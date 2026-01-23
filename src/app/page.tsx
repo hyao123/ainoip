@@ -318,35 +318,415 @@ const problems: Problem[] = [
     defaultCode: '#include <iostream>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int ans = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            if (a[i] > a[j]) ans++;\n        }\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
     category: '排序与查找',
     year: '2021'
+  },
+  {
+    id: 23,
+    title: '二分查找',
+    difficulty: 'easy',
+    description: '在一个有序数组中查找目标值，如果找到返回其下标，否则返回 -1。',
+    inputFormat: '第一行输入 n 和 target，分别表示数组长度和目标值。第二行输入 n 个有序整数。',
+    outputFormat: '输出目标值的下标，未找到输出 -1。',
+    sampleInput: '5 3\n1 2 3 4 5',
+    sampleOutput: '2',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n, target;\n    cin >> n >> target;\n    \n    int a[105];\n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int left = 0, right = n - 1, ans = -1;\n    while (left <= right) {\n        int mid = (left + right) / 2;\n        if (a[mid] == target) {\n            ans = mid;\n            break;\n        } else if (a[mid] < target) {\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    category: '排序与查找'
+  },
+  {
+    id: 24,
+    title: 'NOIP 2011 普及组 - 数字游戏',
+    difficulty: 'easy',
+    description: '给定的整数 N，计算 1 到 N 之间（包括 N）的所有整数中，数字 0 出现的次数。',
+    inputFormat: '输入一个整数 N。',
+    outputFormat: '输出 1 到 N 中数字 0 出现的次数。',
+    sampleInput: '9',
+    sampleOutput: '0',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int cnt = 0;\n    for (int i = 1; i <= n; i++) {\n        int x = i;\n        while (x > 0) {\n            if (x % 10 == 0) cnt++;\n            x /= 10;\n        }\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    category: '基础算法',
+    year: '2011'
+  },
+  // 动态规划
+  {
+    id: 25,
+    title: 'NOIP 2005 普及组 - 陶陶摘苹果',
+    difficulty: 'easy',
+    description: '陶陶家的院子里有一棵苹果树，每到秋天树上就会结出 10 个苹果。苹果成熟的时候，陶陶就会跑去摘苹果。陶陶有个 30 厘米高的板凳，当她不能直接用手摘到苹果的时候，就会踩到板凳上再试试。现在已知 10 个苹果到地面的高度，以及陶陶把手伸直的时候能够达到的最大高度，请帮陶陶算一下她能够摘到的苹果的数目。假设她碰到苹果，苹果就会掉下来。',
+    inputFormat: '第一行输入 10 个整数，表示 10 个苹果到地面的高度，两两之间用空格隔开。第二行输入 1 个整数，表示陶陶把手伸直时能够达到的最大高度。',
+    outputFormat: '输出陶陶能够摘到的苹果的数目。',
+    sampleInput: '100 200 150 140 129 134 167 198 200 111\n110',
+    sampleOutput: '5',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int apples[10];\n    for (int i = 0; i < 10; i++) {\n        cin >> apples[i];\n    }\n    \n    int h;\n    cin >> h;\n    \n    int cnt = 0;\n    for (int i = 0; i < 10; i++) {\n        if (apples[i] <= h + 30) cnt++;\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    category: '动态规划',
+    year: '2005'
+  },
+  {
+    id: 26,
+    title: 'NOIP 2017 普及组 - 跳房子',
+    difficulty: 'medium',
+    description: '跳房子，也叫跳飞机，是一种世界性的儿童游戏。游戏参与者需要分多个回合按顺序跳到第 0 格、第 1 格、……、直到跳到第 n 格。跳到第 n 格即胜利。每次跳房子，玩家可以向前跳 1 格或 2 格。请问跳到第 n 格有多少种不同的跳法。',
+    inputFormat: '输入一个整数 n。',
+    outputFormat: '输出跳到第 n 格的不同跳法数。',
+    sampleInput: '5',
+    sampleOutput: '8',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nconst int MAXN = 1005;\nint dp[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    dp[0] = 1;\n    dp[1] = 1;\n    for (int i = 2; i <= n; i++) {\n        dp[i] = dp[i - 1] + dp[i - 2];\n    }\n    \n    cout << dp[n] << endl;\n    return 0;\n}',
+    category: '动态规划',
+    year: '2017'
+  },
+  {
+    id: 27,
+    title: 'NOIP 2010 普及组 - 接力赛',
+    difficulty: 'medium',
+    description: '给定 n 个物品，每个物品有重量 w 和价值 v。一个背包最多能承重 W，求背包能装的最大价值。',
+    inputFormat: '第一行输入 n 和 W，表示物品数量和背包容量。接下来 n 行，每行输入 wi 和 vi，表示物品的重量和价值。',
+    outputFormat: '输出背包能装的最大价值。',
+    sampleInput: '4 10\n2 3\n3 4\n4 5\n5 6',
+    sampleOutput: '13',
+    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 105;\nconst int MAXW = 1005;\nint w[MAXN], v[MAXN];\nint dp[MAXW];\n\nint main() {\n    int n, W;\n    cin >> n >> W;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> w[i] >> v[i];\n    }\n    \n    for (int i = 1; i <= n; i++) {\n        for (int j = W; j >= w[i]; j--) {\n            dp[j] = max(dp[j], dp[j - w[i]] + v[i]);\n        }\n    }\n    \n    cout << dp[W] << endl;\n    return 0;\n}',
+    category: '动态规划',
+    year: '2010'
+  },
+  {
+    id: 28,
+    title: 'NOIP 2018 提高组 - 货币系统',
+    difficulty: 'hard',
+    description: '给定 n 个面值不同的货币，每种货币可以使用任意次，求用这些货币能组成的不同金额的数量。',
+    inputFormat: '第一行输入 n，表示货币种类数。第二行输入 n 个整数，表示货币的面值。',
+    outputFormat: '输出能组成的不同金额的数量。',
+    sampleInput: '4\n1 2 5 10',
+    sampleOutput: '无限',
+    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 105;\nconst int MAXW = 10005;\nint a[MAXN];\nbool dp[MAXW];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    sort(a + 1, a + n + 1);\n    \n    dp[0] = true;\n    for (int i = 1; i <= n; i++) {\n        for (int j = a[i]; j <= MAXW; j++) {\n            if (dp[j - a[i]]) dp[j] = true;\n        }\n    }\n    \n    int cnt = 0;\n    for (int i = 1; i <= MAXW; i++) {\n        if (dp[i]) cnt++;\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    category: '动态规划',
+    year: '2018'
+  },
+  // 图论
+  {
+    id: 29,
+    title: '图的遍历 - DFS',
+    difficulty: 'medium',
+    description: '给定一个 n 个点 m 条边的无向图，从节点 1 开始进行深度优先搜索（DFS），输出遍历顺序。',
+    inputFormat: '第一行输入 n 和 m，表示节点数和边数。接下来 m 行，每行输入两个整数 u 和 v，表示一条边。',
+    outputFormat: '输出 DFS 遍历顺序，用空格分隔。',
+    sampleInput: '5 5\n1 2\n1 3\n2 4\n2 5\n3 4',
+    sampleOutput: '1 2 4 5 3',
+    defaultCode: '#include <iostream>\n#include <vector>\nusing namespace std;\n\nconst int MAXN = 105;\nvector<int> g[MAXN];\nbool vis[MAXN];\n\nvoid dfs(int u) {\n    cout << u << " ";\n    vis[u] = true;\n    for (int v : g[u]) {\n        if (!vis[v]) dfs(v);\n    }\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    \n    for (int i = 1; i <= m; i++) {\n        int u, v;\n        cin >> u >> v;\n        g[u].push_back(v);\n        g[v].push_back(u);\n    }\n    \n    dfs(1);\n    cout << endl;\n    \n    return 0;\n}',
+    category: '图论'
+  },
+  {
+    id: 30,
+    title: 'NOIP 2010 普及组 - 接力赛 (BFS)',
+    difficulty: 'medium',
+    description: '在一个 n × m 的迷宫中，从起点 (1, 1) 走到终点 (n, m)，求最短路径长度。迷宫中 0 表示可走，1 表示障碍。',
+    inputFormat: '第一行输入 n 和 m，表示迷宫大小。接下来 n 行，每行 m 个数字，表示迷宫。',
+    outputFormat: '输出最短路径长度，无法到达输出 -1。',
+    sampleInput: '3 3\n0 0 0\n1 0 1\n0 0 0',
+    sampleOutput: '4',
+    defaultCode: '#include <iostream>\n#include <queue>\nusing namespace std;\n\nconst int MAXN = 105;\nint maze[MAXN][MAXN];\nint dist[MAXN][MAXN];\nint dx[4] = {0, 0, 1, -1};\nint dy[4] = {1, -1, 0, 0};\n\nstruct Node {\n    int x, y;\n};\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    \n    for (int i = 1; i <= n; i++) {\n        for (int j = 1; j <= m; j++) {\n            cin >> maze[i][j];\n            dist[i][j] = -1;\n        }\n    }\n    \n    queue<Node> q;\n    q.push({1, 1});\n    dist[1][1] = 0;\n    \n    while (!q.empty()) {\n        Node u = q.front(); q.pop();\n        \n        if (u.x == n && u.y == m) {\n            cout << dist[n][m] << endl;\n            return 0;\n        }\n        \n        for (int i = 0; i < 4; i++) {\n            int nx = u.x + dx[i];\n            int ny = u.y + dy[i];\n            if (nx >= 1 && nx <= n && ny >= 1 && ny <= m && maze[nx][ny] == 0 && dist[nx][ny] == -1) {\n                dist[nx][ny] = dist[u.x][u.y] + 1;\n                q.push({nx, ny});\n            }\n        }\n    }\n    \n    cout << -1 << endl;\n    return 0;\n}',
+    category: '图论',
+    year: '2010'
+  },
+  {
+    id: 31,
+    title: 'NOIP 2015 提高组 - 信息传递',
+    difficulty: 'hard',
+    description: '有 n 个同学（编号为 1 到 n），每个人有一个信息传递对象 ti。如果 i 把信息告诉 ti，ti 再把信息告诉 tti，……，最终某个人的信息传递对象是他自己，这就形成了一个信息传递链条。求信息传递链条的最小长度。',
+    inputFormat: '第一行输入 n，表示同学数量。第二行输入 n 个整数 t1, t2, ..., tn，表示每个人的信息传递对象。',
+    outputFormat: '输出最小信息传递链条的长度。',
+    sampleInput: '5\n2 4 2 3 1',
+    sampleOutput: '3',
+    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 200005;\nint t[MAXN];\nint vis[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> t[i];\n    }\n    \n    int ans = n + 1;\n    for (int i = 1; i <= n; i++) {\n        if (vis[i] == 0) {\n            int cnt = 0;\n            int u = i;\n            while (vis[u] == 0 && vis[u] != -1) {\n                vis[u] = i;\n                u = t[u];\n                cnt++;\n            }\n            if (vis[u] == i) {\n                ans = min(ans, cnt);\n            }\n            u = i;\n            while (vis[u] == i) {\n                vis[u] = -1;\n                u = t[u];\n            }\n        }\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    category: '图论',
+    year: '2015'
+  },
+  // 搜索算法
+  {
+    id: 32,
+    title: 'N皇后问题',
+    difficulty: 'hard',
+    description: '在 n × n 的棋盘上放置 n 个皇后，使得任意两个皇后不在同一行、同一列或同一对角线上。求放置方案数。',
+    inputFormat: '输入一个整数 n (n ≤ 10)。',
+    outputFormat: '输出放置方案数。',
+    sampleInput: '4',
+    sampleOutput: '2',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nconst int MAXN = 15;\nint row[MAXN], col[MAXN], diag1[MAXN * 2], diag2[MAXN * 2];\nint n, ans;\n\nvoid dfs(int x) {\n    if (x > n) {\n        ans++;\n        return;\n    }\n    for (int y = 1; y <= n; y++) {\n        if (!col[y] && !diag1[x + y] && !diag2[x - y + n]) {\n            col[y] = diag1[x + y] = diag2[x - y + n] = 1;\n            dfs(x + 1);\n            col[y] = diag1[x + y] = diag2[x - y + n] = 0;\n        }\n    }\n}\n\nint main() {\n    cin >> n;\n    dfs(1);\n    cout << ans << endl;\n    return 0;\n}',
+    category: '搜索算法'
+  },
+  {
+    id: 33,
+    title: '全排列',
+    difficulty: 'easy',
+    description: '输出 1 到 n 的所有排列，按字典序输出。',
+    inputFormat: '输入一个整数 n (n ≤ 8)。',
+    outputFormat: '输出所有排列，每个排列占一行。',
+    sampleInput: '3',
+    sampleOutput: '1 2 3\n1 3 2\n2 1 3\n2 3 1\n3 1 2\n3 2 1',
+    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int a[10];\n    for (int i = 1; i <= n; i++) {\n        a[i] = i;\n    }\n    \n    do {\n        for (int i = 1; i <= n; i++) {\n            cout << a[i];\n            if (i < n) cout << " ";\n        }\n        cout << endl;\n    } while (next_permutation(a + 1, a + n + 1));\n    \n    return 0;\n}',
+    category: '搜索算法'
+  },
+  {
+    id: 34,
+    title: 'NOIP 2009 普及组 - 分解因数',
+    difficulty: 'medium',
+    description: '给出一个正整数 a，要求分解成若干个质因数的乘积，输出所有可能的分解方案。',
+    inputFormat: '输入一个正整数 a (a ≤ 100)。',
+    outputFormat: '输出所有分解方案，每个方案占一行。',
+    sampleInput: '12',
+    sampleOutput: '12=2*2*3\n12=2*6\n12=3*4\n12=12',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nint n;\n\nvoid dfs(int now, int last, string ans) {\n    if (now == 1) {\n        cout << ans << endl;\n        return;\n    }\n    for (int i = last; i <= now; i++) {\n        if (now % i == 0) {\n            string newAns = ans;\n            if (newAns != to_string(n)) newAns += "*";\n            newAns += to_string(i);\n            dfs(now / i, i, newAns);\n        }\n    }\n}\n\nint main() {\n    cin >> n;\n    dfs(n, 2, to_string(n));\n    return 0;\n}',
+    category: '搜索算法',
+    year: '2009'
+  },
+  // 数据结构
+  {
+    id: 35,
+    title: '栈的应用 - 括号匹配',
+    difficulty: 'easy',
+    description: '给定一个只包含 \'()\'、\'[]\'、\'{}\' 的字符串，判断括号是否匹配。',
+    inputFormat: '输入一个字符串，只包含括号字符。',
+    outputFormat: '如果括号匹配输出"YES"，否则输出"NO"。',
+    sampleInput: '()[]{}',
+    sampleOutput: 'YES',
+    defaultCode: '#include <iostream>\n#include <stack>\n#include <string>\nusing namespace std;\n\nbool match(char a, char b) {\n    return (a == \'(\' && b == \')\') || \n           (a == \'[\' && b == \']\') || \n           (a == \'{\' && b == \'}\');\n}\n\nint main() {\n    string s;\n    cin >> s;\n    \n    stack<char> st;\n    bool ok = true;\n    for (char c : s) {\n        if (c == \'(\' || c == \'[\' || c == \'{\') {\n            st.push(c);\n        } else {\n            if (st.empty() || !match(st.top(), c)) {\n                ok = false;\n                break;\n            }\n            st.pop();\n        }\n    }\n    \n    if (ok && st.empty()) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    return 0;\n}',
+    category: '数据结构'
+  },
+  {
+    id: 36,
+    title: '队列 - 约瑟夫问题',
+    difficulty: 'medium',
+    description: 'n 个人围成一圈，从第 1 个人开始报数，数到 k 的人出局，然后从下一个人重新开始报数，直到所有人都出局。求出局顺序。',
+    inputFormat: '输入两个整数 n 和 k。',
+    outputFormat: '输出出局顺序，用空格分隔。',
+    sampleInput: '5 2',
+    sampleOutput: '2 4 1 5 3',
+    defaultCode: '#include <iostream>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, k;\n    cin >> n >> k;\n    \n    queue<int> q;\n    for (int i = 1; i <= n; i++) {\n        q.push(i);\n    }\n    \n    while (!q.empty()) {\n        for (int i = 1; i < k; i++) {\n            q.push(q.front());\n            q.pop();\n        }\n        cout << q.front();\n        q.pop();\n        if (!q.empty()) cout << " ";\n    }\n    cout << endl;\n    \n    return 0;\n}',
+    category: '数据结构'
+  },
+  {
+    id: 37,
+    title: 'NOIP 2018 提高组 - 对称二叉树',
+    difficulty: 'hard',
+    description: '给定一棵二叉树，判断它是否是对称的（即左子树和右子树镜像对称）。',
+    inputFormat: '第一行输入 n，表示节点数。接下来 n 行，每行输入三个整数 v、l、r，表示节点的值、左子节点、右子节点，-1 表示空。',
+    outputFormat: '输出"YES"或"NO"。',
+    sampleInput: '3\n1 2 3\n2 -1 -1\n3 -1 -1',
+    sampleOutput: 'NO',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nconst int MAXN = 1000005;\nint val[MAXN], left[MAXN], right[MAXN];\nbool mirror(int a, int b) {\n    if (a == -1 && b == -1) return true;\n    if (a == -1 || b == -1) return false;\n    if (val[a] != val[b]) return false;\n    return mirror(left[a], right[b]) && mirror(right[a], left[b]);\n}\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> val[i] >> left[i] >> right[i];\n    }\n    \n    if (mirror(1, 1)) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    return 0;\n}',
+    category: '数据结构',
+    year: '2018'
+  },
+  // 贪心算法
+  {
+    id: 38,
+    title: 'NOIP 2012 普及组 - 贪心 - 活动选择',
+    difficulty: 'easy',
+    description: '给定 n 个活动，每个活动有开始时间和结束时间，求最多能参加多少个活动（不能重叠）。',
+    inputFormat: '第一行输入 n，表示活动数量。接下来 n 行，每行输入两个整数 si 和 ei，表示活动的开始和结束时间。',
+    outputFormat: '输出最多能参加的活动数量。',
+    sampleInput: '3\n1 3\n2 4\n3 5',
+    sampleOutput: '2',
+    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 1005;\nstruct Activity {\n    int start, end;\n} a[MAXN];\n\nbool cmp(Activity x, Activity y) {\n    return x.end < y.end;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i].start >> a[i].end;\n    }\n    \n    sort(a + 1, a + n + 1, cmp);\n    \n    int cnt = 1, last = a[1].end;\n    for (int i = 2; i <= n; i++) {\n        if (a[i].start >= last) {\n            cnt++;\n            last = a[i].end;\n        }\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    category: '贪心算法'
+  },
+  {
+    id: 39,
+    title: 'NOIP 2016 普及组 - 海港',
+    difficulty: 'medium',
+    description: '小K是一名海员，他每天的工作就是在海上开船。有一天，他接到了一个任务：在一个海港，有 n 艘船依次到达，每艘船上有 ai 个人。海港最多容纳 k 个人。如果海港中的人数已经达到 k，那么最早上船的船必须离开海港。求每个时刻海港中有多少个国籍的人。',
+    inputFormat: '第一行输入 n 和 k，表示船数和海港容量。接下来 n 行，每行输入 ti 和 ai，表示船的到达时间和船上人数。',
+    outputFormat: '输出每个时刻海港中国籍的数量。',
+    sampleInput: '3 3\n1 3\n2 3\n3 3',
+    sampleOutput: '3\n3\n3',
+    defaultCode: '#include <iostream>\n#include <queue>\nusing namespace std;\n\nconst int MAXN = 100005;\nint cnt[MAXN];\n\nstruct Ship {\n    int time, num;\n};\n\nint main() {\n    int n, k;\n    cin >> n >> k;\n    \n    queue<Ship> q;\n    int total = 0;\n    \n    for (int i = 1; i <= n; i++) {\n        int t, a;\n        cin >> t >> a;\n        \n        while (!q.empty() && q.front().time <= t - 86400) {\n            total -= q.front().num;\n            q.pop();\n        }\n        \n        q.push({t, a});\n        total += a;\n        \n        cout << total << endl;\n    }\n    \n    return 0;\n}',
+    category: '贪心算法',
+    year: '2016'
+  },
+  {
+    id: 40,
+    title: 'NOIP 2013 普及组 - 货车运输',
+    difficulty: 'hard',
+    description: '给定一个 n 个点 m 条边的图，每条边有一个权值。求从起点到终点的路径，使得路径上边的最小权值最大。',
+    inputFormat: '第一行输入 n、m、s、t，分别表示点数、边数、起点和终点。接下来 m 行，每行输入 u、v、w，表示边的两个端点和权值。',
+    outputFormat: '输出路径上边的最小权值的最大值。',
+    sampleInput: '4 4 1 4\n1 2 4\n2 3 3\n3 4 5\n1 4 2',
+    sampleOutput: '4',
+    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 10005;\nstruct Edge {\n    int u, v, w;\n} e[MAXN];\n\nint parent[MAXN];\n\nint find(int x) {\n    if (parent[x] == x) return x;\n    return parent[x] = find(parent[x]);\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m >> s >> t;\n    \n    for (int i = 1; i <= m; i++) {\n        cin >> e[i].u >> e[i].v >> e[i].w;\n    }\n    \n    sort(e + 1, e + m + 1, [](Edge a, Edge b) {\n        return a.w > b.w;\n    });\n    \n    for (int i = 1; i <= n; i++) {\n        parent[i] = i;\n    }\n    \n    int ans = 0;\n    for (int i = 1; i <= m; i++) {\n        int pu = find(e[i].u);\n        int pv = find(e[i].v);\n        if (pu != pv) {\n            parent[pu] = pv;\n            ans = e[i].w;\n        }\n        if (find(s) == find(t)) break;\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    category: '贪心算法',
+    year: '2013'
+  },
+  // 位运算
+  {
+    id: 41,
+    title: '二进制中1的个数',
+    difficulty: 'easy',
+    description: '输入一个整数，输出它的二进制表示中 1 的个数。',
+    inputFormat: '输入一个整数 n。',
+    outputFormat: '输出 n 的二进制表示中 1 的个数。',
+    sampleInput: '5',
+    sampleOutput: '2',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int cnt = 0;\n    while (n > 0) {\n        cnt += n & 1;\n        n >>= 1;\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    category: '位运算'
+  },
+  {
+    id: 42,
+    title: 'NOIP 2020 普及组 - 优秀的拆分',
+    difficulty: 'medium',
+    description: '将一个数拆分成若干个不同的 2 的幂次的和，求拆分方案数。',
+    inputFormat: '输入一个正整数 n。',
+    outputFormat: '输出拆分方案数。',
+    sampleInput: '7',
+    sampleOutput: '4',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    // 答案就是n的二进制表示中1的个数\n    int cnt = 0;\n    while (n > 0) {\n        cnt += n & 1;\n        n >>= 1;\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    category: '位运算',
+    year: '2020'
+  },
+  {
+    id: 43,
+    title: 'NOIP 2021 提高组 - 异或之积',
+    difficulty: 'hard',
+    description: '给定一个长度为 n 的数组 a，计算所有 (i, j, k) 三元组的异或值，满足 1 ≤ i < j < k ≤ n。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数。',
+    outputFormat: '输出异或值的总和。',
+    sampleInput: '3\n1 2 3',
+    sampleOutput: '0',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    long long ans = 0;\n    for (int i = 1; i <= n; i++) {\n        for (int j = i + 1; j <= n; j++) {\n            for (int k = j + 1; k <= n; k++) {\n                ans ^= (a[i] ^ a[j] ^ a[k]);\n            }\n        }\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    category: '位运算',
+    year: '2021'
+  },
+  // 递归与分治
+  {
+    id: 44,
+    title: '汉诺塔问题',
+    difficulty: 'medium',
+    description: '有 n 个盘子，从 A 柱移动到 C 柱，每次只能移动一个盘子，且大盘子不能放在小盘子上。输出移动步骤。',
+    inputFormat: '输入一个整数 n。',
+    outputFormat: '输出移动步骤，每行格式为"移动第 n 个盘子从 X 到 Y"。',
+    sampleInput: '2',
+    sampleOutput: '移动第 1 个盘子从 A 到 B\n移动第 2 个盘子从 A 到 C\n移动第 1 个盘子从 B 到 C',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nvoid hanoi(int n, char from, char to, char aux) {\n    if (n == 1) {\n        cout << "移动第 " << n << " 个盘子从 " << from << " 到 " << to << endl;\n        return;\n    }\n    hanoi(n - 1, from, aux, to);\n    cout << "移动第 " << n << " 个盘子从 " << from << " 到 " << to << endl;\n    hanoi(n - 1, aux, to, from);\n}\n\nint main() {\n    int n;\n    cin >> n;\n    hanoi(n, \'A\', \'C\', \'B\');\n    return 0;\n}',
+    category: '递归与分治'
+  },
+  {
+    id: 45,
+    title: '归并排序',
+    difficulty: 'medium',
+    description: '实现归并排序算法，对给定的数组进行升序排序。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数。',
+    outputFormat: '输出排序后的数组。',
+    sampleInput: '5\n3 1 4 1 5',
+    sampleOutput: '1 1 3 4 5',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN], tmp[MAXN];\n\nvoid merge(int l, int mid, int r) {\n    int i = l, j = mid + 1, k = l;\n    while (i <= mid && j <= r) {\n        if (a[i] <= a[j]) tmp[k++] = a[i++];\n        else tmp[k++] = a[j++];\n    }\n    while (i <= mid) tmp[k++] = a[i++];\n    while (j <= r) tmp[k++] = a[j++];\n    for (int i = l; i <= r; i++) a[i] = tmp[i];\n}\n\nvoid mergeSort(int l, int r) {\n    if (l >= r) return;\n    int mid = (l + r) / 2;\n    mergeSort(l, mid);\n    mergeSort(mid + 1, r);\n    merge(l, mid, r);\n}\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    mergeSort(1, n);\n    \n    for (int i = 1; i <= n; i++) {\n        cout << a[i];\n        if (i < n) cout << " ";\n    }\n    cout << endl;\n    \n    return 0;\n}',
+    category: '递归与分治'
+  },
+  {
+    id: 46,
+    title: 'NOIP 2019 提高组 - 聪明的方法',
+    difficulty: 'hard',
+    description: '给定一个区间 [L, R]，求区间内所有数的约数个数之和。',
+    inputFormat: '输入两个整数 L 和 R。',
+    outputFormat: '输出约数个数之和。',
+    sampleInput: '1 5',
+    sampleOutput: '10',
+    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int L, R;\n    cin >> L >> R;\n    \n    long long ans = 0;\n    for (int i = 1; i <= R; i++) {\n        int start = max(L, i);\n        int cnt = R / i - (L - 1) / i;\n        ans += cnt;\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    category: '递归与分治',
+    year: '2019'
   }
 ];
 
-// 按分类和年份组织题目
+// 按分类和难度组织题目（按从易到难排序）
 const categories: Category[] = [
   {
     name: '基础算法',
     icon: '📚',
-    problems: problems.filter(p => p.category === '基础算法')
+    problems: problems.filter(p => p.category === '基础算法').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
   },
   {
     name: '字符串处理',
     icon: '📝',
-    problems: problems.filter(p => p.category === '字符串处理')
+    problems: problems.filter(p => p.category === '字符串处理').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
   },
   {
     name: '数论',
     icon: '🔢',
-    problems: problems.filter(p => p.category === '数论')
+    problems: problems.filter(p => p.category === '数论').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
   },
   {
     name: '模拟',
     icon: '🎮',
-    problems: problems.filter(p => p.category === '模拟')
+    problems: problems.filter(p => p.category === '模拟').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
   },
   {
     name: '排序与查找',
     icon: '🔍',
-    problems: problems.filter(p => p.category === '排序与查找')
+    problems: problems.filter(p => p.category === '排序与查找').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
+  },
+  {
+    name: '动态规划',
+    icon: '💡',
+    problems: problems.filter(p => p.category === '动态规划').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
+  },
+  {
+    name: '图论',
+    icon: '🕸️',
+    problems: problems.filter(p => p.category === '图论').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
+  },
+  {
+    name: '搜索算法',
+    icon: '🔎',
+    problems: problems.filter(p => p.category === '搜索算法').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
+  },
+  {
+    name: '数据结构',
+    icon: '🏗️',
+    problems: problems.filter(p => p.category === '数据结构').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
+  },
+  {
+    name: '贪心算法',
+    icon: '🎯',
+    problems: problems.filter(p => p.category === '贪心算法').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
+  },
+  {
+    name: '位运算',
+    icon: '⚡',
+    problems: problems.filter(p => p.category === '位运算').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
+  },
+  {
+    name: '递归与分治',
+    icon: '🔄',
+    problems: problems.filter(p => p.category === '递归与分治').sort((a, b) => {
+      const diffMap = { 'easy': 1, 'medium': 2, 'hard': 3 };
+      return diffMap[a.difficulty] - diffMap[b.difficulty];
+    })
   }
 ];
 
