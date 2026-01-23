@@ -72,18 +72,25 @@ const problems: Problem[] = [
 
 export default function Home() {
   const [selectedProblem, setSelectedProblem] = useState<Problem>(problems[0]);
-  const [code, setCode] = useState(selectedProblem.defaultCode);
+  const [code, setCode] = useState('#include <iostream>\nusing namespace std;\n\nint main() {\n    // 在此编写你的代码\n    \n    return 0;\n}');
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
+  const [showSolution, setShowSolution] = useState(false);
 
   const handleProblemSelect = (problem: Problem) => {
     setSelectedProblem(problem);
-    setCode(problem.defaultCode);
+    setCode('#include <iostream>\nusing namespace std;\n\nint main() {\n    // 在此编写你的代码\n    \n    return 0;\n}');
     setInput(problem.sampleInput);
     setOutput('');
     setError('');
+    setShowSolution(false);
+  };
+
+  const handleShowSolution = () => {
+    setShowSolution(true);
+    setCode(selectedProblem.defaultCode);
   };
 
   const handleRunCode = async () => {
@@ -192,14 +199,27 @@ export default function Home() {
               {getDifficultyText(selectedProblem.difficulty)}
             </span>
           </div>
-          <Button
-            onClick={handleRunCode}
-            disabled={isRunning}
-            className="gap-2"
-          >
-            <Play className="h-4 w-4" />
-            {isRunning ? '运行中...' : '运行代码'}
-          </Button>
+          <div className="flex items-center gap-3">
+            {!showSolution && (
+              <Button
+                onClick={handleShowSolution}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <Code2 className="h-4 w-4" />
+                查看答案
+              </Button>
+            )}
+            <Button
+              onClick={handleRunCode}
+              disabled={isRunning}
+              className="gap-2"
+            >
+              <Play className="h-4 w-4" />
+              {isRunning ? '运行中...' : '运行代码'}
+            </Button>
+          </div>
         </header>
 
         {/* 内容区域 */}
@@ -233,6 +253,10 @@ export default function Home() {
                       <Code2 className="h-4 w-4" />
                       样例输出
                     </TabsTrigger>
+                    <TabsTrigger value="solution" className="gap-2">
+                      <Code2 className="h-4 w-4" />
+                      参考答案
+                    </TabsTrigger>
                   </TabsList>
                   <TabsContent value="input">
                     <Card className="p-4">
@@ -247,6 +271,22 @@ export default function Home() {
                         {selectedProblem.sampleOutput}
                       </pre>
                     </Card>
+                  </TabsContent>
+                  <TabsContent value="solution">
+                    {showSolution ? (
+                      <Card className="p-4">
+                        <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
+                          {selectedProblem.defaultCode}
+                        </pre>
+                      </Card>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8">
+                        <p className="text-sm text-muted-foreground">先试试自己解决问题吧！</p>
+                        <Button onClick={handleShowSolution} variant="outline" size="sm">
+                          查看答案
+                        </Button>
+                      </div>
+                    )}
                   </TabsContent>
                 </Tabs>
               </div>
