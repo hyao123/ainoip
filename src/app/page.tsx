@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight } from 'lucide-react';
+import { CodeEditor } from '@/components/CodeEditor';
+import { InputPanel } from '@/components/InputPanel';
+import { OutputPanel } from '@/components/OutputPanel';
 
 // 题目数据类型
 interface Problem {
@@ -1225,56 +1227,46 @@ export default function Home() {
           {/* 代码编辑器和测试区 */}
           <div className="flex flex-1 flex-col overflow-hidden">
             {/* 代码编辑器 */}
-            <div className="flex-1 border-b">
-              <div className="flex items-center justify-between border-b px-4 py-2">
-                <span className="text-sm font-medium">main.cpp</span>
-                <span className="text-xs text-muted-foreground">C++ 17</span>
+            <div className="flex-1 flex flex-col overflow-hidden border-b">
+              <div className="flex items-center justify-between border-b bg-slate-900/50 px-4 py-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <span className="text-sm font-medium text-slate-300">main.cpp</span>
+                </div>
+                <span className="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded font-mono">C++ 17</span>
               </div>
-              <Textarea
+              <CodeEditor
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="h-full resize-none rounded-none border-0 font-mono text-sm focus-visible:ring-0"
+                onChange={setCode}
                 placeholder="// 在此编写你的代码..."
-                spellCheck={false}
+                language="C++ 17"
+                onRunCode={() => !isRunning && handleRunCode()}
               />
             </div>
 
             {/* 测试输入输出 */}
-            <div className="h-1/3 flex">
+            <div className="h-1/3 flex border-t border-border">
               {/* 输入 */}
-              <div className="w-1/2 border-r">
-                <div className="flex items-center border-b px-4 py-2">
-                  <span className="text-sm font-medium">测试输入</span>
-                </div>
-                <Textarea
+              <div className="w-1/2 border-r border-border">
+                <InputPanel
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  className="h-[calc(100%-3rem)] resize-none rounded-none border-0 font-mono text-xs focus-visible:ring-0"
+                  onChange={setInput}
                   placeholder="输入测试数据..."
-                  spellCheck={false}
+                  title="测试输入"
                 />
               </div>
 
               {/* 输出 */}
               <div className="w-1/2">
-                <div className="flex items-center border-b px-4 py-2">
-                  <span className="text-sm font-medium">运行结果</span>
-                </div>
-                {error ? (
-                  <div className="flex h-[calc(100%-3rem)] items-center justify-center bg-destructive/10 p-4">
-                    <div className="flex items-start gap-2 text-destructive">
-                      <AlertCircle className="h-4 w-4 mt-0.5" />
-                      <span className="text-xs">{error}</span>
-                    </div>
-                  </div>
-                ) : (
-                  <Textarea
-                    value={output}
-                    readOnly
-                    className="h-[calc(100%-3rem)] resize-none rounded-none border-0 bg-muted/30 font-mono text-xs focus-visible:ring-0"
-                    placeholder="运行结果将显示在这里..."
-                  />
-                )}
+                <OutputPanel
+                  value={output}
+                  error={error}
+                  title="运行结果"
+                />
               </div>
             </div>
           </div>
