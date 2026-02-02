@@ -10,6 +10,7 @@ import { Play, Code2, ListChecks, ChevronDown, ChevronRight } from 'lucide-react
 import { CodeEditor } from '@/components/CodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
+import { NOIPTemplateHint } from '@/components/NOIPTemplateHint';
 
 // 题目数据类型
 interface Problem {
@@ -40,12 +41,12 @@ const problems: Problem[] = [
     id: 1,
     title: 'A + B 问题',
     difficulty: 'easy',
-    description: '输入两个整数，输出它们的和。这是最基础的题目，帮助你熟悉输入输出。',
+    description: '输入两个整数，输出它们的和。这是最基础的题目，帮助你熟悉输入输出。NOIP竞赛要求使用文件输入输出。',
     inputFormat: '输入包含两个整数 a, b，用空格分隔。',
     outputFormat: '输出一个整数，表示 a + b 的值。',
     sampleInput: '1 2',
     sampleOutput: '3',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b;\n    cin >> a >> b;\n    cout << a + b << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    // NOIP标准文件输入输出\n    freopen("ab.in", "r", stdin);\n    freopen("ab.out", "w", stdout);\n    \n    int a, b;\n    cin >> a >> b;\n    cout << a + b << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '基础算法'
   },
   {
@@ -57,7 +58,7 @@ const problems: Problem[] = [
     outputFormat: '输出斐波那契数列的第 n 项。',
     sampleInput: '5',
     sampleOutput: '5',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    if (n == 0) {\n        cout << 0 << endl;\n        return 0;\n    }\n    if (n == 1) {\n        cout << 1 << endl;\n        return 0;\n    }\n    \n    int a = 0, b = 1, c;\n    for (int i = 2; i <= n; i++) {\n        c = a + b;\n        a = b;\n        b = c;\n    }\n    cout << b << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("fibonacci.in", "r", stdin);\n    freopen("fibonacci.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    if (n == 0) {\n        cout << 0 << endl;\n        fclose(stdin);\n        fclose(stdout);\n        return 0;\n    }\n    if (n == 1) {\n        cout << 1 << endl;\n        fclose(stdin);\n        fclose(stdout);\n        return 0;\n    }\n    \n    int a = 0, b = 1, c;\n    for (int i = 2; i <= n; i++) {\n        c = a + b;\n        a = b;\n        b = c;\n    }\n    cout << b << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '基础算法'
   },
   {
@@ -69,7 +70,7 @@ const problems: Problem[] = [
     outputFormat: '输出 n! 的值。',
     sampleInput: '10',
     sampleOutput: '3628800',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    long long ans = 1;\n    for (int i = 2; i <= n; i++) {\n        ans *= i;\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("factorial.in", "r", stdin);\n    freopen("factorial.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    long long ans = 1;\n    for (int i = 2; i <= n; i++) {\n        ans *= i;\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '基础算法'
   },
   {
@@ -94,7 +95,7 @@ const problems: Problem[] = [
     outputFormat: '输出一个整数，表示数字 N 反转后的值。',
     sampleInput: '123000',
     sampleOutput: '321',
-    defaultCode: '#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    \n    // 去掉前导符号\n    int start = 0;\n    bool negative = false;\n    if (s[0] == \'-\') {\n        negative = true;\n        start = 1;\n    }\n    \n    // 找到末尾的0的起始位置\n    int end = s.length() - 1;\n    while (end > start && s[end] == \'0\') {\n        end--;\n    }\n    \n    // 输出符号\n    if (negative) cout << \'-\';\n    \n    // 反向输出\n    for (int i = end; i >= start; i--) {\n        cout << s[i];\n    }\n    cout << endl;\n    \n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("reverse.in", "r", stdin);\n    freopen("reverse.out", "w", stdout);\n    \n    string s;\n    cin >> s;\n    \n    // 去掉前导符号\n    int start = 0;\n    bool negative = false;\n    if (s[0] == \'-\') {\n        negative = true;\n        start = 1;\n    }\n    \n    // 找到末尾的0的起始位置\n    int end = s.length() - 1;\n    while (end > start && s[end] == \'0\') {\n        end--;\n    }\n    \n    // 输出符号\n    if (negative) cout << \'-\';\n    \n    // 反向输出\n    for (int i = end; i >= start; i--) {\n        cout << s[i];\n    }\n    cout << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '字符串处理',
     year: '2011'
   },
@@ -107,7 +108,7 @@ const problems: Problem[] = [
     outputFormat: '如果计算出的识别码与输入的识别码相同，输出"Right"，否则输出正确的ISBN号码。',
     sampleInput: '0-670-82162-0',
     sampleOutput: 'Right',
-    defaultCode: '#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    \n    int sum = 0;\n    int cnt = 1;\n    for (int i = 0; i < s.length(); i++) {\n        if (isdigit(s[i])) {\n            sum += (s[i] - \'0\') * cnt;\n            cnt++;\n        }\n    }\n    \n    int mod = sum % 11;\n    char check;\n    if (mod == 10) check = \'X\';\n    else check = \'0\' + mod;\n    \n    if (s[s.length() - 1] == check) {\n        cout << "Right" << endl;\n    } else {\n        s[s.length() - 1] = check;\n        cout << s << endl;\n    }\n    \n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\n#include <cctype>\nusing namespace std;\n\nint main() {\n    freopen("isbn.in", "r", stdin);\n    freopen("isbn.out", "w", stdout);\n    \n    string s;\n    cin >> s;\n    \n    int sum = 0;\n    int cnt = 1;\n    for (int i = 0; i < s.length(); i++) {\n        if (isdigit(s[i])) {\n            sum += (s[i] - \'0\') * cnt;\n            cnt++;\n        }\n    }\n    \n    int mod = sum % 11;\n    char check;\n    if (mod == 10) check = \'X\';\n    else check = \'0\' + mod;\n    \n    if (s[s.length() - 1] == check) {\n        cout << "Right" << endl;\n    } else {\n        s[s.length() - 1] = check;\n        cout << s << endl;\n    }\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '字符串处理',
     year: '2008'
   },
@@ -147,7 +148,7 @@ const problems: Problem[] = [
     outputFormat: '输出较大的那个质数。',
     sampleInput: '21',
     sampleOutput: '7',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) {\n            cout << n / i << endl;\n            break;\n        }\n    }\n    \n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("prime.in", "r", stdin);\n    freopen("prime.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) {\n            cout << n / i << endl;\n            fclose(stdin);\n            fclose(stdout);\n            return 0;\n        }\n    }\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '数论',
     year: '2014'
   },
@@ -187,7 +188,7 @@ const problems: Problem[] = [
     outputFormat: '输出一个整数，表示骑士在第 k 天总共获得的金币数。',
     sampleInput: '6',
     sampleOutput: '14',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k;\n    cin >> k;\n    \n    int day = 0, coins = 0, n = 1;\n    while (day + n <= k) {\n        coins += n * n;\n        day += n;\n        n++;\n    }\n    \n    coins += (k - day) * n;\n    cout << coins << endl;\n    \n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("coins.in", "r", stdin);\n    freopen("coins.out", "w", stdout);\n    \n    int k;\n    cin >> k;\n    \n    int day = 0, coins = 0, n = 1;\n    while (day + n <= k) {\n        coins += n * n;\n        day += n;\n        n++;\n    }\n    \n    coins += (k - day) * n;\n    cout << coins << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '模拟',
     year: '2015'
   },
@@ -304,7 +305,7 @@ const problems: Problem[] = [
     outputFormat: '输出一个整数，表示满足条件的 ai + aj 的最大值。',
     sampleInput: '5\n1 2 3 4 5',
     sampleOutput: '9',
-    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    sort(a + 1, a + n + 1);\n    \n    int ans = 0;\n    for (int i = 1; i < n; i++) {\n        ans = max(ans, a[i] + a[i + 1]);\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    freopen("number.in", "r", stdin);\n    freopen("number.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    sort(a + 1, a + n + 1);\n    \n    int ans = 0;\n    for (int i = 1; i < n; i++) {\n        ans = max(ans, a[i] + a[i + 1]);\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '排序与查找',
     year: '2019'
   },
@@ -577,7 +578,7 @@ const problems: Problem[] = [
     outputFormat: '输出陶陶能够摘到的苹果的数目。',
     sampleInput: '100 200 150 140 129 134 167 198 200 111\n110',
     sampleOutput: '5',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int apples[10];\n    for (int i = 0; i < 10; i++) {\n        cin >> apples[i];\n    }\n    \n    int h;\n    cin >> h;\n    \n    int cnt = 0;\n    for (int i = 0; i < 10; i++) {\n        if (apples[i] <= h + 30) cnt++;\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("apple.in", "r", stdin);\n    freopen("apple.out", "w", stdout);\n    \n    int apples[10];\n    for (int i = 0; i < 10; i++) {\n        cin >> apples[i];\n    }\n    \n    int h;\n    cin >> h;\n    \n    int cnt = 0;\n    for (int i = 0; i < 10; i++) {\n        if (apples[i] <= h + 30) cnt++;\n    }\n    \n    cout << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '动态规划',
     year: '2005'
   },
@@ -630,7 +631,7 @@ const problems: Problem[] = [
     outputFormat: '输出 DFS 遍历顺序，用空格分隔。',
     sampleInput: '5 5\n1 2\n1 3\n2 4\n2 5\n3 4',
     sampleOutput: '1 2 4 5 3',
-    defaultCode: '#include <iostream>\n#include <vector>\nusing namespace std;\n\nconst int MAXN = 105;\nvector<int> g[MAXN];\nbool vis[MAXN];\n\nvoid dfs(int u) {\n    cout << u << " ";\n    vis[u] = true;\n    for (int v : g[u]) {\n        if (!vis[v]) dfs(v);\n    }\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    \n    for (int i = 1; i <= m; i++) {\n        int u, v;\n        cin >> u >> v;\n        g[u].push_back(v);\n        g[v].push_back(u);\n    }\n    \n    dfs(1);\n    cout << endl;\n    \n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <vector>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 105;\nvector<int> g[MAXN];\nbool vis[MAXN];\n\nvoid dfs(int u) {\n    cout << u << " ";\n    vis[u] = true;\n    for (int v : g[u]) {\n        if (!vis[v]) dfs(v);\n    }\n}\n\nint main() {\n    freopen("dfs.in", "r", stdin);\n    freopen("dfs.out", "w", stdout);\n    \n    int n, m;\n    cin >> n >> m;\n    \n    for (int i = 1; i <= m; i++) {\n        int u, v;\n        cin >> u >> v;\n        g[u].push_back(v);\n        g[v].push_back(u);\n    }\n    \n    dfs(1);\n    cout << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '图论'
   },
   {
@@ -745,7 +746,7 @@ const problems: Problem[] = [
     outputFormat: '输出最多能参加的活动数量。',
     sampleInput: '3\n1 3\n2 4\n3 5',
     sampleOutput: '2',
-    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 1005;\nstruct Activity {\n    int start, end;\n} a[MAXN];\n\nbool cmp(Activity x, Activity y) {\n    return x.end < y.end;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i].start >> a[i].end;\n    }\n    \n    sort(a + 1, a + n + 1, cmp);\n    \n    int cnt = 1, last = a[1].end;\n    for (int i = 2; i <= n; i++) {\n        if (a[i].start >= last) {\n            cnt++;\n            last = a[i].end;\n        }\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 1005;\nstruct Activity {\n    int start, end;\n} a[MAXN];\n\nbool cmp(Activity x, Activity y) {\n    return x.end < y.end;\n}\n\nint main() {\n    freopen("activity.in", "r", stdin);\n    freopen("activity.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i].start >> a[i].end;\n    }\n    \n    sort(a + 1, a + n + 1, cmp);\n    \n    int cnt = 1, last = a[1].end;\n    for (int i = 2; i <= n; i++) {\n        if (a[i].start >= last) {\n            cnt++;\n            last = a[i].end;\n        }\n    }\n    \n    cout << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '贪心算法'
   },
   {
@@ -784,7 +785,7 @@ const problems: Problem[] = [
     outputFormat: '输出 n 的二进制表示中 1 的个数。',
     sampleInput: '5',
     sampleOutput: '2',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int cnt = 0;\n    while (n > 0) {\n        cnt += n & 1;\n        n >>= 1;\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("bitcount.in", "r", stdin);\n    freopen("bitcount.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    int cnt = 0;\n    while (n > 0) {\n        cnt += n & 1;\n        n >>= 1;\n    }\n    \n    cout << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '位运算'
   },
   {
@@ -1173,6 +1174,11 @@ export default function Home() {
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   {selectedProblem.outputFormat}
                 </p>
+
+                {/* NOIP 模板提示 */}
+                <div className="mt-6">
+                  <NOIPTemplateHint />
+                </div>
 
                 <Tabs defaultValue="input" className="mt-6">
                   <TabsList>
