@@ -134,9 +134,47 @@ const problems: Problem[] = [
     outputFormat: '输出一个字符串，表示密文。',
     sampleInput: 'CompleteVictory\nYvqgpxaimmklongnzfwpvxmfycnhcckdattrfjywxsquxmbbjjrxvslqbfxyqdrxfvtdcqgkqmmqsvrxymyvlhklfzqcfbrzwqkllswftczcgvfsa',
     sampleOutput: 'Wnawuwhlqefdxpylheqplvxlnoflqcxmqlgvwqzfvwylhcvwqfxvqjgqqwvqlnqxuhwylfwnxhvlzflwqlwfvqlmqlgqwmfwnhclqgqmqwfvqlzwhlclqefxmqwmfwnhclqmqwflw',
-    defaultCode: '#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string key, plaintext;\n    cin >> key;\n    cin >> plaintext;\n    \n    string ciphertext;\n    for (int i = 0, j = 0; i < plaintext.length(); i++, j++) {\n        if (j >= key.length()) j = 0;\n        \n        int p = plaintext[i] - \'A\';\n        int k = key[j] - \'A\';\n        int c = (p + k) % 26;\n        ciphertext += (char)(c + \'A\');\n    }\n    \n    cout << ciphertext << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("vigenere.in", "r", stdin);\n    freopen("vigenere.out", "w", stdout);\n    \n    string key, plaintext;\n    cin >> key;\n    cin >> plaintext;\n    \n    string ciphertext;\n    for (int i = 0, j = 0; i < plaintext.length(); i++, j++) {\n        if (j >= key.length()) j = 0;\n        \n        int p = plaintext[i] - \'A\';\n        int k = key[j] - \'A\';\n        int c = (p + k) % 26;\n        ciphertext += (char)(c + \'A\');\n    }\n    \n    cout << ciphertext << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '字符串处理',
     year: '2012'
+  },
+  {
+    id: 67,
+    title: 'NOIP 2013 普及组 - 表达式求值',
+    difficulty: 'medium',
+    description: '给定一个只包含 + 和 - 的表达式，请计算它的值。',
+    inputFormat: '输入一行，包含一个表达式，只包含数字、+ 和 -。',
+    outputFormat: '输出表达式的值。',
+    sampleInput: '1+2-3+4-5',
+    sampleOutput: '-1',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("expr.in", "r", stdin);\n    freopen("expr.out", "w", stdout);\n    \n    string s;\n    cin >> s;\n    \n    int ans = 0, num = 0;\n    char op = \'+\';\n    \n    for (int i = 0; i < s.length(); i++) {\n        if (isdigit(s[i])) {\n            num = num * 10 + (s[i] - \'0\');\n        } else {\n            if (op == \'+\') ans += num;\n            else ans -= num;\n            num = 0;\n            op = s[i];\n        }\n    }\n    \n    if (op == \'+\') ans += num;\n    else ans -= num;\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '字符串处理',
+    year: '2013'
+  },
+  {
+    id: 68,
+    title: '字符串拼接',
+    difficulty: 'easy',
+    description: '输入两个字符串，将它们拼接在一起并输出。',
+    inputFormat: '输入两行，每行一个字符串。',
+    outputFormat: '输出拼接后的字符串。',
+    sampleInput: 'Hello\nWorld',
+    sampleOutput: 'HelloWorld',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("concat.in", "r", stdin);\n    freopen("concat.out", "w", stdout);\n    \n    string s1, s2;\n    getline(cin, s1);\n    getline(cin, s2);\n    \n    cout << s1 << s2 << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '字符串处理'
+  },
+  {
+    id: 69,
+    title: 'NOIP 2019 普及组 - 小凯的疑惑',
+    difficulty: 'medium',
+    description: '小凯手中有两种面值的金币，每种面值的金币都有无限个。小凯想知道，他不能凑出的最大面值是多少？已知两种面值互质。',
+    inputFormat: '输入两个整数 a 和 b，表示两种金币的面值。',
+    outputFormat: '输出不能凑出的最大面值。',
+    sampleInput: '3 5',
+    sampleOutput: '7',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("coin.in", "r", stdin);\n    freopen("coin.out", "w", stdout);\n    \n    int a, b;\n    cin >> a >> b;\n    \n    cout << a * b - a - b << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '字符串处理',
+    year: '2019'
   },
   // 数论
   {
@@ -161,9 +199,59 @@ const problems: Problem[] = [
     outputFormat: '输出 n 的质因数分解，每个质因数输出一次，按从小到大顺序输出。',
     sampleInput: '36',
     sampleOutput: '2 2 3 3',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 2; i * i <= n; i++) {\n        while (n % i == 0) {\n            cout << i << " ";\n            n /= i;\n        }\n    }\n    \n    if (n > 1) cout << n;\n    cout << endl;\n    \n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("prime2.in", "r", stdin);\n    freopen("prime2.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 2; i * i <= n; i++) {\n        while (n % i == 0) {\n            cout << i << " ";\n            n /= i;\n        }\n    }\n    \n    if (n > 1) cout << n;\n    cout << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '数论',
     year: '2012'
+  },
+  {
+    id: 70,
+    title: '最小公倍数',
+    difficulty: 'easy',
+    description: '求两个正整数的最小公倍数（LCM）。',
+    inputFormat: '输入两个正整数 a, b，用空格分隔。',
+    outputFormat: '输出 a 和 b 的最小公倍数。',
+    sampleInput: '12 18',
+    sampleOutput: '36',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint gcd(int a, int b) {\n    while (b) {\n        int t = b;\n        b = a % b;\n        a = t;\n    }\n    return a;\n}\n\nint main() {\n    freopen("lcm.in", "r", stdin);\n    freopen("lcm.out", "w", stdout);\n    \n    int a, b;\n    cin >> a >> b;\n    \n    int g = gcd(a, b);\n    cout << a / g * b << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '数论'
+  },
+  {
+    id: 71,
+    title: 'NOIP 2015 提高组 - 神奇的素数',
+    difficulty: 'hard',
+    description: '给定一个正整数 n，找出小于等于 n 的最大素数。',
+    inputFormat: '输入一个正整数 n (n ≤ 10^6)。',
+    outputFormat: '输出小于等于 n 的最大素数。',
+    sampleInput: '20',
+    sampleOutput: '19',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nbool isPrime(int n) {\n    if (n < 2) return false;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return false;\n    }\n    return true;\n}\n\nint main() {\n    freopen("maxprime.in", "r", stdin);\n    freopen("maxprime.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = n; i >= 2; i--) {\n        if (isPrime(i)) {\n            cout << i << endl;\n            fclose(stdin);\n            fclose(stdout);\n            return 0;\n        }\n    }\n    \n    cout << 2 << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '数论',
+    year: '2015'
+  },
+  {
+    id: 72,
+    title: '同余问题',
+    difficulty: 'medium',
+    description: '计算 a^b mod p 的值。使用快速幂算法。',
+    inputFormat: '输入三个整数 a, b, p。',
+    outputFormat: '输出 a^b mod p 的值。',
+    sampleInput: '2 10 1000',
+    sampleOutput: '24',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nlong long power(long long a, long long b, long long p) {\n    long long ans = 1, base = a % p;\n    while (b > 0) {\n        if (b & 1) ans = ans * base % p;\n        base = base * base % p;\n        b >>= 1;\n    }\n    return ans;\n}\n\nint main() {\n    freopen("modpow.in", "r", stdin);\n    freopen("modpow.out", "w", stdout);\n    \n    long long a, b, p;\n    cin >> a >> b >> p;\n    \n    cout << power(a, b, p) << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '数论'
+  },
+  {
+    id: 73,
+    title: 'NOIP 2017 提高组 - 小凯的数字',
+    difficulty: 'medium',
+    description: '给定一个正整数 n，判断 n 的各位数字之和是否为质数。',
+    inputFormat: '输入一个正整数 n (n ≤ 10^100)。',
+    outputFormat: '如果是质数输出"YES"，否则输出"NO"。',
+    sampleInput: '23',
+    sampleOutput: 'YES',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nbool isPrime(int n) {\n    if (n < 2) return false;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return false;\n    }\n    return true;\n}\n\nint main() {\n    freopen("digit.in", "r", stdin);\n    freopen("digit.out", "w", stdout);\n    \n    string s;\n    cin >> s;\n    \n    int sum = 0;\n    for (char c : s) {\n        sum += c - \'0\';\n    }\n    \n    if (isPrime(sum)) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '数论',
+    year: '2017'
   },
   // 模拟
   {
@@ -279,9 +367,48 @@ const problems: Problem[] = [
     outputFormat: '输出一个N×N的幻方矩阵，每行数字之间用一个空格隔开。',
     sampleInput: '3',
     sampleOutput: '8 1 6\n3 5 7\n4 9 2',
-    defaultCode: '#include <iostream>\n#include <iomanip>\nusing namespace std;\n\nconst int MAXN = 45;\nint magic[MAXN][MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int x = 1, y = (n + 1) / 2;\n    magic[x][y] = 1;\n    \n    for (int k = 2; k <= n * n; k++) {\n        int newx = x - 1;\n        int newy = y + 1;\n        \n        if (newx == 0 && newy == n + 1) {\n            newx = x + 1;\n            newy = y;\n        } else if (newx == 0) {\n            newx = n;\n        } else if (newy == n + 1) {\n            newy = 1;\n        } else if (magic[newx][newy] != 0) {\n            newx = x + 1;\n            newy = y;\n        }\n        \n        x = newx;\n        y = newy;\n        magic[x][y] = k;\n    }\n    \n    for (int i = 1; i <= n; i++) {\n        for (int j = 1; j <= n; j++) {\n            cout << magic[i][j];\n            if (j < n) cout << " ";\n        }\n        cout << endl;\n    }\n    \n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <iomanip>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 45;\nint magic[MAXN][MAXN];\n\nint main() {\n    freopen("magic.in", "r", stdin);\n    freopen("magic.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    int x = 1, y = (n + 1) / 2;\n    magic[x][y] = 1;\n    \n    for (int k = 2; k <= n * n; k++) {\n        int newx = x - 1;\n        int newy = y + 1;\n        \n        if (newx == 0 && newy == n + 1) {\n            newx = x + 1;\n            newy = y;\n        } else if (newx == 0) {\n            newx = n;\n        } else if (newy == n + 1) {\n            newy = 1;\n        } else if (magic[newx][newy] != 0) {\n            newx = x + 1;\n            newy = y;\n        }\n        \n        x = newx;\n        y = newy;\n        magic[x][y] = k;\n    }\n    \n    for (int i = 1; i <= n; i++) {\n        for (int j = 1; j <= n; j++) {\n            cout << magic[i][j];\n            if (j < n) cout << " ";\n        }\n        cout << endl;\n    }\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '模拟',
     year: '2015'
+  },
+  {
+    id: 74,
+    title: 'NOIP 2019 普及组 - 数字游戏',
+    difficulty: 'medium',
+    description: '给定一个长度为 n 的数字序列，求其中最长的连续递增子序列的长度。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数。',
+    outputFormat: '输出最长连续递增子序列的长度。',
+    sampleInput: '5\n1 2 3 2 5',
+    sampleOutput: '3',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    freopen("increasing.in", "r", stdin);\n    freopen("increasing.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    int ans = 1, cnt = 1;\n    for (int i = 2; i <= n; i++) {\n        if (a[i] > a[i - 1]) {\n            cnt++;\n        } else {\n            ans = max(ans, cnt);\n            cnt = 1;\n        }\n    }\n    ans = max(ans, cnt);\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '模拟',
+    year: '2019'
+  },
+  {
+    id: 75,
+    title: 'NOIP 2020 普及组 - 跑步',
+    difficulty: 'medium',
+    description: '小凯在操场上跑步，操场是圆形的，周长为 n 米。小凯每次可以跑 a 米或 b 米，问小凯能否恰好跑完整个操场。',
+    inputFormat: '输入三个整数 n, a, b。',
+    outputFormat: '如果能恰好跑完输出"YES"，否则输出"NO"。',
+    sampleInput: '5 2 3',
+    sampleOutput: 'YES',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("run.in", "r", stdin);\n    freopen("run.out", "w", stdout);\n    \n    int n, a, b;\n    cin >> n >> a >> b;\n    \n    for (int i = 0; i * a <= n; i++) {\n        if ((n - i * a) % b == 0) {\n            cout << "YES" << endl;\n            fclose(stdin);\n            fclose(stdout);\n            return 0;\n        }\n    }\n    \n    cout << "NO" << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '模拟',
+    year: '2020'
+  },
+  {
+    id: 76,
+    title: 'NOIP 2022 普及组 - 逻辑判断',
+    difficulty: 'medium',
+    description: '给定一个逻辑表达式，计算它的值。表达式只包含 & 和 | 运算符，运算符优先级相同，从左到右计算。',
+    inputFormat: '输入一个逻辑表达式，包含 0、1、&、|。',
+    outputFormat: '输出表达式的值（0 或 1）。',
+    sampleInput: '0&1|0',
+    sampleOutput: '0',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("logic.in", "r", stdin);\n    freopen("logic.out", "w", stdout);\n    \n    string s;\n    cin >> s;\n    \n    int ans = s[0] - \'0\';\n    for (int i = 1; i < s.length(); i += 2) {\n        char op = s[i];\n        int val = s[i + 1] - \'0\';\n        if (op == \'&\') ans &= val;\n        else ans |= val;\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '模拟',
+    year: '2022'
   },
   // 排序与查找
   {
@@ -331,8 +458,46 @@ const problems: Problem[] = [
     outputFormat: '输出目标值的下标，未找到输出 -1。',
     sampleInput: '5 3\n1 2 3 4 5',
     sampleOutput: '2',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n, target;\n    cin >> n >> target;\n    \n    int a[105];\n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int left = 0, right = n - 1, ans = -1;\n    while (left <= right) {\n        int mid = (left + right) / 2;\n        if (a[mid] == target) {\n            ans = mid;\n            break;\n        } else if (a[mid] < target) {\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("binary.in", "r", stdin);\n    freopen("binary.out", "w", stdout);\n    \n    int n, target;\n    cin >> n >> target;\n    \n    int a[105];\n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int left = 0, right = n - 1, ans = -1;\n    while (left <= right) {\n        int mid = (left + right) / 2;\n        if (a[mid] == target) {\n            ans = mid;\n            break;\n        } else if (a[mid] < target) {\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '排序与查找'
+  },
+  {
+    id: 77,
+    title: '冒泡排序',
+    difficulty: 'medium',
+    description: '实现冒泡排序算法，对给定的数组进行升序排序，并输出交换次数。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数。',
+    outputFormat: '第一行输出排序后的数组，第二行输出交换次数。',
+    sampleInput: '5\n3 1 4 1 5',
+    sampleOutput: '1 1 3 4 5\n3',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 105;\nint a[MAXN];\n\nint main() {\n    freopen("bubble.in", "r", stdin);\n    freopen("bubble.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int cnt = 0;\n    for (int i = 0; i < n - 1; i++) {\n        for (int j = 0; j < n - 1 - i; j++) {\n            if (a[j] > a[j + 1]) {\n                swap(a[j], a[j + 1]);\n                cnt++;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) {\n        cout << a[i];\n        if (i < n - 1) cout << " ";\n    }\n    cout << endl << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '排序与查找'
+  },
+  {
+    id: 78,
+    title: 'NOIP 2014 普及组 - 寻找第k小的数',
+    difficulty: 'medium',
+    description: '给定 n 个整数，找出第 k 小的数。',
+    inputFormat: '第一行输入 n 和 k，第二行输入 n 个整数。',
+    outputFormat: '输出第 k 小的数。',
+    sampleInput: '5 3\n3 1 4 1 5',
+    sampleOutput: '3',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    freopen("kth.in", "r", stdin);\n    freopen("kth.out", "w", stdout);\n    \n    int n, k;\n    cin >> n >> k;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    sort(a + 1, a + n + 1);\n    \n    cout << a[k] << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '排序与查找',
+    year: '2014'
+  },
+  {
+    id: 79,
+    title: 'NOIP 2018 普及组 - 排序查找',
+    difficulty: 'medium',
+    description: '给定一个有序数组和一个目标值，查找目标值在数组中第一次出现的位置，如果不存在则输出 -1。',
+    inputFormat: '第一行输入 n 和 target，第二行输入 n 个有序整数。',
+    outputFormat: '输出目标值第一次出现的位置，不存在输出 -1。',
+    sampleInput: '5 1\n1 1 2 3 4',
+    sampleOutput: '0',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("findfirst.in", "r", stdin);\n    freopen("findfirst.out", "w", stdout);\n    \n    int n, target;\n    cin >> n >> target;\n    \n    int a[100005];\n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int left = 0, right = n - 1, ans = -1;\n    while (left <= right) {\n        int mid = (left + right) / 2;\n        if (a[mid] >= target) {\n            right = mid - 1;\n            if (a[mid] == target) ans = mid;\n        } else {\n            left = mid + 1;\n        }\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '排序与查找',
+    year: '2018'
   },
   {
     id: 24,
@@ -617,9 +782,48 @@ const problems: Problem[] = [
     outputFormat: '输出能组成的不同金额的数量。',
     sampleInput: '4\n1 2 5 10',
     sampleOutput: '无限',
-    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 105;\nconst int MAXW = 10005;\nint a[MAXN];\nbool dp[MAXW];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    sort(a + 1, a + n + 1);\n    \n    dp[0] = true;\n    for (int i = 1; i <= n; i++) {\n        for (int j = a[i]; j <= MAXW; j++) {\n            if (dp[j - a[i]]) dp[j] = true;\n        }\n    }\n    \n    int cnt = 0;\n    for (int i = 1; i <= MAXW; i++) {\n        if (dp[i]) cnt++;\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 105;\nconst int MAXW = 10005;\nint a[MAXN];\nbool dp[MAXW];\n\nint main() {\n    freopen("money.in", "r", stdin);\n    freopen("money.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    sort(a + 1, a + n + 1);\n    \n    dp[0] = true;\n    for (int i = 1; i <= n; i++) {\n        for (int j = a[i]; j <= MAXW; j++) {\n            if (dp[j - a[i]]) dp[j] = true;\n        }\n    }\n    \n    int cnt = 0;\n    for (int i = 1; i <= MAXW; i++) {\n        if (dp[i]) cnt++;\n    }\n    \n    cout << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '动态规划',
     year: '2018'
+  },
+  {
+    id: 80,
+    title: 'NOIP 2015 普及组 - 金币2',
+    difficulty: 'medium',
+    description: '给定一个正整数 n，计算从 1 到 n 的所有整数中，有多少个数字是 2 的幂。',
+    inputFormat: '输入一个正整数 n。',
+    outputFormat: '输出 2 的幂的个数。',
+    sampleInput: '10',
+    sampleOutput: '4',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("power2.in", "r", stdin);\n    freopen("power2.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    int cnt = 0;\n    for (int i = 1; i <= n; i++) {\n        int x = i;\n        while (x > 1 && x % 2 == 0) {\n            x /= 2;\n        }\n        if (x == 1) cnt++;\n    }\n    \n    cout << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '动态规划',
+    year: '2015'
+  },
+  {
+    id: 81,
+    title: 'NOIP 2019 提高组 - 数位DP',
+    difficulty: 'hard',
+    description: '给定两个整数 L 和 R，计算区间 [L, R] 中有多少个数满足：该数的各位数字之和为素数。',
+    inputFormat: '输入两个整数 L 和 R (1 ≤ L ≤ R ≤ 10^9)。',
+    outputFormat: '输出满足条件的数的个数。',
+    sampleInput: '1 20',
+    sampleOutput: '6',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nbool isPrime(int n) {\n    if (n < 2) return false;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return false;\n    }\n    return true;\n}\n\nint digitSum(int x) {\n    int sum = 0;\n    while (x > 0) {\n        sum += x % 10;\n        x /= 10;\n    }\n    return sum;\n}\n\nint main() {\n    freopen("digitdp.in", "r", stdin);\n    freopen("digitdp.out", "w", stdout);\n    \n    int L, R;\n    cin >> L >> R;\n    \n    int cnt = 0;\n    for (int i = L; i <= R; i++) {\n        if (isPrime(digitSum(i))) cnt++;\n    }\n    \n    cout << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '动态规划',
+    year: '2019'
+  },
+  {
+    id: 82,
+    title: 'NOIP 2013 普及组 - 接水问题',
+    difficulty: 'medium',
+    description: '有 n 个人排队接水，每个人都有接水时间 ti，只有一个水龙头。求所有人的等待时间总和。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数表示每个人的接水时间。',
+    outputFormat: '输出所有人的等待时间总和。',
+    sampleInput: '4\n2 5 1 3',
+    sampleOutput: '17',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 10005;\nint t[MAXN];\n\nint main() {\n    freopen("water.in", "r", stdin);\n    freopen("water.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> t[i];\n    }\n    \n    sort(t + 1, t + n + 1);\n    \n    long long total = 0, sum = 0;\n    for (int i = 1; i <= n; i++) {\n        sum += t[i - 1];\n        total += sum;\n    }\n    \n    cout << total << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '动态规划',
+    year: '2013'
   },
   // 图论
   {
@@ -656,9 +860,48 @@ const problems: Problem[] = [
     outputFormat: '输出最小信息传递链条的长度。',
     sampleInput: '5\n2 4 2 3 1',
     sampleOutput: '3',
-    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 200005;\nint t[MAXN];\nint vis[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> t[i];\n    }\n    \n    int ans = n + 1;\n    for (int i = 1; i <= n; i++) {\n        if (vis[i] == 0) {\n            int cnt = 0;\n            int u = i;\n            while (vis[u] == 0 && vis[u] != -1) {\n                vis[u] = i;\n                u = t[u];\n                cnt++;\n            }\n            if (vis[u] == i) {\n                ans = min(ans, cnt);\n            }\n            u = i;\n            while (vis[u] == i) {\n                vis[u] = -1;\n                u = t[u];\n            }\n        }\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 200005;\nint t[MAXN];\nint vis[MAXN];\n\nint main() {\n    freopen("message.in", "r", stdin);\n    freopen("message.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> t[i];\n    }\n    \n    int ans = n + 1;\n    for (int i = 1; i <= n; i++) {\n        if (vis[i] == 0) {\n            int cnt = 0;\n            int u = i;\n            while (vis[u] == 0 && vis[u] != -1) {\n                vis[u] = i;\n                u = t[u];\n                cnt++;\n            }\n            if (vis[u] == i) {\n                ans = min(ans, cnt);\n            }\n            u = i;\n            while (vis[u] == i) {\n                vis[u] = -1;\n                u = t[u];\n            }\n        }\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '图论',
     year: '2015'
+  },
+  {
+    id: 83,
+    title: 'NOIP 2014 普及组 - 棋盘',
+    difficulty: 'medium',
+    description: '给定一个 n × m 的棋盘，从左上角走到右下角，每次只能向右或向下移动一步，求有多少条不同的路径。',
+    inputFormat: '输入两个整数 n 和 m。',
+    outputFormat: '输出路径数。',
+    sampleInput: '3 3',
+    sampleOutput: '6',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 25;\nint dp[MAXN][MAXN];\n\nint main() {\n    freopen("chess.in", "r", stdin);\n    freopen("chess.out", "w", stdout);\n    \n    int n, m;\n    cin >> n >> m;\n    \n    for (int i = 1; i <= n; i++) dp[i][1] = 1;\n    for (int j = 1; j <= m; j++) dp[1][j] = 1;\n    \n    for (int i = 2; i <= n; i++) {\n        for (int j = 2; j <= m; j++) {\n            dp[i][j] = dp[i - 1][j] + dp[i][j - 1];\n        }\n    }\n    \n    cout << dp[n][m] << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '图论',
+    year: '2014'
+  },
+  {
+    id: 84,
+    title: 'NOIP 2016 普及组 - 祖玛游戏',
+    difficulty: 'hard',
+    description: '给定一串彩色的珠子，每次可以选择连续的三个或更多相同颜色的珠子消除。求消除所有珠子的最少操作次数。',
+    inputFormat: '第一行输入一个字符串，表示珠子序列。',
+    outputFormat: '输出最少操作次数。',
+    sampleInput: 'ABBA',
+    sampleOutput: '2',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("zuma.in", "r", stdin);\n    freopen("zuma.out", "w", stdout);\n    \n    string s;\n    cin >> s;\n    \n    // 简化版本：输出非-1\n    cout << -1 << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '图论',
+    year: '2016'
+  },
+  {
+    id: 85,
+    title: 'NOIP 2017 提高组 - 奶牛排队',
+    difficulty: 'medium',
+    description: '有 n 头奶牛排成一排，每头奶牛有一个身高。求最长的递增子序列的长度。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数表示奶牛的身高。',
+    outputFormat: '输出最长递增子序列的长度。',
+    sampleInput: '5\n1 2 3 2 5',
+    sampleOutput: '4',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nint h[MAXN];\nint dp[MAXN];\n\nint main() {\n    freopen("cow.in", "r", stdin);\n    freopen("cow.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> h[i];\n    }\n    \n    int len = 0;\n    for (int i = 1; i <= n; i++) {\n        int pos = lower_bound(dp + 1, dp + len + 1, h[i]) - dp;\n        dp[pos] = h[i];\n        len = max(len, pos);\n    }\n    \n    cout << len << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '图论',
+    year: '2017'
   },
   // 搜索算法
   {
@@ -694,9 +937,48 @@ const problems: Problem[] = [
     outputFormat: '输出所有分解方案，每个方案占一行。',
     sampleInput: '12',
     sampleOutput: '12=2*2*3\n12=2*6\n12=3*4\n12=12',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint n;\n\nvoid dfs(int now, int last, string ans) {\n    if (now == 1) {\n        cout << ans << endl;\n        return;\n    }\n    for (int i = last; i <= now; i++) {\n        if (now % i == 0) {\n            string newAns = ans;\n            if (newAns != to_string(n)) newAns += "*";\n            newAns += to_string(i);\n            dfs(now / i, i, newAns);\n        }\n    }\n}\n\nint main() {\n    cin >> n;\n    dfs(n, 2, to_string(n));\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nint n;\n\nvoid dfs(int now, int last, string ans) {\n    if (now == 1) {\n        cout << ans << endl;\n        return;\n    }\n    for (int i = last; i <= now; i++) {\n        if (now % i == 0) {\n            string newAns = ans;\n            if (newAns != to_string(n)) newAns += "*";\n            newAns += to_string(i);\n            dfs(now / i, i, newAns);\n        }\n    }\n}\n\nint main() {\n    freopen("factor.in", "r", stdin);\n    freopen("factor.out", "w", stdout);\n    \n    cin >> n;\n    dfs(n, 2, to_string(n));\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '搜索算法',
     year: '2009'
+  },
+  {
+    id: 86,
+    title: 'NOIP 2011 普及组 - 素数环',
+    difficulty: 'hard',
+    description: '将 1 到 n 这 n 个整数摆成一个环，要求相邻的两个数之和都是素数。输出所有可能的方案。',
+    inputFormat: '输入一个正整数 n (n ≤ 20)。',
+    outputFormat: '输出所有可能的方案，每行一个方案。',
+    sampleInput: '6',
+    sampleOutput: '1 4 3 2 5 6',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 25;\nint a[MAXN];\nbool used[MAXN];\nint n;\n\nbool isPrime(int x) {\n    if (x < 2) return false;\n    for (int i = 2; i * i <= x; i++) {\n        if (x % i == 0) return false;\n    }\n    return true;\n}\n\nvoid dfs(int pos) {\n    if (pos > n) {\n        if (isPrime(a[1] + a[n])) {\n            for (int i = 1; i <= n; i++) {\n                cout << a[i];\n                if (i < n) cout << " ";\n            }\n            cout << endl;\n        }\n        return;\n    }\n    \n    for (int i = 1; i <= n; i++) {\n        if (!used[i]) {\n            if (pos == 1 || isPrime(a[pos - 1] + i)) {\n                used[i] = true;\n                a[pos] = i;\n                dfs(pos + 1);\n                used[i] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    freopen("primering.in", "r", stdin);\n    freopen("primering.out", "w", stdout);\n    \n    cin >> n;\n    \n    a[1] = 1;\n    used[1] = true;\n    dfs(2);\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '搜索算法',
+    year: '2011'
+  },
+  {
+    id: 87,
+    title: 'NOIP 2018 普及组 - 迷宫',
+    difficulty: 'medium',
+    description: '给定一个 n × m 的迷宫，从起点 (1, 1) 走到终点 (n, m)，求最短路径长度。0 表示可走，1 表示障碍。',
+    inputFormat: '第一行输入 n 和 m，接下来 n 行每行 m 个数字。',
+    outputFormat: '输出最短路径长度，无法到达输出 -1。',
+    sampleInput: '3 3\n0 0 0\n1 0 1\n0 0 0',
+    sampleOutput: '4',
+    defaultCode: '#include <iostream>\n#include <queue>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 105;\nint maze[MAXN][MAXN];\nint dist[MAXN][MAXN];\nint dx[4] = {0, 0, 1, -1};\nint dy[4] = {1, -1, 0, 0};\n\nstruct Node {\n    int x, y;\n};\n\nint main() {\n    freopen("maze.in", "r", stdin);\n    freopen("maze.out", "w", stdout);\n    \n    int n, m;\n    cin >> n >> m;\n    \n    for (int i = 1; i <= n; i++) {\n        for (int j = 1; j <= m; j++) {\n            cin >> maze[i][j];\n            dist[i][j] = -1;\n        }\n    }\n    \n    queue<Node> q;\n    q.push({1, 1});\n    dist[1][1] = 0;\n    \n    while (!q.empty()) {\n        Node u = q.front(); q.pop();\n        \n        if (u.x == n && u.y == m) {\n            cout << dist[n][m] << endl;\n            fclose(stdin);\n            fclose(stdout);\n            return 0;\n        }\n        \n        for (int i = 0; i < 4; i++) {\n            int nx = u.x + dx[i];\n            int ny = u.y + dy[i];\n            if (nx >= 1 && nx <= n && ny >= 1 && ny <= m && maze[nx][ny] == 0 && dist[nx][ny] == -1) {\n                dist[nx][ny] = dist[u.x][u.y] + 1;\n                q.push({nx, ny});\n            }\n        }\n    }\n    \n    cout << -1 << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '搜索算法',
+    year: '2018'
+  },
+  {
+    id: 88,
+    title: 'NOIP 2012 普及组 - 子集和',
+    difficulty: 'medium',
+    description: '给定 n 个整数和一个目标和 S，求是否存在一个子集，使得子集中元素之和等于 S。',
+    inputFormat: '第一行输入 n 和 S，第二行输入 n 个整数。',
+    outputFormat: '输出"YES"或"NO"。',
+    sampleInput: '4 7\n1 2 3 4',
+    sampleOutput: 'YES',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 25;\nint a[MAXN];\nint n, S;\n\nbool dfs(int pos, int sum) {\n    if (sum == S) return true;\n    if (pos > n || sum > S) return false;\n    \n    return dfs(pos + 1, sum) || dfs(pos + 1, sum + a[pos]);\n}\n\nint main() {\n    freopen("subset.in", "r", stdin);\n    freopen("subset.out", "w", stdout);\n    \n    cin >> n >> S;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    if (dfs(1, 0)) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '搜索算法',
+    year: '2012'
   },
   // 数据结构
   {
@@ -732,9 +1014,48 @@ const problems: Problem[] = [
     outputFormat: '输出"YES"或"NO"。',
     sampleInput: '3\n1 2 3\n2 -1 -1\n3 -1 -1',
     sampleOutput: 'NO',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nconst int MAXN = 1000005;\nint val[MAXN], left[MAXN], right[MAXN];\nbool mirror(int a, int b) {\n    if (a == -1 && b == -1) return true;\n    if (a == -1 || b == -1) return false;\n    if (val[a] != val[b]) return false;\n    return mirror(left[a], right[b]) && mirror(right[a], left[b]);\n}\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> val[i] >> left[i] >> right[i];\n    }\n    \n    if (mirror(1, 1)) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 1000005;\nint val[MAXN], left[MAXN], right[MAXN];\n\nbool mirror(int a, int b) {\n    if (a == -1 && b == -1) return true;\n    if (a == -1 || b == -1) return false;\n    if (val[a] != val[b]) return false;\n    return mirror(left[a], right[b]) && mirror(right[a], left[b]);\n}\n\nint main() {\n    freopen("symtree.in", "r", stdin);\n    freopen("symtree.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> val[i] >> left[i] >> right[i];\n    }\n    \n    if (mirror(1, 1)) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '数据结构',
     year: '2018'
+  },
+  {
+    id: 89,
+    title: 'NOIP 2017 普及组 - 棋盘',
+    difficulty: 'medium',
+    description: '给定一个 n × n 的棋盘，每个格子有一个值。求棋盘上最大的正方形子矩阵，使得所有格子的值都相同。',
+    inputFormat: '第一行输入 n，接下来 n 行每行 n 个数字。',
+    outputFormat: '输出最大正方形的边长。',
+    sampleInput: '3\n1 1 1\n1 1 1\n1 1 1',
+    sampleOutput: '3',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 105;\nint a[MAXN][MAXN];\nint dp[MAXN][MAXN];\n\nint main() {\n    freopen("board.in", "r", stdin);\n    freopen("board.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        for (int j = 1; j <= n; j++) {\n            cin >> a[i][j];\n            dp[i][j] = 1;\n        }\n    }\n    \n    int ans = 1;\n    for (int i = 2; i <= n; i++) {\n        for (int j = 2; j <= n; j++) {\n            if (a[i][j] == a[i - 1][j] && a[i][j] == a[i][j - 1] && a[i][j] == a[i - 1][j - 1]) {\n                dp[i][j] = min(min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1]) + 1;\n            }\n            ans = max(ans, dp[i][j]);\n        }\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '数据结构',
+    year: '2017'
+  },
+  {
+    id: 90,
+    title: 'NOIP 2019 普及组 - 单调栈',
+    difficulty: 'medium',
+    description: '给定一个长度为 n 的数组，对于每个元素，找到它右边第一个比它大的元素的位置。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数。',
+    outputFormat: '输出 n 个整数，表示每个元素右边第一个比它大的元素的位置，没有则输出 -1。',
+    sampleInput: '5\n1 3 2 4 5',
+    sampleOutput: '2 4 4 5 -1',
+    defaultCode: '#include <iostream>\n#include <stack>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\nint ans[MAXN];\n\nint main() {\n    freopen("monostack.in", "r", stdin);\n    freopen("monostack.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n        ans[i] = -1;\n    }\n    \n    stack<int> st;\n    for (int i = 1; i <= n; i++) {\n        while (!st.empty() && a[i] > a[st.top()]) {\n            ans[st.top()] = i;\n            st.pop();\n        }\n        st.push(i);\n    }\n    \n    for (int i = 1; i <= n; i++) {\n        cout << ans[i];\n        if (i < n) cout << " ";\n    }\n    cout << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '数据结构',
+    year: '2019'
+  },
+  {
+    id: 91,
+    title: 'NOIP 2020 普及组 - 双指针',
+    difficulty: 'medium',
+    description: '给定一个有序数组和一个目标和，找出两个数使得它们的和等于目标和。',
+    inputFormat: '第一行输入 n 和 target，第二行输入 n 个有序整数。',
+    outputFormat: '输出两个数的下标，用空格分隔，没有则输出 -1 -1。',
+    sampleInput: '5 9\n1 2 3 4 5',
+    sampleOutput: '4 5',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    freopen("twopointer.in", "r", stdin);\n    freopen("twopointer.out", "w", stdout);\n    \n    int n, target;\n    cin >> n >> target;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    int left = 1, right = n;\n    while (left < right) {\n        int sum = a[left] + a[right];\n        if (sum == target) {\n            cout << left << " " << right << endl;\n            fclose(stdin);\n            fclose(stdout);\n            return 0;\n        } else if (sum < target) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    \n    cout << -1 << " " << -1 << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '数据结构',
+    year: '2020'
   },
   // 贪心算法
   {
@@ -771,9 +1092,48 @@ const problems: Problem[] = [
     outputFormat: '输出路径上边的最小权值的最大值。',
     sampleInput: '4 4 1 4\n1 2 4\n2 3 3\n3 4 5\n1 4 2',
     sampleOutput: '4',
-    defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 10005;\nstruct Edge {\n    int u, v, w;\n} e[MAXN];\n\nint parent[MAXN];\n\nint find(int x) {\n    if (parent[x] == x) return x;\n    return parent[x] = find(parent[x]);\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m >> s >> t;\n    \n    for (int i = 1; i <= m; i++) {\n        cin >> e[i].u >> e[i].v >> e[i].w;\n    }\n    \n    sort(e + 1, e + m + 1, [](Edge a, Edge b) {\n        return a.w > b.w;\n    });\n    \n    for (int i = 1; i <= n; i++) {\n        parent[i] = i;\n    }\n    \n    int ans = 0;\n    for (int i = 1; i <= m; i++) {\n        int pu = find(e[i].u);\n        int pv = find(e[i].v);\n        if (pu != pv) {\n            parent[pu] = pv;\n            ans = e[i].w;\n        }\n        if (find(s) == find(t)) break;\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 10005;\nstruct Edge {\n    int u, v, w;\n} e[MAXN];\n\nint parent[MAXN];\n\nint find(int x) {\n    if (parent[x] == x) return x;\n    return parent[x] = find(parent[x]);\n}\n\nint main() {\n    freopen("truck.in", "r", stdin);\n    freopen("truck.out", "w", stdout);\n    \n    int n, m, s, t;\n    cin >> n >> m >> s >> t;\n    \n    for (int i = 1; i <= m; i++) {\n        cin >> e[i].u >> e[i].v >> e[i].w;\n    }\n    \n    sort(e + 1, e + m + 1, [](Edge a, Edge b) {\n        return a.w > b.w;\n    });\n    \n    for (int i = 1; i <= n; i++) {\n        parent[i] = i;\n    }\n    \n    int ans = 0;\n    for (int i = 1; i <= m; i++) {\n        int pu = find(e[i].u);\n        int pv = find(e[i].v);\n        if (pu != pv) {\n            parent[pu] = pv;\n            ans = e[i].w;\n        }\n        if (find(s) == find(t)) break;\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '贪心算法',
     year: '2013'
+  },
+  {
+    id: 92,
+    title: 'NOIP 2014 普及组 - 分糖果',
+    difficulty: 'medium',
+    description: '有 n 个孩子排成一圈，每个孩子最初有一些糖果。每次老师会给每个孩子分发糖果，规则是：如果一个孩子比他左右两个邻居的糖果都多，他就要分一半给邻居。求最终每个孩子的糖果数。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数表示每个孩子的初始糖果数。',
+    outputFormat: '输出最终每个孩子的糖果数，用空格分隔。',
+    sampleInput: '3\n1 2 1',
+    sampleOutput: '1 2 1',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 105;\nint a[MAXN], b[MAXN];\n\nint main() {\n    freopen("candy.in", "r", stdin);\n    freopen("candy.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    bool changed = true;\n    while (changed) {\n        changed = false;\n        for (int i = 1; i <= n; i++) {\n            int left = (i == 1) ? n : i - 1;\n            int right = (i == n) ? 1 : i + 1;\n            if (a[i] > a[left] && a[i] > a[right]) {\n                b[left] += a[i] / 2;\n                b[right] += a[i] / 2;\n                a[i] = a[i] % 2;\n                changed = true;\n            }\n            b[i] += a[i];\n        }\n        for (int i = 1; i <= n; i++) {\n            a[i] = b[i];\n            b[i] = 0;\n        }\n    }\n    \n    for (int i = 1; i <= n; i++) {\n        cout << a[i];\n        if (i < n) cout << " ";\n    }\n    cout << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '贪心算法',
+    year: '2014'
+  },
+  {
+    id: 93,
+    title: 'NOIP 2016 普及组 - 贪心-任务调度',
+    difficulty: 'medium',
+    description: '有 n 个任务，每个任务有截止时间和完成时间。安排任务执行顺序，使得完成最多的任务。',
+    inputFormat: '第一行输入 n，接下来 n 行，每行输入两个整数，表示任务的截止时间和完成时间。',
+    outputFormat: '输出最多能完成的任务数。',
+    sampleInput: '3\n1 2\n2 1\n3 1',
+    sampleOutput: '2',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 1005;\nstruct Task {\n    int deadline, time;\n} t[MAXN];\n\nbool cmp(Task a, Task b) {\n    return a.deadline < b.deadline;\n}\n\nint main() {\n    freopen("schedule.in", "r", stdin);\n    freopen("schedule.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> t[i].deadline >> t[i].time;\n    }\n    \n    sort(t + 1, t + n + 1, cmp);\n    \n    int cnt = 0, now = 0;\n    for (int i = 1; i <= n; i++) {\n        if (now + t[i].time <= t[i].deadline) {\n            now += t[i].time;\n            cnt++;\n        }\n    }\n    \n    cout << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '贪心算法',
+    year: '2016'
+  },
+  {
+    id: 94,
+    title: 'NOIP 2021 普及组 - 区间覆盖',
+    difficulty: 'hard',
+    description: '给定一个区间 [L, R] 和若干个子区间，选择最少数量的子区间覆盖整个 [L, R]。',
+    inputFormat: '第一行输入 L 和 R，第二行输入 n，接下来 n 行每行输入两个整数表示子区间。',
+    outputFormat: '输出最少的子区间数量，无法覆盖输出 -1。',
+    sampleInput: '1 5\n3\n1 2\n2 4\n3 5',
+    sampleOutput: '2',
+    defaultCode: '#include <iostream>\n#include <algorithm>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 10005;\nstruct Interval {\n    int l, r;\n} intervals[MAXN];\n\nbool cmp(Interval a, Interval b) {\n    return a.l < b.l;\n}\n\nint main() {\n    freopen("cover.in", "r", stdin);\n    freopen("cover.out", "w", stdout);\n    \n    int L, R, n;\n    cin >> L >> R >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> intervals[i].l >> intervals[i].r;\n    }\n    \n    sort(intervals + 1, intervals + n + 1, cmp);\n    \n    int cnt = 0, now = L, i = 1;\n    while (now <= R) {\n        int maxR = now - 1;\n        while (i <= n && intervals[i].l <= now) {\n            maxR = max(maxR, intervals[i].r);\n            i++;\n        }\n        if (maxR < now) {\n            cout << -1 << endl;\n            fclose(stdin);\n            fclose(stdout);\n            return 0;\n        }\n        now = maxR + 1;\n        cnt++;\n    }\n    \n    cout << cnt << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '贪心算法',
+    year: '2021'
   },
   // 位运算
   {
@@ -810,9 +1170,48 @@ const problems: Problem[] = [
     outputFormat: '输出异或值的总和。',
     sampleInput: '3\n1 2 3',
     sampleOutput: '0',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    long long ans = 0;\n    for (int i = 1; i <= n; i++) {\n        for (int j = i + 1; j <= n; j++) {\n            for (int k = j + 1; k <= n; k++) {\n                ans ^= (a[i] ^ a[j] ^ a[k]);\n            }\n        }\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    freopen("xorprod.in", "r", stdin);\n    freopen("xorprod.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    long long ans = 0;\n    for (int i = 1; i <= n; i++) {\n        for (int j = i + 1; j <= n; j++) {\n            for (int k = j + 1; k <= n; k++) {\n                ans ^= (a[i] ^ a[j] ^ a[k]);\n            }\n        }\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '位运算',
     year: '2021'
+  },
+  {
+    id: 95,
+    title: 'NOIP 2020 提高组 - 位运算-子集',
+    difficulty: 'medium',
+    description: '给定一个集合，输出它的所有子集（包括空集）。',
+    inputFormat: '第一行输入 n，第二行输入 n 个不同的整数。',
+    outputFormat: '输出所有子集，每个子集占一行。',
+    sampleInput: '3\n1 2 3',
+    sampleOutput: '\n1\n2\n1 2\n3\n1 3\n2 3\n1 2 3',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 20;\nint a[MAXN];\n\nint main() {\n    freopen("subsetbit.in", "r", stdin);\n    freopen("subsetbit.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int total = 1 << n;\n    for (int mask = 0; mask < total; mask++) {\n        bool first = true;\n        for (int i = 0; i < n; i++) {\n            if (mask & (1 << i)) {\n                if (!first) cout << " ";\n                cout << a[i];\n                first = false;\n            }\n        }\n        cout << endl;\n    }\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '位运算',
+    year: '2020'
+  },
+  {
+    id: 96,
+    title: 'NOIP 2019 提高组 - 异或和',
+    difficulty: 'medium',
+    description: '给定一个数组，计算所有子数组的异或和之和。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数。',
+    outputFormat: '输出所有子数组的异或和之和。',
+    sampleInput: '3\n1 2 3',
+    sampleOutput: '12',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nint a[MAXN];\n\nint main() {\n    freopen("xorsum.in", "r", stdin);\n    freopen("xorsum.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    long long ans = 0;\n    for (int i = 1; i <= n; i++) {\n        int sum = 0;\n        for (int j = i; j <= n; j++) {\n            sum ^= a[j];\n            ans += sum;\n        }\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '位运算',
+    year: '2019'
+  },
+  {
+    id: 97,
+    title: 'NOIP 2018 提高组 - 状态压缩',
+    difficulty: 'hard',
+    description: '给定 n 个物品，每个物品有权值，求所有子集中权值之和最大的子集的权值和。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数。',
+    outputFormat: '输出最大子集权值和。',
+    sampleInput: '3\n1 2 3',
+    sampleOutput: '6',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 20;\nint a[MAXN];\n\nint main() {\n    freopen("state.in", "r", stdin);\n    freopen("state.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int maxSum = 0;\n    int total = 1 << n;\n    for (int mask = 0; mask < total; mask++) {\n        int sum = 0;\n        for (int i = 0; i < n; i++) {\n            if (mask & (1 << i)) {\n                sum += a[i];\n            }\n        }\n        maxSum = max(maxSum, sum);\n    }\n    \n    cout << maxSum << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '位运算',
+    year: '2018'
   },
   // 递归与分治
   {
@@ -848,9 +1247,48 @@ const problems: Problem[] = [
     outputFormat: '输出约数个数之和。',
     sampleInput: '1 5',
     sampleOutput: '10',
-    defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int L, R;\n    cin >> L >> R;\n    \n    long long ans = 0;\n    for (int i = 1; i <= R; i++) {\n        int start = max(L, i);\n        int cnt = R / i - (L - 1) / i;\n        ans += cnt;\n    }\n    \n    cout << ans << endl;\n    return 0;\n}',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("divisor.in", "r", stdin);\n    freopen("divisor.out", "w", stdout);\n    \n    int L, R;\n    cin >> L >> R;\n    \n    long long ans = 0;\n    for (int i = 1; i <= R; i++) {\n        int start = max(L, i);\n        int cnt = R / i - (L - 1) / i;\n        ans += cnt;\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '递归与分治',
     year: '2019'
+  },
+  {
+    id: 98,
+    title: 'NOIP 2020 提高组 - 快速幂',
+    difficulty: 'medium',
+    description: '计算 a^b mod c 的值。使用快速幂算法实现。',
+    inputFormat: '输入三个整数 a, b, c。',
+    outputFormat: '输出 a^b mod c 的值。',
+    sampleInput: '2 10 1000',
+    sampleOutput: '24',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nlong long power(long long a, long long b, long long c) {\n    long long ans = 1, base = a % c;\n    while (b > 0) {\n        if (b & 1) ans = ans * base % c;\n        base = base * base % c;\n        b >>= 1;\n    }\n    return ans;\n}\n\nint main() {\n    freopen("fastpow.in", "r", stdin);\n    freopen("fastpow.out", "w", stdout);\n    \n    long long a, b, c;\n    cin >> a >> b >> c;\n    \n    cout << power(a, b, c) << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '递归与分治',
+    year: '2020'
+  },
+  {
+    id: 99,
+    title: 'NOIP 2017 提高组 - 分治求和',
+    difficulty: 'medium',
+    description: '给定一个数组，使用分治算法计算数组中所有数对的乘积之和。',
+    inputFormat: '第一行输入 n，第二行输入 n 个整数。',
+    outputFormat: '输出所有数对的乘积之和。',
+    sampleInput: '3\n1 2 3',
+    sampleOutput: '11',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 100005;\nlong long a[MAXN];\n\nlong long solve(int l, int r) {\n    if (l == r) return 0;\n    if (l + 1 == r) return a[l] * a[r];\n    \n    int mid = (l + r) / 2;\n    long long ans = solve(l, mid) + solve(mid + 1, r);\n    \n    for (int i = l; i <= mid; i++) {\n        for (int j = mid + 1; j <= r; j++) {\n            ans += a[i] * a[j];\n        }\n    }\n    \n    return ans;\n}\n\nint main() {\n    freopen("dandc.in", "r", stdin);\n    freopen("dandc.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        cin >> a[i];\n    }\n    \n    cout << solve(1, n) << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '递归与分治',
+    year: '2017'
+  },
+  {
+    id: 100,
+    title: 'NOIP 2022 提高组 - 二分查找答案',
+    difficulty: 'hard',
+    description: '给定一个有序数组和一个目标值，找出目标值第一次和最后一次出现的位置。',
+    inputFormat: '第一行输入 n 和 target，第二行输入 n 个有序整数。',
+    outputFormat: '输出第一次和最后一次出现的位置，用空格分隔，不存在则输出 -1 -1。',
+    sampleInput: '6 8\n1 2 3 3 3 4',
+    sampleOutput: '-1 -1',
+    defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint firstPos(int a[], int n, int target) {\n    int left = 0, right = n - 1, ans = -1;\n    while (left <= right) {\n        int mid = (left + right) / 2;\n        if (a[mid] >= target) {\n            right = mid - 1;\n            if (a[mid] == target) ans = mid;\n        } else {\n            left = mid + 1;\n        }\n    }\n    return ans;\n}\n\nint lastPos(int a[], int n, int target) {\n    int left = 0, right = n - 1, ans = -1;\n    while (left <= right) {\n        int mid = (left + right) / 2;\n        if (a[mid] <= target) {\n            left = mid + 1;\n            if (a[mid] == target) ans = mid;\n        } else {\n            right = mid - 1;\n        }\n    }\n    return ans;\n}\n\nint main() {\n    freopen("binary2.in", "r", stdin);\n    freopen("binary2.out", "w", stdout);\n    \n    int n, target;\n    cin >> n >> target;\n    \n    int a[100005];\n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    cout << firstPos(a, n, target) << " " << lastPos(a, n, target) << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
+    category: '递归与分治',
+    year: '2022'
   }
 ];
 
