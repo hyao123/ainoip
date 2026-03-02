@@ -23,6 +23,11 @@ import {
   MemoryStick,
   FileText,
   TestTube2,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Download,
+  Upload,
 } from 'lucide-react';
 
 interface TestCase {
@@ -150,6 +155,78 @@ export function EvaluationPanel({
     setCompileError(null);
   };
 
+  const handleExportTestCases = () => {
+    const dataStr = JSON.stringify(testCases, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `test-cases-${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportTestCases = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e: Event) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const importedTestCases = JSON.parse(text) as TestCase[];
+        
+        if (!Array.isArray(importedTestCases)) {
+          alert('测试用例格式错误：必须是数组');
+          return;
+        }
+
+        // 验证每个测试用例的格式
+        const validTestCases = importedTestCases.filter(tc => {
+          const hasRequiredFields = typeof tc.id === 'number' &&
+                                     typeof tc.input === 'string' &&
+                                     typeof tc.expectedOutput === 'string';
+          if (!hasRequiredFields) {
+            console.warn('测试用例格式错误，已跳过:', tc);
+          }
+          return hasRequiredFields;
+        });
+
+        if (validTestCases.length === 0) {
+          alert('没有找到有效的测试用例');
+          return;
+        }
+
+        // 更新 ID 以避免冲突
+        const maxId = Math.max(...testCases.map(tc => tc.id), 0);
+        const testCasesWithNewIds = validTestCases.map((tc, index) => ({
+          ...tc,
+          id: maxId + index + 1
+        }));
+
+        setTestCases([...testCases, ...testCasesWithNewIds]);
+        alert(`成功导入 ${testCasesWithNewIds.length} 个测试用例`);
+      } catch (err) {
+        alert('导入失败：文件格式错误');
+        console.error(err);
+      }
+    };
+    input.click();
+  };
+
+  const handleCopyTestCase = (testCase: TestCase) => {
+    const maxId = Math.max(...testCases.map(tc => tc.id), 0);
+    const newTestCase: TestCase = {
+      ...testCase,
+      id: maxId + 1
+    };
+    setTestCases([...testCases, newTestCase]);
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* 顶部工具栏 */}
@@ -237,93 +314,191 @@ export function EvaluationPanel({
                 <span className="text-sm text-muted-foreground">
                   共 {testCases.length} 个测试用例
                 </span>
-                <Button size="sm" variant="outline" onClick={handleAddTestCase} className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  添加测试用例
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleExportTestCases}
+                    className="gap-1 h-7"
+                    disabled={testCases.length === 0}
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    导出
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleImportTestCases}
+                    className="gap-1 h-7"
+                  >
+                    <Upload className="h-3.5 w-3.5" />
+                    导入
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleAddTestCase}
+                    className="gap-2 h-7"
+                  >
+                    <Plus className="h-4 w-4" />
+                    添加测试用例
+                  </Button>
+                </div>
               </div>
 
-              {testCases.map((testCase) => {
+              {testCases.map((testCase, index) => {
                 const isEditing = editingTestCase === testCase.id;
                 const input = isEditing ? newInput : testCase.input;
                 const expectedOutput = isEditing ? newExpectedOutput : testCase.expectedOutput;
 
+                // 生成输入和输出的预览
+                const inputPreview = input.slice(0, 50) + (input.length > 50 ? '...' : '');
+                const outputPreview = expectedOutput.slice(0, 50) + (expectedOutput.length > 50 ? '...' : '');
+                const isEmpty = testCase.input.trim() === '' && testCase.expectedOutput.trim() === '';
+
                 return (
-                  <Card key={testCase.id} className="p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">测试点 #{testCase.id}</Badge>
-                        {testCase.input.trim() === '' && testCase.expectedOutput.trim() === '' && (
-                          <Badge variant="secondary">空</Badge>
-                        )}
+                  <Card key={testCase.id} className={`overflow-hidden ${isEmpty ? 'border-dashed' : ''}`}>
+                    {/* 测试用例头部 */}
+                    <div 
+                      className="flex items-center justify-between p-3 cursor-pointer hover:bg-accent transition-colors"
+                      onClick={() => {
+                        if (!isEditing) {
+                          handleEditTestCase(testCase);
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                          {index + 1}
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm">测试点 #{testCase.id}</span>
+                            {isEmpty && <Badge variant="secondary" className="text-xs">空</Badge>}
+                          </div>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-xs text-muted-foreground">
+                              输入: <span className="font-mono">{inputPreview || '(空)'}</span>
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              输出: <span className="font-mono">{outputPreview || '(空)'}</span>
+                            </span>
+                          </div>
+                        </div>
                       </div>
+
                       <div className="flex items-center gap-2">
                         {isEditing ? (
-                          <Button
-                            size="sm"
-                            onClick={() => handleSaveTestCase(testCase.id)}
-                            className="gap-1"
-                          >
-                            保存
-                          </Button>
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSaveTestCase(testCase.id);
+                              }}
+                              className="gap-1 h-7"
+                            >
+                              保存
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingTestCase(null);
+                              }}
+                              className="gap-1 h-7"
+                            >
+                              取消
+                            </Button>
+                          </>
                         ) : (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEditTestCase(testCase)}
-                            className="gap-1"
-                          >
-                            编辑
-                          </Button>
+                          <>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCopyTestCase(testCase);
+                              }}
+                              className="gap-1 h-7 px-2"
+                              title="复制测试用例"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditTestCase(testCase);
+                              }}
+                              className="gap-1 h-7"
+                            >
+                              编辑
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteTestCase(testCase.id);
+                              }}
+                              className="gap-1 text-red-500 hover:text-red-700 h-7 px-2"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </>
                         )}
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDeleteTestCase(testCase.id)}
-                          className="gap-1 text-red-500 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <div>
-                        <Label className="text-sm">输入数据</Label>
-                        {isEditing ? (
+                    {/* 编辑模式下的详细内容 */}
+                    {isEditing && (
+                      <div className="border-t bg-muted/20 p-4 space-y-4">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <Label className="text-sm font-medium">输入数据</Label>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setNewInput('')}
+                              className="text-xs h-6"
+                            >
+                              清空
+                            </Button>
+                          </div>
                           <Textarea
                             value={input}
                             onChange={(e) => setNewInput(e.target.value)}
                             placeholder="输入测试数据..."
-                            className="font-mono text-sm mt-1 min-h-[80px]"
+                            className="font-mono text-sm min-h-[100px] resize-none"
+                            rows={4}
                           />
-                        ) : (
-                          <Card className="p-3 mt-1 bg-muted/30">
-                            <pre className="text-sm font-mono whitespace-pre-wrap">
-                              {input || '(空)'}
-                            </pre>
-                          </Card>
-                        )}
-                      </div>
+                        </div>
 
-                      <div>
-                        <Label className="text-sm">期望输出</Label>
-                        {isEditing ? (
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <Label className="text-sm font-medium">期望输出</Label>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setNewExpectedOutput('')}
+                              className="text-xs h-6"
+                            >
+                              清空
+                            </Button>
+                          </div>
                           <Textarea
                             value={expectedOutput}
                             onChange={(e) => setNewExpectedOutput(e.target.value)}
                             placeholder="输入期望输出..."
-                            className="font-mono text-sm mt-1 min-h-[80px]"
+                            className="font-mono text-sm min-h-[100px] resize-none"
+                            rows={4}
                           />
-                        ) : (
-                          <Card className="p-3 mt-1 bg-muted/30">
-                            <pre className="text-sm font-mono whitespace-pre-wrap">
-                              {expectedOutput || '(空)'}
-                            </pre>
-                          </Card>
-                        )}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </Card>
                 );
               })}
