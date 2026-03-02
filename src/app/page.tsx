@@ -2029,6 +2029,12 @@ export default function Home() {
   const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [activeTab, setActiveTab] = useState<'input' | 'test' | 'output'>('input');
 
+  // 初始化样例输入和期望输出
+  useEffect(() => {
+    setInput(selectedProblem.sampleInput);
+    setExpectedOutput(selectedProblem.sampleOutput);
+  }, [selectedProblem]);
+
   const toggleCategory = (categoryName: string) => {
     setExpandedCategories(prev => {
       const newSet = new Set(prev);
@@ -2045,6 +2051,7 @@ export default function Home() {
     setSelectedProblem(problem);
     setCode('#include <iostream>\nusing namespace std;\n\nint main() {\n    // 在此编写你的代码\n    \n    return 0;\n}');
     setInput(problem.sampleInput);
+    setExpectedOutput(problem.sampleOutput);
     setOutput('');
     setError('');
     setShowSolution(false);
