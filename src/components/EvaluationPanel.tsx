@@ -288,8 +288,8 @@ export function EvaluationPanel({
       </div>
 
       {/* 主内容区 */}
-      <Tabs defaultValue="testcases" className="flex-1 flex flex-col">
-        <div className="border-b px-4">
+      <Tabs defaultValue="testcases" className="flex-1 flex flex-col min-h-0">
+        <div className="border-b px-4 flex-shrink-0">
           <TabsList>
             <TabsTrigger value="testcases" className="gap-2">
               <FileText className="h-4 w-4" />
@@ -310,11 +310,11 @@ export function EvaluationPanel({
           </TabsList>
         </div>
 
-        <TabsContent value="testcases" className="flex-1 m-0 p-0">
+        <TabsContent value="testcases" className="flex-1 m-0 p-0 min-h-0 overflow-hidden">
           <ScrollArea className="h-full">
             <div className="p-3">
               {/* 工具栏 */}
-              <div className="flex items-center justify-between mb-3 pb-3 border-b">
+              <div className="flex items-center justify-between mb-3 pb-3 border-b flex-shrink-0">
                 <span className="text-xs text-muted-foreground">
                   共 {testCases.length} 个测试用例
                 </span>
@@ -362,7 +362,7 @@ export function EvaluationPanel({
                   return (
                     <Card 
                       key={testCase.id} 
-                      className={`overflow-hidden hover:shadow-sm transition-shadow ${isEmpty ? 'border-dashed bg-muted/30' : ''}`}
+                      className={`overflow-hidden hover:shadow-sm transition-shadow flex-shrink-0 ${isEmpty ? 'border-dashed bg-muted/30' : ''}`}
                     >
                       <div className="flex items-center gap-2 p-2">
                         {/* 序号 */}
@@ -439,7 +439,7 @@ export function EvaluationPanel({
           </ScrollArea>
         </TabsContent>
 
-        <TabsContent value="results" className="flex-1 m-0 p-0">
+        <TabsContent value="results" className="flex-1 m-0 p-0 min-h-0 overflow-hidden">
           {results && summary && (
             <EvaluationResults
               results={results}
@@ -465,6 +465,9 @@ export function EvaluationPanel({
             <DialogTitle>
               {editingTestCase ? `编辑测试用例 #${editingTestCase}` : '编辑测试用例'}
             </DialogTitle>
+            <DialogDescription>
+              编辑测试用例的输入数据和期望输出。修改后点击保存即可更新。
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
