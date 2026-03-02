@@ -64,11 +64,39 @@ const problems: Problem[] = [
     timeLimit: 1000,
     memoryLimit: 128,
     testCases: [
-      { id: 1, input: '1 2', expectedOutput: '3' },
-      { id: 2, input: '100 200', expectedOutput: '300' },
-      { id: 3, input: '0 0', expectedOutput: '0' },
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
+  },
+      // 零值测试
+      { id: 2, input: '0 0', expectedOutput: '0' },
+      { id: 3, input: '0 100', expectedOutput: '100' },
+      // 负数测试
       { id: 4, input: '-5 10', expectedOutput: '5' },
-      { id: 5, input: '1000000 2000000', expectedOutput: '3000000' },
+      { id: 5, input: '-100 -200', expectedOutput: '-300' },
+      // 边界值测试（int 范围边界）
+      { id: 6, input: '2147483647 0', expectedOutput: '2147483647' },
+      { id: 7, input: '-2147483648 1', expectedOutput: '-2147483647' },
+      // 大数测试
+      { id: 8, input: '1000000 2000000', expectedOutput: '3000000' },
+      // 中等数
+      { id: 9, input: '12345 67890', expectedOutput: '80235' },
+      // 混合正负
+      { id: 10, input: '-500 1000', expectedOutput: '500' },
     ]
   },
   {
@@ -85,11 +113,21 @@ const problems: Problem[] = [
     timeLimit: 1000,
     memoryLimit: 128,
     testCases: [
+      // 边界值测试
       { id: 1, input: '0', expectedOutput: '0' },
       { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
       { id: 3, input: '5', expectedOutput: '5' },
       { id: 4, input: '10', expectedOutput: '55' },
+      // 中等数据测试
       { id: 5, input: '20', expectedOutput: '6765' },
+      { id: 6, input: '30', expectedOutput: '832040' },
+      // 大数据测试（考验时间复杂度，递归算法会超时）
+      { id: 7, input: '40', expectedOutput: '102334155' },
+      // 接近int边界值测试（测试是否正确处理大数）
+      { id: 8, input: '45', expectedOutput: '1134903170' },
+      // 性能测试（O(2^n)递归算法会严重超时，测试是否使用O(n)算法）
+      { id: 9, input: '46', expectedOutput: '1836311903' },
     ]
   },
   {
@@ -102,7 +140,27 @@ const problems: Problem[] = [
     sampleInput: '10',
     sampleOutput: '3628800',
     defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("factorial.in", "r", stdin);\n    freopen("factorial.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    long long ans = 1;\n    for (int i = 2; i <= n; i++) {\n        ans *= i;\n    }\n    \n    cout << ans << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 4,
@@ -114,7 +172,31 @@ const problems: Problem[] = [
     sampleInput: '12 18',
     sampleOutput: '6',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint gcd(int a, int b) {\n    while (b) {\n        int t = b;\n        b = a % b;\n        a = t;\n    }\n    return a;\n}\n\nint main() {\n    int a, b;\n    cin >> a >> b;\n    cout << gcd(a, b) << endl;\n    return 0;\n}',
-    category: '数论'
+    category: '数论',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 基础测试
+      { id: 1, input: '12 18', expectedOutput: '6' },
+      // 边界值测试：相同数
+      { id: 2, input: '18 18', expectedOutput: '18' },
+      // 互质数测试
+      { id: 3, input: '17 19', expectedOutput: '1' },
+      // 边界值测试：一个为1
+      { id: 4, input: '1 100', expectedOutput: '1' },
+      // 倍数关系测试
+      { id: 5, input: '12 36', expectedOutput: '12' },
+      // 边界值测试：一个为另一个的因数
+      { id: 6, input: '6 30', expectedOutput: '6' },
+      // 大数测试
+      { id: 7, input: '1000000 500000', expectedOutput: '500000' },
+      // 互质大数
+      { id: 8, input: '9999991 9999997', expectedOutput: '1' },
+      // 测试欧几里得算法效率（两个连续斐波那契数，最坏情况）
+      { id: 9, input: '1836311903 1134903170', expectedOutput: '1' },
+      // 边界值：接近 int 边界
+      { id: 10, input: '2147483647 2147483646', expectedOutput: '1' },
+    ]
   },
   // 字符串处理
   {
@@ -219,6 +301,30 @@ const problems: Problem[] = [
     sampleOutput: '7',
     defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("prime.in", "r", stdin);\n    freopen("prime.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) {\n            cout << n / i << endl;\n            fclose(stdin);\n            fclose(stdout);\n            return 0;\n        }\n    }\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '数论',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 基础测试
+      { id: 1, input: '12 18', expectedOutput: '6' },
+      // 边界值测试：相同数
+      { id: 2, input: '18 18', expectedOutput: '18' },
+      // 互质数测试
+      { id: 3, input: '17 19', expectedOutput: '1' },
+      // 边界值测试：一个为1
+      { id: 4, input: '1 100', expectedOutput: '1' },
+      // 倍数关系测试
+      { id: 5, input: '12 36', expectedOutput: '12' },
+      // 边界值测试：一个为另一个的因数
+      { id: 6, input: '6 30', expectedOutput: '6' },
+      // 大数测试
+      { id: 7, input: '1000000 500000', expectedOutput: '500000' },
+      // 互质大数
+      { id: 8, input: '9999991 9999997', expectedOutput: '1' },
+      // 测试欧几里得算法效率（两个连续斐波那契数，最坏情况）
+      { id: 9, input: '1836311903 1134903170', expectedOutput: '1' },
+      // 边界值：接近 int 边界
+      { id: 10, input: '2147483647 2147483646', expectedOutput: '1' },
+    ],
     year: '2014'
   },
   {
@@ -232,6 +338,30 @@ const problems: Problem[] = [
     sampleOutput: '2 2 3 3',
     defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("prime2.in", "r", stdin);\n    freopen("prime2.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = 2; i * i <= n; i++) {\n        while (n % i == 0) {\n            cout << i << " ";\n            n /= i;\n        }\n    }\n    \n    if (n > 1) cout << n;\n    cout << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '数论',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 基础测试
+      { id: 1, input: '12 18', expectedOutput: '6' },
+      // 边界值测试：相同数
+      { id: 2, input: '18 18', expectedOutput: '18' },
+      // 互质数测试
+      { id: 3, input: '17 19', expectedOutput: '1' },
+      // 边界值测试：一个为1
+      { id: 4, input: '1 100', expectedOutput: '1' },
+      // 倍数关系测试
+      { id: 5, input: '12 36', expectedOutput: '12' },
+      // 边界值测试：一个为另一个的因数
+      { id: 6, input: '6 30', expectedOutput: '6' },
+      // 大数测试
+      { id: 7, input: '1000000 500000', expectedOutput: '500000' },
+      // 互质大数
+      { id: 8, input: '9999991 9999997', expectedOutput: '1' },
+      // 测试欧几里得算法效率（两个连续斐波那契数，最坏情况）
+      { id: 9, input: '1836311903 1134903170', expectedOutput: '1' },
+      // 边界值：接近 int 边界
+      { id: 10, input: '2147483647 2147483646', expectedOutput: '1' },
+    ],
     year: '2012'
   },
   {
@@ -244,7 +374,31 @@ const problems: Problem[] = [
     sampleInput: '12 18',
     sampleOutput: '36',
     defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint gcd(int a, int b) {\n    while (b) {\n        int t = b;\n        b = a % b;\n        a = t;\n    }\n    return a;\n}\n\nint main() {\n    freopen("lcm.in", "r", stdin);\n    freopen("lcm.out", "w", stdout);\n    \n    int a, b;\n    cin >> a >> b;\n    \n    int g = gcd(a, b);\n    cout << a / g * b << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
-    category: '数论'
+    category: '数论',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 基础测试
+      { id: 1, input: '12 18', expectedOutput: '6' },
+      // 边界值测试：相同数
+      { id: 2, input: '18 18', expectedOutput: '18' },
+      // 互质数测试
+      { id: 3, input: '17 19', expectedOutput: '1' },
+      // 边界值测试：一个为1
+      { id: 4, input: '1 100', expectedOutput: '1' },
+      // 倍数关系测试
+      { id: 5, input: '12 36', expectedOutput: '12' },
+      // 边界值测试：一个为另一个的因数
+      { id: 6, input: '6 30', expectedOutput: '6' },
+      // 大数测试
+      { id: 7, input: '1000000 500000', expectedOutput: '500000' },
+      // 互质大数
+      { id: 8, input: '9999991 9999997', expectedOutput: '1' },
+      // 测试欧几里得算法效率（两个连续斐波那契数，最坏情况）
+      { id: 9, input: '1836311903 1134903170', expectedOutput: '1' },
+      // 边界值：接近 int 边界
+      { id: 10, input: '2147483647 2147483646', expectedOutput: '1' },
+    ]
   },
   {
     id: 71,
@@ -257,6 +411,30 @@ const problems: Problem[] = [
     sampleOutput: '19',
     defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nbool isPrime(int n) {\n    if (n < 2) return false;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return false;\n    }\n    return true;\n}\n\nint main() {\n    freopen("maxprime.in", "r", stdin);\n    freopen("maxprime.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    for (int i = n; i >= 2; i--) {\n        if (isPrime(i)) {\n            cout << i << endl;\n            fclose(stdin);\n            fclose(stdout);\n            return 0;\n        }\n    }\n    \n    cout << 2 << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '数论',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 基础测试
+      { id: 1, input: '12 18', expectedOutput: '6' },
+      // 边界值测试：相同数
+      { id: 2, input: '18 18', expectedOutput: '18' },
+      // 互质数测试
+      { id: 3, input: '17 19', expectedOutput: '1' },
+      // 边界值测试：一个为1
+      { id: 4, input: '1 100', expectedOutput: '1' },
+      // 倍数关系测试
+      { id: 5, input: '12 36', expectedOutput: '12' },
+      // 边界值测试：一个为另一个的因数
+      { id: 6, input: '6 30', expectedOutput: '6' },
+      // 大数测试
+      { id: 7, input: '1000000 500000', expectedOutput: '500000' },
+      // 互质大数
+      { id: 8, input: '9999991 9999997', expectedOutput: '1' },
+      // 测试欧几里得算法效率（两个连续斐波那契数，最坏情况）
+      { id: 9, input: '1836311903 1134903170', expectedOutput: '1' },
+      // 边界值：接近 int 边界
+      { id: 10, input: '2147483647 2147483646', expectedOutput: '1' },
+    ],
     year: '2015'
   },
   {
@@ -269,7 +447,31 @@ const problems: Problem[] = [
     sampleInput: '2 10 1000',
     sampleOutput: '24',
     defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nlong long power(long long a, long long b, long long p) {\n    long long ans = 1, base = a % p;\n    while (b > 0) {\n        if (b & 1) ans = ans * base % p;\n        base = base * base % p;\n        b >>= 1;\n    }\n    return ans;\n}\n\nint main() {\n    freopen("modpow.in", "r", stdin);\n    freopen("modpow.out", "w", stdout);\n    \n    long long a, b, p;\n    cin >> a >> b >> p;\n    \n    cout << power(a, b, p) << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
-    category: '数论'
+    category: '数论',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 基础测试
+      { id: 1, input: '12 18', expectedOutput: '6' },
+      // 边界值测试：相同数
+      { id: 2, input: '18 18', expectedOutput: '18' },
+      // 互质数测试
+      { id: 3, input: '17 19', expectedOutput: '1' },
+      // 边界值测试：一个为1
+      { id: 4, input: '1 100', expectedOutput: '1' },
+      // 倍数关系测试
+      { id: 5, input: '12 36', expectedOutput: '12' },
+      // 边界值测试：一个为另一个的因数
+      { id: 6, input: '6 30', expectedOutput: '6' },
+      // 大数测试
+      { id: 7, input: '1000000 500000', expectedOutput: '500000' },
+      // 互质大数
+      { id: 8, input: '9999991 9999997', expectedOutput: '1' },
+      // 测试欧几里得算法效率（两个连续斐波那契数，最坏情况）
+      { id: 9, input: '1836311903 1134903170', expectedOutput: '1' },
+      // 边界值：接近 int 边界
+      { id: 10, input: '2147483647 2147483646', expectedOutput: '1' },
+    ]
   },
   {
     id: 73,
@@ -282,6 +484,30 @@ const problems: Problem[] = [
     sampleOutput: 'YES',
     defaultCode: '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nbool isPrime(int n) {\n    if (n < 2) return false;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return false;\n    }\n    return true;\n}\n\nint main() {\n    freopen("digit.in", "r", stdin);\n    freopen("digit.out", "w", stdout);\n    \n    string s;\n    cin >> s;\n    \n    int sum = 0;\n    for (char c : s) {\n        sum += c - \'0\';\n    }\n    \n    if (isPrime(sum)) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
     category: '数论',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 基础测试
+      { id: 1, input: '12 18', expectedOutput: '6' },
+      // 边界值测试：相同数
+      { id: 2, input: '18 18', expectedOutput: '18' },
+      // 互质数测试
+      { id: 3, input: '17 19', expectedOutput: '1' },
+      // 边界值测试：一个为1
+      { id: 4, input: '1 100', expectedOutput: '1' },
+      // 倍数关系测试
+      { id: 5, input: '12 36', expectedOutput: '12' },
+      // 边界值测试：一个为另一个的因数
+      { id: 6, input: '6 30', expectedOutput: '6' },
+      // 大数测试
+      { id: 7, input: '1000000 500000', expectedOutput: '500000' },
+      // 互质大数
+      { id: 8, input: '9999991 9999997', expectedOutput: '1' },
+      // 测试欧几里得算法效率（两个连续斐波那契数，最坏情况）
+      { id: 9, input: '1836311903 1134903170', expectedOutput: '1' },
+      // 边界值：接近 int 边界
+      { id: 10, input: '2147483647 2147483646', expectedOutput: '1' },
+    ],
     year: '2017'
   },
   // 模拟
@@ -541,6 +767,26 @@ const problems: Problem[] = [
     sampleOutput: '0',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int cnt = 0;\n    for (int i = 1; i <= n; i++) {\n        int x = i;\n        while (x > 0) {\n            if (x % 10 == 0) cnt++;\n            x /= 10;\n        }\n    }\n    \n    cout << cnt << endl;\n    return 0;\n}',
     category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ],
     year: '2011'
   },
   {
@@ -553,7 +799,27 @@ const problems: Problem[] = [
     sampleInput: '17',
     sampleOutput: 'YES',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nbool isPrime(int n) {\n    if (n < 2) return false;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return false;\n    }\n    return true;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    \n    if (isPrime(n)) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 48,
@@ -565,7 +831,27 @@ const problems: Problem[] = [
     sampleInput: '2000',
     sampleOutput: 'YES',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int year;\n    cin >> year;\n    \n    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {\n        cout << "YES" << endl;\n    } else {\n        cout << "NO" << endl;\n    }\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 49,
@@ -577,7 +863,27 @@ const problems: Problem[] = [
     sampleInput: '3',
     sampleOutput: '153\n370\n371\n407',
     defaultCode: '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int start = 1;\n    for (int i = 1; i < n; i++) start *= 10;\n    int end = start * 10;\n    \n    for (int i = start; i < end; i++) {\n        int sum = 0, x = i;\n        while (x > 0) {\n            int digit = x % 10;\n            sum += pow(digit, n);\n            x /= 10;\n        }\n        if (sum == i) cout << i << endl;\n    }\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 50,
@@ -589,7 +895,27 @@ const problems: Problem[] = [
     sampleInput: '121',
     sampleOutput: 'YES',
     defaultCode: '#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    \n    int len = s.length();\n    bool isPalindrome = true;\n    for (int i = 0; i < len / 2; i++) {\n        if (s[i] != s[len - 1 - i]) {\n            isPalindrome = false;\n            break;\n        }\n    }\n    \n    if (isPalindrome) cout << "YES" << endl;\n    else cout << "NO" << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 51,
@@ -601,7 +927,27 @@ const problems: Problem[] = [
     sampleInput: '5\n1 2 3 4 5',
     sampleOutput: '5 1',
     defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int a[105];\n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int maxVal = *max_element(a, a + n);\n    int minVal = *min_element(a, a + n);\n    \n    cout << maxVal << " " << minVal << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 52,
@@ -613,7 +959,27 @@ const problems: Problem[] = [
     sampleInput: '3\n1 2 3',
     sampleOutput: '2.00',
     defaultCode: '#include <iostream>\n#include <iomanip>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    double sum = 0;\n    for (int i = 0; i < n; i++) {\n        int x;\n        cin >> x;\n        sum += x;\n    }\n    \n    double avg = sum / n;\n    cout << fixed << setprecision(2) << avg << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 53,
@@ -625,7 +991,27 @@ const problems: Problem[] = [
     sampleInput: '100',
     sampleOutput: '5050',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    long long sum = (long long)n * (n + 1) / 2;\n    \n    cout << sum << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 54,
@@ -637,7 +1023,27 @@ const problems: Problem[] = [
     sampleInput: '3',
     sampleOutput: '9',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    long long sum = 0, factorial = 1;\n    for (int i = 1; i <= n; i++) {\n        factorial *= i;\n        sum += factorial;\n    }\n    \n    cout << sum << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 55,
@@ -649,7 +1055,27 @@ const problems: Problem[] = [
     sampleInput: '12345',
     sampleOutput: '1\n1\n1\n1\n1\n0\n0\n0\n0',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int cnt[10] = {0};\n    \n    if (n == 0) cnt[0] = 1;\n    else {\n        while (n > 0) {\n            cnt[n % 10]++;\n            n /= 10;\n        }\n    }\n    \n    for (int i = 1; i <= 9; i++) {\n        cout << cnt[i] << endl;\n    }\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 56,
@@ -661,7 +1087,27 @@ const problems: Problem[] = [
     sampleInput: '6\n1 1 2 2 3 3',
     sampleOutput: '1 2 3',
     defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int a[105];\n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int len = unique(a, a + n) - a;\n    \n    for (int i = 0; i < len; i++) {\n        cout << a[i];\n        if (i < len - 1) cout << " ";\n    }\n    cout << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 57,
@@ -673,7 +1119,27 @@ const problems: Problem[] = [
     sampleInput: '5\n1 2 3 2 1\n2',
     sampleOutput: '1',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int a[105];\n    for (int i = 0; i < n; i++) {\n        cin >> a[i];\n    }\n    \n    int x;\n    cin >> x;\n    \n    int ans = -1;\n    for (int i = 0; i < n; i++) {\n        if (a[i] == x) {\n            ans = i;\n            break;\n        }\n    }\n    \n    cout << ans << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 58,
@@ -685,7 +1151,27 @@ const problems: Problem[] = [
     sampleInput: '16',
     sampleOutput: 'YES',
     defaultCode: '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int root = sqrt(n);\n    if (root * root == n) {\n        cout << "YES" << endl;\n    } else {\n        cout << "NO" << endl;\n    }\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 59,
@@ -697,7 +1183,27 @@ const problems: Problem[] = [
     sampleInput: '2 10',
     sampleOutput: '1024',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nlong long power(int a, int b) {\n    long long ans = 1, base = a;\n    while (b > 0) {\n        if (b & 1) ans *= base;\n        base *= base;\n        b >>= 1;\n    }\n    return ans;\n}\n\nint main() {\n    int a, b;\n    cin >> a >> b;\n    \n    cout << power(a, b) << endl;\n    \n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ]
   },
   {
     id: 60,
@@ -710,6 +1216,26 @@ const problems: Problem[] = [
     sampleOutput: '55',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    if (n <= 2) {\n        cout << 1 << endl;\n        return 0;\n    }\n    \n    long long a = 1, b = 1, c;\n    for (int i = 3; i <= n; i++) {\n        c = a + b;\n        a = b;\n        b = c;\n    }\n    \n    cout << b << endl;\n    \n    return 0;\n}',
     category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ],
     year: '2006'
   },
   {
@@ -723,6 +1249,26 @@ const problems: Problem[] = [
     sampleOutput: '8 275\n2 264\n6 264\n1 258\n5 258',
     defaultCode: '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nstruct Student {\n    int id, chinese, math, english, total;\n} s[305];\n\nbool cmp(Student a, Student b) {\n    if (a.total != b.total) return a.total > b.total;\n    if (a.chinese != b.chinese) return a.chinese > b.chinese;\n    return a.id < b.id;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int i = 1; i <= n; i++) {\n        s[i].id = i;\n        cin >> s[i].chinese >> s[i].math >> s[i].english;\n        s[i].total = s[i].chinese + s[i].math + s[i].english;\n    }\n    \n    sort(s + 1, s + n + 1, cmp);\n    \n    for (int i = 1; i <= min(5, n); i++) {\n        cout << s[i].id << " " << s[i].total << endl;\n    }\n    \n    return 0;\n}',
     category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ],
     year: '2007'
   },
   {
@@ -736,6 +1282,26 @@ const problems: Problem[] = [
     sampleOutput: '100x^5-x^4+x^3-3x^2+10',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int a[105];\n    for (int i = n; i >= 0; i--) {\n        cin >> a[i];\n    }\n    \n    bool first = true;\n    for (int i = n; i >= 0; i--) {\n        if (a[i] == 0) continue;\n        \n        // 输出系数\n        if (first) {\n            if (a[i] == -1 && i > 0) cout << "-";\n            else if (a[i] != 1 || i == 0) cout << a[i];\n            first = false;\n        } else {\n            if (a[i] > 0) cout << "+";\n            if (a[i] == -1 && i > 0) cout << "-";\n            else if (a[i] != 1 || i == 0) cout << a[i];\n        }\n        \n        // 输出x的部分\n        if (i > 1) cout << "x^" << i;\n        else if (i == 1) cout << "x";\n    }\n    \n    if (first) cout << "0";\n    cout << endl;\n    \n    return 0;\n}',
     category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ],
     year: '2009'
   },
   {
@@ -749,6 +1315,26 @@ const problems: Problem[] = [
     sampleOutput: '6',
     defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    int L, R;\n    cin >> L >> R;\n    \n    int cnt = 0;\n    for (int i = L; i <= R; i++) {\n        int x = i;\n        while (x > 0) {\n            if (x % 10 == 2) cnt++;\n            x /= 10;\n        }\n    }\n    \n    cout << cnt << endl;\n    \n    return 0;\n}',
     category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ],
     year: '2010'
   },
   {
@@ -762,6 +1348,26 @@ const problems: Problem[] = [
     sampleOutput: '5',
     defaultCode: '#include <iostream>\n#include <stack>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    \n    stack<int> nums;\n    stack<char> ops;\n    \n    int num = 0;\n    for (int i = 0; i <= s.length(); i++) {\n        if (i < s.length() && isdigit(s[i])) {\n            num = num * 10 + (s[i] - \'0\');\n        } else {\n            nums.push(num);\n            num = 0;\n            \n            if (i < s.length()) {\n                char op = s[i];\n                while (!ops.empty() && (ops.top() == \'*\' || ops.top() == \'/\')) {\n                    int b = nums.top(); nums.pop();\n                    int a = nums.top(); nums.pop();\n                    char topOp = ops.top(); ops.pop();\n                    if (topOp == \'*\') nums.push(a * b);\n                    else nums.push(a / b);\n                }\n                ops.push(op);\n            }\n        }\n    }\n    \n    while (!ops.empty()) {\n        int b = nums.top(); nums.pop();\n        int a = nums.top(); nums.pop();\n        char op = ops.top(); ops.pop();\n        if (op == \'+\') nums.push(a + b);\n        else nums.push(a - b);\n    }\n    \n    cout << nums.top() << endl;\n    \n    return 0;\n}',
     category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      // 特殊定义：0! = 1
+      { id: 1, input: '0', expectedOutput: '1' },
+      // 边界值：1! = 1
+      { id: 2, input: '1', expectedOutput: '1' },
+      // 小数据测试
+      { id: 3, input: '5', expectedOutput: '120' },
+      // 中等数据测试
+      { id: 4, input: '10', expectedOutput: '3628800' },
+      // 较大数据测试
+      { id: 5, input: '15', expectedOutput: '1307674368000' },
+      // 最大值测试（20! 是 long long 能表示的最大阶乘）
+      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
+      // 中间值测试
+      { id: 7, input: '12', expectedOutput: '479001600' },
+      // 另一个中间值
+      { id: 8, input: '18', expectedOutput: '6402373705728000' },
+    ],
     year: '2011'
   },
   // 动态规划
