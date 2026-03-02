@@ -2067,6 +2067,7 @@ export default function Home() {
     setIsRunning(true);
     setOutput('');
     setError('');
+    setActiveTab('output');
 
     const startTime = Date.now();
 
@@ -2389,6 +2390,8 @@ export default function Home() {
                     value={output}
                     error={error}
                     title="运行结果"
+                    expectedOutput={expectedOutput}
+                    executionTime={executionTime}
                   />
                 </div>
               </div>
