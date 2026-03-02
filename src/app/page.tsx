@@ -2087,13 +2087,10 @@ export default function Home() {
       const endTime = Date.now();
       setExecutionTime(endTime - startTime);
 
-      console.log('API Response:', data);
-
       if (data.error) {
         setError(data.error);
       } else {
         setOutput(data.output || '');
-        console.log('Output set:', data.output || '');
       }
     } catch (err) {
       setError('运行失败，请检查代码是否正确');

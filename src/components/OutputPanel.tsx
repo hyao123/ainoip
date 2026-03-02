@@ -14,8 +14,6 @@ interface OutputPanelProps {
 export function OutputPanel({ value, error, title = '运行结果', executionTime, expectedOutput }: OutputPanelProps) {
   const checkResult = expectedOutput && value ? expectedOutput.trim() === value.trim() : null;
 
-  console.log('OutputPanel props:', { value, error, executionTime, expectedOutput, checkResult });
-
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900/50">
       {/* 标题栏 */}

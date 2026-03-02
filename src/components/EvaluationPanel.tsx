@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import {
   EvaluationResults,
   TestCaseResult,
@@ -28,6 +29,8 @@ import {
   Copy,
   Download,
   Upload,
+  Edit3,
+  Maximize2,
 } from 'lucide-react';
 
 interface TestCase {
@@ -309,212 +312,129 @@ export function EvaluationPanel({
 
         <TabsContent value="testcases" className="flex-1 m-0 p-0">
           <ScrollArea className="h-full">
-            <div className="p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
+            <div className="p-3">
+              {/* 工具栏 */}
+              <div className="flex items-center justify-between mb-3 pb-3 border-b">
+                <span className="text-xs text-muted-foreground">
                   共 {testCases.length} 个测试用例
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={handleExportTestCases}
                     className="gap-1 h-7"
                     disabled={testCases.length === 0}
+                    title="导出测试用例"
                   >
                     <Download className="h-3.5 w-3.5" />
-                    导出
                   </Button>
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={handleImportTestCases}
                     className="gap-1 h-7"
+                    title="导入测试用例"
                   >
                     <Upload className="h-3.5 w-3.5" />
-                    导入
                   </Button>
+                  <Separator orientation="vertical" className="h-5 mx-1" />
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={handleAddTestCase}
-                    className="gap-2 h-7"
+                    className="gap-1 h-7"
                   >
-                    <Plus className="h-4 w-4" />
-                    添加测试用例
+                    <Plus className="h-3.5 w-3.5" />
+                    添加
                   </Button>
                 </div>
               </div>
 
-              {testCases.map((testCase, index) => {
-                const isEditing = editingTestCase === testCase.id;
-                const input = isEditing ? newInput : testCase.input;
-                const expectedOutput = isEditing ? newExpectedOutput : testCase.expectedOutput;
+              {/* 测试用例列表 - 使用紧凑设计 */}
+              <div className="space-y-2">
+                {testCases.map((testCase, index) => {
+                  // 生成输入和输出的预览
+                  const inputPreview = testCase.input.slice(0, 30) + (testCase.input.length > 30 ? '...' : '');
+                  const outputPreview = testCase.expectedOutput.slice(0, 30) + (testCase.expectedOutput.length > 30 ? '...' : '');
+                  const isEmpty = testCase.input.trim() === '' && testCase.expectedOutput.trim() === '';
 
-                // 生成输入和输出的预览
-                const inputPreview = input.slice(0, 50) + (input.length > 50 ? '...' : '');
-                const outputPreview = expectedOutput.slice(0, 50) + (expectedOutput.length > 50 ? '...' : '');
-                const isEmpty = testCase.input.trim() === '' && testCase.expectedOutput.trim() === '';
-
-                return (
-                  <Card key={testCase.id} className={`overflow-hidden ${isEmpty ? 'border-dashed' : ''}`}>
-                    {/* 测试用例头部 */}
-                    <div 
-                      className="flex items-center justify-between p-3 cursor-pointer hover:bg-accent transition-colors"
-                      onClick={() => {
-                        if (!isEditing) {
-                          handleEditTestCase(testCase);
-                        }
-                      }}
+                  return (
+                    <Card 
+                      key={testCase.id} 
+                      className={`overflow-hidden hover:shadow-sm transition-shadow ${isEmpty ? 'border-dashed bg-muted/30' : ''}`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                      <div className="flex items-center gap-2 p-2">
+                        {/* 序号 */}
+                        <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 text-primary text-[11px] font-bold flex-shrink-0">
                           {index + 1}
                         </div>
-                        <div className="flex flex-col">
+
+                        {/* 内容预览 */}
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-sm">测试点 #{testCase.id}</span>
-                            {isEmpty && <Badge variant="secondary" className="text-xs">空</Badge>}
+                            <span className="text-xs font-medium truncate">#{testCase.id}</span>
+                            {isEmpty && <Badge variant="secondary" className="text-[10px] px-1 h-4">空</Badge>}
                           </div>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span className="text-xs text-muted-foreground">
-                              输入: <span className="font-mono">{inputPreview || '(空)'}</span>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[10px] text-muted-foreground font-mono truncate max-w-[120px]">
+                              {inputPreview || '(空)'}
                             </span>
-                            <span className="text-xs text-muted-foreground">
-                              输出: <span className="font-mono">{outputPreview || '(空)'}</span>
+                            <span className="text-[10px] text-muted-foreground">→</span>
+                            <span className="text-[10px] text-muted-foreground font-mono truncate max-w-[120px]">
+                              {outputPreview || '(空)'}
                             </span>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-2">
-                        {isEditing ? (
-                          <>
-                            <Button
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleSaveTestCase(testCase.id);
-                              }}
-                              className="gap-1 h-7"
-                            >
-                              保存
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setEditingTestCase(null);
-                              }}
-                              className="gap-1 h-7"
-                            >
-                              取消
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCopyTestCase(testCase);
-                              }}
-                              className="gap-1 h-7 px-2"
-                              title="复制测试用例"
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEditTestCase(testCase);
-                              }}
-                              className="gap-1 h-7"
-                            >
-                              编辑
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteTestCase(testCase.id);
-                              }}
-                              className="gap-1 text-red-500 hover:text-red-700 h-7 px-2"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* 编辑模式下的详细内容 */}
-                    {isEditing && (
-                      <div className="border-t bg-muted/20 p-4 space-y-4">
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <Label className="text-sm font-medium">输入数据</Label>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setNewInput('')}
-                              className="text-xs h-6"
-                            >
-                              清空
-                            </Button>
-                          </div>
-                          <Textarea
-                            value={input}
-                            onChange={(e) => setNewInput(e.target.value)}
-                            placeholder="输入测试数据..."
-                            className="font-mono text-sm min-h-[100px] resize-none"
-                            rows={4}
-                          />
-                        </div>
-
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <Label className="text-sm font-medium">期望输出</Label>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setNewExpectedOutput('')}
-                              className="text-xs h-6"
-                            >
-                              清空
-                            </Button>
-                          </div>
-                          <Textarea
-                            value={expectedOutput}
-                            onChange={(e) => setNewExpectedOutput(e.target.value)}
-                            placeholder="输入期望输出..."
-                            className="font-mono text-sm min-h-[100px] resize-none"
-                            rows={4}
-                          />
+                        {/* 操作按钮 */}
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleCopyTestCase(testCase)}
+                            className="gap-1 h-6 w-6 p-0"
+                            title="复制"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleEditTestCase(testCase)}
+                            className="gap-1 h-6 w-6 p-0"
+                            title="编辑"
+                          >
+                            <Edit3 className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDeleteTestCase(testCase.id)}
+                            className="gap-1 h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                            title="删除"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
                         </div>
                       </div>
-                    )}
+                    </Card>
+                  );
+                })}
+
+                {testCases.length === 0 && (
+                  <Card className="p-8 text-center">
+                    <FileText className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground mb-4">
+                      还没有测试用例
+                    </p>
+                    <Button onClick={handleAddTestCase} size="sm" className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      添加第一个测试用例
+                    </Button>
                   </Card>
-                );
-              })}
-
-              {testCases.length === 0 && (
-                <Card className="p-12 text-center">
-                  <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-4">
-                    还没有测试用例
-                  </p>
-                  <Button onClick={handleAddTestCase} className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    添加第一个测试用例
-                  </Button>
-                </Card>
-              )}
+                )}
+              </div>
             </div>
           </ScrollArea>
         </TabsContent>
@@ -537,6 +457,73 @@ export function EvaluationPanel({
           )}
         </TabsContent>
       </Tabs>
+
+      {/* 编辑测试用例对话框 */}
+      <Dialog open={editingTestCase !== null} onOpenChange={(open) => !open && setEditingTestCase(null)}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>
+              {editingTestCase ? `编辑测试用例 #${editingTestCase}` : '编辑测试用例'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-sm font-medium">输入数据</Label>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setNewInput('')}
+                  className="text-xs h-7"
+                >
+                  清空
+                </Button>
+              </div>
+              <Textarea
+                value={newInput}
+                onChange={(e) => setNewInput(e.target.value)}
+                placeholder="输入测试数据..."
+                className="font-mono text-sm min-h-[120px]"
+                rows={5}
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-sm font-medium">期望输出</Label>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setNewExpectedOutput('')}
+                  className="text-xs h-7"
+                >
+                  清空
+                </Button>
+              </div>
+              <Textarea
+                value={newExpectedOutput}
+                onChange={(e) => setNewExpectedOutput(e.target.value)}
+                placeholder="输入期望输出..."
+                className="font-mono text-sm min-h-[120px]"
+                rows={5}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setEditingTestCase(null)}
+            >
+              取消
+            </Button>
+            <Button
+              onClick={() => editingTestCase && handleSaveTestCase(editingTestCase)}
+            >
+              保存
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
