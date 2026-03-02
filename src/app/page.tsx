@@ -6,11 +6,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle } from 'lucide-react';
 import { CodeEditor } from '@/components/CodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
 import { NOIPTemplateHint } from '@/components/NOIPTemplateHint';
+import { TestCasesPanel } from '@/components/TestCasesPanel';
+import { ShortcutsHelp } from '@/components/ShortcutsHelp';
 
 // 题目数据类型
 interface Problem {
@@ -1397,10 +1399,15 @@ export default function Home() {
   const [code, setCode] = useState('#include <iostream>\nusing namespace std;\n\nint main() {\n    // 在此编写你的代码\n    \n    return 0;\n}');
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
+  const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
   const [showSolution, setShowSolution] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(categories.map(c => c.name)));
+  const [executionTime, setExecutionTime] = useState<number>(0);
+  const [showTestPanel, setShowTestPanel] = useState(false);
+  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
+  const [activeTab, setActiveTab] = useState<'input' | 'test' | 'output'>('input');
 
   const toggleCategory = (categoryName: string) => {
     setExpandedCategories(prev => {
@@ -1428,10 +1435,12 @@ export default function Home() {
     setCode(selectedProblem.defaultCode);
   };
 
-  const handleRunCode = async () => {
+  const handleRunCode = async (testInput?: string) => {
     setIsRunning(true);
     setOutput('');
     setError('');
+
+    const startTime = Date.now();
 
     try {
       const response = await fetch('/api/run', {
@@ -1441,11 +1450,13 @@ export default function Home() {
         },
         body: JSON.stringify({
           code,
-          input: input || selectedProblem.sampleInput,
+          input: testInput || input || selectedProblem.sampleInput,
         }),
       });
 
       const data = await response.json();
+      const endTime = Date.now();
+      setExecutionTime(endTime - startTime);
 
       if (data.error) {
         setError(data.error);
@@ -1457,6 +1468,12 @@ export default function Home() {
     } finally {
       setIsRunning(false);
     }
+  };
+
+  const handleRunTest = (testInput: string, testExpectedOutput: string) => {
+    setExpectedOutput(testExpectedOutput);
+    setActiveTab('output');
+    handleRunCode(testInput);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -1582,7 +1599,7 @@ export default function Home() {
               </Button>
             )}
             <Button
-              onClick={handleRunCode}
+              onClick={() => handleRunCode()}
               disabled={isRunning}
               className="gap-2"
             >

@@ -1,15 +1,19 @@
 'use client';
 
 import { Card } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Terminal } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Terminal, Clock, XCircle } from 'lucide-react';
 
 interface OutputPanelProps {
   value: string;
   error?: string;
   title?: string;
+  executionTime?: number;
+  expectedOutput?: string;
 }
 
-export function OutputPanel({ value, error, title = '运行结果' }: OutputPanelProps) {
+export function OutputPanel({ value, error, title = '运行结果', executionTime, expectedOutput }: OutputPanelProps) {
+  const checkResult = expectedOutput && value ? expectedOutput.trim() === value.trim() : null;
+
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900/50">
       {/* 标题栏 */}
@@ -18,18 +22,48 @@ export function OutputPanel({ value, error, title = '运行结果' }: OutputPane
           <Terminal className="h-4 w-4 text-slate-500" />
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{title}</span>
         </div>
-        {error && (
-          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-red-50 dark:bg-red-900/20 rounded">
-            <AlertCircle className="h-3.5 w-3.5 text-red-500" />
-            <span className="text-xs font-medium text-red-600 dark:text-red-400">编译/运行错误</span>
-          </div>
-        )}
-        {value && !error && (
-          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-green-50 dark:bg-green-900/20 rounded">
-            <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
-            <span className="text-xs font-medium text-green-600 dark:text-green-400">运行成功</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {executionTime !== undefined && executionTime > 0 && (
+            <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 rounded">
+              <Clock className="h-3.5 w-3.5 text-blue-500" />
+              <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                {executionTime}ms
+              </span>
+            </div>
+          )}
+          {error && (
+            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-red-50 dark:bg-red-900/20 rounded">
+              <XCircle className="h-3.5 w-3.5 text-red-500" />
+              <span className="text-xs font-medium text-red-600 dark:text-red-400">运行失败</span>
+            </div>
+          )}
+          {value && !error && (
+            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-green-50 dark:bg-green-900/20 rounded">
+              <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+              <span className="text-xs font-medium text-green-600 dark:text-green-400">运行成功</span>
+            </div>
+          )}
+          {checkResult !== null && !error && (
+            <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded ${
+              checkResult 
+                ? 'bg-green-50 dark:bg-green-900/20' 
+                : 'bg-amber-50 dark:bg-amber-900/20'
+            }`}>
+              {checkResult ? (
+                <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+              ) : (
+                <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
+              )}
+              <span className={`text-xs font-medium ${
+                checkResult 
+                  ? 'text-green-600 dark:text-green-400' 
+                  : 'text-amber-600 dark:text-amber-400'
+              }`}>
+                {checkResult ? '测试通过' : '输出不符'}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 输出内容 */}
@@ -42,9 +76,9 @@ export function OutputPanel({ value, error, title = '运行结果' }: OutputPane
                 <p className="text-sm font-semibold text-red-700 dark:text-red-400 mb-2">
                   发生错误
                 </p>
-                <p className="text-xs text-red-600 dark:text-red-500 font-mono whitespace-pre-wrap break-all">
+                <pre className="text-xs text-red-600 dark:text-red-500 font-mono whitespace-pre-wrap break-all">
                   {error}
-                </p>
+                </pre>
               </div>
             </div>
           </Card>
@@ -58,9 +92,21 @@ export function OutputPanel({ value, error, title = '运行结果' }: OutputPane
             }}
           >
             {value ? (
-              <pre className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap break-all">
-                {value}
-              </pre>
+              <div>
+                <pre className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap break-all">
+                  {value}
+                </pre>
+                {expectedOutput && !error && (
+                  <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
+                      期望输出:
+                    </p>
+                    <pre className="text-slate-600 dark:text-slate-400 whitespace-pre-wrap break-all">
+                      {expectedOutput}
+                    </pre>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="h-full flex items-center justify-center text-slate-400 dark:text-slate-600">
                 <p className="text-sm">运行结果将显示在这里...</p>
