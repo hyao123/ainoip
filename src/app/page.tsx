@@ -6,13 +6,21 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X } from 'lucide-react';
 import { CodeEditor } from '@/components/CodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
 import { NOIPTemplateHint } from '@/components/NOIPTemplateHint';
 import { TestCasesPanel } from '@/components/TestCasesPanel';
 import { ShortcutsHelp } from '@/components/ShortcutsHelp';
+import { EvaluationPanel } from '@/components/EvaluationPanel';
+
+// 测试用例类型
+interface TestCase {
+  id: number;
+  input: string;
+  expectedOutput: string;
+}
 
 // 题目数据类型
 interface Problem {
@@ -27,6 +35,9 @@ interface Problem {
   defaultCode: string;
   category: string;
   year?: string;
+  testCases?: TestCase[];
+  timeLimit?: number;  // 毫秒
+  memoryLimit?: number;  // MB
 }
 
 // 分类类型
@@ -49,7 +60,16 @@ const problems: Problem[] = [
     sampleInput: '1 2',
     sampleOutput: '3',
     defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    // NOIP标准文件输入输出\n    freopen("ab.in", "r", stdin);\n    freopen("ab.out", "w", stdout);\n    \n    int a, b;\n    cin >> a >> b;\n    cout << a + b << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '1 2', expectedOutput: '3' },
+      { id: 2, input: '100 200', expectedOutput: '300' },
+      { id: 3, input: '0 0', expectedOutput: '0' },
+      { id: 4, input: '-5 10', expectedOutput: '5' },
+      { id: 5, input: '1000000 2000000', expectedOutput: '3000000' },
+    ]
   },
   {
     id: 2,
@@ -61,7 +81,16 @@ const problems: Problem[] = [
     sampleInput: '5',
     sampleOutput: '5',
     defaultCode: '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    freopen("fibonacci.in", "r", stdin);\n    freopen("fibonacci.out", "w", stdout);\n    \n    int n;\n    cin >> n;\n    \n    if (n == 0) {\n        cout << 0 << endl;\n        fclose(stdin);\n        fclose(stdout);\n        return 0;\n    }\n    if (n == 1) {\n        cout << 1 << endl;\n        fclose(stdin);\n        fclose(stdout);\n        return 0;\n    }\n    \n    int a = 0, b = 1, c;\n    for (int i = 2; i <= n; i++) {\n        c = a + b;\n        a = b;\n        b = c;\n    }\n    cout << b << endl;\n    \n    fclose(stdin);\n    fclose(stdout);\n    return 0;\n}',
-    category: '基础算法'
+    category: '基础算法',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '0', expectedOutput: '0' },
+      { id: 2, input: '1', expectedOutput: '1' },
+      { id: 3, input: '5', expectedOutput: '5' },
+      { id: 4, input: '10', expectedOutput: '55' },
+      { id: 5, input: '20', expectedOutput: '6765' },
+    ]
   },
   {
     id: 3,
@@ -1399,6 +1428,7 @@ export default function Home() {
   const [code, setCode] = useState('#include <iostream>\nusing namespace std;\n\nint main() {\n    // 在此编写你的代码\n    \n    return 0;\n}');
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
+  const [showEvaluation, setShowEvaluation] = useState(false);
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
@@ -1428,6 +1458,7 @@ export default function Home() {
     setOutput('');
     setError('');
     setShowSolution(false);
+    setShowEvaluation(false);
   };
 
   const handleShowSolution = () => {
@@ -1587,6 +1618,17 @@ export default function Home() {
             </span>
           </div>
           <div className="flex items-center gap-3">
+            {!showEvaluation && (
+              <Button
+                onClick={() => setShowEvaluation(true)}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <TestTube2 className="h-4 w-4" />
+                评测系统
+              </Button>
+            )}
             {!showSolution && (
               <Button
                 onClick={handleShowSolution}
@@ -1598,14 +1640,27 @@ export default function Home() {
                 查看答案
               </Button>
             )}
-            <Button
-              onClick={() => handleRunCode()}
-              disabled={isRunning}
-              className="gap-2"
-            >
-              <Play className="h-4 w-4" />
-              {isRunning ? '运行中...' : '运行代码'}
-            </Button>
+            {!showEvaluation && (
+              <Button
+                onClick={() => handleRunCode()}
+                disabled={isRunning}
+                className="gap-2"
+              >
+                <Play className="h-4 w-4" />
+                {isRunning ? '运行中...' : '运行代码'}
+              </Button>
+            )}
+            {showEvaluation && (
+              <Button
+                onClick={() => setShowEvaluation(false)}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <X className="h-4 w-4" />
+                关闭评测
+              </Button>
+            )}
           </div>
         </header>
 
@@ -1709,27 +1764,38 @@ export default function Home() {
               />
             </div>
 
-            {/* 测试输入输出 */}
-            <div className="h-1/3 flex border-t border-border">
-              {/* 输入 */}
-              <div className="w-1/2 border-r border-border">
-                <InputPanel
-                  value={input}
-                  onChange={setInput}
-                  placeholder="输入测试数据..."
-                  title="测试输入"
+            {/* 测试输入输出 或 评测系统 */}
+            {showEvaluation ? (
+              <div className="h-1/3 border-t border-border">
+                <EvaluationPanel
+                  code={code}
+                  defaultTestCases={selectedProblem.testCases}
+                  timeLimit={selectedProblem.timeLimit || 1000}
+                  memoryLimit={selectedProblem.memoryLimit || 128}
                 />
               </div>
+            ) : (
+              <div className="h-1/3 flex border-t border-border">
+                {/* 输入 */}
+                <div className="w-1/2 border-r border-border">
+                  <InputPanel
+                    value={input}
+                    onChange={setInput}
+                    placeholder="输入测试数据..."
+                    title="测试输入"
+                  />
+                </div>
 
-              {/* 输出 */}
-              <div className="w-1/2">
-                <OutputPanel
-                  value={output}
-                  error={error}
-                  title="运行结果"
-                />
+                {/* 输出 */}
+                <div className="w-1/2">
+                  <OutputPanel
+                    value={output}
+                    error={error}
+                    title="运行结果"
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </main>
