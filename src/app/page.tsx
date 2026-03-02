@@ -64,24 +64,8 @@ const problems: Problem[] = [
     timeLimit: 1000,
     memoryLimit: 128,
     testCases: [
-      // 特殊定义：0! = 1
-      { id: 1, input: '0', expectedOutput: '1' },
-      // 边界值：1! = 1
-      { id: 2, input: '1', expectedOutput: '1' },
-      // 小数据测试
-      { id: 3, input: '5', expectedOutput: '120' },
-      // 中等数据测试
-      { id: 4, input: '10', expectedOutput: '3628800' },
-      // 较大数据测试
-      { id: 5, input: '15', expectedOutput: '1307674368000' },
-      // 最大值测试（20! 是 long long 能表示的最大阶乘）
-      { id: 6, input: '20', expectedOutput: '2432902008176640000' },
-      // 中间值测试
-      { id: 7, input: '12', expectedOutput: '479001600' },
-      // 另一个中间值
-      { id: 8, input: '18', expectedOutput: '6402373705728000' },
-    ]
-  },
+      // 基础测试
+      { id: 1, input: '1 2', expectedOutput: '3' },
       // 零值测试
       { id: 2, input: '0 0', expectedOutput: '0' },
       { id: 3, input: '0 100', expectedOutput: '100' },
