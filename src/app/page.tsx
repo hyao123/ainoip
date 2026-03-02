@@ -2087,10 +2087,13 @@ export default function Home() {
       const endTime = Date.now();
       setExecutionTime(endTime - startTime);
 
+      console.log('API Response:', data);
+
       if (data.error) {
         setError(data.error);
       } else {
-        setOutput(data.output);
+        setOutput(data.output || '');
+        console.log('Output set:', data.output || '');
       }
     } catch (err) {
       setError('运行失败，请检查代码是否正确');
@@ -2339,9 +2342,9 @@ export default function Home() {
           </div>
 
           {/* 代码编辑器和测试区 */}
-          <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col overflow-hidden">
             {/* 代码编辑器 */}
-            <div className="flex-1 flex flex-col overflow-hidden border-b">
+            <div className="flex-[2] flex flex-col overflow-hidden border-b">
               <div className="flex items-center justify-between border-b bg-slate-900/50 px-4 py-2">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
@@ -2364,7 +2367,7 @@ export default function Home() {
 
             {/* 测试输入输出 或 评测系统 */}
             {showEvaluation ? (
-              <div className="h-1/3 border-t border-border">
+              <div className="h-1/3 min-h-[200px] border-t border-border">
                 <EvaluationPanel
                   code={code}
                   defaultTestCases={selectedProblem.testCases}
@@ -2373,7 +2376,7 @@ export default function Home() {
                 />
               </div>
             ) : (
-              <div className="h-1/3 flex border-t border-border">
+              <div className="flex-1 min-h-[200px] flex border-t border-border">
                 {/* 输入 */}
                 <div className="w-1/2 border-r border-border">
                   <InputPanel
