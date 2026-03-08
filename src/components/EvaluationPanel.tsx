@@ -31,6 +31,7 @@ import {
   Upload,
   Edit3,
   Maximize2,
+  FileCode,
 } from 'lucide-react';
 
 interface TestCase {
@@ -147,6 +148,64 @@ export function EvaluationPanel({
       }
     } catch (err) {
       alert('评测请求失败: ' + err);
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  // NOIP文件格式评测
+  const handleNoipEvaluation = async () => {
+    if (!code.trim()) {
+      alert('请先编写代码');
+      return;
+    }
+
+    // 检查是否包含freopen语句
+    if (!code.includes('freopen')) {
+      alert('NOIP评测需要代码中包含freopen语句\n示例:\nfreopen("xxx.in", "r", stdin);\nfreopen("xxx.out", "w", stdout);');
+      return;
+    }
+
+    const validTestCases = testCases.filter(
+      tc => tc.input.trim() !== '' || tc.expectedOutput.trim() !== ''
+    );
+
+    if (validTestCases.length === 0) {
+      alert('请至少添加一个有效的测试用例');
+      return;
+    }
+
+    setIsRunning(true);
+    setResults(null);
+    setSummary(null);
+    setCompileError(null);
+
+    try {
+      const response = await fetch('/api/evaluate-noip', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code,
+          testCases: validTestCases,
+          timeLimit: customTimeLimit,
+          memoryLimit: customMemoryLimit,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.compileError) {
+        setCompileError(data.compileError);
+      } else if (data.success) {
+        setResults(data.results);
+        setSummary(data.summary);
+      } else {
+        alert('NOIP评测失败: ' + (data.error || '未知错误'));
+      }
+    } catch (err) {
+      alert('NOIP评测请求失败: ' + err);
     } finally {
       setIsRunning(false);
     }
@@ -277,14 +336,25 @@ export function EvaluationPanel({
             </div>
           </div>
         </div>
-        <Button
-          onClick={handleRunEvaluation}
-          disabled={isRunning}
-          className="gap-2"
-        >
-          <Play className="h-4 w-4" />
-          {isRunning ? '评测中...' : '开始评测'}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleRunEvaluation}
+            disabled={isRunning}
+            variant="outline"
+            className="gap-2"
+          >
+            <Play className="h-4 w-4" />
+            {isRunning ? '评测中...' : '标准评测'}
+          </Button>
+          <Button
+            onClick={handleNoipEvaluation}
+            disabled={isRunning}
+            className="gap-2"
+          >
+            <FileCode className="h-4 w-4" />
+            {isRunning ? '评测中...' : 'NOIP评测'}
+          </Button>
+        </div>
       </div>
 
       {/* 主内容区 */}
