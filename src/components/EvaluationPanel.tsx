@@ -70,6 +70,51 @@ export function EvaluationPanel({
   const [customTimeLimit, setCustomTimeLimit] = useState(timeLimit);
   const [customMemoryLimit, setCustomMemoryLimit] = useState(memoryLimit);
 
+  // 注释掉freopen语句（用于标准评测）
+  const commentOutFreopen = (sourceCode: string): string => {
+    const lines = sourceCode.split('\n');
+    const processedLines = lines.map(line => {
+      const trimmed = line.trim();
+      // 匹配 freopen(...) 语句
+      if (trimmed.startsWith('freopen(') && (trimmed.includes('"r"') || trimmed.includes('"w"'))) {
+        // 如果已经注释，保持不变
+        if (trimmed.startsWith('//')) {
+          return line;
+        }
+        // 添加注释
+        return line.replace(trimmed, '// ' + trimmed);
+      }
+      // 匹配 fclose(stdin) 和 fclose(stdout)
+      if (trimmed === 'fclose(stdin);' || trimmed === 'fclose(stdout);') {
+        if (trimmed.startsWith('//')) {
+          return line;
+        }
+        return line.replace(trimmed, '// ' + trimmed);
+      }
+      return line;
+    });
+    return processedLines.join('\n');
+  };
+
+  // 取消freopen语句的注释（用于NOIP评测）
+  const uncommentFreopen = (sourceCode: string): string => {
+    const lines = sourceCode.split('\n');
+    const processedLines = lines.map(line => {
+      const trimmed = line.trim();
+      // 匹配被注释的 freopen(...) 语句
+      if (trimmed.startsWith('//') && trimmed.includes('freopen(')) {
+        // 移除注释
+        return line.replace(/\/\/\s*/, '');
+      }
+      // 匹配被注释的 fclose 语句
+      if (trimmed.startsWith('//') && (trimmed.includes('fclose(stdin)') || trimmed.includes('fclose(stdout)'))) {
+        return line.replace(/\/\/\s*/, '');
+      }
+      return line;
+    });
+    return processedLines.join('\n');
+  };
+
   const handleAddTestCase = () => {
     const newId = Math.max(...testCases.map(tc => tc.id), 0) + 1;
     setTestCases([...testCases, { id: newId, input: '', expectedOutput: '' }]);
@@ -117,6 +162,9 @@ export function EvaluationPanel({
       return;
     }
 
+    // 标准评测：自动注释掉freopen语句
+    const processedCode = commentOutFreopen(code);
+
     setIsRunning(true);
     setResults(null);
     setSummary(null);
@@ -129,7 +177,7 @@ export function EvaluationPanel({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          code,
+          code: processedCode,
           testCases: validTestCases,
           timeLimit: customTimeLimit,
           memoryLimit: customMemoryLimit,
@@ -160,8 +208,11 @@ export function EvaluationPanel({
       return;
     }
 
+    // NOIP评测：自动取消freopen语句的注释
+    const processedCode = uncommentFreopen(code);
+
     // 检查是否包含freopen语句
-    if (!code.includes('freopen')) {
+    if (!processedCode.includes('freopen')) {
       alert('NOIP评测需要代码中包含freopen语句\n示例:\nfreopen("xxx.in", "r", stdin);\nfreopen("xxx.out", "w", stdout);');
       return;
     }
@@ -187,7 +238,7 @@ export function EvaluationPanel({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          code,
+          code: processedCode,
           testCases: validTestCases,
           timeLimit: customTimeLimit,
           memoryLimit: customMemoryLimit,
