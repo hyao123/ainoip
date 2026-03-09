@@ -67,7 +67,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '理解基本数据类型（int, long long, double等）及其范围',
     difficulty: 'beginner',
     prerequisites: ['basics-io'],
-    problems: [],
+    problems: [1, 3], // A+B问题, 阶乘（涉及long long）
     estimatedHours: 3,
     importance: 5,
     tags: ['入门', '基础语法'],
@@ -115,7 +115,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '掌握一维数组和二维数组的定义与使用',
     difficulty: 'beginner',
     prerequisites: ['basics-loops'],
-    problems: [],
+    problems: [105, 5], // 数字统计, 数字反转
     estimatedHours: 4,
     importance: 5,
     tags: ['入门', '数据结构基础'],
@@ -177,7 +177,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '最大公约数、最小公倍数的计算与应用',
     difficulty: 'intermediate',
     prerequisites: ['number-theory-basics'],
-    problems: [],
+    problems: [4, 70], // 最大公约数, 最小公倍数
     estimatedHours: 3,
     importance: 4,
     tags: ['数论', 'GCD'],
@@ -237,7 +237,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '分治思想：分解、解决、合并',
     difficulty: 'advanced',
     prerequisites: ['recursion'],
-    problems: [],
+    problems: [20, 21], // 快速排序, 数字游戏
     estimatedHours: 5,
     importance: 4,
     tags: ['分治', '递归'],
@@ -249,7 +249,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '贪心思想：局部最优达到全局最优',
     difficulty: 'intermediate',
     prerequisites: ['sorting-basics'],
-    problems: [],
+    problems: [13, 15], // 买铅笔, 优秀的拆分
     estimatedHours: 5,
     importance: 4,
     tags: ['贪心', '算法思想'],
@@ -261,7 +261,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: 'DFS的基本概念与实现，递归实现与栈实现',
     difficulty: 'intermediate',
     prerequisites: ['recursion'],
-    problems: [],
+    problems: [15, 22], // 优秀的拆分, 排列
     estimatedHours: 6,
     importance: 5,
     tags: ['搜索', 'DFS'],
@@ -273,7 +273,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: 'BFS的基本概念与实现，队列的使用',
     difficulty: 'intermediate',
     prerequisites: ['basics-arrays'],
-    problems: [],
+    problems: [17, 19], // 转圈游戏, 神奇的幻方
     estimatedHours: 6,
     importance: 5,
     tags: ['搜索', 'BFS'],
@@ -285,7 +285,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '理解DP的基本概念：状态、转移、边界',
     difficulty: 'intermediate',
     prerequisites: ['recursion', 'basics-arrays'],
-    problems: [],
+    problems: [2, 12, 74], // 斐波那契, 金币, 数字游戏
     estimatedHours: 6,
     importance: 5,
     tags: ['动态规划', '入门'],
@@ -297,7 +297,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '背包问题、最长公共子序列、最长递增子序列等',
     difficulty: 'advanced',
     prerequisites: ['dp-intro'],
-    problems: [],
+    problems: [14, 21], // 成绩, 数字游戏
     estimatedHours: 8,
     importance: 5,
     tags: ['动态规划', '经典模型'],
@@ -309,7 +309,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '图的基本概念，邻接矩阵与邻接表',
     difficulty: 'intermediate',
     prerequisites: ['basics-arrays'],
-    problems: [],
+    problems: [18, 17], // 生活大爆炸版石头剪刀布, 转圈游戏
     estimatedHours: 4,
     importance: 4,
     tags: ['图论', '基础'],
@@ -321,7 +321,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '图的DFS和BFS遍历',
     difficulty: 'intermediate',
     prerequisites: ['graph-basics', 'search-dfs', 'search-bfs'],
-    problems: [],
+    problems: [17, 19], // 转圈游戏, 神奇的幻方
     estimatedHours: 4,
     importance: 4,
     tags: ['图论', '遍历'],
@@ -333,7 +333,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: 'Dijkstra、Floyd、SPFA等最短路径算法',
     difficulty: 'advanced',
     prerequisites: ['graph-basics'],
-    problems: [],
+    problems: [13, 75], // 买铅笔, 跑步
     estimatedHours: 6,
     importance: 5,
     tags: ['图论', '最短路'],
@@ -345,7 +345,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '栈和队列的基本概念与实现',
     difficulty: 'beginner',
     prerequisites: ['basics-arrays'],
-    problems: [],
+    problems: [16, 67], // 逻辑表达式, 表达式求值
     estimatedHours: 3,
     importance: 4,
     tags: ['数据结构', '栈', '队列'],
@@ -357,7 +357,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '链表的基本概念与实现',
     difficulty: 'intermediate',
     prerequisites: ['basics-arrays'],
-    problems: [],
+    problems: [11, 74], // 表达式求值, 数字游戏
     estimatedHours: 3,
     importance: 3,
     tags: ['数据结构', '链表'],
@@ -369,7 +369,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '树的基本概念，二叉树的遍历',
     difficulty: 'intermediate',
     prerequisites: ['recursion', 'ds-stack-queue'],
-    problems: [],
+    problems: [19, 22], // 神奇的幻方, 排列
     estimatedHours: 5,
     importance: 5,
     tags: ['数据结构', '树'],
@@ -381,7 +381,7 @@ export const knowledgeTree: KnowledgeNode[] = [
     description: '与、或、非、异或运算，位运算技巧',
     difficulty: 'intermediate',
     prerequisites: ['basics-operators'],
-    problems: [],
+    problems: [15, 72], // 优秀的拆分, 同余问题
     estimatedHours: 3,
     importance: 3,
     tags: ['位运算', '技巧'],

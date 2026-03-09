@@ -11,6 +11,7 @@ import {
   type UserProgress,
   calculateNodeStatus,
 } from '@/lib/learning-path';
+import { getKnowledgeLesson } from '@/lib/knowledge-lessons';
 import {
   Lock,
   CheckCircle2,
@@ -21,12 +22,14 @@ import {
   Clock,
   Target,
   Lightbulb,
+  BookOpen,
 } from 'lucide-react';
 
 interface KnowledgeRoadmapProps {
   completedNodes: Set<string>;
   learningNodes: Set<string>;
   onNodeSelect?: (node: KnowledgeNode) => void;
+  onViewLesson?: (nodeId: string) => void;
   selectedNodeId?: string;
 }
 
@@ -54,6 +57,7 @@ export function KnowledgeRoadmap({
   completedNodes,
   learningNodes,
   onNodeSelect,
+  onViewLesson,
   selectedNodeId,
 }: KnowledgeRoadmapProps) {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
@@ -237,6 +241,21 @@ export function KnowledgeRoadmap({
                                         </Badge>
                                       ))}
                                     </div>
+                                  )}
+                                  {/* 查看讲解按钮 */}
+                                  {getKnowledgeLesson(node.id) && onViewLesson && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="w-full mt-2 h-7 text-xs bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onViewLesson(node.id);
+                                      }}
+                                    >
+                                      <BookOpen className="h-3 w-3 mr-1" />
+                                      查看知识点讲解
+                                    </Button>
                                   )}
                                 </div>
                               )}

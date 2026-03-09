@@ -15,11 +15,13 @@ import {
   type LearningGoal,
   type KnowledgeNode,
 } from '@/lib/learning-path';
+import { getKnowledgeLesson, type KnowledgeLesson } from '@/lib/knowledge-lessons';
 import { ProgressRadar } from '@/components/RadarChart';
 import {
   KnowledgeRoadmap,
   KnowledgeNodeCard,
 } from '@/components/KnowledgeRoadmap';
+import { KnowledgeLessonPanel } from '@/components/KnowledgeLessonPanel';
 import {
   Target,
   Clock,
@@ -36,6 +38,7 @@ import {
   Star,
   Rocket,
   Award,
+  X,
 } from 'lucide-react';
 
 // 目标配置
@@ -52,6 +55,7 @@ export function LearningPathPage() {
   const [learningNodes, setLearningNodes] = useState<Set<string>>(new Set(['basics-operators']));
   const [selectedNode, setSelectedNode] = useState<KnowledgeNode | null>(null);
   const [activeTab, setActiveTab] = useState<'roadmap' | 'path' | 'stats'>('roadmap');
+  const [viewingLesson, setViewingLesson] = useState<KnowledgeLesson | null>(null);
 
   // 获取当前学习路径
   const currentPath = useMemo(() => {
@@ -177,6 +181,12 @@ export function LearningPathPage() {
                 completedNodes={completedNodes}
                 learningNodes={learningNodes}
                 onNodeSelect={setSelectedNode}
+                onViewLesson={(nodeId) => {
+                  const lesson = getKnowledgeLesson(nodeId);
+                  if (lesson) {
+                    setViewingLesson(lesson);
+                  }
+                }}
                 selectedNodeId={selectedNode?.id}
               />
             </TabsContent>
@@ -285,14 +295,41 @@ export function LearningPathPage() {
 
         {/* 右侧：详情和推荐 */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* 选中知识点详情 */}
-          {selectedNode ? (
+          {/* 知识点讲解面板 */}
+          {viewingLesson ? (
+            <div className="flex-1 p-4">
+              <KnowledgeLessonPanel
+                lesson={viewingLesson}
+                onClose={() => setViewingLesson(null)}
+                onStartProblem={(problemId) => {
+                  // TODO: 跳转到题目练习
+                  console.log('Start problem:', problemId);
+                }}
+                getProblemTitle={(id) => {
+                  const node = knowledgeTree.find(n => n.problems.includes(id));
+                  return node ? `题目 #${id}` : `题目 ${id}`;
+                }}
+                getProblemDifficulty={() => 'medium'}
+              />
+            </div>
+          ) : selectedNode ? (
+            /* 选中知识点详情 */
             <div className="p-4 border-b">
               <KnowledgeNodeCard
                 node={selectedNode}
                 onStartLearning={() => startLearning(selectedNode.id)}
                 onPractice={() => {/* 跳转到练习页面 */}}
               />
+              {/* 查看讲解按钮 */}
+              {getKnowledgeLesson(selectedNode.id) && (
+                <Button
+                  className="w-full mt-3"
+                  onClick={() => setViewingLesson(getKnowledgeLesson(selectedNode.id))}
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  查看知识点讲解
+                </Button>
+              )}
             </div>
           ) : (
             /* 推荐学习 */
