@@ -19,7 +19,6 @@ import { getKnowledgeLesson, type KnowledgeLesson } from '@/lib/knowledge-lesson
 import { ProgressRadar } from '@/components/RadarChart';
 import {
   KnowledgeRoadmap,
-  KnowledgeNodeCard,
 } from '@/components/KnowledgeRoadmap';
 import { KnowledgeLessonPanel } from '@/components/KnowledgeLessonPanel';
 import {
@@ -34,11 +33,10 @@ import {
   TrendingUp,
   Users,
   Calendar,
-  ChevronRight,
   Star,
   Rocket,
   Award,
-  X,
+  BarChart3,
 } from 'lucide-react';
 
 // 目标配置
@@ -105,20 +103,18 @@ export function LearningPathPage() {
     };
   }, [currentPath, completedNodes]);
 
-  // 标记知识点为已完成
-  const markAsCompleted = (nodeId: string) => {
-    setCompletedNodes(prev => new Set([...prev, nodeId]));
-    setLearningNodes(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(nodeId);
-      return newSet;
-    });
-  };
-
   // 开始学习知识点
   const startLearning = (nodeId: string) => {
     setLearningNodes(prev => new Set([...prev, nodeId]));
     setSelectedNode(knowledgeTree.find(n => n.id === nodeId) || null);
+  };
+
+  // 难度配置
+  const difficultyConfig = {
+    beginner: { label: '入门', color: 'bg-green-100 text-green-800 border-green-200' },
+    intermediate: { label: '进阶', color: 'bg-blue-100 text-blue-800 border-blue-200' },
+    advanced: { label: '高级', color: 'bg-orange-100 text-orange-800 border-orange-200' },
+    expert: { label: '专家', color: 'bg-red-100 text-red-800 border-red-200' },
   };
 
   return (
@@ -160,7 +156,7 @@ export function LearningPathPage() {
       {/* 主内容区 */}
       <div className="flex-1 flex min-h-0">
         {/* 左侧：知识点树 */}
-        <div className="w-80 border-r bg-white">
+        <div className="w-80 border-r bg-white flex-shrink-0">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
             <div className="px-4 pt-3 border-b">
               <TabsList className="w-full">
@@ -171,7 +167,7 @@ export function LearningPathPage() {
                   学习路径
                 </TabsTrigger>
                 <TabsTrigger value="stats" className="flex-1 text-xs">
-                  能力分析
+                  统计分析
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -263,160 +259,304 @@ export function LearningPathPage() {
             </TabsContent>
 
             <TabsContent value="stats" className="m-0 h-[calc(100%-40px)] overflow-auto">
-              <div className="p-4">
-                <h3 className="font-semibold mb-4">能力雷达图</h3>
-                <div className="flex justify-center mb-4">
-                  <ProgressRadar data={categoryProgress} />
+              <div className="p-4 space-y-4">
+                {/* 学习统计卡片 */}
+                <div className="grid grid-cols-2 gap-3">
+                  <Card className="p-3 text-center bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                    <div className="text-2xl font-bold text-blue-600">{completedNodes.size}</div>
+                    <div className="text-xs text-gray-600 mt-1">已学知识点</div>
+                  </Card>
+                  <Card className="p-3 text-center bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                    <div className="text-2xl font-bold text-green-600">
+                      {knowledgeTree.length - completedNodes.size}
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">待学知识点</div>
+                  </Card>
+                  <Card className="p-3 text-center bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                    <div className="text-2xl font-bold text-purple-600">{pathProgress.progress}%</div>
+                    <div className="text-xs text-gray-600 mt-1">路径完成度</div>
+                  </Card>
+                  <Card className="p-3 text-center bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {Math.round(knowledgeTree.filter(n => completedNodes.has(n.id)).reduce((sum, n) => sum + n.estimatedHours, 0))}
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">已学习时长(h)</div>
+                  </Card>
                 </div>
 
-                {/* 分类详情 */}
-                <div className="space-y-2">
-                  {categoryProgress.map(item => (
-                    <div key={item.category} className="flex items-center justify-between text-sm">
-                      <span>{item.category}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-blue-500"
-                            style={{ width: `${item.total > 0 ? (item.completed / item.total) * 100 : 0}%` }}
-                          />
-                        </div>
-                        <span className="text-gray-500 w-12 text-right">
-                          {item.completed}/{item.total}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                <Separator />
+
+                {/* 能力雷达图 */}
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <BarChart3 className="h-4 w-4 text-blue-600" />
+                    <h3 className="font-semibold text-sm">能力雷达图</h3>
+                  </div>
+                  <div className="flex justify-center">
+                    <ProgressRadar data={categoryProgress} />
+                  </div>
                 </div>
+
+                <Separator />
+
+                {/* 分类进度 */}
+                <div>
+                  <h3 className="font-semibold text-sm mb-3">各分类进度</h3>
+                  <div className="space-y-2">
+                    {categoryProgress.map(item => (
+                      <div key={item.category} className="flex items-center justify-between text-sm">
+                        <span className="text-gray-700">{item.category}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                              style={{ width: `${item.total > 0 ? (item.completed / item.total) * 100 : 0}%` }}
+                            />
+                          </div>
+                          <span className="text-gray-500 w-12 text-right text-xs">
+                            {item.completed}/{item.total}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* 学习建议 */}
+                <Card className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+                  <div className="flex items-start gap-2">
+                    <div className="p-1.5 bg-blue-100 rounded-lg flex-shrink-0">
+                      <BookOpen className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">学习建议</h4>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {recommendedNodes.length > 0 ? (
+                          <>
+                            建议下一步学习 <strong>{recommendedNodes[0].name}</strong>，
+                            预计需要 {recommendedNodes[0].estimatedHours} 小时。
+                          </>
+                        ) : (
+                          <>
+                            太棒了！你已经完成了所有基础知识点的学习。建议继续挑战更高难度。
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
               </div>
             </TabsContent>
           </Tabs>
         </div>
 
-        {/* 右侧：详情和推荐 */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {/* 知识点讲解面板 */}
+        {/* 右侧：知识点详情卡片 - 占据全部剩余空间 */}
+        <div className="flex-1 min-h-0 overflow-hidden">
           {viewingLesson ? (
-            <div className="flex-1 min-h-0 p-4">
-              <KnowledgeLessonPanel
-                lesson={viewingLesson}
-                onClose={() => setViewingLesson(null)}
-                onStartProblem={(problemId) => {
-                  // TODO: 跳转到题目练习
-                  console.log('Start problem:', problemId);
-                }}
-                getProblemTitle={(id) => {
-                  const node = knowledgeTree.find(n => n.problems.includes(id));
-                  return node ? `题目 #${id}` : `题目 ${id}`;
-                }}
-                getProblemDifficulty={() => 'medium'}
-              />
-            </div>
+            /* 知识点讲解面板 */
+            <KnowledgeLessonPanel
+              lesson={viewingLesson}
+              onClose={() => setViewingLesson(null)}
+              onStartProblem={(problemId) => {
+                console.log('Start problem:', problemId);
+              }}
+              getProblemTitle={(id) => {
+                const node = knowledgeTree.find(n => n.problems.includes(id));
+                return node ? `题目 #${id}` : `题目 ${id}`;
+              }}
+              getProblemDifficulty={() => 'medium'}
+            />
           ) : selectedNode ? (
             /* 选中知识点详情 */
-            <div className="p-4 border-b">
-              <KnowledgeNodeCard
-                node={selectedNode}
-                onStartLearning={() => startLearning(selectedNode.id)}
-                onPractice={() => {/* 跳转到练习页面 */}}
-              />
-              {/* 查看讲解按钮 */}
-              {getKnowledgeLesson(selectedNode.id) && (
-                <Button
-                  className="w-full mt-3"
-                  onClick={() => setViewingLesson(getKnowledgeLesson(selectedNode.id))}
-                >
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  查看知识点讲解
-                </Button>
-              )}
-            </div>
-          ) : (
-            /* 推荐学习 */
-            <div className="p-4 border-b">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="h-5 w-5 text-yellow-500" />
-                <h3 className="font-semibold">推荐学习</h3>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {recommendedNodes.map(node => (
-                  <Card
-                    key={node.id}
-                    className="p-3 cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                    onClick={() => setSelectedNode(node)}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-sm">{node.name}</span>
-                      <Badge variant="outline" className="text-xs">
-                        {node.estimatedHours}h
+            <ScrollArea className="h-full">
+              <div className="p-6 space-y-6">
+                {/* 知识点标题和基本信息 */}
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <h2 className="text-2xl font-bold text-gray-800">{selectedNode.name}</h2>
+                      <Badge className={difficultyConfig[selectedNode.difficulty].color}>
+                        {difficultyConfig[selectedNode.difficulty].label}
                       </Badge>
                     </div>
-                    <p className="text-xs text-gray-500 truncate">{node.description}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="secondary" className="text-xs">{node.category}</Badge>
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <TrendingUp className="h-3 w-3" />
-                        重要度 {node.importance}
-                      </div>
+                    <p className="text-gray-500">{selectedNode.category}</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedNode(null)}
+                  >
+                    返回
+                  </Button>
+                </div>
+
+                {/* 描述 */}
+                <Card className="p-4">
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-blue-500" />
+                    知识点描述
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed">{selectedNode.description}</p>
+                </Card>
+
+                {/* 学习信息 */}
+                <div className="grid grid-cols-3 gap-4">
+                  <Card className="p-4 text-center">
+                    <Clock className="h-5 w-5 text-blue-500 mx-auto mb-2" />
+                    <div className="text-xl font-bold text-gray-800">{selectedNode.estimatedHours}h</div>
+                    <div className="text-sm text-gray-500">预计时长</div>
+                  </Card>
+                  <Card className="p-4 text-center">
+                    <TrendingUp className="h-5 w-5 text-orange-500 mx-auto mb-2" />
+                    <div className="text-xl font-bold text-gray-800">{selectedNode.importance}/5</div>
+                    <div className="text-sm text-gray-500">重要程度</div>
+                  </Card>
+                  <Card className="p-4 text-center">
+                    <Zap className="h-5 w-5 text-yellow-500 mx-auto mb-2" />
+                    <div className="text-xl font-bold text-gray-800">{selectedNode.problems.length}</div>
+                    <div className="text-sm text-gray-500">相关题目</div>
+                  </Card>
+                </div>
+
+                {/* 标签 */}
+                {selectedNode.tags.length > 0 && (
+                  <Card className="p-4">
+                    <h3 className="font-semibold mb-3">标签</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedNode.tags.map(tag => (
+                        <Badge key={tag} variant="secondary" className="text-sm">
+                          {tag}
+                        </Badge>
+                      ))}
                     </div>
                   </Card>
-                ))}
+                )}
+
+                {/* 前置知识点 */}
+                {selectedNode.prerequisites.length > 0 && (
+                  <Card className="p-4">
+                    <h3 className="font-semibold mb-3">前置知识点</h3>
+                    <div className="space-y-2">
+                      {selectedNode.prerequisites.map(preId => {
+                        const preNode = knowledgeTree.find(n => n.id === preId);
+                        const isCompleted = completedNodes.has(preId);
+                        return preNode ? (
+                          <div 
+                            key={preId}
+                            className="flex items-center justify-between p-2 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => setSelectedNode(preNode)}
+                          >
+                            <div className="flex items-center gap-2">
+                              {isCompleted ? (
+                                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                              ) : (
+                                <Circle className="h-4 w-4 text-gray-400" />
+                              )}
+                              <span className="text-sm">{preNode.name}</span>
+                            </div>
+                            <Badge variant="outline" className="text-xs">{preNode.category}</Badge>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  </Card>
+                )}
+
+                {/* 操作按钮 */}
+                <div className="flex gap-4">
+                  <Button 
+                    className="flex-1 h-12 text-base"
+                    onClick={() => startLearning(selectedNode.id)}
+                  >
+                    <Zap className="h-5 w-5 mr-2" />
+                    开始学习
+                  </Button>
+                  {getKnowledgeLesson(selectedNode.id) && (
+                    <Button 
+                      variant="outline"
+                      className="flex-1 h-12 text-base"
+                      onClick={() => setViewingLesson(getKnowledgeLesson(selectedNode.id)!)}
+                    >
+                      <BookOpen className="h-5 w-5 mr-2" />
+                      查看讲解
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-
-          {/* 学习统计概览 */}
-          <div className="p-4 flex-1 overflow-auto">
-            <h3 className="font-semibold mb-4">学习统计</h3>
-            <div className="grid grid-cols-4 gap-4">
-              <Card className="p-4 text-center">
-                <div className="text-3xl font-bold text-blue-600">{completedNodes.size}</div>
-                <div className="text-sm text-gray-500 mt-1">已学知识点</div>
-              </Card>
-              <Card className="p-4 text-center">
-                <div className="text-3xl font-bold text-green-600">
-                  {knowledgeTree.length - completedNodes.size}
-                </div>
-                <div className="text-sm text-gray-500 mt-1">待学知识点</div>
-              </Card>
-              <Card className="p-4 text-center">
-                <div className="text-3xl font-bold text-purple-600">{pathProgress.progress}%</div>
-                <div className="text-sm text-gray-500 mt-1">路径完成度</div>
-              </Card>
-              <Card className="p-4 text-center">
-                <div className="text-3xl font-bold text-orange-600">
-                  {Math.round(knowledgeTree.filter(n => completedNodes.has(n.id)).reduce((sum, n) => sum + n.estimatedHours, 0))}
-                </div>
-                <div className="text-sm text-gray-500 mt-1">已学习时长(h)</div>
-              </Card>
-            </div>
-
-            {/* 学习建议 */}
-            <Card className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <BookOpen className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <h4 className="font-medium">学习建议</h4>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {recommendedNodes.length > 0 ? (
-                      <>
-                        建议下一步学习 <strong>{recommendedNodes[0].name}</strong>，
-                        预计需要 {recommendedNodes[0].estimatedHours} 小时。
-                        该知识点属于{recommendedNodes[0].category}，重要程度为 {recommendedNodes[0].importance}/5。
-                      </>
-                    ) : (
-                      <>
-                        太棒了！你已经完成了所有基础知识点的学习。建议继续挑战更高难度的题目，
-                        或者切换到更高的学习目标继续提升。
-                      </>
-                    )}
+            </ScrollArea>
+          ) : (
+            /* 默认：推荐学习 */
+            <ScrollArea className="h-full">
+              <div className="p-6 space-y-6">
+                {/* 欢迎信息 */}
+                <div className="text-center py-8">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 mb-4">
+                    <Target className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">选择一个知识点开始学习</h2>
+                  <p className="text-gray-500 max-w-md mx-auto">
+                    从左侧知识地图中选择一个知识点，或者从下方推荐开始你的学习之旅
                   </p>
                 </div>
+
+                {/* 推荐学习 */}
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Zap className="h-5 w-5 text-yellow-500" />
+                    <h3 className="font-semibold text-lg">推荐学习</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {recommendedNodes.map(node => (
+                      <Card
+                        key={node.id}
+                        className="p-4 cursor-pointer hover:border-blue-300 hover:shadow-md transition-all"
+                        onClick={() => setSelectedNode(node)}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-semibold text-lg">{node.name}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {node.estimatedHours}h
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-500 mb-3 line-clamp-2">{node.description}</p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="secondary" className="text-xs">{node.category}</Badge>
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <TrendingUp className="h-3 w-3" />
+                            重要度 {node.importance}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 快速入口 */}
+                <div className="grid grid-cols-3 gap-4">
+                  <Card className="p-4 text-center cursor-pointer hover:border-blue-300 hover:shadow-md transition-all"
+                    onClick={() => setActiveTab('roadmap')}>
+                    <BookOpen className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+                    <div className="font-medium">浏览知识地图</div>
+                    <div className="text-xs text-gray-500 mt-1">查看完整知识点结构</div>
+                  </Card>
+                  <Card className="p-4 text-center cursor-pointer hover:border-blue-300 hover:shadow-md transition-all"
+                    onClick={() => setActiveTab('path')}>
+                    <Target className="h-8 w-8 text-purple-500 mx-auto mb-2" />
+                    <div className="font-medium">学习路径</div>
+                    <div className="text-xs text-gray-500 mt-1">按计划系统学习</div>
+                  </Card>
+                  <Card className="p-4 text-center cursor-pointer hover:border-blue-300 hover:shadow-md transition-all"
+                    onClick={() => setActiveTab('stats')}>
+                    <BarChart3 className="h-8 w-8 text-green-500 mx-auto mb-2" />
+                    <div className="font-medium">学习统计</div>
+                    <div className="text-xs text-gray-500 mt-1">查看学习进度</div>
+                  </Card>
+                </div>
               </div>
-            </Card>
-          </div>
+            </ScrollArea>
+          )}
         </div>
       </div>
     </div>
