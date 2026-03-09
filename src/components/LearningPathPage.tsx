@@ -17,9 +17,7 @@ import {
 } from '@/lib/learning-path';
 import { getKnowledgeLesson, type KnowledgeLesson } from '@/lib/knowledge-lessons';
 import { ProgressRadar } from '@/components/RadarChart';
-import {
-  KnowledgeRoadmap,
-} from '@/components/KnowledgeRoadmap';
+import { KnowledgeRoadmap } from '@/components/KnowledgeRoadmap';
 import { KnowledgeLessonPanel } from '@/components/KnowledgeLessonPanel';
 import {
   Target,
@@ -37,6 +35,8 @@ import {
   Rocket,
   Award,
   BarChart3,
+  ArrowLeft,
+  Play,
 } from 'lucide-react';
 
 // 目标配置
@@ -45,6 +45,14 @@ const goalConfig: Record<LearningGoal, { label: string; color: string; icon: Rea
   improvement: { label: '提高组', color: 'text-blue-600', icon: <Award className="h-4 w-4" /> },
   provincial: { label: '省选', color: 'text-purple-600', icon: <Trophy className="h-4 w-4" /> },
   national: { label: '国赛', color: 'text-red-600', icon: <Rocket className="h-4 w-4" /> },
+};
+
+// 难度配置
+const difficultyConfig = {
+  beginner: { label: '入门', color: 'bg-green-100 text-green-800 border-green-200' },
+  intermediate: { label: '进阶', color: 'bg-blue-100 text-blue-800 border-blue-200' },
+  advanced: { label: '高级', color: 'bg-orange-100 text-orange-800 border-orange-200' },
+  expert: { label: '专家', color: 'bg-red-100 text-red-800 border-red-200' },
 };
 
 export function LearningPathPage() {
@@ -103,18 +111,33 @@ export function LearningPathPage() {
     };
   }, [currentPath, completedNodes]);
 
-  // 开始学习知识点
+  // 开始学习 - 打开讲解面板
   const startLearning = (nodeId: string) => {
-    setLearningNodes(prev => new Set([...prev, nodeId]));
-    setSelectedNode(knowledgeTree.find(n => n.id === nodeId) || null);
+    const node = knowledgeTree.find(n => n.id === nodeId);
+    if (node) {
+      setSelectedNode(node);
+      setLearningNodes(prev => new Set([...prev, nodeId]));
+      // 自动打开讲解面板
+      const lesson = getKnowledgeLesson(nodeId);
+      if (lesson) {
+        setViewingLesson(lesson);
+      }
+    }
   };
 
-  // 难度配置
-  const difficultyConfig = {
-    beginner: { label: '入门', color: 'bg-green-100 text-green-800 border-green-200' },
-    intermediate: { label: '进阶', color: 'bg-blue-100 text-blue-800 border-blue-200' },
-    advanced: { label: '高级', color: 'bg-orange-100 text-orange-800 border-orange-200' },
-    expert: { label: '专家', color: 'bg-red-100 text-red-800 border-red-200' },
+  // 标记已掌握
+  const markAsCompleted = (nodeId: string) => {
+    setCompletedNodes(prev => new Set([...prev, nodeId]));
+    setLearningNodes(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(nodeId);
+      return newSet;
+    });
+  };
+
+  // 关闭讲解面板，返回知识点列表
+  const closeLessonAndReturn = () => {
+    setViewingLesson(null);
   };
 
   return (
@@ -352,24 +375,26 @@ export function LearningPathPage() {
           </Tabs>
         </div>
 
-        {/* 右侧：知识点详情卡片 - 占据全部剩余空间 */}
+        {/* 右侧：知识点详情卡片 */}
         <div className="flex-1 min-h-0 overflow-hidden">
-          {viewingLesson ? (
+          {viewingLesson && selectedNode ? (
             /* 知识点讲解面板 */
             <KnowledgeLessonPanel
               lesson={viewingLesson}
-              onClose={() => setViewingLesson(null)}
+              knowledgeNode={selectedNode}
+              isCompleted={completedNodes.has(selectedNode.id)}
+              onClose={closeLessonAndReturn}
+              onMarkCompleted={() => markAsCompleted(selectedNode.id)}
               onStartProblem={(problemId) => {
                 console.log('Start problem:', problemId);
               }}
               getProblemTitle={(id) => {
-                const node = knowledgeTree.find(n => n.problems.includes(id));
-                return node ? `题目 #${id}` : `题目 ${id}`;
+                return `题目 #${id}`;
               }}
               getProblemDifficulty={() => 'medium'}
             />
           ) : selectedNode ? (
-            /* 选中知识点详情 */
+            /* 选中知识点详情 - 简化版，只有开始学习按钮 */
             <ScrollArea className="h-full">
               <div className="p-6 space-y-6">
                 {/* 知识点标题和基本信息 */}
@@ -380,6 +405,12 @@ export function LearningPathPage() {
                       <Badge className={difficultyConfig[selectedNode.difficulty].color}>
                         {difficultyConfig[selectedNode.difficulty].label}
                       </Badge>
+                      {completedNodes.has(selectedNode.id) && (
+                        <Badge className="bg-green-100 text-green-800 border-green-200">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          已掌握
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-gray-500">{selectedNode.category}</p>
                   </div>
@@ -464,26 +495,24 @@ export function LearningPathPage() {
                   </Card>
                 )}
 
-                {/* 操作按钮 */}
-                <div className="flex gap-4">
+                {/* 唯一入口：开始学习按钮 */}
+                <div className="flex gap-4 pt-4">
                   <Button 
-                    className="flex-1 h-12 text-base"
+                    className="flex-1 h-14 text-lg"
+                    size="lg"
                     onClick={() => startLearning(selectedNode.id)}
                   >
-                    <Zap className="h-5 w-5 mr-2" />
+                    <Play className="h-5 w-5 mr-2" />
                     开始学习
                   </Button>
-                  {getKnowledgeLesson(selectedNode.id) && (
-                    <Button 
-                      variant="outline"
-                      className="flex-1 h-12 text-base"
-                      onClick={() => setViewingLesson(getKnowledgeLesson(selectedNode.id)!)}
-                    >
-                      <BookOpen className="h-5 w-5 mr-2" />
-                      查看讲解
-                    </Button>
-                  )}
                 </div>
+
+                {/* 学习提示 */}
+                {getKnowledgeLesson(selectedNode.id) && (
+                  <p className="text-center text-sm text-gray-500">
+                    点击"开始学习"将打开知识点讲解，包含理论知识和练习题目
+                  </p>
+                )}
               </div>
             </ScrollArea>
           ) : (
