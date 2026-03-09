@@ -15,7 +15,9 @@ import { TestCasesPanel } from '@/components/TestCasesPanel';
 import { ShortcutsHelp } from '@/components/ShortcutsHelp';
 import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
+import { LearningPathPage } from '@/components/LearningPathPage';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
+import { Target, BookOpen } from 'lucide-react';
 
 // 测试用例类型
 interface TestCase {
@@ -2310,6 +2312,7 @@ export default function Home() {
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
+  const [currentView, setCurrentView] = useState<'practice' | 'learning'>('practice');
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
@@ -2425,12 +2428,38 @@ export default function Home() {
   return (
     <div className="flex h-screen bg-background">
       {/* 左侧边栏 - 题目列表 */}
-      <aside className="w-80 border-r bg-muted/30">
-        <div className="flex h-16 items-center border-b px-4">
-          <Code2 className="mr-2 h-5 w-5 text-primary" />
-          <h1 className="text-lg font-bold">NOIP 算法题库</h1>
+      <aside className="w-80 border-r bg-muted/30 flex flex-col">
+        <div className="flex h-16 items-center border-b px-4 gap-2">
+          <Code2 className="h-5 w-5 text-primary" />
+          <h1 className="text-lg font-bold flex-1">NOIP 算法题库</h1>
         </div>
-        <ScrollArea className="h-[calc(100vh-4rem)]">
+        {/* 视图切换标签 */}
+        <div className="flex border-b">
+          <button
+            onClick={() => setCurrentView('practice')}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+              currentView === 'practice'
+                ? 'text-primary border-b-2 border-primary bg-primary/5'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+            }`}
+          >
+            <BookOpen className="h-4 w-4" />
+            题库练习
+          </button>
+          <button
+            onClick={() => setCurrentView('learning')}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+              currentView === 'learning'
+                ? 'text-primary border-b-2 border-primary bg-primary/5'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+            }`}
+          >
+            <Target className="h-4 w-4" />
+            学习路径
+          </button>
+        </div>
+        {currentView === 'practice' ? (
+          <ScrollArea className="flex-1">
           <div className="space-y-1 p-2">
             {categories.map((category) => (
               <div key={category.name}>
@@ -2489,10 +2518,17 @@ export default function Home() {
             ))}
           </div>
         </ScrollArea>
+        ) : (
+          <div className="flex-1" />
+        )}
       </aside>
 
       {/* 主内容区 */}
       <main className="flex flex-1 flex-col overflow-hidden">
+        {currentView === 'learning' ? (
+          <LearningPathPage />
+        ) : (
+          <>
         {/* 顶部导航栏 */}
         <header className="flex h-16 items-center justify-between border-b px-6">
           <div className="flex items-center gap-4">
@@ -2701,6 +2737,8 @@ export default function Home() {
             )}
           </div>
         </div>
+          </>
+        )}
       </main>
     </div>
   );
