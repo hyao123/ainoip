@@ -122,7 +122,7 @@ export function LearningPathPage() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col overflow-hidden">
       {/* 顶部标题栏 */}
       <div className="px-6 py-4 border-b bg-gradient-to-r from-purple-50 via-blue-50 to-cyan-50">
         <div className="flex items-center justify-between">
@@ -294,10 +294,10 @@ export function LearningPathPage() {
         </div>
 
         {/* 右侧：详情和推荐 */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           {/* 知识点讲解面板 */}
           {viewingLesson ? (
-            <div className="flex-1 p-4">
+            <div className="flex-1 min-h-0 p-4">
               <KnowledgeLessonPanel
                 lesson={viewingLesson}
                 onClose={() => setViewingLesson(null)}

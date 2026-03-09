@@ -55,7 +55,7 @@ export function KnowledgeLessonPanel({
   };
 
   return (
-    <Card className="h-full bg-[#1a1a2e] border-[#2a2a4a] flex flex-col">
+    <Card className="h-full bg-[#1a1a2e] border-[#2a2a4a] flex flex-col overflow-hidden">
       <CardHeader className="flex-shrink-0 border-b border-[#2a2a4a] py-3 px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -116,9 +116,9 @@ export function KnowledgeLessonPanel({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 overflow-hidden p-0">
-        <ScrollArea className="h-full">
-          <div className="p-4 space-y-4">
+      <CardContent className="flex-1 min-h-0 p-0">
+        <ScrollArea className="h-full w-full">
+          <div className="p-4 space-y-4 pb-8">
             {activeTab === 'content' && (
               <>
                 {/* Markdown 内容渲染 */}
