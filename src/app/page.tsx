@@ -14,6 +14,8 @@ import { NOIPTemplateHint } from '@/components/NOIPTemplateHint';
 import { TestCasesPanel } from '@/components/TestCasesPanel';
 import { ShortcutsHelp } from '@/components/ShortcutsHelp';
 import { EvaluationPanel } from '@/components/EvaluationPanel';
+import { AIAssistantPanel } from '@/components/AIAssistantPanel';
+import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
 
 // 测试用例类型
 interface TestCase {
@@ -2306,6 +2308,8 @@ export default function Home() {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [showEvaluation, setShowEvaluation] = useState(false);
+  const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
+  const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
@@ -2651,12 +2655,24 @@ export default function Home() {
 
             {/* 测试输入输出 或 评测系统 */}
             {showEvaluation ? (
-              <div className="h-1/3 min-h-[200px] border-t border-border">
-                <EvaluationPanel
+              <div className="flex flex-col h-1/2 min-h-[300px] border-t border-border">
+                <div className="flex-1 min-h-0">
+                  <EvaluationPanel
+                    code={code}
+                    defaultTestCases={selectedProblem.testCases}
+                    timeLimit={selectedProblem.timeLimit || 1000}
+                    memoryLimit={selectedProblem.memoryLimit || 128}
+                    onResultsChange={(results, summary) => {
+                      setEvaluationResults(results);
+                      setEvaluationSummary(summary);
+                    }}
+                  />
+                </div>
+                {/* AI 助教面板 */}
+                <AIAssistantPanel
+                  problem={selectedProblem}
                   code={code}
-                  defaultTestCases={selectedProblem.testCases}
-                  timeLimit={selectedProblem.timeLimit || 1000}
-                  memoryLimit={selectedProblem.memoryLimit || 128}
+                  evaluationResults={evaluationResults}
                 />
               </div>
             ) : (

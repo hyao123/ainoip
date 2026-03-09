@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -45,6 +45,7 @@ interface EvaluationPanelProps {
   defaultTestCases?: TestCase[];
   timeLimit?: number;
   memoryLimit?: number;
+  onResultsChange?: (results: TestCaseResult[] | null, summary: EvaluateSummary | null) => void;
 }
 
 export function EvaluationPanel({
@@ -52,6 +53,7 @@ export function EvaluationPanel({
   defaultTestCases = [],
   timeLimit = 1000,
   memoryLimit = 128,
+  onResultsChange,
 }: EvaluationPanelProps) {
   const [testCases, setTestCases] = useState<TestCase[]>(
     defaultTestCases.length > 0
@@ -69,6 +71,13 @@ export function EvaluationPanel({
 
   const [customTimeLimit, setCustomTimeLimit] = useState(timeLimit);
   const [customMemoryLimit, setCustomMemoryLimit] = useState(memoryLimit);
+
+  // 当评测结果变化时通知父组件
+  useEffect(() => {
+    if (onResultsChange) {
+      onResultsChange(results, summary);
+    }
+  }, [results, summary, onResultsChange]);
 
   // 注释掉freopen语句（用于标准评测）
   const commentOutFreopen = (sourceCode: string): string => {
