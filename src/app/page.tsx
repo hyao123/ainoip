@@ -17,7 +17,9 @@ import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { LearningPathPage } from '@/components/LearningPathPage';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
-import { Target, BookOpen } from 'lucide-react';
+import { Target, BookOpen, Database } from 'lucide-react';
+import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
+import type { Problem as BankProblem } from '@/lib/problems';
 
 // 测试用例类型
 interface TestCase {
@@ -2312,7 +2314,7 @@ export default function Home() {
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
-  const [currentView, setCurrentView] = useState<'practice' | 'learning'>('practice');
+  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank'>('practice');
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
@@ -2350,6 +2352,30 @@ export default function Home() {
     setError('');
     setShowSolution(false);
     setShowEvaluation(false);
+  };
+
+  // 从智能题库选择题目时的适配函数
+  const handleBankProblemSelect = (bankProblem: BankProblem) => {
+    // 转换为原有的Problem类型
+    const problem: Problem = {
+      id: bankProblem.id,
+      title: bankProblem.title,
+      difficulty: mapDifficulty(bankProblem.difficulty),
+      description: bankProblem.description,
+      inputFormat: bankProblem.inputFormat,
+      outputFormat: bankProblem.outputFormat,
+      sampleInput: bankProblem.sampleInput,
+      sampleOutput: bankProblem.sampleOutput,
+      defaultCode: bankProblem.defaultCode,
+      category: bankProblem.category,
+      year: bankProblem.year,
+      testCases: bankProblem.testCases,
+      timeLimit: bankProblem.timeLimit,
+      memoryLimit: bankProblem.memoryLimit,
+    };
+    handleProblemSelect(problem);
+    // 切换到练习视图以显示题目详情
+    setCurrentView('practice');
   };
 
   const handleShowSolution = () => {
@@ -2437,7 +2463,7 @@ export default function Home() {
         <div className="flex border-b">
           <button
             onClick={() => setCurrentView('practice')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1 px-2 py-3 text-xs font-medium transition-colors ${
               currentView === 'practice'
                 ? 'text-primary border-b-2 border-primary bg-primary/5'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
@@ -2447,8 +2473,19 @@ export default function Home() {
             题库练习
           </button>
           <button
+            onClick={() => setCurrentView('bank')}
+            className={`flex-1 flex items-center justify-center gap-1 px-2 py-3 text-xs font-medium transition-colors ${
+              currentView === 'bank'
+                ? 'text-primary border-b-2 border-primary bg-primary/5'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+            }`}
+          >
+            <Database className="h-4 w-4" />
+            智能题库
+          </button>
+          <button
             onClick={() => setCurrentView('learning')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1 px-2 py-3 text-xs font-medium transition-colors ${
               currentView === 'learning'
                 ? 'text-primary border-b-2 border-primary bg-primary/5'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
@@ -2518,6 +2555,8 @@ export default function Home() {
             ))}
           </div>
         </ScrollArea>
+        ) : currentView === 'bank' ? (
+          <ProblemBankPage onSelectProblem={handleBankProblemSelect} />
         ) : (
           <div className="flex-1" />
         )}
@@ -2527,6 +2566,14 @@ export default function Home() {
       <main className="flex flex-1 flex-col overflow-hidden">
         {currentView === 'learning' ? (
           <LearningPathPage />
+        ) : currentView === 'bank' ? (
+          <div className="flex-1 flex items-center justify-center bg-muted/30">
+            <div className="text-center">
+              <Database className="h-16 w-16 mx-auto mb-4 text-muted-foreground/30" />
+              <h3 className="text-lg font-medium text-muted-foreground">请从左侧选择题目</h3>
+              <p className="text-sm text-muted-foreground/70 mt-1">使用筛选器快速找到适合的题目</p>
+            </div>
+          </div>
         ) : (
           <>
         {/* 顶部导航栏 */}
