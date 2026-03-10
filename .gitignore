@@ -97,3 +97,19 @@ Desktop.ini
 .turbo
 
 .coze-logs
+
+# Credentials and secrets (NEVER commit these!)
+.git-credentials
+*_credentials*
+*.pem
+*.key
+*.p12
+secrets/
+.secrets/
+credentials.json
+service-account.json
+
+# Private keys
+id_rsa
+id_ed25519
+*.ppk
