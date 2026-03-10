@@ -20,6 +20,7 @@ import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationRes
 import { Target, BookOpen, Database } from 'lucide-react';
 import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
 import type { Problem as BankProblem } from '@/lib/problems';
+import { getProblemById } from '@/lib/problems';
 
 // 测试用例类型
 interface TestCase {
@@ -2378,6 +2379,14 @@ export default function Home() {
     setCurrentView('practice');
   };
 
+  // 从学习路径页面跳转到题目练习
+  const handleStartProblemById = (problemId: number) => {
+    const bankProblem = getProblemById(problemId);
+    if (bankProblem) {
+      handleBankProblemSelect(bankProblem);
+    }
+  };
+
   const handleShowSolution = () => {
     setShowSolution(true);
     setCode(selectedProblem.defaultCode);
@@ -2565,7 +2574,7 @@ export default function Home() {
       {/* 主内容区 */}
       <main className="flex flex-1 flex-col overflow-hidden">
         {currentView === 'learning' ? (
-          <LearningPathPage />
+          <LearningPathPage onStartProblem={handleStartProblemById} />
         ) : currentView === 'bank' ? (
           <div className="flex-1 flex items-center justify-center bg-muted/30">
             <div className="text-center">

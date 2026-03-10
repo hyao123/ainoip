@@ -16,6 +16,7 @@ import {
   type KnowledgeNode,
 } from '@/lib/learning-path';
 import { getKnowledgeLesson, type KnowledgeLesson } from '@/lib/knowledge-lessons';
+import { getProblemById, type Problem, difficultyConfig as bankDifficultyConfig } from '@/lib/problems';
 import { ProgressRadar } from '@/components/RadarChart';
 import { KnowledgeRoadmap } from '@/components/KnowledgeRoadmap';
 import { KnowledgeLessonPanel } from '@/components/KnowledgeLessonPanel';
@@ -39,6 +40,10 @@ import {
   Play,
 } from 'lucide-react';
 
+interface LearningPathPageProps {
+  onStartProblem?: (problemId: number) => void;
+}
+
 // 目标配置
 const goalConfig: Record<LearningGoal, { label: string; color: string; icon: React.ReactNode }> = {
   popularity: { label: '普及组', color: 'text-green-600', icon: <Star className="h-4 w-4" /> },
@@ -55,7 +60,7 @@ const difficultyConfig = {
   expert: { label: '专家', color: 'bg-red-100 text-red-800 border-red-200' },
 };
 
-export function LearningPathPage() {
+export function LearningPathPage({ onStartProblem }: LearningPathPageProps) {
   const [selectedGoal, setSelectedGoal] = useState<LearningGoal>('popularity');
   const [completedNodes, setCompletedNodes] = useState<Set<string>>(new Set(['basics-io', 'basics-variables']));
   const [learningNodes, setLearningNodes] = useState<Set<string>>(new Set(['basics-operators']));
@@ -386,12 +391,38 @@ export function LearningPathPage() {
               onClose={closeLessonAndReturn}
               onMarkCompleted={() => markAsCompleted(selectedNode.id)}
               onStartProblem={(problemId) => {
-                console.log('Start problem:', problemId);
+                const id = parseInt(problemId, 10);
+                if (!isNaN(id) && onStartProblem) {
+                  onStartProblem(id);
+                }
               }}
               getProblemTitle={(id) => {
+                const numId = parseInt(id, 10);
+                if (!isNaN(numId)) {
+                  const problem = getProblemById(numId);
+                  if (problem) {
+                    return problem.title;
+                  }
+                }
                 return `题目 #${id}`;
               }}
-              getProblemDifficulty={() => 'medium'}
+              getProblemDifficulty={(id) => {
+                const numId = parseInt(id, 10);
+                if (!isNaN(numId)) {
+                  const problem = getProblemById(numId);
+                  if (problem) {
+                    // 映射难度到旧格式
+                    const diffMap: Record<string, 'easy' | 'medium' | 'hard'> = {
+                      'beginner': 'easy',
+                      'intermediate': 'medium',
+                      'advanced': 'hard',
+                      'expert': 'hard',
+                    };
+                    return diffMap[problem.difficulty] || 'medium';
+                  }
+                }
+                return 'medium';
+              }}
             />
           ) : selectedNode ? (
             /* 选中知识点详情 - 简化版，只有开始学习按钮 */
