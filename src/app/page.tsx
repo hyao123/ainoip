@@ -2469,15 +2469,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      {/* 顶部导航栏 - 独立整行 */}
-      <header className="h-14 border-b bg-background flex items-center px-4 gap-6 shrink-0">
-        <div className="flex items-center gap-2">
-          <Code2 className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-bold">NOIP 算法题库</h1>
-        </div>
-        <Separator orientation="vertical" className="h-6" />
-        
-        {/* 主导航标签 */}
+      {/* 顶部导航栏 - 纯导航 */}
+      <header className="h-12 border-b bg-background flex items-center justify-center px-4 shrink-0">
         <nav className="flex items-center gap-1">
           <button
             onClick={() => setCurrentView('practice')}
@@ -2531,6 +2524,12 @@ export default function Home() {
         {/* 左侧边栏 - 仅在题库练习和智能题库时显示 */}
         {(currentView === 'practice' || currentView === 'bank') && (
           <aside className="w-72 border-r bg-muted/30 flex flex-col shrink-0">
+            {/* 左侧边栏标题 */}
+            <div className="h-11 border-b bg-background flex items-center px-3 gap-2 shrink-0">
+              <Code2 className="h-4 w-4 text-primary" />
+              <h1 className="text-sm font-semibold">NOIP 算法题库</h1>
+            </div>
+            
             {currentView === 'practice' ? (
               <ScrollArea className="flex-1">
                 <div className="space-y-0.5 p-1.5">
