@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X } from 'lucide-react';
-import { CodeEditor } from '@/components/CodeEditor';
+import { MonacoCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/MonacoCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
 import { NOIPTemplateHint } from '@/components/NOIPTemplateHint';
@@ -2325,6 +2325,11 @@ export default function Home() {
   const [showTestPanel, setShowTestPanel] = useState(false);
   const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [activeTab, setActiveTab] = useState<'input' | 'test' | 'output'>('input');
+  const [editorSettings, setEditorSettings] = useState<EditorSettings>({
+    theme: 'vs-dark',
+    language: 'cpp',
+    fontSize: 14,
+  });
 
   // 初始化样例输入和期望输出
   useEffect(() => {
@@ -2725,23 +2730,13 @@ export default function Home() {
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* 代码编辑器 */}
             <div className="flex-[2] flex flex-col overflow-hidden border-b">
-              <div className="flex items-center justify-between border-b bg-slate-900/50 px-4 py-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <span className="text-sm font-medium text-slate-300">main.cpp</span>
-                </div>
-                <span className="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded font-mono">C++ 17</span>
-              </div>
-              <CodeEditor
+              <MonacoCodeEditor
                 value={code}
                 onChange={setCode}
-                placeholder="// 在此编写你的代码..."
-                language="C++ 17"
+                language={editorSettings.language}
+                theme={editorSettings.theme}
                 onRunCode={() => !isRunning && handleRunCode()}
+                onSettingsChange={setEditorSettings}
               />
             </div>
 
