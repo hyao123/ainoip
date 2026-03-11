@@ -16,14 +16,16 @@ import { ShortcutsHelp } from '@/components/ShortcutsHelp';
 import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { LearningPathPage } from '@/components/LearningPathPage';
+import { LearningCenter } from '@/components/LearningCenter';
+import { DailyProblemCard } from '@/components/DailyProblemCard';
 import { UserCenterPage } from '@/components/UserCenterPage';
 import { AILogoWithText } from '@/components/AILogo';
 import { ProgressiveHint } from '@/components/ProgressiveHint';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
 
 import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
-import type { Problem as BankProblem } from '@/lib/problems';
-import { getProblemById } from '@/lib/problems';
+import type { Problem as BankProblem, DifficultyLevel } from '@/lib/problems';
+import { getProblemById, problems as allProblems } from '@/lib/problems';
 import { getProblemHints, generateGenericHints, type ProblemHints, type HintLevel } from '@/lib/hints';
 import { addSubmission, getUserPointsAndHints, useHint, getProblemHintUsage } from '@/lib/user-learning-data';
 
@@ -2574,6 +2576,14 @@ export default function Home() {
             {currentView === 'practice' ? (
               <ScrollArea className="flex-1">
                 <div className="space-y-0.5 p-1.5">
+                  {/* 每日一题 */}
+                  <div className="mb-2">
+                    <DailyProblemCard 
+                      onStartProblem={(problem) => handleStartProblemById(problem.id)} 
+                      compact 
+                    />
+                  </div>
+                  
                   {categories.map((category) => (
                     <div key={category.name}>
                       {/* 分类标题 */}
@@ -2640,7 +2650,7 @@ export default function Home() {
         {/* 主内容区 */}
         <main className="flex flex-1 flex-col overflow-hidden">
           {currentView === 'learning' ? (
-            <LearningPathPage onStartProblem={handleStartProblemById} />
+            <LearningCenter onStartProblem={(problemId) => handleStartProblemById(problemId)} />
           ) : currentView === 'user' ? (
             <UserCenterPage onSelectProblem={handleStartProblemById} />
           ) : currentView === 'bank' ? (
