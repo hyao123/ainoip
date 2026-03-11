@@ -16,11 +16,13 @@ import { ShortcutsHelp } from '@/components/ShortcutsHelp';
 import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { LearningPathPage } from '@/components/LearningPathPage';
+import { UserCenterPage } from '@/components/UserCenterPage';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
-import { Target, BookOpen, Database } from 'lucide-react';
+import { Target, BookOpen, Database, User } from 'lucide-react';
 import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
 import type { Problem as BankProblem } from '@/lib/problems';
 import { getProblemById } from '@/lib/problems';
+import { addSubmission } from '@/lib/user-learning-data';
 
 // 测试用例类型
 interface TestCase {
@@ -2315,7 +2317,7 @@ export default function Home() {
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
-  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank'>('practice');
+  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user'>('practice');
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
@@ -2508,6 +2510,17 @@ export default function Home() {
             <Target className="h-4 w-4" />
             学习路径
           </button>
+          <button
+            onClick={() => setCurrentView('user')}
+            className={`flex-1 flex items-center justify-center gap-1 px-2 py-3 text-xs font-medium transition-colors ${
+              currentView === 'user'
+                ? 'text-primary border-b-2 border-primary bg-primary/5'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+            }`}
+          >
+            <User className="h-4 w-4" />
+            个人中心
+          </button>
         </div>
         {currentView === 'practice' ? (
           <ScrollArea className="flex-1">
@@ -2580,6 +2593,8 @@ export default function Home() {
       <main className="flex flex-1 flex-col overflow-hidden">
         {currentView === 'learning' ? (
           <LearningPathPage onStartProblem={handleStartProblemById} />
+        ) : currentView === 'user' ? (
+          <UserCenterPage onSelectProblem={handleStartProblemById} />
         ) : currentView === 'bank' ? (
           <div className="flex-1 flex items-center justify-center bg-muted/30">
             <div className="text-center">
@@ -2753,6 +2768,30 @@ export default function Home() {
                     onResultsChange={(results, summary) => {
                       setEvaluationResults(results);
                       setEvaluationSummary(summary);
+                      
+                      // 记录提交结果到用户学习数据
+                      if (summary && results && results.length > 0) {
+                        const passedCount = results.filter(r => r.status === 'AC').length;
+                        // 根据通过率判断结果
+                        const result: 'AC' | 'WA' | 'TLE' | 'MLE' | 'RE' | 'CE' | 'SE' = 
+                          passedCount === results.length ? 'AC' : 
+                          results.some(r => r.status === 'TLE') ? 'TLE' :
+                          results.some(r => r.status === 'MLE') ? 'MLE' :
+                          results.some(r => r.status === 'RE') ? 'RE' :
+                          results.some(r => r.status === 'CE') ? 'CE' : 'WA';
+                        
+                        addSubmission(
+                          selectedProblem.id,
+                          selectedProblem.title,
+                          selectedProblem.category,
+                          selectedProblem.difficulty,
+                          code,
+                          editorSettings.language,
+                          result,
+                          passedCount,
+                          results.length
+                        );
+                      }
                     }}
                   />
                 </div>
