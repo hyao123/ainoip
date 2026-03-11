@@ -5,7 +5,8 @@ import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, XCircle, CheckCircle, Clock, MemoryStick, AlertTriangle, FileOutput, FileCode } from 'lucide-react';
+import { ChevronDown, ChevronUp, XCircle, CheckCircle, Clock, MemoryStick, AlertTriangle, FileOutput, FileCode, GitCompare } from 'lucide-react';
+import { DiffViewer } from '@/components/DiffViewer';
 
 export interface TestCaseResult {
   testCaseId: number;
@@ -244,35 +245,56 @@ export function EvaluationResults({
                       </Card>
                     </div>
 
-                    <div>
-                      <p className="text-sm font-medium mb-2">期望输出</p>
-                      <Card className="p-3">
-                        <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-mono">
-                          {result.expectedOutput || '(空)'}
-                        </pre>
-                      </Card>
-                    </div>
+                    {/* 根据状态选择不同的展示方式 */}
+                    {result.status === 'AC' ? (
+                      // AC状态：简单展示输出
+                      <div>
+                        <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          程序输出
+                        </p>
+                        <Card className="p-3 bg-green-50 dark:bg-green-950">
+                          <pre className="text-sm text-green-700 dark:text-green-300 whitespace-pre-wrap font-mono">
+                            {result.actualOutput || '(空)'}
+                          </pre>
+                        </Card>
+                      </div>
+                    ) : result.status === 'WA' ? (
+                      // WA状态：使用差异对比视图
+                      <div>
+                        <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                          <GitCompare className="h-4 w-4 text-orange-500" />
+                          输出对比
+                        </p>
+                        <Card className="p-3">
+                          <DiffViewer 
+                            expected={result.expectedOutput || ''} 
+                            actual={result.actualOutput || ''} 
+                          />
+                        </Card>
+                      </div>
+                    ) : (
+                      // 其他状态：分别展示期望和实际输出
+                      <>
+                        <div>
+                          <p className="text-sm font-medium mb-2">期望输出</p>
+                          <Card className="p-3">
+                            <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-mono">
+                              {result.expectedOutput || '(空)'}
+                            </pre>
+                          </Card>
+                        </div>
 
-                    <div>
-                      <p className="text-sm font-medium mb-2">实际输出</p>
-                      <Card
-                        className={`p-3 ${
-                          result.status === 'AC'
-                            ? 'bg-green-50 dark:bg-green-950'
-                            : 'bg-red-50 dark:bg-red-950'
-                        }`}
-                      >
-                        <pre
-                          className={`text-sm whitespace-pre-wrap font-mono ${
-                            result.status === 'AC'
-                              ? 'text-green-700 dark:text-green-300'
-                              : 'text-red-700 dark:text-red-300'
-                          }`}
-                        >
-                          {result.actualOutput || '(空)'}
-                        </pre>
-                      </Card>
-                    </div>
+                        <div>
+                          <p className="text-sm font-medium mb-2">实际输出</p>
+                          <Card className="p-3 bg-red-50 dark:bg-red-950">
+                            <pre className="text-sm whitespace-pre-wrap font-mono text-red-700 dark:text-red-300">
+                              {result.actualOutput || '(空)'}
+                            </pre>
+                          </Card>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </Card>

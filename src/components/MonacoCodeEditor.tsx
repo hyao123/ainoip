@@ -39,6 +39,7 @@ import {
   searchTemplates,
   type CodeTemplate,
 } from '@/lib/code-templates';
+import { getSnippetsForLanguage, type CodeSnippet } from '@/lib/code-snippets';
 
 export type EditorTheme = 'vs-dark' | 'vs-light' | 'hc-black';
 export type EditorLanguage = 'cpp' | 'java' | 'python';
@@ -104,6 +105,49 @@ export function MonacoCodeEditor({
         onRunCode?.();
       }
     );
+
+    // 注册自定义代码补全
+    const registerCompletionProvider = (language: string, snippets: CodeSnippet[]) => {
+      monaco.languages.registerCompletionItemProvider(language, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        provideCompletionItems: (model: any, position: any) => {
+          const word = model.getWordUntilPosition(position);
+          const range = {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: word.startColumn,
+            endColumn: word.endColumn,
+          };
+
+          const suggestions = snippets.map((snippet, index) => ({
+            label: {
+              label: snippet.label,
+              description: snippet.detail || '',
+            },
+            kind: monaco.languages.CompletionItemKind[
+              snippet.kind === 'function' ? 'Function' :
+              snippet.kind === 'snippet' ? 'Snippet' :
+              snippet.kind === 'keyword' ? 'Keyword' : 'Constant'
+            ],
+            insertText: snippet.insertText,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: snippet.documentation,
+            range: range,
+            sortText: String(index).padStart(4, '0'),
+            detail: snippet.detail,
+          }));
+
+          return { suggestions };
+        },
+      });
+    };
+
+    // 为 C++ 注册补全
+    registerCompletionProvider('cpp', getSnippetsForLanguage('cpp'));
+    // 为 Python 注册补全
+    registerCompletionProvider('python', getSnippetsForLanguage('python'));
+    // 为 Java 注册补全
+    registerCompletionProvider('java', getSnippetsForLanguage('java'));
   };
 
   const handleEditorChange: OnChange = (value) => {

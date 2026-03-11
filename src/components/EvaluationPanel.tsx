@@ -42,6 +42,7 @@ interface TestCase {
 
 interface EvaluationPanelProps {
   code: string;
+  language?: 'cpp' | 'python' | 'java';
   defaultTestCases?: TestCase[];
   timeLimit?: number;
   memoryLimit?: number;
@@ -50,6 +51,7 @@ interface EvaluationPanelProps {
 
 export function EvaluationPanel({
   code,
+  language = 'cpp',
   defaultTestCases = [],
   timeLimit = 1000,
   memoryLimit = 128,
@@ -190,6 +192,7 @@ export function EvaluationPanel({
           testCases: validTestCases,
           timeLimit: customTimeLimit,
           memoryLimit: customMemoryLimit,
+          language: language,
         }),
       });
 
@@ -220,7 +223,12 @@ export function EvaluationPanel({
     // NOIP评测：自动取消freopen语句的注释
     const processedCode = uncommentFreopen(code);
 
-    // 检查是否包含freopen语句
+    // 检查是否包含freopen语句 (仅C++支持NOIP格式)
+    if (language !== 'cpp') {
+      alert('NOIP评测仅支持C++语言');
+      return;
+    }
+
     if (!processedCode.includes('freopen')) {
       alert('NOIP评测需要代码中包含freopen语句\n示例:\nfreopen("xxx.in", "r", stdin);\nfreopen("xxx.out", "w", stdout);');
       return;

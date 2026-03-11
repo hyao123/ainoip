@@ -2746,6 +2746,7 @@ export default function Home() {
                 <div className="flex-1 min-h-0">
                   <EvaluationPanel
                     code={code}
+                    language={editorSettings.language}
                     defaultTestCases={selectedProblem.testCases}
                     timeLimit={selectedProblem.timeLimit || 1000}
                     memoryLimit={selectedProblem.memoryLimit || 128}
