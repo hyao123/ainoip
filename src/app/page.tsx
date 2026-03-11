@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles } from 'lucide-react';
-import { MonacoCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/MonacoCodeEditor';
+import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
 import { NOIPTemplateHint } from '@/components/NOIPTemplateHint';
@@ -2808,7 +2808,7 @@ export default function Home() {
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* 代码编辑器 */}
             <div className="flex-[2] flex flex-col overflow-hidden border-b">
-              <MonacoCodeEditor
+              <SmartCodeEditor
                 value={code}
                 onChange={setCode}
                 language={editorSettings.language}
