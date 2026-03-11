@@ -685,150 +685,6 @@ export const pythonSnippets: CodeSnippet[] = [
   },
 ];
 
-// Java 常用片段
-export const javaSnippets: CodeSnippet[] = [
-  {
-    label: 'main',
-    kind: 'snippet',
-    insertText: 'public static void main(String[] args) {\n    ${1:// code}\n}',
-    documentation: '主函数',
-    detail: '模板',
-  },
-  {
-    label: 'scanner',
-    kind: 'snippet',
-    insertText: 'Scanner sc = new Scanner(System.in);\nint n = sc.nextInt();\nlong m = sc.nextLong();\nString s = sc.next();',
-    documentation: 'Scanner输入',
-    detail: '输入',
-  },
-  {
-    label: 'bufferedReader',
-    kind: 'snippet',
-    insertText: 'BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\nString line = br.readLine();\nint n = Integer.parseInt(line);',
-    documentation: 'BufferedReader快速输入',
-    detail: '快速输入',
-  },
-  {
-    label: 'array_int',
-    kind: 'snippet',
-    insertText: 'int[] ${1:arr} = new int[${2:n}];',
-    documentation: '定义整数数组',
-    detail: '数组',
-  },
-  {
-    label: 'array_2d',
-    kind: 'snippet',
-    insertText: 'int[][] ${1:arr} = new int[${2:rows}][${3:cols}];',
-    documentation: '定义二维数组',
-    detail: '数组',
-  },
-  {
-    label: 'arraylist',
-    kind: 'snippet',
-    insertText: 'ArrayList<${1:Integer}> ${2:list} = new ArrayList<>();',
-    documentation: '动态数组',
-    detail: '集合',
-  },
-  {
-    label: 'hashmap',
-    kind: 'snippet',
-    insertText: 'HashMap<${1:Integer}, ${2:Integer}> ${3:map} = new HashMap<>();',
-    documentation: '哈希映射',
-    detail: '集合',
-  },
-  {
-    label: 'hashset',
-    kind: 'snippet',
-    insertText: 'HashSet<${1:Integer}> ${2:set} = new HashSet<>();',
-    documentation: '哈希集合',
-    detail: '集合',
-  },
-  {
-    label: 'priorityqueue',
-    kind: 'snippet',
-    insertText: 'PriorityQueue<${1:Integer}> ${2:pq} = new PriorityQueue<>();',
-    documentation: '优先队列（小根堆）',
-    detail: '集合',
-  },
-  {
-    label: 'priorityqueue_max',
-    kind: 'snippet',
-    insertText: 'PriorityQueue<${1:Integer}> ${2:pq} = new PriorityQueue<>(Collections.reverseOrder());',
-    documentation: '优先队列（大根堆）',
-    detail: '集合',
-  },
-  {
-    label: 'arrays_sort',
-    kind: 'snippet',
-    insertText: 'Arrays.sort(${1:arr});',
-    documentation: '数组排序',
-    detail: '排序',
-  },
-  {
-    label: 'collections_sort',
-    kind: 'snippet',
-    insertText: 'Collections.sort(${1:list});',
-    documentation: '集合排序',
-    detail: '排序',
-  },
-  {
-    label: 'math_max',
-    kind: 'snippet',
-    insertText: 'Math.max(${1:a}, ${2:b})',
-    documentation: '最大值',
-    detail: '数学',
-  },
-  {
-    label: 'math_min',
-    kind: 'snippet',
-    insertText: 'Math.min(${1:a}, ${2:b})',
-    documentation: '最小值',
-    detail: '数学',
-  },
-  {
-    label: 'math_pow',
-    kind: 'snippet',
-    insertText: 'Math.pow(${1:base}, ${2:exp})',
-    documentation: '幂运算',
-    detail: '数学',
-  },
-  {
-    label: 'stringbuilder',
-    kind: 'snippet',
-    insertText: 'StringBuilder sb = new StringBuilder();\nsb.append(${1:str});\nSystem.out.println(sb.toString());',
-    documentation: '快速字符串拼接',
-    detail: '字符串',
-  },
-  {
-    label: 'string_to_int',
-    kind: 'snippet',
-    insertText: 'Integer.parseInt(${1:str})',
-    documentation: '字符串转整数',
-    detail: '类型转换',
-  },
-  {
-    label: 'int_to_string',
-    kind: 'snippet',
-    insertText: 'String.valueOf(${1:num})',
-    documentation: '整数转字符串',
-    detail: '类型转换',
-  },
-  {
-    label: 'System_out_println',
-    kind: 'snippet',
-    insertText: 'System.out.println(${1:content});',
-    documentation: '输出换行',
-    detail: '输出',
-  },
-  {
-    label: 'System_out_print',
-    kind: 'snippet',
-    insertText: 'System.out.print(${1:content});',
-    documentation: '输出不换行',
-    detail: '输出',
-  },
-];
-
 // 导出所有片段，按语言分类
 export const allSnippets = {
   cpp: [
@@ -844,7 +700,6 @@ export const allSnippets = {
     ...cppAlgorithmTemplates,
   ],
   python: pythonSnippets,
-  java: javaSnippets,
 };
 
 // 获取指定语言的片段
@@ -855,9 +710,6 @@ export function getSnippetsForLanguage(language: string): CodeSnippet[] {
   }
   if (lang === 'python' || lang === 'py') {
     return allSnippets.python;
-  }
-  if (lang === 'java') {
-    return allSnippets.java;
   }
   return [];
 }
