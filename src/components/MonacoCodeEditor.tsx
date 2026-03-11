@@ -42,7 +42,7 @@ import {
 import { getSnippetsForLanguage, type CodeSnippet } from '@/lib/code-snippets';
 
 export type EditorTheme = 'vs-dark' | 'vs-light' | 'hc-black';
-export type EditorLanguage = 'cpp' | 'python';
+export type EditorLanguage = 'cpp' | 'java' | 'python';
 
 export interface EditorSettings {
   theme: EditorTheme;
@@ -63,6 +63,7 @@ interface MonacoCodeEditorProps {
 
 const languageConfig: Record<EditorLanguage, { label: string; icon: string }> = {
   cpp: { label: 'C++ 17', icon: '⚙️' },
+  java: { label: 'Java', icon: '☕' },
   python: { label: 'Python 3', icon: '🐍' },
 };
 
@@ -145,6 +146,8 @@ export function MonacoCodeEditor({
     registerCompletionProvider('cpp', getSnippetsForLanguage('cpp'));
     // 为 Python 注册补全
     registerCompletionProvider('python', getSnippetsForLanguage('python'));
+    // 为 Java 注册补全
+    registerCompletionProvider('java', getSnippetsForLanguage('java'));
   };
 
   const handleEditorChange: OnChange = (value) => {
@@ -210,6 +213,7 @@ export function MonacoCodeEditor({
   const getMonacoLanguage = (lang: EditorLanguage): string => {
     const mapping: Record<EditorLanguage, string> = {
       cpp: 'cpp',
+      java: 'java',
       python: 'python',
     };
     return mapping[lang] || 'cpp';
