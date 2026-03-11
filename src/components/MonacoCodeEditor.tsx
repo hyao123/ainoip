@@ -41,7 +41,7 @@ import {
 } from '@/lib/code-templates';
 
 export type EditorTheme = 'vs-dark' | 'vs-light' | 'hc-black';
-export type EditorLanguage = 'cpp' | 'java' | 'python' | 'pascal';
+export type EditorLanguage = 'cpp' | 'java' | 'python';
 
 export interface EditorSettings {
   theme: EditorTheme;
@@ -64,7 +64,6 @@ const languageConfig: Record<EditorLanguage, { label: string; icon: string }> = 
   cpp: { label: 'C++ 17', icon: '⚙️' },
   java: { label: 'Java', icon: '☕' },
   python: { label: 'Python 3', icon: '🐍' },
-  pascal: { label: 'Pascal', icon: '📜' },
 };
 
 const themeConfig: Record<EditorTheme, { label: string; icon: React.ReactNode }> = {
@@ -172,7 +171,6 @@ export function MonacoCodeEditor({
       cpp: 'cpp',
       java: 'java',
       python: 'python',
-      pascal: 'pascal',
     };
     return mapping[lang] || 'cpp';
   };
