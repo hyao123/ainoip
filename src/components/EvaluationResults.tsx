@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, XCircle, CheckCircle, Clock, MemoryStick, AlertTriangle, FileOutput, FileCode, GitCompare } from 'lucide-react';
 import { DiffViewer } from '@/components/DiffViewer';
+import { ErrorDiagnosisPanel } from '@/components/ErrorDiagnosisPanel';
 
 export interface TestCaseResult {
   testCaseId: number;
@@ -31,6 +32,7 @@ interface EvaluationResultsProps {
   results: TestCaseResult[];
   summary: EvaluateSummary;
   compileError?: string;
+  code?: string;  // 用于错误诊断
   onClose?: () => void;
 }
 
@@ -90,6 +92,7 @@ export function EvaluationResults({
   results,
   summary,
   compileError,
+  code = '',
   onClose,
 }: EvaluationResultsProps) {
   const [expandedCases, setExpandedCases] = React.useState<Set<number>>(new Set());
@@ -294,6 +297,17 @@ export function EvaluationResults({
                           </Card>
                         </div>
                       </>
+                    )}
+
+                    {/* 智能错误诊断面板 - WA和TLE时显示 */}
+                    {(result.status === 'WA' || result.status === 'TLE') && code && (
+                      <ErrorDiagnosisPanel
+                        result={result}
+                        code={code}
+                        expectedOutput={result.expectedOutput}
+                        actualOutput={result.actualOutput}
+                        testInput={result.input}
+                      />
                     )}
                   </div>
                 )}

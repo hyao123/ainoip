@@ -583,6 +583,7 @@ export function EvaluationPanel({
               results={results}
               summary={summary}
               compileError={compileError || undefined}
+              code={code}
               onClose={handleCloseResults}
             />
           )}
