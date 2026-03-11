@@ -2468,21 +2468,23 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* 左侧边栏 - 题目列表 */}
-      <aside className="w-80 border-r bg-muted/30 flex flex-col">
-        <div className="flex h-16 items-center border-b px-4 gap-2">
+    <div className="flex flex-col h-screen bg-background">
+      {/* 顶部导航栏 - 独立整行 */}
+      <header className="h-14 border-b bg-background flex items-center px-4 gap-6 shrink-0">
+        <div className="flex items-center gap-2">
           <Code2 className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-bold flex-1">NOIP 算法题库</h1>
+          <h1 className="text-lg font-bold">NOIP 算法题库</h1>
         </div>
-        {/* 视图切换标签 */}
-        <div className="flex border-b">
+        <Separator orientation="vertical" className="h-6" />
+        
+        {/* 主导航标签 */}
+        <nav className="flex items-center gap-1">
           <button
             onClick={() => setCurrentView('practice')}
-            className={`flex-1 flex items-center justify-center gap-1 px-2 py-3 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'practice'
-                ? 'text-primary border-b-2 border-primary bg-primary/5'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
             <BookOpen className="h-4 w-4" />
@@ -2490,10 +2492,10 @@ export default function Home() {
           </button>
           <button
             onClick={() => setCurrentView('bank')}
-            className={`flex-1 flex items-center justify-center gap-1 px-2 py-3 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'bank'
-                ? 'text-primary border-b-2 border-primary bg-primary/5'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
             <Database className="h-4 w-4" />
@@ -2501,10 +2503,10 @@ export default function Home() {
           </button>
           <button
             onClick={() => setCurrentView('learning')}
-            className={`flex-1 flex items-center justify-center gap-1 px-2 py-3 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'learning'
-                ? 'text-primary border-b-2 border-primary bg-primary/5'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
             <Target className="h-4 w-4" />
@@ -2512,161 +2514,167 @@ export default function Home() {
           </button>
           <button
             onClick={() => setCurrentView('user')}
-            className={`flex-1 flex items-center justify-center gap-1 px-2 py-3 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'user'
-                ? 'text-primary border-b-2 border-primary bg-primary/5'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
             <User className="h-4 w-4" />
             个人中心
           </button>
-        </div>
-        {currentView === 'practice' ? (
-          <ScrollArea className="flex-1">
-          <div className="space-y-1 p-2">
-            {categories.map((category) => (
-              <div key={category.name}>
-                {/* 分类标题 */}
-                <button
-                  onClick={() => toggleCategory(category.name)}
-                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left font-medium hover:bg-accent transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">{category.icon}</span>
-                    <span className="text-sm">{category.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      ({category.problems.length})
-                    </span>
-                  </div>
-                  {expandedCategories.has(category.name) ? (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </button>
+        </nav>
+      </header>
 
-                {/* 分类下的题目列表 */}
-                {expandedCategories.has(category.name) && (
-                  <div className="ml-2 mt-1 space-y-1">
-                    {category.problems.map((problem) => (
+      {/* 下方内容区 */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* 左侧边栏 - 仅在题库练习和智能题库时显示 */}
+        {(currentView === 'practice' || currentView === 'bank') && (
+          <aside className="w-80 border-r bg-muted/30 flex flex-col shrink-0">
+            {currentView === 'practice' ? (
+              <ScrollArea className="flex-1">
+                <div className="space-y-1 p-2">
+                  {categories.map((category) => (
+                    <div key={category.name}>
+                      {/* 分类标题 */}
                       <button
-                        key={problem.id}
-                        onClick={() => handleProblemSelect(problem)}
-                        className={`w-full rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent ${
-                          selectedProblem.id === problem.id ? 'bg-accent' : ''
-                        }`}
+                        onClick={() => toggleCategory(category.name)}
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left font-medium hover:bg-accent transition-colors"
                       >
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-start justify-between">
-                            <span className="text-sm font-medium">{problem.title}</span>
-                            <span
-                              className={`ml-2 shrink-0 rounded px-1.5 py-0.5 text-[10px] ${getDifficultyColor(
-                                problem.difficulty
-                              )}`}
-                            >
-                              {getDifficultyText(problem.difficulty)}
-                            </span>
-                          </div>
-                          {problem.year && (
-                            <span className="text-xs text-muted-foreground">
-                              NOIP {problem.year}
-                            </span>
-                          )}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm">{category.icon}</span>
+                          <span className="text-sm">{category.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            ({category.problems.length})
+                          </span>
                         </div>
+                        {expandedCategories.has(category.name) ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
                       </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-        ) : currentView === 'bank' ? (
-          <ProblemBankPage onSelectProblem={handleBankProblemSelect} />
-        ) : (
-          <div className="flex-1" />
+
+                      {/* 分类下的题目列表 */}
+                      {expandedCategories.has(category.name) && (
+                        <div className="ml-2 mt-1 space-y-1">
+                          {category.problems.map((problem) => (
+                            <button
+                              key={problem.id}
+                              onClick={() => handleProblemSelect(problem)}
+                              className={`w-full rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent ${
+                                selectedProblem.id === problem.id ? 'bg-accent' : ''
+                              }`}
+                            >
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-start justify-between">
+                                  <span className="text-sm font-medium">{problem.title}</span>
+                                  <span
+                                    className={`ml-2 shrink-0 rounded px-1.5 py-0.5 text-[10px] ${getDifficultyColor(
+                                      problem.difficulty
+                                    )}`}
+                                  >
+                                    {getDifficultyText(problem.difficulty)}
+                                  </span>
+                                </div>
+                                {problem.year && (
+                                  <span className="text-xs text-muted-foreground">
+                                    NOIP {problem.year}
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            ) : (
+              <ProblemBankPage onSelectProblem={handleBankProblemSelect} />
+            )}
+          </aside>
         )}
-      </aside>
 
-      {/* 主内容区 */}
-      <main className="flex flex-1 flex-col overflow-hidden">
-        {currentView === 'learning' ? (
-          <LearningPathPage onStartProblem={handleStartProblemById} />
-        ) : currentView === 'user' ? (
-          <UserCenterPage onSelectProblem={handleStartProblemById} />
-        ) : currentView === 'bank' ? (
-          <div className="flex-1 flex items-center justify-center bg-muted/30">
-            <div className="text-center">
-              <Database className="h-16 w-16 mx-auto mb-4 text-muted-foreground/30" />
-              <h3 className="text-lg font-medium text-muted-foreground">请从左侧选择题目</h3>
-              <p className="text-sm text-muted-foreground/70 mt-1">使用筛选器快速找到适合的题目</p>
+        {/* 主内容区 */}
+        <main className="flex flex-1 flex-col overflow-hidden">
+          {currentView === 'learning' ? (
+            <LearningPathPage onStartProblem={handleStartProblemById} />
+          ) : currentView === 'user' ? (
+            <UserCenterPage onSelectProblem={handleStartProblemById} />
+          ) : currentView === 'bank' ? (
+            <div className="flex-1 flex items-center justify-center bg-muted/30">
+              <div className="text-center">
+                <Database className="h-16 w-16 mx-auto mb-4 text-muted-foreground/30" />
+                <h3 className="text-lg font-medium text-muted-foreground">请从左侧选择题目</h3>
+                <p className="text-sm text-muted-foreground/70 mt-1">使用筛选器快速找到适合的题目</p>
+              </div>
             </div>
-          </div>
-        ) : (
-          <>
-        {/* 顶部导航栏 */}
-        <header className="flex h-16 items-center justify-between border-b px-6">
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold">{selectedProblem.title}</h2>
-            <Separator orientation="vertical" className="h-6" />
-            <span
-              className={`rounded px-2 py-1 text-xs ${getDifficultyColor(
-                selectedProblem.difficulty
-              )}`}
-            >
-              {getDifficultyText(selectedProblem.difficulty)}
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            {!showEvaluation && (
-              <Button
-                onClick={() => setShowEvaluation(true)}
-                variant="outline"
-                size="sm"
-                className="gap-2"
-              >
-                <TestTube2 className="h-4 w-4" />
-                评测系统
-              </Button>
-            )}
-            {!showSolution && (
-              <Button
-                onClick={handleShowSolution}
-                variant="outline"
-                size="sm"
-                className="gap-2"
-              >
-                <Code2 className="h-4 w-4" />
-                查看答案
-              </Button>
-            )}
-            {!showEvaluation && (
-              <Button
-                onClick={() => handleRunCode()}
-                disabled={isRunning}
-                className="gap-2"
-              >
-                <Play className="h-4 w-4" />
-                {isRunning ? '运行中...' : '运行代码'}
-              </Button>
-            )}
-            {showEvaluation && (
-              <Button
-                onClick={() => setShowEvaluation(false)}
-                variant="outline"
-                size="sm"
-                className="gap-2"
-              >
-                <X className="h-4 w-4" />
-                关闭评测
-              </Button>
-            )}
-          </div>
-        </header>
+          ) : (
+            <>
+              {/* 顶部导航栏 */}
+              <header className="flex h-16 items-center justify-between border-b px-6">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-xl font-semibold">{selectedProblem.title}</h2>
+                  <Separator orientation="vertical" className="h-6" />
+                  <span
+                    className={`rounded px-2 py-1 text-xs ${getDifficultyColor(
+                      selectedProblem.difficulty
+                    )}`}
+                  >
+                    {getDifficultyText(selectedProblem.difficulty)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  {!showEvaluation && (
+                    <Button
+                      onClick={() => setShowEvaluation(true)}
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <TestTube2 className="h-4 w-4" />
+                      评测系统
+                    </Button>
+                  )}
+                  {!showSolution && (
+                    <Button
+                      onClick={handleShowSolution}
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <Code2 className="h-4 w-4" />
+                      查看答案
+                    </Button>
+                  )}
+                  {!showEvaluation && (
+                    <Button
+                      onClick={() => handleRunCode()}
+                      disabled={isRunning}
+                      className="gap-2"
+                    >
+                      <Play className="h-4 w-4" />
+                      {isRunning ? '运行中...' : '运行代码'}
+                    </Button>
+                  )}
+                  {showEvaluation && (
+                    <Button
+                      onClick={() => setShowEvaluation(false)}
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <X className="h-4 w-4" />
+                      关闭评测
+                    </Button>
+                  )}
+                </div>
+              </header>
 
-        {/* 内容区域 */}
-        <div className="flex flex-1 overflow-hidden">
+              {/* 内容区域 */}
+              <div className="flex flex-1 overflow-hidden">
           {/* 题目描述区 */}
           <div className="w-[450px] border-r overflow-hidden">
             <ScrollArea className="h-full px-6 py-4">
@@ -2826,11 +2834,12 @@ export default function Home() {
                 </div>
               </div>
             )}
-          </div>
-        </div>
-          </>
-        )}
-      </main>
+              </div>
+            </div>
+            </>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
