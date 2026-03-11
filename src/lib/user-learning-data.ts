@@ -87,6 +87,13 @@ export interface UserLearningData {
   stats: LearningStats;
   achievements: Achievement[];
   knowledgeProgress: Record<string, { completed: boolean; completedAt?: number }>;
+  // 积分系统
+  points: number;
+  // 提示系统
+  hintsUsedToday: number;
+  lastHintResetDate: string;
+  // 题目的提示使用记录
+  problemHintUsage: Record<number, number[]>; // problemId -> levels used
 }
 
 // 成就定义列表
@@ -146,6 +153,10 @@ function getDefaultData(): UserLearningData {
       unlocked: false,
     })),
     knowledgeProgress: {},
+    points: 100,
+    hintsUsedToday: 0,
+    lastHintResetDate: new Date().toISOString().split('T')[0],
+    problemHintUsage: {},
   };
 }
 
@@ -491,4 +502,128 @@ export function getProblemSubmissions(problemId: number): SubmissionRecord[] {
 export function clearAllData(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(STORAGE_KEY);
+}
+
+// ================== 提示系统相关函数 ==================
+
+// 检查并重置每日提示次数
+export function checkAndResetDailyHints(data: UserLearningData): UserLearningData {
+  const today = new Date().toISOString().split('T')[0];
+  if (data.lastHintResetDate !== today) {
+    return {
+      ...data,
+      hintsUsedToday: 0,
+      lastHintResetDate: today,
+    };
+  }
+  return data;
+}
+
+// 获取用户积分和提示信息
+export function getUserPointsAndHints(): {
+  points: number;
+  hintsUsedToday: number;
+  dailyHintsRemaining: number;
+} {
+  const data = getUserLearningData();
+  const checkedData = checkAndResetDailyHints(data);
+  
+  if (checkedData !== data) {
+    saveUserLearningData(checkedData);
+  }
+  
+  return {
+    points: checkedData.points,
+    hintsUsedToday: checkedData.hintsUsedToday,
+    dailyHintsRemaining: Math.max(0, 5 - checkedData.hintsUsedToday), // 每日5次免费提示
+  };
+}
+
+// 使用提示
+export function useHint(problemId: number, level: 1 | 2 | 3, cost: number): {
+  success: boolean;
+  message: string;
+  points: number;
+  hintsUsedToday: number;
+} {
+  const data = getUserLearningData();
+  const checkedData = checkAndResetDailyHints(data);
+  
+  // 检查积分
+  if (checkedData.points < cost) {
+    return {
+      success: false,
+      message: '积分不足',
+      points: checkedData.points,
+      hintsUsedToday: checkedData.hintsUsedToday,
+    };
+  }
+  
+  // 检查每日次数
+  if (checkedData.hintsUsedToday >= 5) {
+    return {
+      success: false,
+      message: '今日提示次数已用完',
+      points: checkedData.points,
+      hintsUsedToday: checkedData.hintsUsedToday,
+    };
+  }
+  
+  // 检查是否已经使用过该级提示
+  const usedLevels = checkedData.problemHintUsage[problemId] || [];
+  if (usedLevels.includes(level)) {
+    return {
+      success: false,
+      message: '已经查看过该提示',
+      points: checkedData.points,
+      hintsUsedToday: checkedData.hintsUsedToday,
+    };
+  }
+  
+  // 检查是否按顺序使用（必须先使用1级才能用2级）
+  if (level > 1 && !usedLevels.includes((level - 1) as 1 | 2)) {
+    return {
+      success: false,
+      message: '请先查看上一级提示',
+      points: checkedData.points,
+      hintsUsedToday: checkedData.hintsUsedToday,
+    };
+  }
+  
+  // 更新数据
+  const newData: UserLearningData = {
+    ...checkedData,
+    points: checkedData.points - cost,
+    hintsUsedToday: checkedData.hintsUsedToday + 1,
+    problemHintUsage: {
+      ...checkedData.problemHintUsage,
+      [problemId]: [...usedLevels, level],
+    },
+  };
+  
+  saveUserLearningData(newData);
+  
+  return {
+    success: true,
+    message: '提示已解锁',
+    points: newData.points,
+    hintsUsedToday: newData.hintsUsedToday,
+  };
+}
+
+// 获取题目的提示使用记录
+export function getProblemHintUsage(problemId: number): number[] {
+  const data = getUserLearningData();
+  return data.problemHintUsage[problemId] || [];
+}
+
+// 获得积分奖励
+export function addPoints(amount: number, reason: string): number {
+  const data = getUserLearningData();
+  const newPoints = data.points + amount;
+  saveUserLearningData({
+    ...data,
+    points: newPoints,
+  });
+  return newPoints;
 }

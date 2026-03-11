@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles } from 'lucide-react';
 import { MonacoCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/MonacoCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -18,12 +18,14 @@ import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { LearningPathPage } from '@/components/LearningPathPage';
 import { UserCenterPage } from '@/components/UserCenterPage';
 import { AILogoWithText } from '@/components/AILogo';
+import { ProgressiveHint } from '@/components/ProgressiveHint';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
 
 import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
 import type { Problem as BankProblem } from '@/lib/problems';
 import { getProblemById } from '@/lib/problems';
-import { addSubmission } from '@/lib/user-learning-data';
+import { getProblemHints, generateGenericHints, type ProblemHints, type HintLevel } from '@/lib/hints';
+import { addSubmission, getUserPointsAndHints, useHint, getProblemHintUsage } from '@/lib/user-learning-data';
 
 // 测试用例类型
 interface TestCase {
@@ -2333,6 +2335,45 @@ export default function Home() {
     language: 'cpp',
     fontSize: 14,
   });
+  
+  // 渐进式提示系统状态
+  const [showHintPanel, setShowHintPanel] = useState(false);
+  const [userPoints, setUserPoints] = useState(100);
+  const [dailyHintsRemaining, setDailyHintsRemaining] = useState(5);
+  const [usedHintLevels, setUsedHintLevels] = useState<HintLevel[]>([]);
+
+  // 初始化用户积分和提示次数
+  useEffect(() => {
+    const { points, hintsUsedToday, dailyHintsRemaining: remaining } = getUserPointsAndHints();
+    setUserPoints(points);
+    setDailyHintsRemaining(remaining);
+  }, []);
+
+  // 当选择新题目时，加载该题目的提示使用记录
+  useEffect(() => {
+    const usedLevels = getProblemHintUsage(selectedProblem.id) as HintLevel[];
+    setUsedHintLevels(usedLevels);
+  }, [selectedProblem.id]);
+
+  // 获取当前题目的提示数据
+  const problemHints: ProblemHints | undefined = getProblemHints(selectedProblem.id) || 
+    generateGenericHints(
+      selectedProblem.id,
+      selectedProblem.title,
+      selectedProblem.category,
+      selectedProblem.difficulty,
+      selectedProblem.defaultCode
+    );
+
+  // 处理提示使用
+  const handleHintUsed = (level: HintLevel) => {
+    const result = useHint(selectedProblem.id, level, problemHints?.hints[level - 1]?.cost || 5);
+    if (result.success) {
+      setUserPoints(result.points);
+      setDailyHintsRemaining(5 - result.hintsUsedToday);
+      setUsedHintLevels(prev => [...prev, level]);
+    }
+  };
 
   // 初始化样例输入和期望输出
   useEffect(() => {
@@ -2706,6 +2747,13 @@ export default function Home() {
                       <Code2 className="h-3 w-3" />
                       样例输出
                     </TabsTrigger>
+                    <TabsTrigger value="hints" className="gap-1.5 text-xs h-7">
+                      <Sparkles className="h-3 w-3" />
+                      智能提示
+                      <span className="ml-1 rounded-full bg-primary/20 px-1.5 text-[9px]">
+                        {dailyHintsRemaining}
+                      </span>
+                    </TabsTrigger>
                     <TabsTrigger value="solution" className="gap-1.5 text-xs h-7">
                       <Code2 className="h-3 w-3" />
                       参考答案
@@ -2725,6 +2773,15 @@ export default function Home() {
                       </pre>
                     </Card>
                   </TabsContent>
+                  <TabsContent value="hints" className="mt-2">
+                    <ProgressiveHint
+                      problemId={selectedProblem.id}
+                      problemHints={problemHints}
+                      onHintUsed={handleHintUsed}
+                      userPoints={userPoints}
+                      dailyHintsRemaining={dailyHintsRemaining}
+                    />
+                  </TabsContent>
                   <TabsContent value="solution">
                     {showSolution ? (
                       <Card className="p-3">
@@ -2735,7 +2792,8 @@ export default function Home() {
                     ) : (
                       <div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6">
                         <p className="text-xs text-muted-foreground">先试试自己解决问题吧！</p>
-                        <Button onClick={handleShowSolution} variant="outline" size="sm" className="h-7 text-xs">
+                        <p className="text-[10px] text-muted-foreground/70">建议先使用"智能提示"获取思路</p>
+                        <Button onClick={handleShowSolution} variant="outline" size="sm" className="h-7 text-xs mt-1">
                           查看答案
                         </Button>
                       </div>
