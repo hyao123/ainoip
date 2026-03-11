@@ -37,75 +37,65 @@ export function UserCenterPage({ onSelectProblem }: UserCenterPageProps) {
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      {/* 顶部用户信息 */}
-      <div className="px-6 py-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-            <User className="h-6 w-6" />
+      {/* 顶部用户信息 - 紧凑设计 */}
+      <div className="px-5 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 text-white shrink-0">
+        <div className="flex items-center justify-between">
+          {/* 左侧：用户信息 */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+              <User className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold">我的学习中心</h1>
+              <p className="text-xs text-white/70">记录学习历程，见证成长足迹</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold">我的学习中心</h1>
-            <p className="text-sm text-white/80">记录学习历程，见证成长足迹</p>
-          </div>
-        </div>
 
-        {/* 快速统计 */}
-        <div className="grid grid-cols-5 gap-2">
-          <div className="bg-white/10 rounded-lg p-2 text-center backdrop-blur">
-            <div className="flex items-center justify-center gap-1">
+          {/* 右侧：快速统计 - 横向排列 */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm">
               <Flame className="h-4 w-4 text-orange-300" />
-              <span className="text-lg font-bold">{quickStats.streak}</span>
+              <span className="text-sm font-bold">{quickStats.streak}</span>
+              <span className="text-xs text-white/60">天</span>
             </div>
-            <div className="text-[10px] text-white/70">连续天数</div>
-          </div>
-          <div className="bg-white/10 rounded-lg p-2 text-center backdrop-blur">
-            <div className="flex items-center justify-center gap-1">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm">
               <Target className="h-4 w-4 text-green-300" />
-              <span className="text-lg font-bold">{quickStats.solved}</span>
+              <span className="text-sm font-bold">{quickStats.solved}</span>
+              <span className="text-xs text-white/60">题</span>
             </div>
-            <div className="text-[10px] text-white/70">已解题目</div>
-          </div>
-          <div className="bg-white/10 rounded-lg p-2 text-center backdrop-blur">
-            <div className="flex items-center justify-center gap-1">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm">
               <BookX className="h-4 w-4 text-red-300" />
-              <span className="text-lg font-bold">{quickStats.wrong}</span>
+              <span className="text-sm font-bold">{quickStats.wrong}</span>
             </div>
-            <div className="text-[10px] text-white/70">错题数</div>
-          </div>
-          <div className="bg-white/10 rounded-lg p-2 text-center backdrop-blur">
-            <div className="flex items-center justify-center gap-1">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm">
               <Star className="h-4 w-4 text-yellow-300" />
-              <span className="text-lg font-bold">{quickStats.favorites}</span>
+              <span className="text-sm font-bold">{quickStats.favorites}</span>
             </div>
-            <div className="text-[10px] text-white/70">收藏数</div>
-          </div>
-          <div className="bg-white/10 rounded-lg p-2 text-center backdrop-blur">
-            <div className="flex items-center justify-center gap-1">
-              <Trophy className="h-4 w-4 text-yellow-300" />
-              <span className="text-lg font-bold">{quickStats.achievements}</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm">
+              <Trophy className="h-4 w-4 text-amber-300" />
+              <span className="text-sm font-bold">{quickStats.achievements}</span>
             </div>
-            <div className="text-[10px] text-white/70">成就数</div>
           </div>
         </div>
       </div>
 
       {/* Tab导航和内容 */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
-        <div className="border-b px-4">
-          <TabsList className="h-12">
-            <TabsTrigger value="record" className="gap-1 data-[state=active]:text-primary">
+        <div className="border-b px-4 bg-muted/30 shrink-0">
+          <TabsList className="h-11">
+            <TabsTrigger value="record" className="gap-1.5 data-[state=active]:text-primary">
               <History className="h-4 w-4" />
               学习记录
             </TabsTrigger>
-            <TabsTrigger value="wrong" className="gap-1 data-[state=active]:text-red-500">
+            <TabsTrigger value="wrong" className="gap-1.5 data-[state=active]:text-red-500">
               <BookX className="h-4 w-4" />
               错题本
             </TabsTrigger>
-            <TabsTrigger value="favorite" className="gap-1 data-[state=active]:text-yellow-500">
+            <TabsTrigger value="favorite" className="gap-1.5 data-[state=active]:text-yellow-500">
               <Star className="h-4 w-4" />
               收藏夹
             </TabsTrigger>
-            <TabsTrigger value="achievement" className="gap-1 data-[state=active]:text-orange-500">
+            <TabsTrigger value="achievement" className="gap-1.5 data-[state=active]:text-orange-500">
               <Trophy className="h-4 w-4" />
               成就
             </TabsTrigger>

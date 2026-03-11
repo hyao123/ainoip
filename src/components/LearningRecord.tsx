@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -32,6 +31,7 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
+  Zap,
 } from 'lucide-react';
 
 interface LearningRecordProps {
@@ -62,13 +62,10 @@ export function LearningRecord({ onSelectProblem }: LearningRecordProps) {
       ? Math.round((s.acceptedSubmissions / s.totalSubmissions) * 100) 
       : 0;
     
-    // 最近7天数据
     const last7Days = s.weeklyData.slice(-7);
     const weeklySubmissions = last7Days.reduce((sum, d) => sum + d.submissions, 0);
     const weeklyAccepted = last7Days.reduce((sum, d) => sum + d.accepted, 0);
     const weeklyTime = last7Days.reduce((sum, d) => sum + d.timeSpent, 0);
-
-    // 本周目标进度
     const dailyGoalProgress = Math.min(100, Math.round((s.dailyCompleted / s.dailyGoal) * 100));
 
     return {
@@ -92,7 +89,7 @@ export function LearningRecord({ onSelectProblem }: LearningRecordProps) {
       records = records.filter(r => r.result === 'WA');
     }
     
-    return records.slice(0, 100); // 限制显示最近100条
+    return records.slice(0, 100);
   }, [data.submissions, historyFilter]);
 
   const formatDate = (timestamp: number) => {
@@ -109,7 +106,6 @@ export function LearningRecord({ onSelectProblem }: LearningRecordProps) {
     setData(getUserLearningData());
   };
 
-  // 获取星期几
   const getWeekday = (dateStr: string) => {
     const days = ['日', '一', '二', '三', '四', '五', '六'];
     const date = new Date(dateStr);
@@ -118,144 +114,146 @@ export function LearningRecord({ onSelectProblem }: LearningRecordProps) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* 顶部标题栏 */}
-      <div className="px-4 py-3 border-b bg-muted/30">
-        <div className="flex items-center justify-between">
+      {/* 顶部工具栏 - 极简 */}
+      <div className="px-4 py-2 border-b bg-muted/20 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <History className="h-5 w-5 text-primary" />
-            <span className="font-semibold">学习记录</span>
+            <BarChart3 className="h-4 w-4 text-primary" />
+            <Button
+              variant={activeTab === 'stats' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('stats')}
+              className="h-7 text-xs"
+            >
+              统计
+            </Button>
+            <Button
+              variant={activeTab === 'history' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('history')}
+              className="h-7 text-xs"
+            >
+              记录
+            </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={refreshData}>
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
 
-      {/* Tab切换 */}
-      <div className="px-4 pt-3 border-b">
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-          <TabsList>
-            <TabsTrigger value="stats" className="gap-1">
-              <BarChart3 className="h-4 w-4" />
-              学习统计
-            </TabsTrigger>
-            <TabsTrigger value="history" className="gap-1">
-              <History className="h-4 w-4" />
-              提交记录
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+          {activeTab === 'history' && (
+            <Select value={historyFilter} onValueChange={(v) => setHistoryFilter(v as typeof historyFilter)}>
+              <SelectTrigger className="w-20 h-7 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部</SelectItem>
+                <SelectItem value="AC">通过</SelectItem>
+                <SelectItem value="WA">错误</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+        <Button variant="ghost" size="sm" onClick={refreshData} className="h-7 w-7 p-0">
+          <RefreshCw className="h-3.5 w-3.5" />
+        </Button>
       </div>
 
       {/* 内容区 */}
       {activeTab === 'stats' ? (
         <ScrollArea className="flex-1 p-4">
-          <div className="space-y-4">
-            {/* 连续学习天数 */}
-            <Card className="p-4 bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200">
+          <div className="grid grid-cols-2 gap-3">
+            {/* 连续学习天数 - 大卡片 */}
+            <Card className="col-span-2 p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-orange-100 rounded-full">
+                  <div className="p-2 bg-orange-100 rounded-xl">
                     <Flame className="h-6 w-6 text-orange-500" />
                   </div>
                   <div>
-                    <div className="text-sm text-muted-foreground">连续学习</div>
-                    <div className="text-2xl font-bold text-orange-600">
-                      {stats.streak} 天
-                    </div>
+                    <div className="text-xs text-muted-foreground">连续学习</div>
+                    <div className="text-2xl font-bold text-orange-600">{stats.streak} 天</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-muted-foreground">最长记录</div>
+                  <div className="text-xs text-muted-foreground">最长记录</div>
                   <div className="text-lg font-semibold">{stats.maxStreak} 天</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-muted-foreground">今日目标</div>
+                  <div className="text-lg font-semibold">{stats.dailyCompleted}/{stats.dailyGoal}</div>
+                  <Progress value={stats.dailyGoalProgress} className="w-16 h-1.5 mt-1" />
                 </div>
               </div>
             </Card>
 
             {/* 核心指标 */}
-            <div className="grid grid-cols-2 gap-3">
-              <Card className="p-3 text-center">
-                <div className="text-2xl font-bold text-primary">{stats.solvedProblems}</div>
-                <div className="text-xs text-muted-foreground">已解决题目</div>
-              </Card>
-              <Card className="p-3 text-center">
-                <div className="text-2xl font-bold text-green-600">{stats.accuracy}%</div>
+            <Card className="p-3 flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Target className="h-4 w-4 text-blue-500" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-blue-600">{stats.solvedProblems}</div>
+                <div className="text-xs text-muted-foreground">已解决</div>
+              </div>
+            </Card>
+            <Card className="p-3 flex items-center gap-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-green-600">{stats.accuracy}%</div>
                 <div className="text-xs text-muted-foreground">正确率</div>
-              </Card>
-              <Card className="p-3 text-center">
-                <div className="text-2xl font-bold text-blue-600">{stats.totalSubmissions}</div>
-                <div className="text-xs text-muted-foreground">总提交次数</div>
-              </Card>
-              <Card className="p-3 text-center">
-                <div className="text-2xl font-bold text-purple-600">{stats.acceptedSubmissions}</div>
+              </div>
+            </Card>
+            <Card className="p-3 flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Code className="h-4 w-4 text-purple-500" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-purple-600">{stats.totalSubmissions}</div>
+                <div className="text-xs text-muted-foreground">总提交</div>
+              </div>
+            </Card>
+            <Card className="p-3 flex items-center gap-3">
+              <div className="p-2 bg-emerald-100 rounded-lg">
+                <Zap className="h-4 w-4 text-emerald-500" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-emerald-600">{stats.acceptedSubmissions}</div>
                 <div className="text-xs text-muted-foreground">通过次数</div>
-              </Card>
-            </div>
-
-            {/* 每日目标 */}
-            <Card className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Target className="h-4 w-4 text-primary" />
-                  <span className="font-medium">今日目标</span>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {stats.dailyCompleted} / {stats.dailyGoal} 题
-                </span>
-              </div>
-              <Progress value={stats.dailyGoalProgress} className="h-2" />
-            </Card>
-
-            {/* 本周统计 */}
-            <Card className="p-4">
-              <h4 className="font-medium mb-3 flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" />
-                本周学习
-              </h4>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-xl font-bold">{stats.weeklySubmissions}</div>
-                  <div className="text-xs text-muted-foreground">提交次数</div>
-                </div>
-                <div>
-                  <div className="text-xl font-bold text-green-600">{stats.weeklyAccepted}</div>
-                  <div className="text-xs text-muted-foreground">通过次数</div>
-                </div>
-                <div>
-                  <div className="text-xl font-bold">{stats.weeklyTime}</div>
-                  <div className="text-xs text-muted-foreground">学习时长(分)</div>
-                </div>
               </div>
             </Card>
 
-            {/* 最近7天活动图 */}
-            <Card className="p-4">
-              <h4 className="font-medium mb-3 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-primary" />
-                最近7天活动
-              </h4>
-              <div className="flex justify-between gap-1">
+            {/* 最近7天活动图 - 横向 */}
+            <Card className="col-span-2 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-medium text-sm flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  最近7天活动
+                </h4>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span>提交 {stats.weeklySubmissions}</span>
+                  <span>通过 {stats.weeklyAccepted}</span>
+                  <span>时长 {stats.weeklyTime}分</span>
+                </div>
+              </div>
+              <div className="flex justify-between gap-2">
                 {stats.last7Days.map((day, i) => (
-                  <div key={day.date} className="flex-1 text-center">
-                    <div className="text-[10px] text-muted-foreground mb-1">
-                      {getWeekday(day.date)}
-                    </div>
+                  <div key={day.date} className="flex-1 flex flex-col items-center">
                     <div 
-                      className={`h-16 rounded relative ${day.submissions > 0 ? 'bg-primary/20' : 'bg-muted'}`}
+                      className={`w-full rounded-md relative transition-all ${day.submissions > 0 ? 'bg-primary/10' : 'bg-muted'}`}
                       style={{
-                        background: `linear-gradient(to top, hsl(var(--primary)) ${Math.min(100, (day.submissions / 10) * 100)}%, transparent ${Math.min(100, (day.submissions / 10) * 100)}%)`,
+                        height: '48px',
+                        background: day.submissions > 0 
+                          ? `linear-gradient(to top, hsl(var(--primary)) ${Math.min(100, (day.submissions / 8) * 100)}%, transparent ${Math.min(100, (day.submissions / 8) * 100)}%)`
+                          : undefined,
                       }}
                     >
                       {day.submissions > 0 && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-xs font-bold text-primary-foreground">
-                            {day.submissions}
-                          </span>
+                          <span className="text-xs font-medium text-primary">{day.submissions}</span>
                         </div>
                       )}
                     </div>
-                    <div className="text-[10px] mt-1 text-muted-foreground">
-                      {day.accepted}✓
+                    <div className="text-[10px] text-muted-foreground mt-1.5">
+                      {getWeekday(day.date)}
                     </div>
                   </div>
                 ))}
@@ -264,108 +262,78 @@ export function LearningRecord({ onSelectProblem }: LearningRecordProps) {
           </div>
         </ScrollArea>
       ) : (
-        <>
-          {/* 历史记录过滤 */}
-          <div className="px-4 py-2 border-b">
-            <Select value={historyFilter} onValueChange={(v) => setHistoryFilter(v as typeof historyFilter)}>
-              <SelectTrigger className="w-32 h-8 text-xs">
-                <SelectValue placeholder="筛选" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部记录</SelectItem>
-                <SelectItem value="AC">仅通过</SelectItem>
-                <SelectItem value="WA">仅错误</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* 历史记录列表 */}
-          <ScrollArea className="flex-1 p-4">
+        <ScrollArea className="flex-1">
+          <div className="p-3 space-y-2">
             {filteredHistory.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Code className="h-16 w-16 text-muted-foreground/30 mb-4" />
-                <h3 className="text-lg font-medium text-muted-foreground">暂无提交记录</h3>
-                <p className="text-sm text-muted-foreground/70 mt-1">
-                  开始做题，记录你的学习历程
-                </p>
+              <div className="text-center py-8 text-muted-foreground">
+                <History className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                <p className="text-sm">暂无提交记录</p>
               </div>
             ) : (
-              <div className="space-y-2">
-                {filteredHistory.map(record => (
+              filteredHistory.map(record => {
+                const config = resultConfig[record.result] || resultConfig.SE;
+                const isExpanded = expandedSubmission === record.id;
+                
+                return (
                   <Card
                     key={record.id}
-                    className="p-3 cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setExpandedSubmission(
-                      expandedSubmission === record.id ? null : record.id
-                    )}
+                    className="p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => setExpandedSubmission(isExpanded ? null : record.id)}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-1.5 rounded ${resultConfig[record.result]?.bgColor}`}>
-                          {record.result === 'AC' ? (
-                            <CheckCircle className={`h-4 w-4 ${resultConfig[record.result]?.color}`} />
-                          ) : (
-                            <XCircle className={`h-4 w-4 ${resultConfig[record.result]?.color}`} />
-                          )}
-                        </div>
-                        <div>
-                          <div className="font-medium text-sm">{record.problemTitle}</div>
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <Badge className={`${config.bgColor} ${config.color} text-xs shrink-0`}>
+                          {record.result}
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm truncate">{record.problemTitle}</div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>{record.language.toUpperCase()}</span>
-                            <span>·</span>
-                            <span>{record.testCasesPassed}/{record.totalTestCases} 通过</span>
-                            {record.executionTime && (
-                              <>
-                                <span>·</span>
-                                <span>{record.executionTime}ms</span>
-                              </>
-                            )}
+                            <span>{record.category}</span>
+                            <span>•</span>
+                            <span>{formatDate(record.timestamp)}</span>
+                            <span>•</span>
+                            <span>{record.language}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className={resultConfig[record.result]?.bgColor}>
-                          {resultConfig[record.result]?.label}
-                        </Badge>
-                        {expandedSubmission === record.id ? (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="text-right text-xs">
+                          <div className="font-medium">{record.passedCount}/{record.totalCount}</div>
+                        </div>
+                        {isExpanded ? (
                           <ChevronUp className="h-4 w-4 text-muted-foreground" />
                         ) : (
                           <ChevronDown className="h-4 w-4 text-muted-foreground" />
                         )}
                       </div>
                     </div>
-
-                    {/* 展开的代码详情 */}
-                    {expandedSubmission === record.id && (
+                    
+                    {isExpanded && (
                       <div className="mt-3 pt-3 border-t">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {formatDate(record.timestamp)}
-                          </span>
+                        <pre className="text-xs bg-muted/50 p-3 rounded-lg overflow-x-auto max-h-48">
+                          {record.code}
+                        </pre>
+                        {onSelectProblem && (
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
-                            className="h-6 text-xs"
+                            className="mt-2 text-xs"
                             onClick={(e) => {
                               e.stopPropagation();
-                              onSelectProblem?.(record.problemId);
+                              onSelectProblem(record.problemId);
                             }}
                           >
                             重新练习
                           </Button>
-                        </div>
-                        <pre className="text-xs bg-muted p-2 rounded overflow-x-auto max-h-40">
-                          {record.code}
-                        </pre>
+                        )}
                       </div>
                     )}
                   </Card>
-                ))}
-              </div>
+                );
+              })
             )}
-          </ScrollArea>
-        </>
+          </div>
+        </ScrollArea>
       )}
     </div>
   );

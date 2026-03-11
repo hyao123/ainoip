@@ -2530,47 +2530,47 @@ export default function Home() {
       <div className="flex flex-1 overflow-hidden">
         {/* 左侧边栏 - 仅在题库练习和智能题库时显示 */}
         {(currentView === 'practice' || currentView === 'bank') && (
-          <aside className="w-80 border-r bg-muted/30 flex flex-col shrink-0">
+          <aside className="w-72 border-r bg-muted/30 flex flex-col shrink-0">
             {currentView === 'practice' ? (
               <ScrollArea className="flex-1">
-                <div className="space-y-1 p-2">
+                <div className="space-y-0.5 p-1.5">
                   {categories.map((category) => (
                     <div key={category.name}>
                       {/* 分类标题 */}
                       <button
                         onClick={() => toggleCategory(category.name)}
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left font-medium hover:bg-accent transition-colors"
+                        className="flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-left font-medium hover:bg-accent transition-colors"
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">{category.icon}</span>
-                          <span className="text-sm">{category.name}</span>
-                          <span className="text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs">{category.icon}</span>
+                          <span className="text-xs">{category.name}</span>
+                          <span className="text-[10px] text-muted-foreground">
                             ({category.problems.length})
                           </span>
                         </div>
                         {expandedCategories.has(category.name) ? (
-                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                          <ChevronDown className="h-3 w-3 text-muted-foreground" />
                         ) : (
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          <ChevronRight className="h-3 w-3 text-muted-foreground" />
                         )}
                       </button>
 
                       {/* 分类下的题目列表 */}
                       {expandedCategories.has(category.name) && (
-                        <div className="ml-2 mt-1 space-y-1">
+                        <div className="ml-1 mt-0.5 space-y-0.5">
                           {category.problems.map((problem) => (
                             <button
                               key={problem.id}
                               onClick={() => handleProblemSelect(problem)}
-                              className={`w-full rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent ${
+                              className={`w-full rounded-md px-2.5 py-1.5 text-left transition-colors hover:bg-accent ${
                                 selectedProblem.id === problem.id ? 'bg-accent' : ''
                               }`}
                             >
-                              <div className="flex flex-col gap-1">
+                              <div className="flex flex-col gap-0.5">
                                 <div className="flex items-start justify-between">
-                                  <span className="text-sm font-medium">{problem.title}</span>
+                                  <span className="text-xs font-medium truncate flex-1">{problem.title}</span>
                                   <span
-                                    className={`ml-2 shrink-0 rounded px-1.5 py-0.5 text-[10px] ${getDifficultyColor(
+                                    className={`ml-1.5 shrink-0 rounded px-1 py-0.5 text-[9px] ${getDifficultyColor(
                                       problem.difficulty
                                     )}`}
                                   >
@@ -2578,7 +2578,7 @@ export default function Home() {
                                   </span>
                                 </div>
                                 {problem.year && (
-                                  <span className="text-xs text-muted-foreground">
+                                  <span className="text-[10px] text-muted-foreground">
                                     NOIP {problem.year}
                                   </span>
                                 )}
@@ -2613,61 +2613,59 @@ export default function Home() {
             </div>
           ) : (
             <>
-              {/* 顶部导航栏 */}
-              <header className="flex h-16 items-center justify-between border-b px-6">
-                <div className="flex items-center gap-4">
-                  <h2 className="text-xl font-semibold">{selectedProblem.title}</h2>
-                  <Separator orientation="vertical" className="h-6" />
+              {/* 顶部导航栏 - 紧凑 */}
+              <header className="flex h-12 items-center justify-between border-b px-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-base font-semibold truncate max-w-[200px]">{selectedProblem.title}</h2>
+                  <Separator orientation="vertical" className="h-5" />
                   <span
-                    className={`rounded px-2 py-1 text-xs ${getDifficultyColor(
+                    className={`rounded px-1.5 py-0.5 text-[10px] ${getDifficultyColor(
                       selectedProblem.difficulty
                     )}`}
                   >
                     {getDifficultyText(selectedProblem.difficulty)}
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   {!showEvaluation && (
-                    <Button
-                      onClick={() => setShowEvaluation(true)}
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                    >
-                      <TestTube2 className="h-4 w-4" />
-                      评测系统
-                    </Button>
-                  )}
-                  {!showSolution && (
-                    <Button
-                      onClick={handleShowSolution}
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                    >
-                      <Code2 className="h-4 w-4" />
-                      查看答案
-                    </Button>
-                  )}
-                  {!showEvaluation && (
-                    <Button
-                      onClick={() => handleRunCode()}
-                      disabled={isRunning}
-                      className="gap-2"
-                    >
-                      <Play className="h-4 w-4" />
-                      {isRunning ? '运行中...' : '运行代码'}
-                    </Button>
+                    <>
+                      <Button
+                        onClick={() => setShowEvaluation(true)}
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 h-7 text-xs"
+                      >
+                        <TestTube2 className="h-3.5 w-3.5" />
+                        评测
+                      </Button>
+                      <Button
+                        onClick={handleShowSolution}
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 h-7 text-xs"
+                      >
+                        <Code2 className="h-3.5 w-3.5" />
+                        答案
+                      </Button>
+                      <Button
+                        onClick={() => handleRunCode()}
+                        disabled={isRunning}
+                        className="gap-1.5 h-7 text-xs"
+                      >
+                        <Play className="h-3.5 w-3.5" />
+                        {isRunning ? '运行中...' : '运行'}
+                      </Button>
+                    </>
                   )}
                   {showEvaluation && (
                     <Button
                       onClick={() => setShowEvaluation(false)}
                       variant="outline"
                       size="sm"
-                      className="gap-2"
+                      className="gap-1.5 h-7 text-xs"
                     >
-                      <X className="h-4 w-4" />
-                      关闭评测
+                      <X className="h-3.5 w-3.5" />
+                      关闭
                     </Button>
                   )}
                 </div>
@@ -2675,70 +2673,70 @@ export default function Home() {
 
               {/* 内容区域 */}
               <div className="flex flex-1 overflow-hidden">
-          {/* 题目描述区 */}
-          <div className="w-[450px] border-r overflow-hidden">
-            <ScrollArea className="h-full px-6 py-4">
-              <div className="prose prose-sm dark:prose-invert">
-                <h3 className="text-base font-semibold">题目描述</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+          {/* 题目描述区 - 紧凑 */}
+          <div className="w-[380px] border-r overflow-hidden">
+            <ScrollArea className="h-full px-4 py-3">
+              <div className="prose prose-sm dark:prose-invert prose-headings:mb-2 prose-headings:mt-3 prose-p:my-1.5">
+                <h3 className="text-sm font-semibold">题目描述</h3>
+                <p className="text-xs leading-relaxed text-muted-foreground">
                   {selectedProblem.description}
                 </p>
 
-                <h3 className="mt-4 text-base font-semibold">输入格式</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <h3 className="text-sm font-semibold">输入格式</h3>
+                <p className="text-xs leading-relaxed text-muted-foreground">
                   {selectedProblem.inputFormat}
                 </p>
 
-                <h3 className="mt-4 text-base font-semibold">输出格式</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <h3 className="text-sm font-semibold">输出格式</h3>
+                <p className="text-xs leading-relaxed text-muted-foreground">
                   {selectedProblem.outputFormat}
                 </p>
 
                 {/* NOIP 模板提示 */}
-                <div className="mt-6">
+                <div className="mt-4">
                   <NOIPTemplateHint />
                 </div>
 
-                <Tabs defaultValue="input" className="mt-6">
-                  <TabsList>
-                    <TabsTrigger value="input" className="gap-2">
-                      <ListChecks className="h-4 w-4" />
+                <Tabs defaultValue="input" className="mt-4">
+                  <TabsList className="h-8">
+                    <TabsTrigger value="input" className="gap-1.5 text-xs h-7">
+                      <ListChecks className="h-3 w-3" />
                       样例输入
                     </TabsTrigger>
-                    <TabsTrigger value="output" className="gap-2">
-                      <Code2 className="h-4 w-4" />
+                    <TabsTrigger value="output" className="gap-1.5 text-xs h-7">
+                      <Code2 className="h-3 w-3" />
                       样例输出
                     </TabsTrigger>
-                    <TabsTrigger value="solution" className="gap-2">
-                      <Code2 className="h-4 w-4" />
+                    <TabsTrigger value="solution" className="gap-1.5 text-xs h-7">
+                      <Code2 className="h-3 w-3" />
                       参考答案
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="input">
-                    <Card className="p-4">
-                      <pre className="text-sm text-muted-foreground">
+                    <Card className="p-3">
+                      <pre className="text-xs text-muted-foreground">
                         {selectedProblem.sampleInput}
                       </pre>
                     </Card>
                   </TabsContent>
                   <TabsContent value="output">
-                    <Card className="p-4">
-                      <pre className="text-sm text-muted-foreground">
+                    <Card className="p-3">
+                      <pre className="text-xs text-muted-foreground">
                         {selectedProblem.sampleOutput}
                       </pre>
                     </Card>
                   </TabsContent>
                   <TabsContent value="solution">
                     {showSolution ? (
-                      <Card className="p-4">
-                        <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      <Card className="p-3">
+                        <pre className="text-xs text-muted-foreground whitespace-pre-wrap">
                           {selectedProblem.defaultCode}
                         </pre>
                       </Card>
                     ) : (
-                      <div className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8">
-                        <p className="text-sm text-muted-foreground">先试试自己解决问题吧！</p>
-                        <Button onClick={handleShowSolution} variant="outline" size="sm">
+                      <div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6">
+                        <p className="text-xs text-muted-foreground">先试试自己解决问题吧！</p>
+                        <Button onClick={handleShowSolution} variant="outline" size="sm" className="h-7 text-xs">
                           查看答案
                         </Button>
                       </div>
@@ -2765,7 +2763,7 @@ export default function Home() {
 
             {/* 测试输入输出 或 评测系统 */}
             {showEvaluation ? (
-              <div className="flex flex-col h-1/2 min-h-[300px] border-t border-border">
+              <div className="flex flex-col h-[45%] min-h-[280px] border-t border-border">
                 <div className="flex-1 min-h-0">
                   <EvaluationPanel
                     code={code}
@@ -2811,7 +2809,7 @@ export default function Home() {
                 />
               </div>
             ) : (
-              <div className="flex-1 min-h-[200px] flex border-t border-border">
+              <div className="flex-1 min-h-[180px] flex border-t border-border">
                 {/* 输入 */}
                 <div className="w-1/2 border-r border-border">
                   <InputPanel

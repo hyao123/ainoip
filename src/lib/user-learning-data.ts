@@ -8,6 +8,8 @@ export interface SubmissionRecord {
   id: string;
   problemId: number;
   problemTitle: string;
+  category: string;
+  difficulty: 'easy' | 'medium' | 'hard';
   code: string;
   language: 'cpp' | 'python';
   timestamp: number;
@@ -16,6 +18,8 @@ export interface SubmissionRecord {
   memoryUsed?: number;
   testCasesPassed: number;
   totalTestCases: number;
+  passedCount: number;
+  totalCount: number;
 }
 
 // 错题记录
@@ -205,6 +209,8 @@ export function addSubmission(
     id: `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     problemId,
     problemTitle,
+    category,
+    difficulty,
     code,
     language,
     timestamp: Date.now(),
@@ -213,6 +219,8 @@ export function addSubmission(
     memoryUsed,
     testCasesPassed,
     totalTestCases,
+    passedCount: testCasesPassed,
+    totalCount: totalTestCases,
   };
   
   data.submissions.push(submission);
