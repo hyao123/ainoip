@@ -19,6 +19,7 @@ import { getKnowledgeLesson, type KnowledgeLesson } from '@/lib/knowledge-lesson
 import { getProblemById, type Problem, difficultyConfig as bankDifficultyConfig } from '@/lib/problems';
 import { ProgressRadar } from '@/components/RadarChart';
 import { KnowledgeRoadmap } from '@/components/KnowledgeRoadmap';
+import { LearningPathPlanner } from '@/components/LearningPathPlanner';
 import { KnowledgeLessonPanel } from '@/components/KnowledgeLessonPanel';
 import {
   Target,
@@ -215,75 +216,19 @@ export function LearningPathPage({ onStartProblem }: LearningPathPageProps) {
               />
             </TabsContent>
 
-            <TabsContent value="path" className="m-0 h-[calc(100%-40px)] overflow-auto">
-              {currentPath && (
-                <div className="p-4">
-                  <div className="mb-4">
-                    <h3 className="font-semibold text-lg">{currentPath.name}</h3>
-                    <p className="text-sm text-gray-500 mt-1">{currentPath.description}</p>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
-                        {currentPath.targetAudience}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        {currentPath.duration}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 阶段列表 */}
-                  <div className="space-y-3">
-                    {currentPath.stages.map((stage, index) => {
-                      const isCompleted = stage.knowledgeNodes.every(id => completedNodes.has(id));
-                      const isCurrent = !isCompleted && (index === 0 || currentPath.stages[index - 1].knowledgeNodes.every(id => completedNodes.has(id)));
-
-                      return (
-                        <Card
-                          key={stage.id}
-                          className={`p-3 ${
-                            isCompleted ? 'border-green-300 bg-green-50' :
-                            isCurrent ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="mt-0.5">
-                              {isCompleted ? (
-                                <CheckCircle2 className="h-5 w-5 text-green-500" />
-                              ) : isCurrent ? (
-                                <Circle className="h-5 w-5 text-blue-500 fill-blue-100" />
-                              ) : (
-                                <Lock className="h-5 w-5 text-gray-400" />
-                              )}
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium">阶段{stage.order}: {stage.name}</span>
-                                {isCompleted && (
-                                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                                    已完成
-                                  </Badge>
-                                )}
-                                {isCurrent && (
-                                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
-                                    进行中
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-xs text-gray-500 mt-1">{stage.description}</p>
-                              <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                                <span>{stage.knowledgeNodes.length}个知识点</span>
-                                <span>{stage.requiredProblems}道题目</span>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+            <TabsContent value="path" className="m-0 h-[calc(100%-40px)]">
+              <LearningPathPlanner
+                selectedGoal={selectedGoal}
+                completedNodes={completedNodes}
+                onGoalSelect={setSelectedGoal}
+                onNodeSelect={(node) => {
+                  setSelectedNode(node);
+                  const lesson = getKnowledgeLesson(node.id);
+                  if (lesson) {
+                    setViewingLesson(lesson);
+                  }
+                }}
+              />
             </TabsContent>
 
             <TabsContent value="stats" className="m-0 h-[calc(100%-40px)] overflow-auto">

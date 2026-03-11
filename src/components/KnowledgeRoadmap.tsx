@@ -1,370 +1,382 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import {
   knowledgeTree,
-  type KnowledgeNode,
-  type UserProgress,
+  getCategoryStats,
   calculateNodeStatus,
+  type KnowledgeNode,
 } from '@/lib/learning-path';
-import { getKnowledgeLesson } from '@/lib/knowledge-lessons';
 import {
   Lock,
-  CheckCircle2,
-  Circle,
-  PlayCircle,
-  ChevronRight,
-  ChevronDown,
+  Play,
+  CheckCircle,
   Clock,
   Target,
-  Lightbulb,
   BookOpen,
+  ChevronRight,
+  Circle,
+  ArrowRight,
+  Star,
+  TrendingUp,
 } from 'lucide-react';
 
 interface KnowledgeRoadmapProps {
-  completedNodes: Set<string>;
-  learningNodes: Set<string>;
+  completedNodes?: Set<string>;
+  learningNodes?: Set<string>;
   onNodeSelect?: (node: KnowledgeNode) => void;
   onViewLesson?: (nodeId: string) => void;
   selectedNodeId?: string;
 }
 
-// 难度配置
 const difficultyConfig = {
-  beginner: { label: '入门', color: 'bg-green-100 text-green-800 border-green-200' },
-  intermediate: { label: '进阶', color: 'bg-blue-100 text-blue-800 border-blue-200' },
-  advanced: { label: '高级', color: 'bg-orange-100 text-orange-800 border-orange-200' },
-  expert: { label: '专家', color: 'bg-red-100 text-red-800 border-red-200' },
+  beginner: { label: '入门', color: 'bg-green-500', textColor: 'text-green-500' },
+  intermediate: { label: '进阶', color: 'bg-blue-500', textColor: 'text-blue-500' },
+  advanced: { label: '高级', color: 'bg-orange-500', textColor: 'text-orange-500' },
+  expert: { label: '专家', color: 'bg-red-500', textColor: 'text-red-500' },
 };
 
-// 按分类组织知识点
-function organizeByCategory(nodes: KnowledgeNode[]) {
-  const categoryMap = new Map<string, KnowledgeNode[]>();
-  nodes.forEach(node => {
-    if (!categoryMap.has(node.category)) {
-      categoryMap.set(node.category, []);
-    }
-    categoryMap.get(node.category)!.push(node);
-  });
-  return categoryMap;
-}
+const statusConfig = {
+  locked: {
+    label: '未解锁',
+    icon: Lock,
+    color: 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600',
+    textColor: 'text-gray-400',
+    borderColor: 'border-gray-300 dark:border-gray-600',
+  },
+  available: {
+    label: '可学习',
+    icon: Play,
+    color: 'bg-blue-50 dark:bg-blue-950 border-blue-400',
+    textColor: 'text-blue-600 dark:text-blue-400',
+    borderColor: 'border-blue-400',
+  },
+  learning: {
+    label: '学习中',
+    icon: Circle,
+    color: 'bg-yellow-50 dark:bg-yellow-950 border-yellow-400',
+    textColor: 'text-yellow-600 dark:text-yellow-400',
+    borderColor: 'border-yellow-400',
+  },
+  completed: {
+    label: '已完成',
+    icon: CheckCircle,
+    color: 'bg-green-50 dark:bg-green-950 border-green-400',
+    textColor: 'text-green-600 dark:text-green-400',
+    borderColor: 'border-green-400',
+  },
+};
 
 export function KnowledgeRoadmap({
-  completedNodes,
-  learningNodes,
+  completedNodes = new Set(),
+  learningNodes = new Set(),
   onNodeSelect,
   onViewLesson,
   selectedNodeId,
 }: KnowledgeRoadmapProps) {
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-    new Set(knowledgeTree.map(n => n.category))
-  );
+  const [selectedNode, setSelectedNode] = useState<KnowledgeNode | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
-  const categoryMap = organizeByCategory(knowledgeTree);
+  const categoryStats = useMemo(() => getCategoryStats(), []);
 
-  // 切换分类展开状态
-  const toggleCategory = (category: string) => {
-    setExpandedCategories(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(category)) {
-        newSet.delete(category);
-      } else {
-        newSet.add(category);
-      }
-      return newSet;
-    });
+  // 计算每个知识点的状态
+  const getNodeStatus = (nodeId: string) => {
+    if (completedNodes.has(nodeId)) return 'completed';
+    if (learningNodes.has(nodeId)) return 'learning';
+    return calculateNodeStatus(nodeId, completedNodes);
   };
 
-  // 获取状态图标
-  const getStatusIcon = (nodeId: string) => {
-    const status = calculateNodeStatus(nodeId, completedNodes);
+  // 计算总体进度
+  const overallProgress = useMemo(() => {
+    const total = knowledgeTree.length;
+    const completed = completedNodes.size;
+    return Math.round((completed / total) * 100);
+  }, [completedNodes]);
 
-    if (completedNodes.has(nodeId)) {
-      return <CheckCircle2 className="h-5 w-5 text-green-500" />;
-    }
-    if (learningNodes.has(nodeId)) {
-      return <PlayCircle className="h-5 w-5 text-blue-500" />;
-    }
-    if (status === 'locked') {
-      return <Lock className="h-5 w-5 text-gray-400" />;
-    }
-    return <Circle className="h-5 w-5 text-gray-300" />;
+  // 获取前置知识点
+  const getPrerequisites = (nodeId: string) => {
+    const node = knowledgeTree.find(n => n.id === nodeId);
+    if (!node) return [];
+    return node.prerequisites.map(pid => knowledgeTree.find(n => n.id === pid)).filter(Boolean) as KnowledgeNode[];
   };
 
-  // 获取状态样式
-  const getStatusStyle = (nodeId: string) => {
-    const status = calculateNodeStatus(nodeId, completedNodes);
-
-    if (completedNodes.has(nodeId)) {
-      return 'border-green-300 bg-green-50';
-    }
-    if (learningNodes.has(nodeId)) {
-      return 'border-blue-300 bg-blue-50';
-    }
-    if (status === 'locked') {
-      return 'border-gray-200 bg-gray-50 opacity-60';
-    }
-    return 'border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer';
+  // 获取后续知识点
+  const getDependents = (nodeId: string) => {
+    return knowledgeTree.filter(n => n.prerequisites.includes(nodeId));
   };
 
-  // 统计数据
-  const totalNodes = knowledgeTree.length;
-  const completedCount = completedNodes.size;
-  const progressPercent = Math.round((completedCount / totalNodes) * 100);
+  const handleNodeClick = (node: KnowledgeNode) => {
+    setSelectedNode(node);
+    onNodeSelect?.(node);
+  };
 
   return (
     <div className="flex flex-col h-full">
-      {/* 总体进度 */}
-      <div className="px-4 py-3 border-b bg-gradient-to-r from-purple-50 to-blue-50">
-        <div className="flex items-center justify-between mb-2">
-          <span className="font-semibold text-gray-800">学习进度</span>
-          <span className="text-sm text-gray-600">
-            {completedCount} / {totalNodes} 知识点
-          </span>
+      {/* 顶部统计栏 */}
+      <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <span className="font-semibold">知识图谱</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Progress value={overallProgress} className="w-24 h-2" />
+            <span className="text-sm text-muted-foreground">{overallProgress}%</span>
+          </div>
         </div>
-        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-500"
-            style={{ width: `${progressPercent}%` }}
-          />
+        <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-full bg-green-500" />
+            <span>已完成 {completedNodes.size}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+            <span>学习中 {learningNodes.size}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-full bg-blue-500" />
+            <span>可学习</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-full bg-gray-400" />
+            <span>未解锁</span>
+          </div>
         </div>
-        <div className="text-right text-xs text-gray-500 mt-1">{progressPercent}% 完成</div>
       </div>
 
-      {/* 知识点列表 */}
-      <ScrollArea className="flex-1">
-        <div className="p-4">
-          {Array.from(categoryMap.entries()).map(([category, nodes]) => {
-            const isExpanded = expandedCategories.has(category);
-            const categoryCompleted = nodes.filter(n => completedNodes.has(n.id)).length;
+      {/* 知识图谱主体 */}
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-6">
+          {categoryStats.map((category) => {
+            // 计算该分类的进度
+            const categoryCompleted = category.nodes.filter((n: KnowledgeNode) => completedNodes.has(n.id)).length;
+            const categoryProgress = Math.round((categoryCompleted / category.nodes.length) * 100);
 
             return (
-              <div key={category} className="mb-4">
+              <div key={category.name} className="space-y-3">
                 {/* 分类标题 */}
-                <div
-                  className="flex items-center justify-between p-2 rounded-lg bg-muted/50 cursor-pointer hover:bg-muted/70 transition-colors"
-                  onClick={() => toggleCategory(category)}
-                >
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {isExpanded ? (
-                      <ChevronDown className="h-4 w-4 text-gray-500" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 text-gray-500" />
-                    )}
-                    <span className="font-medium">{category}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {categoryCompleted}/{nodes.length}
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    <span className="font-semibold">{category.name}</span>
+                    <Badge variant="outline" className="text-xs">
+                      {categoryCompleted}/{category.nodes.length}
                     </Badge>
                   </div>
+                  <Progress value={categoryProgress} className="w-20 h-1.5" />
                 </div>
 
-                {/* 知识点列表 */}
-                {isExpanded && (
-                  <div className="mt-2 space-y-2 pl-4">
-                    {nodes.map(node => {
-                      const status = calculateNodeStatus(node.id, completedNodes);
-                      const isLocked = status === 'locked';
-                      const isSelected = selectedNodeId === node.id;
+                {/* 知识点卡片网格 */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {category.nodes.map((node: KnowledgeNode) => {
+                    const status = getNodeStatus(node.id);
+                    const config = statusConfig[status];
+                    const diffConfig = difficultyConfig[node.difficulty];
+                    const isSelected = selectedNodeId === node.id;
+                    const isHovered = hoveredNode === node.id;
+                    const StatusIcon = config.icon;
 
-                      return (
-                        <Card
-                          key={node.id}
-                          className={`p-3 transition-all ${getStatusStyle(node.id)} ${
-                            isSelected ? 'ring-2 ring-blue-500' : ''
-                          }`}
-                          onClick={() => {
-                            if (!isLocked && onNodeSelect) {
-                              onNodeSelect(node);
-                            }
-                          }}
-                          onMouseEnter={() => setHoveredNode(node.id)}
-                          onMouseLeave={() => setHoveredNode(null)}
-                        >
-                          <div className="flex items-start gap-3">
-                            {/* 状态图标 */}
-                            <div className="mt-0.5">{getStatusIcon(node.id)}</div>
+                    return (
+                      <Card
+                        key={node.id}
+                        className={`
+                          relative p-3 cursor-pointer transition-all duration-200
+                          border-2 ${config.borderColor} ${config.color}
+                          hover:shadow-md hover:scale-[1.02]
+                          ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}
+                          ${status === 'locked' ? 'opacity-60' : ''}
+                        `}
+                        onClick={() => status !== 'locked' && handleNodeClick(node)}
+                        onMouseEnter={() => setHoveredNode(node.id)}
+                        onMouseLeave={() => setHoveredNode(null)}
+                      >
+                        {/* 状态图标 */}
+                        <div className="absolute top-2 right-2">
+                          <StatusIcon className={`h-4 w-4 ${config.textColor}`} />
+                        </div>
 
-                            {/* 内容 */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="font-medium text-sm truncate">
-                                  {node.name}
-                                </span>
-                                <Badge
-                                  variant="outline"
-                                  className={`text-xs ${
-                                    difficultyConfig[node.difficulty].color
-                                  }`}
-                                >
-                                  {difficultyConfig[node.difficulty].label}
-                                </Badge>
-                              </div>
+                        {/* 知识点名称 */}
+                        <h4 className="font-medium text-sm pr-6">{node.name}</h4>
 
-                              {/* 详细信息（悬停显示） */}
-                              {hoveredNode === node.id && (
-                                <div className="mt-2 space-y-2 text-xs text-gray-600">
-                                  <p>{node.description}</p>
-                                  <div className="flex items-center gap-4">
-                                    <div className="flex items-center gap-1">
-                                      <Clock className="h-3.5 w-3.5" />
-                                      <span>{node.estimatedHours}小时</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <Target className="h-3.5 w-3.5" />
-                                      <span>
-                                        {node.importance}/5 重要度
-                                      </span>
-                                    </div>
-                                    {node.problems.length > 0 && (
-                                      <div className="flex items-center gap-1">
-                                        <Lightbulb className="h-3.5 w-3.5" />
-                                        <span>{node.problems.length}道题目</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                  {node.tags.length > 0 && (
-                                    <div className="flex flex-wrap gap-1">
-                                      {node.tags.map(tag => (
-                                        <Badge
-                                          key={tag}
-                                          variant="secondary"
-                                          className="text-xs"
-                                        >
-                                          {tag}
-                                        </Badge>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {/* 查看讲解按钮 */}
-                                  {getKnowledgeLesson(node.id) && onViewLesson && (
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="w-full mt-2 h-7 text-xs bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        onViewLesson(node.id);
-                                      }}
-                                    >
-                                      <BookOpen className="h-3 w-3 mr-1" />
-                                      查看知识点讲解
-                                    </Button>
-                                  )}
-                                </div>
-                              )}
-
-                              {/* 前置知识点提示 */}
-                              {isLocked && node.prerequisites.length > 0 && (
-                                <p className="text-xs text-gray-500 mt-1">
-                                  需要先完成：
-                                  {node.prerequisites
-                                    .map(
-                                      p =>
-                                        knowledgeTree.find(n => n.id === p)?.name
-                                    )
-                                    .filter(Boolean)
-                                    .join('、')}
-                                </p>
-                              )}
-                            </div>
+                        {/* 难度和时长 */}
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge 
+                            variant="secondary" 
+                            className={`text-[10px] ${diffConfig.textColor}`}
+                          >
+                            {diffConfig.label}
+                          </Badge>
+                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                            <Clock className="h-3 w-3" />
+                            {node.estimatedHours}h
                           </div>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                )}
+                        </div>
+
+                        {/* 重要程度 */}
+                        <div className="flex items-center gap-1 mt-2">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-3 w-3 ${
+                                i < node.importance
+                                  ? 'text-yellow-400 fill-yellow-400'
+                                  : 'text-gray-300'
+                              }`}
+                            />
+                          ))}
+                        </div>
+
+                        {/* 悬浮显示前置依赖 */}
+                        {isHovered && node.prerequisites.length > 0 && (
+                          <div className="absolute -top-8 left-0 right-0 bg-popover border rounded px-2 py-1 text-xs shadow-lg z-10">
+                            <span className="text-muted-foreground">前置: </span>
+                            {node.prerequisites.map((pid: string, i: number) => {
+                              const prereq = knowledgeTree.find(n => n.id === pid);
+                              return (
+                                <span key={pid} className={completedNodes.has(pid) ? 'text-green-500' : 'text-red-500'}>
+                                  {prereq?.name}{i < node.prerequisites.length - 1 ? ', ' : ''}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </Card>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
         </div>
       </ScrollArea>
+
+      {/* 知识点详情对话框 */}
+      <Dialog open={!!selectedNode} onOpenChange={() => setSelectedNode(null)}>
+        <DialogContent className="max-w-lg">
+          {selectedNode && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  {selectedNode.name}
+                  <Badge className={difficultyConfig[selectedNode.difficulty].color}>
+                    {difficultyConfig[selectedNode.difficulty].label}
+                  </Badge>
+                </DialogTitle>
+                <DialogDescription>{selectedNode.description}</DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4 mt-4">
+                {/* 基本信息 */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">预计时长: {selectedNode.estimatedHours} 小时</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Target className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">相关题目: {selectedNode.problems.length} 道</span>
+                  </div>
+                </div>
+
+                {/* 重要程度 */}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">重要程度:</span>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${
+                        i < selectedNode.importance
+                          ? 'text-yellow-400 fill-yellow-400'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {/* 前置知识点 */}
+                {selectedNode.prerequisites.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">前置知识点</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedNode.prerequisites.map(pid => {
+                        const prereq = knowledgeTree.find(n => n.id === pid);
+                        const isCompleted = completedNodes.has(pid);
+                        return prereq ? (
+                          <Badge
+                            key={pid}
+                            variant={isCompleted ? 'default' : 'outline'}
+                            className="gap-1"
+                          >
+                            {isCompleted && <CheckCircle className="h-3 w-3" />}
+                            {prereq.name}
+                          </Badge>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 后续知识点 */}
+                {getDependents(selectedNode.id).length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">解锁知识点</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {getDependents(selectedNode.id).map(node => (
+                        <Badge key={node.id} variant="secondary" className="gap-1">
+                          <ArrowRight className="h-3 w-3" />
+                          {node.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 标签 */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2">标签</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedNode.tags.map(tag => (
+                      <Badge key={tag} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 操作按钮 */}
+                <div className="flex justify-end gap-2 pt-4 border-t">
+                  <Button variant="outline" onClick={() => setSelectedNode(null)}>
+                    关闭
+                  </Button>
+                  <Button onClick={() => {
+                    setSelectedNode(null);
+                    if (onViewLesson) {
+                      onViewLesson(selectedNode.id);
+                    } else {
+                      onNodeSelect?.(selectedNode);
+                    }
+                  }}>
+                    开始学习
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
-  );
-}
-
-// 知识点详情卡片
-interface KnowledgeNodeCardProps {
-  node: KnowledgeNode;
-  progress?: UserProgress;
-  onStartLearning?: () => void;
-  onPractice?: () => void;
-}
-
-export function KnowledgeNodeCard({
-  node,
-  progress,
-  onStartLearning,
-  onPractice,
-}: KnowledgeNodeCardProps) {
-  return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <h3 className="font-semibold text-lg">{node.name}</h3>
-          <p className="text-sm text-gray-500">{node.category}</p>
-        </div>
-        <Badge className={difficultyConfig[node.difficulty].color}>
-          {difficultyConfig[node.difficulty].label}
-        </Badge>
-      </div>
-
-      <p className="text-sm text-gray-600 mb-4">{node.description}</p>
-
-      {/* 元信息 */}
-      <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-        <div className="flex items-center gap-1">
-          <Clock className="h-4 w-4" />
-          <span>{node.estimatedHours}小时</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Target className="h-4 w-4" />
-          <span>重要度 {node.importance}/5</span>
-        </div>
-      </div>
-
-      {/* 标签 */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {node.tags.map(tag => (
-          <Badge key={tag} variant="secondary" className="text-xs">
-            {tag}
-          </Badge>
-        ))}
-      </div>
-
-      {/* 进度 */}
-      {progress && (
-        <div className="mb-4">
-          <div className="flex items-center justify-between text-sm mb-1">
-            <span>掌握程度</span>
-            <span>{progress.masteryLevel}%</span>
-          </div>
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-blue-500 transition-all"
-              style={{ width: `${progress.masteryLevel}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* 操作按钮 */}
-      <div className="flex gap-2">
-        <Button variant="outline" className="flex-1" onClick={onStartLearning}>
-          开始学习
-        </Button>
-        {node.problems.length > 0 && (
-          <Button className="flex-1" onClick={onPractice}>
-            练习题目 ({node.problems.length})
-          </Button>
-        )}
-      </div>
-    </Card>
   );
 }
