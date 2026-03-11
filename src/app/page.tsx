@@ -17,6 +17,7 @@ import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { LearningPathPage } from '@/components/LearningPathPage';
 import { UserCenterPage } from '@/components/UserCenterPage';
+import { AILogoWithText } from '@/components/AILogo';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
 
 import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
@@ -2524,10 +2525,9 @@ export default function Home() {
         {/* 左侧边栏 - 仅在题库练习和智能题库时显示 */}
         {(currentView === 'practice' || currentView === 'bank') && (
           <aside className="w-72 border-r bg-muted/30 flex flex-col shrink-0">
-            {/* 左侧边栏标题 */}
-            <div className="h-11 border-b bg-background flex items-center px-3 gap-2 shrink-0">
-              <Code2 className="h-4 w-4 text-primary" />
-              <h1 className="text-sm font-semibold">NOIP 算法题库</h1>
+            {/* 左侧边栏标题 - AI风格Logo */}
+            <div className="h-12 border-b bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 flex items-center px-3 shrink-0">
+              <AILogoWithText size="default" />
             </div>
             
             {currentView === 'practice' ? (
