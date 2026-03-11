@@ -89,9 +89,9 @@ export function UserCenterPage({ onSelectProblem }: UserCenterPageProps) {
         </div>
       </div>
 
-      {/* Tab导航 */}
-      <div className="border-b px-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
+      {/* Tab导航和内容 */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+        <div className="border-b px-4">
           <TabsList className="h-12">
             <TabsTrigger value="record" className="gap-1 data-[state=active]:text-primary">
               <History className="h-4 w-4" />
@@ -110,24 +110,22 @@ export function UserCenterPage({ onSelectProblem }: UserCenterPageProps) {
               成就
             </TabsTrigger>
           </TabsList>
-        </Tabs>
-      </div>
+        </div>
 
-      {/* Tab内容 */}
-      <div className="flex-1 min-h-0 overflow-hidden">
-        <TabsContent value="record" className="m-0 h-full">
+        {/* Tab内容 */}
+        <TabsContent value="record" className="m-0 flex-1 min-h-0 overflow-hidden">
           <LearningRecord onSelectProblem={onSelectProblem} />
         </TabsContent>
-        <TabsContent value="wrong" className="m-0 h-full">
+        <TabsContent value="wrong" className="m-0 flex-1 min-h-0 overflow-hidden">
           <WrongProblemBook onSelectProblem={onSelectProblem} />
         </TabsContent>
-        <TabsContent value="favorite" className="m-0 h-full">
+        <TabsContent value="favorite" className="m-0 flex-1 min-h-0 overflow-hidden">
           <FavoriteProblems onSelectProblem={onSelectProblem} />
         </TabsContent>
-        <TabsContent value="achievement" className="m-0 h-full">
+        <TabsContent value="achievement" className="m-0 flex-1 min-h-0 overflow-hidden">
           <AchievementSystem />
         </TabsContent>
-      </div>
+      </Tabs>
     </div>
   );
 }

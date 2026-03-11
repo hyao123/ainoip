@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User } from 'lucide-react';
 import { MonacoCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/MonacoCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -18,7 +18,7 @@ import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { LearningPathPage } from '@/components/LearningPathPage';
 import { UserCenterPage } from '@/components/UserCenterPage';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
-import { Target, BookOpen, Database, User } from 'lucide-react';
+
 import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
 import type { Problem as BankProblem } from '@/lib/problems';
 import { getProblemById } from '@/lib/problems';
