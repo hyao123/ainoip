@@ -7,7 +7,7 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 // 支持的编程语言类型
-type SupportedLanguage = 'cpp' | 'python' | 'java';
+type SupportedLanguage = 'cpp' | 'python';
 
 // 测试点结果类型
 interface TestCaseResult {
@@ -96,27 +96,6 @@ const compilerConfigs: Record<SupportedLanguage, CompilerConfig> = {
       if (existsSync(sourcePath)) {
         await unlink(sourcePath).catch(() => {});
       }
-    },
-  },
-  java: {
-    sourceExtension: '.java',
-    compileCommand: (sourcePath, _outputPath) => 
-      `cd /tmp && javac ${sourcePath.split('/').pop()} 2>&1`,
-    runCommand: (executablePath, inputPath, outputPath, timeLimit, memoryLimit) =>
-      `ulimit -v $(( ${memoryLimit} * 1024 )) && timeout ${timeLimit / 1000}s java -cp ${executablePath} Main < ${inputPath} > ${outputPath} 2>&1`,
-    needsCompile: true,
-    getOutputPath: (baseName) => `/tmp/${baseName}`,
-    cleanup: async (baseName) => {
-      const sourcePath = `/tmp/${baseName}.java`;
-      const classPath = '/tmp/Main.class';
-      const cleanupPromises: Promise<void>[] = [];
-      if (existsSync(sourcePath)) {
-        cleanupPromises.push(unlink(sourcePath));
-      }
-      if (existsSync(classPath)) {
-        cleanupPromises.push(unlink(classPath));
-      }
-      await Promise.all(cleanupPromises).catch(() => {});
     },
   },
 };
@@ -307,7 +286,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 验证语言参数
-    const supportedLanguages: SupportedLanguage[] = ['cpp', 'python', 'java'];
+    const supportedLanguages: SupportedLanguage[] = ['cpp', 'python'];
     const lang = (language as string).toLowerCase();
     if (!supportedLanguages.includes(lang as SupportedLanguage)) {
       return NextResponse.json(
@@ -325,26 +304,8 @@ export async function POST(request: NextRequest) {
     const sourcePath = `/tmp/${baseName}${config.sourceExtension}`;
     const outputPath = config.getOutputPath(baseName, '/tmp');
 
-    // 处理 Java 源代码 - 需要确保类名为 Main
-    let processedCode = code;
-    if (selectedLang === 'java') {
-      // 如果代码中没有 public class Main，需要处理
-      const classMatch = code.match(/public\s+class\s+(\w+)/);
-      if (classMatch && classMatch[1] !== 'Main') {
-        // 替换类名为 Main
-        processedCode = code.replace(/public\s+class\s+\w+/, 'public class Main');
-      } else if (!code.includes('public class Main') && !code.includes('class Main')) {
-        // 如果没有类定义，包装成 Main 类
-        processedCode = `public class Main {
-    public static void main(String[] args) {
-        ${code}
-    }
-}`;
-      }
-    }
-
     // 写入源代码文件
-    await writeFile(sourcePath, processedCode, 'utf-8');
+    await writeFile(sourcePath, code, 'utf-8');
 
     // 编译代码（如果需要）
     if (config.needsCompile) {
