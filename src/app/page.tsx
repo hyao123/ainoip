@@ -2547,7 +2547,7 @@ export default function Home() {
             }`}
           >
             <Target className="h-4 w-4" />
-            学习路径
+            学习中心
           </button>
           <button
             onClick={() => setCurrentView('user')}
