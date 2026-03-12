@@ -17,7 +17,7 @@ import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { LearningPathPage } from '@/components/LearningPathPage';
 import { LearningCenter } from '@/components/LearningCenter';
-import { DailyProblemCard } from '@/components/DailyProblemCard';
+
 import { UserCenterPage } from '@/components/UserCenterPage';
 import { AILogoWithText } from '@/components/AILogo';
 import { ProgressiveHint } from '@/components/ProgressiveHint';
@@ -2576,14 +2576,6 @@ export default function Home() {
             {currentView === 'practice' ? (
               <ScrollArea className="flex-1">
                 <div className="space-y-0.5 p-1.5">
-                  {/* 每日一题 */}
-                  <div className="mb-2">
-                    <DailyProblemCard 
-                      onStartProblem={(problem) => handleStartProblemById(problem.id)} 
-                      compact 
-                    />
-                  </div>
-                  
                   {categories.map((category) => (
                     <div key={category.name}>
                       {/* 分类标题 */}
