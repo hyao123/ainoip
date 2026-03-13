@@ -15,6 +15,7 @@ import {
 } from '@/lib/knowledge-map';
 import {
   getVisualizationResource,
+  getBilibiliEmbedUrl,
   type VisualizationResource,
 } from '@/lib/visualization-resources';
 import {
@@ -299,7 +300,7 @@ export default function KnowledgeDetailPage() {
                   )}
 
                   {/* 视频讲解 */}
-                  {visualResource.bilibiliUrl && (
+                  {visualResource.bvNumber && (
                     <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-50 via-violet-50 to-indigo-50 border border-purple-100">
                       <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-purple-800">
                         <Video className="h-5 w-5" />
@@ -319,16 +320,17 @@ export default function KnowledgeDetailPage() {
                         )}
                       </div>
 
-                      {/* 在B站打开按钮 */}
-                      <a
-                        href={visualResource.bilibiliUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition-colors font-medium"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        在B站打开
-                      </a>
+                      {/* 嵌入播放器 */}
+                      <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+                        <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                          <iframe
+                            src={getBilibiliEmbedUrl(visualResource.bvNumber)}
+                            className="absolute top-0 left-0 w-full h-full"
+                            allowFullScreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          />
+                        </div>
+                      </div>
                     </div>
                   )}
                 </section>
