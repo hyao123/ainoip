@@ -15,6 +15,7 @@ import {
 } from '@/lib/knowledge-map';
 import {
   getVisualizationResource,
+  getBilibiliEmbedUrl,
   type VisualizationResource,
 } from '@/lib/visualization-resources';
 import {
@@ -33,6 +34,7 @@ import {
   ExternalLink,
   Image as ImageIcon,
   MonitorPlay,
+  Video,
 } from 'lucide-react';
 import { RunnableCodeBlock } from '@/components/RunnableCodeBlock';
 
@@ -294,6 +296,35 @@ export default function KnowledgeDetailPage() {
                         <ExternalLink className="h-4 w-4" />
                         打开可视化工具
                       </a>
+                    </div>
+                  )}
+
+                  {/* 视频讲解 */}
+                  {visualResource.bvNumber && (
+                    <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-50 via-violet-50 to-indigo-50 border border-purple-100">
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-purple-800">
+                        <Video className="h-5 w-5" />
+                        <span className="text-2xl">📺</span>
+                        视频讲解
+                      </h3>
+                      
+                      {visualResource.videoTitle && (
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {visualResource.videoTitle}
+                        </p>
+                      )}
+
+                      {/* 嵌入播放器 */}
+                      <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+                        <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                          <iframe
+                            src={getBilibiliEmbedUrl(visualResource.bvNumber)}
+                            className="absolute top-0 left-0 w-full h-full"
+                            allowFullScreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          />
+                        </div>
+                      </div>
                     </div>
                   )}
                 </section>
