@@ -29,14 +29,14 @@ import {
   Lightbulb,
   Rocket,
 } from 'lucide-react';
-import { DailyProblemCard, DailyProblemHistory } from '@/components/DailyProblemCard';
-import { VideoTutorialsPanel, FeaturedVideos } from '@/components/VideoTutorialsPanel';
+import { DailyProblemCard } from '@/components/DailyProblemCard';
+import { VideoTutorialsPanel } from '@/components/VideoTutorialsPanel';
 import { AlgorithmAnimationPanel } from '@/components/AlgorithmAnimation';
 import { SolutionCommunity } from '@/components/SolutionCommunity';
-import { LearningPathPage } from '@/components/LearningPathPage';
 
 interface LearningCenterProps {
   onStartProblem?: (problemId: number) => void;
+  onNavigate?: (view: 'practice' | 'map' | 'user') => void;
 }
 
 // 学习进度数据
@@ -83,7 +83,7 @@ interface Recommendation {
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
-export function LearningCenter({ onStartProblem }: LearningCenterProps) {
+export function LearningCenter({ onStartProblem, onNavigate }: LearningCenterProps) {
   const [activeSection, setActiveSection] = useState<'home' | 'videos' | 'animation' | 'solutions'>('home');
 
   // 模拟学习进度数据
@@ -450,6 +450,21 @@ export function LearningCenter({ onStartProblem }: LearningCenterProps) {
             <div className="grid grid-cols-4 gap-4">
               <Card 
                 className="p-4 hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={() => onNavigate?.('map')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Map className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm">知识地图</h4>
+                    <p className="text-xs text-muted-foreground">120天学习路径</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card 
+                className="p-4 hover:bg-muted/50 cursor-pointer transition-colors"
                 onClick={() => setActiveSection('videos')}
               >
                 <div className="flex items-center gap-3">
@@ -480,22 +495,7 @@ export function LearningCenter({ onStartProblem }: LearningCenterProps) {
 
               <Card 
                 className="p-4 hover:bg-muted/50 cursor-pointer transition-colors"
-                onClick={() => setActiveSection('solutions')}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                    <MessageCircle className="h-5 w-5 text-green-500" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-sm">题解社区</h4>
-                    <p className="text-xs text-muted-foreground">优质题解分享</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card 
-                className="p-4 hover:bg-muted/50 cursor-pointer transition-colors"
-                onClick={() => onStartProblem?.(1)}
+                onClick={() => onNavigate?.('practice')}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">

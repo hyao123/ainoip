@@ -15,7 +15,7 @@ import { TestCasesPanel } from '@/components/TestCasesPanel';
 import { ShortcutsHelp } from '@/components/ShortcutsHelp';
 import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
-import { LearningPathPage } from '@/components/LearningPathPage';
+import { KnowledgeMapPage } from '@/components/KnowledgeMapPage';
 import { LearningCenter } from '@/components/LearningCenter';
 
 import { UserCenterPage } from '@/components/UserCenterPage';
@@ -2642,9 +2642,12 @@ export default function Home() {
         {/* 主内容区 */}
         <main className="flex flex-1 flex-col overflow-hidden">
           {currentView === 'learning' ? (
-            <LearningCenter onStartProblem={(problemId) => handleStartProblemById(problemId)} />
+            <LearningCenter 
+              onStartProblem={(problemId) => handleStartProblemById(problemId)}
+              onNavigate={(view) => setCurrentView(view)}
+            />
           ) : currentView === 'map' ? (
-            <LearningPathPage onStartProblem={(problemId) => handleStartProblemById(problemId)} />
+            <KnowledgeMapPage onStartProblem={(problemId) => handleStartProblemById(problemId)} />
           ) : currentView === 'user' ? (
             <UserCenterPage onSelectProblem={handleStartProblemById} />
           ) : (
