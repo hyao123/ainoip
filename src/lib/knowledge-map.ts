@@ -243,64 +243,200 @@ int main() {
     icon: '📦',
     category: 'basics',
     difficulty: 'basic',
-    brief: '学习如何在程序中存储数据',
-    description: '变量就像盒子，可以存放各种数据。你可以把数字、文字放进去，以后再用。',
+    brief: '学习如何在程序中存储数据，这是编程最重要的基础！',
+    description: '变量就像盒子，可以存放各种数据。你可以把数字、文字放进去，以后再用。学编程，先学会"装东西"！',
     content: [
-      '什么是变量？存储数据的容器',
-      '变量的命名规则：字母、数字、下划线',
-      '变量命名的好习惯：见名知意',
-      '变量的声明和初始化',
-      '变量的赋值和修改',
+      '📦 什么是变量？就是一个带名字的盒子，用来存东西',
+      '🏷️ 变量名：盒子的标签，方便你找到它',
+      '📦 变量值：盒子里装的东西',
+      '📋 变量类型：盒子的大小和形状',
+      '✏️ 赋值：往盒子里放东西',
+      '🔄 修改：换个东西放进去',
     ],
     kidFriendly: {
-      analogy: '变量就像一个个带标签的盒子。你在盒子上写上名字（变量名），然后把东西（数据）放进去。以后想用的时候，只要说"打开写着xxx的盒子"就行了。',
-      visualization: '📦 变量示意：\n┌─────────┐\n│  age    │ → 盒子名称\n│   10    │ → 盒子里装的东西\n└─────────┘',
-      whyLearn: '没有变量，程序就记不住任何东西！学会变量，你才能让程序记住用户输入的数据。'
+      analogy: `想象你去超市购物，需要一个购物篮来装东西。
+
+🧺 购物篮 = 变量（存储东西的地方）
+🏷️ 贴个标签"水果篮" = 变量名（方便找到）
+🍎 里面装苹果 = 变量值（存储的数据）
+
+当你说"水果篮"，就知道是哪个篮子，打开就能看到里面的苹果。
+
+变量也一样！你给变量起个名字，存进去一个值，以后用这个名字就能找到这个值。`,
+      visualization: `📦 变量就像储物柜
+
+┌─────────────────────────────────────┐
+│  变量名（柜子编号）：age             │
+├─────────────────────────────────────┤
+│  变量值（柜子里的东西）：10          │
+├─────────────────────────────────────┤
+│  变量类型（柜子大小）：int（整数柜）  │
+└─────────────────────────────────────┘
+
+代码写法：int age = 10;
+意思：申请一个整数柜子，贴上标签"age"，里面放10`,
+      whyLearn: `为什么一定要学变量？
+
+🎮 假如你在玩游戏：
+  - 你的分数需要记下来 → 用变量存分数
+  - 你的生命值需要记下来 → 用变量存生命值
+  - 你的等级需要记下来 → 用变量存等级
+
+没有变量，程序就"记不住"任何东西！
+就像没有购物篮，你买的东西往哪儿放？`
     },
     codeExamples: [
       {
-        title: '声明和使用变量',
-        description: '创建变量并存储数据',
+        title: '示例1：存储你的信息',
+        description: '用变量存储个人信息',
         code: `#include <iostream>
 using namespace std;
 
 int main() {
-    // 声明变量
-    int age;        // 声明一个整数变量
-    age = 10;       // 给变量赋值
+    // 声明变量（准备盒子）
+    string name;   // 姓名盒子
+    int age;       // 年龄盒子
+    int score;     // 分数盒子
     
-    // 声明并初始化
-    int score = 100;
+    // 赋值（往盒子里放东西）
+    name = "小明";   // 放名字
+    age = 10;        // 放年龄
+    score = 100;     // 放分数
     
-    // 输出变量的值
+    // 使用变量（从盒子里拿东西）
+    cout << "姓名：" << name << endl;
     cout << "年龄：" << age << endl;
     cout << "分数：" << score << endl;
     
-    // 修改变量的值
-    age = age + 1;  // 年龄加1
-    cout << "明年年龄：" << age << endl;
+    return 0;
+}`,
+        expectedOutput: '姓名：小明\n年龄：10\n分数：100',
+        explanation: [
+          'string name; → 申请一个放字符串的盒子，贴标签"name"',
+          'name = "小明"; → 往name盒子里放"小明"',
+          'cout << name; → 从name盒子里拿出东西显示出来',
+          '注意：= 不是"相等"，是"放进去"的意思！',
+        ]
+      },
+      {
+        title: '示例2：变量的修改',
+        description: '变量可以随时改变里面的值',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int score = 0;  // 初始分数是0
+    
+    cout << "初始分数：" << score << endl;
+    
+    // 得分了！加10分
+    score = 10;
+    cout << "第一次得分后：" << score << endl;
+    
+    // 又得分了！再加10分
+    score = score + 10;  // 从盒子里拿出10，加上10，放回去
+    cout << "第二次得分后：" << score << endl;
+    
+    // 可以简写成：
+    score += 10;  // 等同于 score = score + 10
+    cout << "第三次得分后：" << score << endl;
     
     return 0;
 }`,
-        expectedOutput: '年龄：10\n分数：100\n明年年龄：11',
+        expectedOutput: '初始分数：0\n第一次得分后：10\n第二次得分后：20\n第三次得分后：30',
         explanation: [
-          'int 是整数类型，用来存储没有小数的数字',
-          '先声明，后使用',
-          '变量可以被多次赋值，后面的值会覆盖前面的',
+          'score = 10; 把盒子清空，放入10',
+          'score = score + 10; 把盒子里的数拿出来，加10，放回去',
+          'score += 10; 是简写，效果一样',
+          '变量之所以叫"变量"，就是因为可以变！',
+        ]
+      },
+      {
+        title: '示例3：变量的命名技巧',
+        description: '好的变量名让程序更易懂',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // ❌ 不好的命名（看不懂是什么）
+    int a = 10;
+    int b = 20;
+    int c = a + b;
+    cout << "结果是：" << c << endl;
+    
+    // ✅ 好的命名（一眼就懂）
+    int applePrice = 10;    // 苹果价格
+    int orangePrice = 20;   // 橙子价格
+    int totalPrice = applePrice + orangePrice;  // 总价
+    cout << "苹果" << applePrice << "元" << endl;
+    cout << "橙子" << orangePrice << "元" << endl;
+    cout << "总共" << totalPrice << "元" << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '结果是：30\n苹果10元\n橙子20元\n总共30元',
+        explanation: [
+          'a, b, c 这种名字完全看不出是什么',
+          'applePrice 一看就知道是苹果价格',
+          '命名技巧：用英文单词，首单词小写，后面单词首字母大写',
+          '这种命名方式叫"驼峰命名法"，因为中间大写字母像驼峰',
+        ]
+      },
+      {
+        title: '示例4：变量的计算',
+        description: '用变量做数学运算',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 定义两个数
+    int a = 15;
+    int b = 4;
+    
+    // 加减乘除
+    cout << a << " + " << b << " = " << a + b << endl;
+    cout << a << " - " << b << " = " << a - b << endl;
+    cout << a << " × " << b << " = " << a * b << endl;
+    cout << a << " ÷ " << b << " = " << a / b << endl;  // 整数除法
+    cout << a << " 除以 " << b << " 余 " << a % b << endl;  // 取余数
+    
+    return 0;
+}`,
+        expectedOutput: '15 + 4 = 19\n15 - 4 = 11\n15 × 4 = 60\n15 ÷ 4 = 3\n15 除以 4 余 3',
+        explanation: [
+          '+ 加法，- 减法，* 乘法，/ 除法',
+          '整数除法会舍去小数部分：15 / 4 = 3（不是3.75）',
+          '% 取余数：15 % 4 = 3（因为 15 = 4 × 3 + 3）',
+          '如果要得到小数，用 double 类型',
         ]
       }
     ],
     commonMistakes: [
       {
         mistake: '使用未初始化的变量',
-        why: '变量里可能有垃圾数据',
-        correctWay: '声明变量时最好立即初始化'
+        why: '就像打开一个空盒子，不知道里面有什么',
+        correctWay: '声明变量时最好立即给一个初始值，如 int score = 0;'
       },
       {
         mistake: '变量名用数字开头',
-        why: 'C++不允许变量名以数字开头',
-        correctWay: '变量名以字母或下划线开头'
+        why: 'C++规定变量名不能以数字开头',
+        correctWay: '用字母或下划线开头，如 age, _count, score1'
       },
+      {
+        mistake: '变量名用中文',
+        why: '虽然有些编译器支持，但容易出问题',
+        correctWay: '用英文命名，如 name 而不是 姓名'
+      },
+      {
+        mistake: '变量名用C++关键字',
+        why: 'int, double, if, for 等是C++保留的词',
+        correctWay: '避免用这些词，如用 myInt 而不是 int'
+      },
+      {
+        mistake: '搞混 = 和 ==',
+        why: '= 是赋值（放东西），== 是比较（判断相等）',
+        correctWay: 'a = 10 是把10放进a；a == 10 是判断a是否等于10'
+      }
     ],
     quiz: {
       question: '下列哪个变量名是正确的？',
@@ -319,74 +455,255 @@ int main() {
     icon: '📊',
     category: 'basics',
     difficulty: 'basic',
-    brief: '了解C++中的不同数据类型',
-    description: '不同的数据需要不同类型的盒子来存储。整数用int，小数用double，字符用char。',
+    brief: '不同类型的数据要放在不同类型的盒子里',
+    description: '整数、小数、字符、字符串...不同类型的数据需要用不同类型的变量来存储。就像大箱子装大东西，小箱子装小东西。',
     content: [
-      '整数类型：int, long long',
-      '浮点类型：float, double',
-      '字符类型：char',
-      '布尔类型：bool',
-      '字符串类型：string',
-      '如何选择合适的数据类型？',
+      '🔢 整数类型：int（常用）、long long（超大整数）',
+      '🔵 小数类型：double（常用）、float',
+      '🔤 字符类型：char（单个字符）',
+      '📝 字符串类型：string（一串字符）',
+      '✅ 布尔类型：bool（真或假）',
+      '📏 数据范围：每种类型能存多大的数？',
     ],
     kidFriendly: {
-      analogy: '数据类型就像不同形状的盒子。整数盒子只能放整数，小数盒子可以放小数，字符盒子只能放一个字符。用错盒子，东西就装不进去。',
-      visualization: '📦 数据类型盒子：\n[int] → 整数盒子\n[double] → 小数盒子\n[char] → 单字符盒子\n[string] → 字符串盒子',
-      whyLearn: '选对数据类型，程序才能正确处理数据。比如算年龄用整数，算价格用小数。'
+      analogy: `想象你有不同形状的收纳盒：
+
+📦 方形盒子（int）→ 装整数，如 1, 100, -50
+🥫 圆形罐子（double）→ 装小数，如 3.14, 0.5, -2.7
+🎴 小卡片盒（char）→ 装单个字符，如 'A', '中', '5'
+📚 书架（string）→ 装一串文字，如 "你好", "Hello"
+💡 开关（bool）→ 只有两个状态：开/关（true/false）
+
+用错盒子会怎样？
+- 小数放进整数盒 → 3.14 变成 3（丢失小数部分）
+- 太大的数放进小盒子 → 溢出（装不下）`,
+      visualization: `📊 数据类型一览表
+
+┌──────────┬─────────────┬──────────────────┬─────────────┐
+│ 类型     │ 存什么      │ 范围             │ 举例        │
+├──────────┼─────────────┼──────────────────┼─────────────┤
+│ int      │ 整数        │ -21亿~21亿       │ 100, -50    │
+│ long long│ 大整数      │ 非常大           │ 1万亿       │
+│ double   │ 小数        │ 很大，精度高     │ 3.14, 0.5   │
+│ char     │ 单字符      │ 任意字符         │ 'A', '好'   │
+│ string   │ 字符串      │ 任意长度文字     │ "你好世界"  │
+│ bool     │ 布尔值      │ true/false       │ true, false │
+└──────────┴─────────────┴──────────────────┴─────────────┘
+
+⚠️ 注意：
+- char 用单引号 'A'
+- string 用双引号 "ABC"
+- 整数除法会舍去小数！`,
+      whyLearn: `为什么为什么要区分数据类型？
+
+💰 计算价格：3.5元，用 double
+🎂 记录年龄：10岁，用 int
+📝 存名字："小明"，用 string
+🎮 游戏状态：是否通关，用 bool
+
+用对类型，程序才能正确处理数据！`
     },
     codeExamples: [
       {
-        title: '各种数据类型',
-        description: '声明不同类型的变量',
+        title: '示例1：整数类型 int 和 long long',
+        description: '存储整数',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // int：普通整数（范围约-21亿到21亿）
+    int age = 10;
+    int students = 50;
+    int temperature = -5;
+    
+    cout << "年龄：" << age << endl;
+    cout << "学生人数：" << students << endl;
+    cout << "温度：" << temperature << "度" << endl;
+    
+    // long long：超大整数
+    long long worldPopulation = 8000000000;  // 80亿
+    cout << "世界人口约：" << worldPopulation << endl;
+    
+    // 小技巧：如何判断用int还是long long？
+    // 如果数字可能超过21亿，就用long long
+    // NOIP竞赛中，如果题目数据范围>10^9，建议用long long
+    
+    return 0;
+}`,
+        expectedOutput: '年龄：10\n学生人数：50\n温度：-5度\n世界人口约：8000000000',
+        explanation: [
+          'int 最常用，能存下大多数整数',
+          'long long 范围超大，约9×10^18',
+          '负数也能存，直接加负号',
+          '如果不确定会不会溢出，就用long long',
+        ]
+      },
+      {
+        title: '示例2：小数类型 double',
+        description: '存储小数',
+        code: `#include <iostream>
+#include <iomanip>  // 用于控制小数位数
+using namespace std;
+
+int main() {
+    // double：存储小数
+    double price = 3.5;
+    double pi = 3.1415926535;
+    double weight = 52.5;
+    
+    cout << "价格：" << price << "元" << endl;
+    cout << "圆周率π：" << pi << endl;
+    cout << "体重：" << weight << "kg" << endl;
+    
+    // 小数计算
+    double a = 10.0;
+    double b = 3.0;
+    cout << "10 ÷ 3 = " << a / b << endl;  // 小数除法
+    
+    // 控制输出小数位数（保留2位）
+    cout << fixed << setprecision(2);
+    cout << "保留2位小数：" << a / b << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '价格：3.5元\n圆周率π：3.14159\n体重：52.5kg\n10 ÷ 3 = 3.33333\n保留2位小数：3.33',
+        explanation: [
+          'double 可以存储小数，精度够用',
+          '10.0 / 3.0 = 3.333... 小数除法会保留小数',
+          'fixed << setprecision(2) 可以控制保留几位小数',
+          '比较：10 / 3 = 3（整数除法舍去小数）',
+        ]
+      },
+      {
+        title: '示例3：字符类型 char 和字符串 string',
+        description: '存储文字',
         code: `#include <iostream>
 #include <string>
 using namespace std;
 
 int main() {
-    // 整数类型
-    int age = 10;
-    long long bigNumber = 1000000000000;
-    
-    // 浮点类型
-    double price = 3.14;
-    
-    // 字符类型
+    // char：单个字符，用单引号
     char grade = 'A';
+    char gender = '男';
+    char symbol = '@';
     
-    // 字符串类型
+    cout << "成绩等级：" << grade << endl;
+    cout << "性别：" << gender << endl;
+    cout << "符号：" << symbol << endl;
+    
+    // string：字符串，用双引号
     string name = "小明";
-    
-    // 布尔类型
-    bool isStudent = true;
+    string school = "阳光小学";
+    string message = "你好，欢迎学习C++！";
     
     cout << "姓名：" << name << endl;
-    cout << "年龄：" << age << endl;
-    cout << "成绩：" << grade << endl;
-    cout << "价格：" << price << endl;
+    cout << "学校：" << school << endl;
+    cout << message << endl;
+    
+    // 字符串拼接
+    string greeting = name + "你好！";
+    cout << greeting << endl;
     
     return 0;
 }`,
-        expectedOutput: '姓名：小明\n年龄：10\n成绩：A\n价格：3.14',
+        expectedOutput: '成绩等级：A\n性别：男\n符号：@\n姓名：小明\n学校：阳光小学\n你好，欢迎学习C++！\n小明你好！',
         explanation: [
-          'int 存储整数，范围约-21亿到21亿',
-          'long long 存储更大的整数',
-          'double 存储小数，精度高',
-          'char 用单引号，存储单个字符',
-          'string 用双引号，存储一串字符',
+          'char 只能存一个字符，用单引号 \'A\'',
+          'string 可以存一串字符，用双引号 "ABC"',
+          '字符串可以用 + 拼接',
+          '中文字符也可以存储',
+        ]
+      },
+      {
+        title: '示例4：布尔类型 bool',
+        description: '存储真假',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // bool：只有两个值 true（真）和 false（假）
+    bool isStudent = true;    // 是学生
+    bool hasHomework = false; // 没有作业
+    bool passed = true;       // 通过了
+    
+    cout << "是学生吗？" << isStudent << endl;     // 输出1
+    cout << "有作业吗？" << hasHomework << endl;   // 输出0
+    cout << "通过了吗？" << passed << endl;        // 输出1
+    
+    // 在C++中，true显示为1，false显示为0
+    // 但我们理解时就是"是/否"、"真/假"
+    
+    // 布尔值常用于判断
+    int score = 60;
+    bool passed2 = (score >= 60);  // 判断是否及格
+    cout << "分数" << score << "是否及格：" << passed2 << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '是学生吗？1\n有作业吗？0\n通过了吗？1\n分数60是否及格：1',
+        explanation: [
+          'bool 只有 true（真）和 false（假）两个值',
+          '输出时 true 显示为 1，false 显示为 0',
+          '常用于判断条件，如 是否及格、是否通关',
+          'score >= 60 会返回一个 bool 值',
+        ]
+      },
+      {
+        title: '示例5：类型转换陷阱',
+        description: '整数除法的坑',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 整数除法：结果还是整数
+    int a = 7, b = 2;
+    cout << "整数除法 7/2 = " << a / b << endl;  // 3，不是3.5！
+    cout << "余数 7%2 = " << a % b << endl;       // 1
+    
+    // 小数除法：结果是小数
+    double x = 7.0, y = 2.0;
+    cout << "小数除法 7.0/2.0 = " << x / y << endl;  // 3.5
+    
+    // 混合除法
+    cout << "混合 7/2.0 = " << a / y << endl;     // 3.5
+    cout << "混合 7.0/2 = " << x / b << endl;     // 3.5
+    
+    // 强制类型转换
+    cout << "强制转换 (double)7/2 = " << (double)a / b << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '整数除法 7/2 = 3\n余数 7%2 = 1\n小数除法 7.0/2.0 = 3.5\n混合 7/2.0 = 3.5\n混合 7.0/2 = 3.5\n强制转换 (double)7/2 = 3.5',
+        explanation: [
+          '整数 / 整数 = 整数（舍去小数）',
+          '想得到小数结果，至少有一个数要变成小数',
+          '方法1：直接用 double 类型',
+          '方法2：写成 7.0 而不是 7',
+          '方法3：强制转换 (double)a',
         ]
       }
     ],
     commonMistakes: [
       {
-        mistake: '用int存储超出范围的数',
-        why: 'int范围有限，超过会溢出',
-        correctWay: '大数用long long'
+        mistake: '整数除法想得到小数',
+        why: 'int / int 结果还是 int，会舍去小数',
+        correctWay: '用 double 类型，或写成 7.0 / 2，或强制转换 (double)7 / 2'
       },
       {
-        mistake: '字符用双引号',
-        why: '双引号是字符串，单引号才是字符',
+        mistake: '数字太大用 int',
+        why: 'int 范围约21亿，超过会溢出',
+        correctWay: '超过10^9的数用 long long'
+      },
+      {
+        mistake: 'char 用双引号',
+        why: '双引号是字符串，char 只能存一个字符',
         correctWay: 'char c = \'A\'; // 单引号'
       },
+      {
+        mistake: 'string 忘记 #include <string>',
+        why: 'string 是标准库类型，需要包含头文件',
+        correctWay: '在开头加上 #include <string>'
+      }
     ],
     quiz: {
       question: '存储3.14应该用什么类型？',
@@ -468,50 +785,194 @@ int main() {
   {
     id: 7,
     slug: 'cin-cout',
-    title: 'cin和cout',
-    icon: '📤',
+    title: '输入与输出',
+    icon: '💬',
     category: 'basics',
     difficulty: 'basic',
-    brief: '学习输入和输出',
-    description: 'cin用于从键盘读取输入，cout用于向屏幕输出结果。',
+    brief: '让程序和你"对话"：程序问你答，或程序告诉你',
+    description: '程序需要和用户交互。输出是程序告诉你信息，输入是你告诉程序信息。就像聊天，有说有听。',
     content: [
-      'cout输出：把内容显示到屏幕',
-      'cin输入：从键盘读取数据',
-      '连续输入输出',
-      'endl和\\n的区别',
-      '输入输出的格式控制',
+      '📤 输出 cout：程序向屏幕显示信息',
+      '📥 输入 cin：程序从键盘读取信息',
+      '🔄 输入输出流程：程序问 → 用户答 → 程序处理',
+      '📝 格式化输出：让输出更整齐好看',
+      '⏎ 换行：endl 和 \\n',
+      '🎯 实际应用：计算器、问答程序',
     ],
     kidFriendly: {
-      analogy: 'cout就像电脑的嘴巴，能把信息说出来给你看。cin就像电脑的耳朵，能听你输入的话。',
-      visualization: '⌨️ 输入输出流程：\n键盘 → cin → 程序 → cout → 屏幕',
-      whyLearn: '没有输入，程序只能做固定的事。有了输入，程序就能根据用户的需求来工作。'
+      analogy: `想象程序是一个机器人朋友：
+
+🤖 机器人说话（输出）
+  cout << "你好！";
+  机器人说："你好！"
+
+🤖 机器人听你说话（输入）
+  cin >> name;
+  机器人等你输入名字
+
+完整的对话：
+  🤖 机器人：你叫什么名字？（cout输出问题）
+  👤 你：小明（cin读取输入）
+  🤖 机器人：你好，小明！（cout输出结果）
+
+这样程序就"活"起来了！`,
+      visualization: `💬 输入输出示意图
+
+        程序
+    ┌─────────────────┐
+    │                 │
+    │  cout << "你好"  │ ──→ 📺 屏幕显示：你好
+    │                 │
+    │  cin >> age     │ ←── ⌨️ 键盘输入：10
+    │                 │
+    └─────────────────┘
+
+箭头方向：
+  << 是把内容"推"到屏幕（输出）
+  >> 是把键盘的内容"拉"到变量（输入）`,
+      whyLearn: `为什么需要输入输出？
+
+🎮 游戏需要你操控（输入），显示画面（输出）
+📱 APP需要你点击（输入），显示结果（输出）
+🧮 计算器需要你输入数字，显示答案
+
+没有输入输出，程序就是个"哑巴"，无法和人交流！`
     },
     codeExamples: [
       {
-        title: '输入输出示例',
-        description: '读取用户输入并输出',
+        title: '示例1：基本输出 cout',
+        description: '让程序说话',
         code: `#include <iostream>
 using namespace std;
 
 int main() {
-    int a, b;
+    // 输出一句话
+    cout << "你好，世界！";
     
-    // 输入两个数
-    cin >> a >> b;
+    // 换行输出的三种方式
+    cout << endl;           // 方式1：endl
+    cout << "第一行\\n";     // 方式2：\\n
+    cout << "第二行" << endl;
     
-    // 计算并输出
-    cout << "和：" << a + b << endl;
-    cout << "差：" << a - b << endl;
-    cout << "积：" << a * b << endl;
+    // 输出多个内容
+    cout << "我今年" << 10 << "岁" << endl;
+    
+    // 输出变量的值
+    string name = "小明";
+    int score = 100;
+    cout << name << "的分数是" << score << "分" << endl;
     
     return 0;
 }`,
-        input: '3 5',
-        expectedOutput: '和：8\n差：-2\n积：15',
+        expectedOutput: '你好，世界！\n第一行\n第二行\n我今年10岁\n小明的分数是100分',
         explanation: [
-          'cin >> a 表示从键盘读取一个数存到a中',
-          '>> 可以连续使用读取多个值',
-          '用空格或回车分隔输入的多个值',
+          'cout << 内容：把内容输出到屏幕',
+          '<< 可以连续使用，输出多个内容',
+          'endl 和 \\n 都表示换行',
+          '可以输出文字、数字、变量',
+        ]
+      },
+      {
+        title: '示例2：基本输入 cin',
+        description: '让程序听你说',
+        code: `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    // 输入一个整数
+    int age;
+    cout << "请输入你的年龄：";
+    cin >> age;  // 等待用户输入
+    cout << "你今年" << age << "岁" << endl;
+    
+    // 输入一个字符串
+    string name;
+    cout << "请输入你的名字：";
+    cin >> name;
+    cout << name << "，你好！" << endl;
+    
+    // 输入多个数据
+    int a, b;
+    cout << "请输入两个数字（用空格分隔）：";
+    cin >> a >> b;
+    cout << "它们的和是：" << a + b << endl;
+    
+    return 0;
+}`,
+        input: '10\n小明\n5 3',
+        expectedOutput: '请输入你的年龄：你今年10岁\n请输入你的名字：小明，你好！\n请输入两个数字（用空格分隔）：它们的和是：8',
+        explanation: [
+          'cin >> 变量：从键盘读取输入，存到变量里',
+          '>> 箭头指向变量，表示"往变量里存"',
+          'cin >> a >> b 可以连续读取多个值',
+          '多个输入用空格或换行分隔',
+        ]
+      },
+      {
+        title: '示例3：做一个简单计算器',
+        description: '综合运用输入输出',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 计算器程序
+    cout << "=== 简易计算器 ===" << endl;
+    cout << "请输入第一个数字：";
+    
+    double a, b;
+    cin >> a;
+    
+    cout << "请输入第二个数字：";
+    cin >> b;
+    
+    // 计算并输出结果
+    cout << endl << "计算结果：" << endl;
+    cout << a << " + " << b << " = " << a + b << endl;
+    cout << a << " - " << b << " = " << a - b << endl;
+    cout << a << " × " << b << " = " << a * b << endl;
+    cout << a << " ÷ " << b << " = " << a / b << endl;
+    
+    return 0;
+}`,
+        input: '15\n4',
+        expectedOutput: '=== 简易计算器 ===\n请输入第一个数字：请输入第二个数字：\n计算结果：\n15 + 4 = 19\n15 - 4 = 11\n15 × 4 = 60\n15 ÷ 4 = 3.75',
+        explanation: [
+          '先输出提示语，让用户知道该输入什么',
+          '用 double 类型支持小数计算',
+          '用户输入后，程序计算并输出结果',
+          '这就是一个真正能用的计算器程序！',
+        ]
+      },
+      {
+        title: '示例4：格式化输出',
+        description: '让输出更整齐',
+        code: `#include <iostream>
+#include <iomanip>  // 格式化输出需要
+using namespace std;
+
+int main() {
+    double pi = 3.14159265;
+    
+    // 控制小数位数
+    cout << "默认输出：" << pi << endl;
+    cout << "保留2位小数：" << fixed << setprecision(2) << pi << endl;
+    cout << "保留4位小数：" << setprecision(4) << pi << endl;
+    
+    // 设置宽度
+    cout << endl << "对齐输出：" << endl;
+    cout << setw(10) << "语文" << setw(10) << "数学" << setw(10) << "英语" << endl;
+    cout << setw(10) << 95 << setw(10) << 88 << setw(10) << 92 << endl;
+    cout << setw(10) << 87 << setw(10) << 90 << setw(10) << 85 << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '默认输出：3.14159\n保留2位小数：3.14\n保留4位小数：3.1416\n\n对齐输出：\n      语文      数学      英语\n        95        88        92\n        87        90        85',
+        explanation: [
+          'fixed << setprecision(n) 保留n位小数',
+          'setw(n) 设置宽度，不足补空格',
+          'setw 只对下一个输出有效',
+          '需要 #include <iomanip>',
         ]
       }
     ],
@@ -882,63 +1343,269 @@ int main() {
   {
     id: 13,
     slug: 'if-else',
-    title: 'if-else语句',
-    icon: '❓',
+    title: '条件语句',
+    icon: '🔀',
     category: 'basics',
     difficulty: 'basic',
     brief: '让程序学会做选择',
-    description: 'if-else语句让程序能够根据条件做出不同的选择，就像"如果下雨就带伞，否则不带"。',
+    description: '程序可以根据不同情况做不同的事情。就像岔路口，根据目的地选择不同的路。',
     content: [
-      'if语句：如果条件成立就执行',
-      'if-else语句：二选一',
-      'else if语句：多选一',
-      '条件表达式的写法',
-      '代码块和缩进',
+      '❓ if 语句：如果...就...（单分支）',
+      '🔄 if-else：如果...就...否则...（双分支）',
+      '🔀 if-else if-else：多选一（多分支）',
+      '🎯 switch：多选一的简洁写法',
+      '🪺 嵌套条件：条件里套条件',
+      '⚠️ 逻辑运算：组合多个条件',
     ],
     kidFriendly: {
-      analogy: 'if-else就像生活中的选择。比如：如果作业写完了，就可以玩游戏；否则，继续写作业。程序也能根据条件做不同的事。',
-      visualization: '🔀 条件分支：\n┌─────────────┐\n│ 如果(条件)  │\n│   执行A     │\n│ 否则        │\n│   执行B     │\n└─────────────┘',
-      whyLearn: '没有条件语句，程序只能从头到尾执行一遍。学会它，程序就能变得"聪明"，能根据情况做不同的事情。'
+      analogy: `条件语句就像生活中的选择：
+
+🌟 if（如果）：单一选择
+  如果下雨，就带伞
+
+  if (下雨) {
+      带伞;
+  }
+
+🌟 if-else（如果...否则）：二选一
+  如果下雨，就带伞；否则，戴太阳帽
+
+  if (下雨) {
+      带伞;
+  } else {
+      戴太阳帽;
+  }
+
+🌟 if-else if-else（多选一）：多种选择
+  如果分数>=90，优秀；
+  否则如果>=80，良好；
+  否则如果>=60，及格；
+  否则，不及格`,
+      visualization: `🔀 条件语句流程图
+
+【 if 语句 】
+        ┌─────────┐
+        │ 条件？   │
+        └────┬────┘
+         是/  \\否
+           /    \\
+     执行代码   跳过
+         
+【 if-else 语句 】
+        ┌─────────┐
+        │ 条件？   │
+        └────┬────┘
+         是/    \\否
+           /      \\
+     执行代码A   执行代码B
+
+【 if-else if-else 语句 】
+        ┌─────────┐
+        │ 条件1？  │
+        └────┬────┘
+         是/    \\否
+           /      \\
+      执行A    ┌─────────┐
+               │ 条件2？  │
+               └────┬────┘
+                是/    \\否
+                  /      \\
+             执行B      执行C`,
+      whyLearn: `为什么需要条件语句？
+
+🎮 游戏中：
+  如果生命值<=0，游戏结束
+  如果有钥匙，可以开门
+  如果金币>=100，可以买装备
+
+📱 APP中：
+  如果输入正确，登录成功
+  如果网络断开，显示错误提示
+
+条件让程序变得"聪明"，能根据情况做出不同反应！`
     },
     codeExamples: [
       {
-        title: 'if-else示例',
-        description: '判断成绩等级',
+        title: '示例1：if 语句（单分支）',
+        description: '满足条件才执行',
         code: `#include <iostream>
 using namespace std;
 
 int main() {
     int score;
+    cout << "请输入你的分数：";
     cin >> score;
     
-    if (score >= 90) {
-        cout << "优秀！" << endl;
-    } else if (score >= 80) {
-        cout << "良好！" << endl;
-    } else if (score >= 60) {
-        cout << "及格" << endl;
-    } else {
-        cout << "需要加油！" << endl;
+    // 如果分数>=60，显示"恭喜通过"
+    if (score >= 60) {
+        cout << "🎉 恭喜通过！" << endl;
     }
+    
+    // 如果分数==100，显示"满分！"
+    if (score == 100) {
+        cout << "🌟 太厉害了，满分！" << endl;
+    }
+    
+    // 程序继续执行
+    cout << "程序结束" << endl;
     
     return 0;
 }`,
         input: '85',
-        expectedOutput: '良好！',
+        expectedOutput: '请输入你的分数：🎉 恭喜通过！\n程序结束',
         explanation: [
-          'if后面的括号里写条件',
-          '条件成立执行对应代码块',
-          'else if可以写多个',
-          'else处理其他所有情况',
+          'if (条件) { ... } 括号内为真才执行大括号内的代码',
+          '条件不满足就跳过，继续执行后面的代码',
+          '大括号 { } 包围要执行的代码块',
+          '可以有多个独立的 if 语句',
+        ]
+      },
+      {
+        title: '示例2：if-else 语句（双分支）',
+        description: '二选一',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int age;
+    cout << "请输入你的年龄：";
+    cin >> age;
+    
+    // 判断是否成年
+    if (age >= 18) {
+        cout << "你已成年，可以观看！" << endl;
+    } else {
+        cout << "你未成年，需要家长陪同！" << endl;
+    }
+    
+    // 判断奇偶
+    int num;
+    cout << "请输入一个整数：";
+    cin >> num;
+    
+    if (num % 2 == 0) {
+        cout << num << " 是偶数" << endl;
+    } else {
+        cout << num << " 是奇数" << endl;
+    }
+    
+    return 0;
+}`,
+        input: '15\n7',
+        expectedOutput: '请输入你的年龄：你未成年，需要家长陪同！\n请输入一个整数：7 是奇数',
+        explanation: [
+          'if-else 是二选一，必有一个分支被执行',
+          '条件为真执行 if 后的代码，为假执行 else 后的代码',
+          'else 不能单独使用，必须跟在 if 后面',
+          '这种结构保证了总有一个分支被执行',
+        ]
+      },
+      {
+        title: '示例3：if-else if-else 语句（多分支）',
+        description: '多选一',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int score;
+    cout << "请输入你的分数：";
+    cin >> score;
+    
+    // 成绩等级判定
+    if (score >= 90) {
+        cout << "优秀！🌟" << endl;
+    } else if (score >= 80) {
+        cout << "良好！😊" << endl;
+    } else if (score >= 60) {
+        cout << "及格！👍" << endl;
+    } else {
+        cout << "不及格，继续努力！💪" << endl;
+    }
+    
+    // 注意：条件要从高到低写！
+    // 如果写成 score >= 60 在前面，那90分也会被判定为"及格"
+    
+    return 0;
+}`,
+        input: '85',
+        expectedOutput: '请输入你的分数：良好！😊',
+        explanation: [
+          'if-else if-else 是多选一，只会执行一个分支',
+          '从上到下依次判断，满足一个就执行，后面的不再判断',
+          '条件要从高到低写，或者用 && 限制范围',
+          '最后的 else 是"其他所有情况"的兜底',
+        ]
+      },
+      {
+        title: '示例4：switch 语句',
+        description: '多选一的简洁写法',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int day;
+    cout << "请输入星期几（1-7）：";
+    cin >> day;
+    
+    // switch 语句：根据值选择分支
+    switch (day) {
+        case 1:
+            cout << "星期一，新的一周开始！" << endl;
+            break;  // 必须有break！
+        case 2:
+            cout << "星期二" << endl;
+            break;
+        case 3:
+            cout << "星期三" << endl;
+            break;
+        case 4:
+            cout << "星期四" << endl;
+            break;
+        case 5:
+            cout << "星期五，明天就是周末！" << endl;
+            break;
+        case 6:
+        case 7:  // 6和7共享同一个结果
+            cout << "周末愉快！" << endl;
+            break;
+        default:  // 其他情况
+            cout << "输入错误，请输入1-7" << endl;
+    }
+    
+    return 0;
+}`,
+        input: '5',
+        expectedOutput: '请输入星期几（1-7）：星期五，明天就是周末！',
+        explanation: [
+          'switch 根据变量的值直接跳到对应的 case',
+          '每个 case 后必须加 break，否则会继续执行下一个 case',
+          'default 处理所有未列出的情况',
+          '多个值可以有相同的处理结果（如 case 6 和 case 7）',
+          'switch 只能用于整数、字符等离散值，不能用于范围判断',
         ]
       }
     ],
     commonMistakes: [
       {
-        mistake: 'if后面加分号',
-        why: '分号会结束if语句',
-        correctWay: 'if (条件) { ... } 不要加分号'
+        mistake: 'if 后面加分号',
+        why: 'if (条件); { } 这样写，大括号会始终执行',
+        correctWay: 'if (条件) { } 中间不要有分号'
       },
+      {
+        mistake: '忘记大括号',
+        why: 'if 只管后面一行代码',
+        correctWay: '即使只有一行代码，也建议加 { }'
+      },
+      {
+        mistake: 'switch 忘记 break',
+        why: '没有 break 会继续执行下一个 case',
+        correctWay: '每个 case 后都要加 break（故意穿透除外）'
+      },
+      {
+        mistake: '= 和 == 搞混',
+        why: '= 是赋值，== 是比较',
+        correctWay: 'if (a == 10) 判断相等，不是 if (a = 10)'
+      }
     ],
     quiz: {
       question: 'score=75，上面的程序输出什么？',
@@ -1326,86 +1993,277 @@ int main() {
   {
     id: 19,
     slug: 'for-loop',
-    title: 'for循环',
+    title: '循环语句',
     icon: '🔄',
     category: 'basics',
     difficulty: 'basic',
-    brief: '让程序重复执行',
-    description: 'for循环是使用最多的循环结构，适合已知循环次数的情况。',
+    brief: '让程序重复做事情',
+    description: '需要重复执行同一段代码时，用循环。就像体育课跑圈，绕着操场跑10圈。',
     content: [
-      'for循环的三个部分：初始化、条件、更新',
-      '循环变量的作用',
-      '循环体的执行过程',
-      '常见循环模式',
-      '如何确定循环次数',
+      '🔁 for 循环：知道次数时用',
+      '🔄 while 循环：不知道次数时用',
+      '📥 do-while 循环：先做再判断',
+      '🪺 循环嵌套：循环里套循环',
+      '⏹️ break 和 continue：控制循环',
+      '⚠️ 死循环：永远停不下来的循环',
     ],
     kidFriendly: {
-      analogy: 'for循环就像体育课跑圈。"从起跑线开始，跑够10圈，每跑一圈就数一下"。程序也是，从一开始，满足条件就继续，每次做完更新一下。',
-      visualization: '🔄 for循环结构：\nfor (起点; 终点条件; 步进) {\n    重复做的事\n}',
-      whyLearn: '很多任务需要重复做，比如计算1到100的和、打印九九乘法表。循环让这些变得简单。'
+      analogy: `循环就像重复做事情：
+
+🏃 for 循环：知道要跑几圈
+  for (跑第1圈; 跑完10圈停下; 下一圈) {
+      跑一圈;
+  }
+  
+  写成代码：
+  for (int i = 1; i <= 10; i++) {
+      cout << "跑了第" << i << "圈" << endl;
+  }
+
+🔄 while 循环：不知道要跑几圈
+  while (还有力气) {
+      再跑一圈;
+  }
+
+📥 do-while 循环：先跑一圈再说
+  do {
+      跑一圈;
+  } while (还有力气);`,
+      visualization: `🔄 循环流程图
+
+【 for 循环 】
+    初始化 → 判断条件 → 执行代码 → 更新 → 判断条件 → ...
+                   ↓
+              条件为假时退出
+
+【 while 循环 】
+    判断条件 → 执行代码 → 判断条件 → ...
+        ↓
+    条件为假时退出
+
+【 do-while 循环 】
+    执行代码 → 判断条件 → 执行代码 → ...
+                   ↓
+              条件为假时退出
+    
+    特点：至少执行一次！`,
+      whyLearn: `为什么需要循环？
+
+🎮 游戏中：
+  让角色重复跑动动画
+  检测每个敌人是否被击中
+  显示排行榜前100名
+
+📊 数据处理：
+  计算1到100的和
+  找出数组中最大的数
+  统计有多少个及格的学生
+
+没有循环，你需要写100遍相同的代码！`
     },
     codeExamples: [
       {
-        title: 'for循环示例',
-        description: '计算1到n的和',
+        title: '示例1：for 循环基础',
+        description: '重复执行指定次数',
         code: `#include <iostream>
 using namespace std;
 
 int main() {
-    int n;
-    cin >> n;
-    
-    int sum = 0;
-    // i从1开始，每次加1，直到超过n
-    for (int i = 1; i <= n; i++) {
-        sum = sum + i;  // 或者 sum += i;
+    // 输出1到10
+    cout << "输出1到10：" << endl;
+    for (int i = 1; i <= 10; i++) {
+        cout << i << " ";
     }
+    cout << endl;
     
-    cout << "1到" << n << "的和是" << sum << endl;
+    // 计算1到100的和
+    int sum = 0;
+    for (int i = 1; i <= 100; i++) {
+        sum += i;  // sum = sum + i
+    }
+    cout << "1到100的和是：" << sum << endl;
+    
+    // 倒着数
+    cout << "倒着数10到1：" << endl;
+    for (int i = 10; i >= 1; i--) {
+        cout << i << " ";
+    }
+    cout << endl;
+    
+    // 只处理偶数
+    cout << "1到10的偶数：" << endl;
+    for (int i = 2; i <= 10; i += 2) {
+        cout << i << " ";
+    }
+    cout << endl;
+    
     return 0;
 }`,
-        input: '10',
-        expectedOutput: '1到10的和是55',
+        expectedOutput: '输出1到10：\n1 2 3 4 5 6 7 8 9 10 \n1到100的和是：5050\n倒着数10到1：\n10 9 8 7 6 5 4 3 2 1 \n1到10的偶数：\n2 4 6 8 10 ',
         explanation: [
-          'int i = 1：初始化，i从1开始',
-          'i <= n：条件，满足才继续循环',
-          'i++：每次循环后i加1',
-          '循环执行10次，sum累加1到10',
+          'for (初始化; 条件; 更新) { 循环体 }',
+          '初始化：int i = 1，只执行一次',
+          '条件：i <= 10，每次循环前判断',
+          '更新：i++，每次循环后执行',
+          '可以递增、递减、跳跃步长',
         ]
       },
       {
-        title: '打印九九乘法表',
-        description: '嵌套for循环',
+        title: '示例2：while 循环',
+        description: '条件满足时持续循环',
         code: `#include <iostream>
 using namespace std;
 
 int main() {
-    for (int i = 1; i <= 9; i++) {
-        for (int j = 1; j <= i; j++) {
-            cout << j << "*" << i << "=" << i*j << " ";
+    // 输出1到5
+    cout << "while循环输出1到5：" << endl;
+    int i = 1;  // 初始化
+    while (i <= 5) {  // 条件
+        cout << i << " ";
+        i++;  // 更新（别忘了！）
+    }
+    cout << endl;
+    
+    // 猜数字游戏
+    int secret = 7;
+    int guess;
+    cout << "猜一个1到10的数字：" << endl;
+    
+    while (true) {  // 无限循环
+        cin >> guess;
+        if (guess == secret) {
+            cout << "猜对了！" << endl;
+            break;  // 退出循环
+        } else if (guess < secret) {
+            cout << "太小了，再猜：" << endl;
+        } else {
+            cout << "太大了，再猜：" << endl;
+        }
+    }
+    
+    return 0;
+}`,
+        input: '3\n5\n7',
+        expectedOutput: 'while循环输出1到5：\n1 2 3 4 5 \n猜一个1到10的数字：\n太小了，再猜：\n太小了，再猜：\n猜对了！',
+        explanation: [
+          'while (条件) { 循环体 }',
+          '先判断条件，条件为真才执行循环体',
+          '循环体里必须有改变条件的代码，否则死循环',
+          'while(true) 可以创建无限循环，用 break 退出',
+        ]
+      },
+      {
+        title: '示例3：循环嵌套',
+        description: '循环里套循环',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 打印矩形
+    cout << "打印5x10矩形：" << endl;
+    for (int i = 1; i <= 5; i++) {      // 5行
+        for (int j = 1; j <= 10; j++) {  // 每行10个星号
+            cout << "*";
+        }
+        cout << endl;  // 每行结束换行
+    }
+    
+    // 打印直角三角形
+    cout << endl << "打印直角三角形：" << endl;
+    for (int i = 1; i <= 5; i++) {        // 5行
+        for (int j = 1; j <= i; j++) {    // 第i行有i个星号
+            cout << "*";
         }
         cout << endl;
     }
+    
+    // 打印九九乘法表
+    cout << endl << "九九乘法表：" << endl;
+    for (int i = 1; i <= 9; i++) {
+        for (int j = 1; j <= i; j++) {
+            cout << j << "×" << i << "=" << i*j << "\\t";
+        }
+        cout << endl;
+    }
+    
     return 0;
 }`,
-        expectedOutput: '1*1=1 \n1*2=2 2*2=4 \n...',
+        expectedOutput: '打印5x10矩形：\n**********\n**********\n**********\n**********\n**********\n\n打印直角三角形：\n*\n**\n***\n****\n*****\n\n九九乘法表：\n1×1=1\t\n1×2=2\t2×2=4\t\n...',
         explanation: [
-          '外层循环控制行，内层循环控制列',
-          '每行结束后换行',
+          '外层循环控制行，内层循环控制每行的内容',
+          '每次外层循环执行一次，内层循环完整执行一轮',
+          '嵌套循环的时间复杂度是 O(n²)',
+          '注意缩进，让代码结构清晰',
+        ]
+      },
+      {
+        title: '示例4：break 和 continue',
+        description: '控制循环流程',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // break：直接退出整个循环
+    cout << "输出1-10，遇到5停止：" << endl;
+    for (int i = 1; i <= 10; i++) {
+        if (i == 5) {
+            break;  // 直接退出循环
+        }
+        cout << i << " ";
+    }
+    cout << endl;
+    
+    // continue：跳过本次循环，继续下一次
+    cout << "输出1-10，跳过5：" << endl;
+    for (int i = 1; i <= 10; i++) {
+        if (i == 5) {
+            continue;  // 跳过5，继续下一次
+        }
+        cout << i << " ";
+    }
+    cout << endl;
+    
+    // 实际应用：找第一个能被7整除的数
+    cout << "找第一个能被7整除的数：" << endl;
+    for (int i = 1; i <= 100; i++) {
+        if (i % 7 == 0) {
+            cout << i << endl;
+            break;  // 找到就退出
+        }
+    }
+    
+    return 0;
+}`,
+        expectedOutput: '输出1-10，遇到5停止：\n1 2 3 4 \n输出1-10，跳过5：\n1 2 3 4 6 7 8 9 10 \n找第一个能被7整除的数：\n7',
+        explanation: [
+          'break：立即退出整个循环',
+          'continue：跳过本次循环，直接进入下一次',
+          'break 常用于找到目标后退出',
+          'continue 常用于跳过不需要处理的情况',
         ]
       }
     ],
     commonMistakes: [
       {
-        mistake: 'for后面加分号',
-        why: '循环体为空，只执行初始化和更新',
-        correctWay: 'for (...) { ... } 不加分号'
+        mistake: '死循环',
+        why: '循环条件永远为真，程序停不下来',
+        correctWay: '确保循环条件最终会变为假'
       },
       {
-        mistake: '循环变量超出范围',
-        why: '可能导致数组越界等问题',
-        correctWay: '仔细检查边界条件'
+        mistake: '差一错误',
+        why: 'i < 10 和 i <= 10 结果不同',
+        correctWay: '明确是"<"还是"<="，画图验证边界'
       },
+      {
+        mistake: '忘记更新循环变量',
+        why: 'i++ 写在循环体外或忘记写',
+        correctWay: 'for循环在括号里更新，while在循环体里更新'
+      },
+      {
+        mistake: '嵌套循环变量用错',
+        why: '外层用i，内层也用i，会出问题',
+        correctWay: '外层用i，内层用j，不同的循环用不同的变量'
+      }
     ],
     quiz: {
       question: 'for (int i = 0; i < 5; i++) 循环执行几次？',
