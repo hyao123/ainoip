@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -69,6 +70,7 @@ const phaseConfig: Record<string, { color: string; bgColor: string; borderColor:
 };
 
 export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowledge }: LearningPathViewProps) {
+  const router = useRouter();
   const [currentDay, setCurrentDay] = useState(1);
   const [completedDays, setCompletedDays] = useState<Set<number>>(new Set());
   const [streakDays, setStreakDays] = useState(7);
@@ -440,8 +442,7 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                               variant="secondary" 
                               className="text-xs cursor-pointer hover:bg-primary/20 transition-colors" 
                               onClick={() => {
-                                onNavigate?.('map');
-                                onNavigateToKnowledge?.(topic.id);
+                                router.push(`/knowledge/${topic.id}?from=learning&day=${currentDay}`);
                               }}
                             >
                               {topic.name}
@@ -453,10 +454,9 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                       {/* 操作区 */}
                       <div className="flex flex-col gap-2">
                         <Button onClick={() => {
-                          onNavigate?.('map');
-                          // 跳转到第一个知识点
+                          // 跳转到第一个知识点的详情页
                           if (todayLesson.topics.length > 0) {
-                            onNavigateToKnowledge?.(todayLesson.topics[0].id);
+                            router.push(`/knowledge/${todayLesson.topics[0].id}?from=learning&day=${currentDay}`);
                           }
                         }}>
                           <BookOpen className="h-4 w-4 mr-2" />

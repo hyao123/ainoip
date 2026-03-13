@@ -2651,7 +2651,6 @@ export default function Home() {
           ) : currentView === 'map' ? (
             <KnowledgeMapPage 
               onStartProblem={(problemId) => handleStartProblemById(problemId)}
-              initialPointSlug={initialKnowledgeSlug}
             />
           ) : currentView === 'user' ? (
             <UserCenterPage onSelectProblem={handleStartProblemById} />
