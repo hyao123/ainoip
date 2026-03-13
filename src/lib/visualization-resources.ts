@@ -77,7 +77,7 @@ export const visualizationResources: VisualizationResource[] = [
     gifUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Bubble-sort-example-300px.gif',
     visualizerUrl: 'https://visualgo.net/zh/sorting?slide=1',
     // 冒泡排序专门讲解
-    bvNumber: 'BV1Cz411B7qd',
+    bvNumber: 'BV1f34y1s7ao',
     videoTitle: '冒泡排序详解',
   },
   {
