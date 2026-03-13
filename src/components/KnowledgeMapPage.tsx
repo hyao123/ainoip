@@ -1,628 +1,485 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
-  dailyLearningPath,
-  learningPhases,
-  getDayLesson,
-  assessmentQuestions,
-  suggestStartDay,
-  type DayLesson,
-  type LearningPhase,
-  type AssessmentQuestion,
-} from '@/lib/daily-learning-path';
+  knowledgePoints,
+  categories,
+  getKnowledgePointById,
+  searchKnowledgePoints,
+  type KnowledgePoint,
+} from '@/lib/knowledge-map';
 import {
-  ChevronRight,
-  ChevronLeft,
-  ChevronDown,
-  Play,
-  CheckCircle2,
-  Circle,
-  Lock,
   BookOpen,
-  Target,
-  Trophy,
-  Rocket,
+  Search,
+  Filter,
+  ChevronRight,
+  ChevronDown,
+  Lightbulb,
+  Code,
+  FileText,
+  Video,
   Clock,
   Star,
-  Zap,
-  Map,
-  Compass,
-  Award,
-  BarChart3,
-  Sparkles,
-  Lightbulb,
-  CheckCircle,
-  XCircle,
-  Calendar,
-  Flag,
-  Eye,
+  CheckCircle2,
+  Circle,
+  ArrowRight,
+  Play,
+  ExternalLink,
+  Bookmark,
+  BookmarkCheck,
 } from 'lucide-react';
 
 interface KnowledgeMapPageProps {
   onStartProblem?: (problemId: number) => void;
 }
 
-// 阶段配置
-const phaseConfig: Record<string, { color: string; bgColor: string; borderColor: string; icon: string; description: string }> = {
-  foundation: {
-    color: 'text-green-600',
-    bgColor: 'bg-green-50 dark:bg-green-950/30',
-    borderColor: 'border-green-200 dark:border-green-800',
-    icon: '🌱',
-    description: '从零开始，掌握C++基础语法',
-  },
-  basic: {
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50 dark:bg-blue-950/30',
-    borderColor: 'border-blue-200 dark:border-blue-800',
-    icon: '🌿',
-    description: '掌握基本算法思想和数据结构',
-  },
-  intermediate: {
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-50 dark:bg-yellow-950/30',
-    borderColor: 'border-yellow-200 dark:border-yellow-800',
-    icon: '🌳',
-    description: '深入算法学习，攻克普及组',
-  },
-  advanced: {
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-50 dark:bg-orange-950/30',
-    borderColor: 'border-orange-200 dark:border-orange-800',
-    icon: '🏔️',
-    description: '掌握高级算法，冲击提高组',
-  },
-  competition: {
-    color: 'text-red-600',
-    bgColor: 'bg-red-50 dark:bg-red-950/30',
-    borderColor: 'border-red-200 dark:border-red-800',
-    icon: '🏆',
-    description: '真题训练，模拟比赛',
-  },
+// 难度配置
+const difficultyConfig: Record<string, { color: string; bgColor: string; label: string }> = {
+  basic: { color: 'text-green-600', bgColor: 'bg-green-50', label: '基础' },
+  intermediate: { color: 'text-yellow-600', bgColor: 'bg-yellow-50', label: '进阶' },
+  advanced: { color: 'text-orange-600', bgColor: 'bg-orange-50', label: '高级' },
+  competition: { color: 'text-red-600', bgColor: 'bg-red-50', label: '竞赛' },
 };
 
 export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
-  const [currentDay, setCurrentDay] = useState(1);
-  const [completedDays, setCompletedDays] = useState<Set<number>>(new Set());
-  const [expandedPhase, setExpandedPhase] = useState<string | null>('foundation');
-  const [showAssessment, setShowAssessment] = useState(false);
-  const [assessmentStep, setAssessmentStep] = useState(0);
-  const [assessmentAnswers, setAssessmentAnswers] = useState<number[]>([]);
-  const [assessmentFinished, setAssessmentFinished] = useState(false);
-  const [suggestedStartDay, setSuggestedStartDay] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [selectedPoint, setSelectedPoint] = useState<KnowledgePoint | null>(null);
+  const [bookmarkedPoints, setBookmarkedPoints] = useState<Set<number>>(new Set());
+  const [viewedPoints, setViewedPoints] = useState<Set<number>>(new Set());
 
-  // 初始化状态
-  useEffect(() => {
-    const savedCurrentDay = localStorage.getItem('noip_current_day');
-    const savedCompletedDays = localStorage.getItem('noip_completed_days');
-    
-    if (savedCurrentDay) setCurrentDay(parseInt(savedCurrentDay));
-    if (savedCompletedDays) setCompletedDays(new Set(JSON.parse(savedCompletedDays)));
-  }, []);
+  // 搜索和过滤
+  const filteredPoints = useMemo(() => {
+    let points = knowledgePoints;
 
-  // 当前天的课程
-  const currentLesson = getDayLesson(currentDay);
+    if (searchQuery) {
+      points = searchKnowledgePoints(searchQuery);
+    }
 
-  // 计算进度
-  const totalDays = dailyLearningPath.length;
-  const completedCount = completedDays.size;
-  const progressPercent = Math.round((completedCount / totalDays) * 100);
+    if (selectedCategory) {
+      points = points.filter(p => p.category === selectedCategory);
+    }
 
-  // 标记完成
-  const markDayComplete = (day: number) => {
-    const newCompleted = new Set([...completedDays, day]);
-    setCompletedDays(newCompleted);
-    localStorage.setItem('noip_completed_days', JSON.stringify([...newCompleted]));
-  };
+    if (selectedDifficulty) {
+      points = points.filter(p => p.difficulty === selectedDifficulty);
+    }
 
-  // 处理评估答案
-  const handleAssessmentAnswer = (answerIndex: number) => {
-    const newAnswers = [...assessmentAnswers, answerIndex];
-    setAssessmentAnswers(newAnswers);
+    return points;
+  }, [searchQuery, selectedCategory, selectedDifficulty]);
 
-    if (assessmentStep < assessmentQuestions.length - 1) {
-      setAssessmentStep(assessmentStep + 1);
+  // 按分类分组
+  const groupedPoints = useMemo(() => {
+    const groups: Record<string, KnowledgePoint[]> = {};
+    filteredPoints.forEach(point => {
+      if (!groups[point.category]) {
+        groups[point.category] = [];
+      }
+      groups[point.category].push(point);
+    });
+    return groups;
+  }, [filteredPoints]);
+
+  // 切换收藏
+  const toggleBookmark = (pointId: number) => {
+    const newBookmarks = new Set(bookmarkedPoints);
+    if (newBookmarks.has(pointId)) {
+      newBookmarks.delete(pointId);
     } else {
-      let correctCount = 0;
-      newAnswers.forEach((answer, index) => {
-        if (answer === assessmentQuestions[index].correctAnswer) {
-          correctCount++;
-        }
-      });
-      const suggested = suggestStartDay(correctCount, assessmentQuestions.length);
-      setSuggestedStartDay(suggested);
-      setAssessmentFinished(true);
+      newBookmarks.add(pointId);
     }
+    setBookmarkedPoints(newBookmarks);
   };
 
-  // 从建议的天数开始学习
-  const startFromSuggestedDay = () => {
-    if (suggestedStartDay) {
-      setCurrentDay(suggestedStartDay);
-      localStorage.setItem('noip_current_day', String(suggestedStartDay));
-      setShowAssessment(false);
-      setAssessmentStep(0);
-      setAssessmentAnswers([]);
-      setAssessmentFinished(false);
-    }
+  // 标记已读
+  const markAsViewed = (pointId: number) => {
+    setViewedPoints(new Set([...viewedPoints, pointId]));
   };
 
-  // 跳转到指定天
-  const jumpToDay = (day: number) => {
-    if (day >= 1 && day <= totalDays) {
-      setCurrentDay(day);
-      localStorage.setItem('noip_current_day', String(day));
-    }
-  };
-
-  // 切换阶段展开
-  const togglePhase = (phaseId: string) => {
-    setExpandedPhase(expandedPhase === phaseId ? null : phaseId);
+  // 查看详情
+  const viewPoint = (point: KnowledgePoint) => {
+    setSelectedPoint(point);
+    markAsViewed(point.id);
   };
 
   return (
     <div className="h-full flex flex-col bg-background">
       {/* 顶部标题栏 */}
-      <div className="px-6 py-4 border-b bg-gradient-to-r from-primary/5 to-transparent shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Map className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">知识地图</h1>
-              <p className="text-sm text-muted-foreground">规划你的学习路径</p>
-            </div>
+      <div className="px-6 py-4 border-b shrink-0">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-xl font-bold flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary" />
+              知识地图
+            </h1>
+            <p className="text-sm text-muted-foreground">系统化的知识点讲解库，帮你理解每个算法</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary" className="gap-1">
+              <Bookmark className="h-3 w-3" />
+              {bookmarkedPoints.size} 已收藏
+            </Badge>
+            <Badge variant="outline" className="gap-1">
+              <CheckCircle2 className="h-3 w-3" />
+              {viewedPoints.size} / {knowledgePoints.length} 已学
+            </Badge>
+          </div>
+        </div>
+
+        {/* 搜索栏 */}
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="搜索知识点..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* 总体进度 */}
-            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-muted/50">
-              <div className="text-center">
-                <div className="text-lg font-bold">{completedCount}</div>
-                <div className="text-xs text-muted-foreground">已完成</div>
-              </div>
-              <Separator orientation="vertical" className="h-8" />
-              <div className="text-center">
-                <div className="text-lg font-bold">{progressPercent}%</div>
-                <div className="text-xs text-muted-foreground">进度</div>
-              </div>
-            </div>
-
-            {/* 基础评估按钮 */}
-            <Dialog open={showAssessment} onOpenChange={setShowAssessment}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                  <Compass className="h-4 w-4" />
-                  基础评估
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-primary" />
-                    基础评估
-                  </DialogTitle>
-                  <DialogDescription>
-                    回答几个问题，我们会为你推荐合适的起始学习位置
-                  </DialogDescription>
-                </DialogHeader>
-
-                {!assessmentFinished ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-2">
-                      <Progress 
-                        value={((assessmentStep + 1) / assessmentQuestions.length) * 100} 
-                        className="flex-1 h-2" 
-                      />
-                      <span className="text-sm text-muted-foreground">
-                        {assessmentStep + 1}/{assessmentQuestions.length}
-                      </span>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="text-lg font-medium">
-                        {assessmentQuestions[assessmentStep].question}
-                      </div>
-
-                      <div className="space-y-2">
-                        {assessmentQuestions[assessmentStep].options.map((option, index) => (
-                          <Button
-                            key={index}
-                            variant="outline"
-                            className="w-full justify-start text-left h-auto py-3"
-                            onClick={() => handleAssessmentAnswer(index)}
-                          >
-                            <span className="w-6 h-6 rounded-full border mr-3 flex items-center justify-center text-xs font-medium">
-                              {String.fromCharCode(65 + index)}
-                            </span>
-                            {option}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-6 py-4">
-                    <div className="text-center space-y-4">
-                      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                        <Lightbulb className="h-8 w-8 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-medium">评估完成！</h3>
-                        <p className="text-muted-foreground mt-1">
-                          你答对了 {assessmentAnswers.filter((a, i) => a === assessmentQuestions[i].correctAnswer).length}/{assessmentQuestions.length} 题
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 rounded-lg bg-muted/50 space-y-3">
-                      <div className="text-sm font-medium">建议起始学习位置</div>
-                      <div className="flex items-center gap-3">
-                        <div className="text-3xl font-bold text-primary">
-                          Day {suggestedStartDay}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {getDayLesson(suggestedStartDay!)?.title}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() => {
-                          setShowAssessment(false);
-                          setAssessmentStep(0);
-                          setAssessmentAnswers([]);
-                          setAssessmentFinished(false);
-                        }}
-                      >
-                        重新评估
-                      </Button>
-                      <Button className="flex-1" onClick={startFromSuggestedDay}>
-                        从这里开始
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </DialogContent>
-            </Dialog>
+          {/* 难度筛选 */}
+          <div className="flex items-center gap-1">
+            {Object.entries(difficultyConfig).map(([key, config]) => (
+              <Button
+                key={key}
+                variant={selectedDifficulty === key ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedDifficulty(selectedDifficulty === key ? null : key)}
+                className="h-8"
+              >
+                {config.label}
+              </Button>
+            ))}
           </div>
         </div>
       </div>
 
       {/* 主内容区 */}
       <div className="flex-1 flex overflow-hidden">
-        {/* 左侧：阶段导航 */}
-        <aside className="w-72 border-r bg-muted/10 shrink-0">
+        {/* 左侧：分类导航 */}
+        <aside className="w-64 border-r bg-muted/10 shrink-0">
           <ScrollArea className="h-full">
-            <div className="p-4 space-y-2">
-              {/* 快速跳转 */}
-              <div className="mb-4">
-                <div className="text-xs font-medium text-muted-foreground mb-2">快速跳转</div>
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    min={1}
-                    max={totalDays}
-                    value={currentDay}
-                    onChange={(e) => jumpToDay(parseInt(e.target.value) || 1)}
-                    className="flex-1 px-2 py-1.5 text-sm border rounded-md"
-                  />
-                  <span className="text-xs text-muted-foreground px-1">/ {totalDays}</span>
-                </div>
-              </div>
+            <div className="p-4 space-y-1">
+              <Button
+                variant={selectedCategory === null ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedCategory(null)}
+              >
+                <BookOpen className="h-4 w-4 mr-2" />
+                全部知识点
+              </Button>
 
-              <Separator className="my-3" />
+              <Separator className="my-2" />
 
-              {/* 阶段列表 */}
-              <div className="text-xs font-medium text-muted-foreground mb-2">
-                学习阶段
-              </div>
-              {learningPhases.map((phase) => {
-                const config = phaseConfig[phase.id];
-                const phaseDays = dailyLearningPath.filter(d => d.phase === phase.id);
-                const completedInPhase = phaseDays.filter(d => completedDays.has(d.day)).length;
-                const isCurrentPhase = currentLesson?.phase === phase.id;
-                const isExpanded = expandedPhase === phase.id;
+              {categories.map((category) => {
+                const pointCount = knowledgePoints.filter(p => p.category === category.id).length;
+                const viewedCount = viewedPoints.size > 0
+                  ? knowledgePoints.filter(p => p.category === category.id && viewedPoints.has(p.id)).length
+                  : 0;
 
                 return (
-                  <div key={phase.id}>
-                    <button
-                      onClick={() => togglePhase(phase.id)}
-                      className={`w-full p-3 rounded-lg text-left transition-colors ${
-                        isCurrentPhase
-                          ? `${config.bgColor} ${config.borderColor} border-2`
-                          : 'hover:bg-muted'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">{config.icon}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className={`font-medium text-sm ${isCurrentPhase ? config.color : ''}`}>
-                            {phase.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            Day {phase.startDay}-{phase.endDay}
-                          </div>
-                        </div>
-                        <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                      </div>
-                      <div className="mt-2">
-                        <Progress 
-                          value={(completedInPhase / phaseDays.length) * 100}
-                          className="h-1"
-                        />
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {completedInPhase}/{phaseDays.length} 已完成
-                        </div>
-                      </div>
-                    </button>
-
-                    {/* 展开的课程列表 */}
-                    {isExpanded && (
-                      <div className="ml-4 mt-1 space-y-1 border-l pl-3">
-                        {phaseDays.slice(0, 7).map((lesson) => {
-                          const isCompleted = completedDays.has(lesson.day);
-                          const isCurrent = currentDay === lesson.day;
-
-                          return (
-                            <button
-                              key={lesson.day}
-                              onClick={() => jumpToDay(lesson.day)}
-                              className={`w-full flex items-center gap-2 p-2 rounded text-xs transition-colors ${
-                                isCurrent ? 'bg-primary/10 text-primary' : 'hover:bg-muted'
-                              }`}
-                            >
-                              <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                                isCompleted ? 'bg-green-500 text-white' : 'bg-muted'
-                              }`}>
-                                {isCompleted ? (
-                                  <CheckCircle2 className="h-3 w-3" />
-                                ) : (
-                                  <span className="text-[10px]">{lesson.day}</span>
-                                )}
-                              </div>
-                              <span className="truncate">{lesson.title}</span>
-                            </button>
-                          );
-                        })}
-                        {phaseDays.length > 7 && (
-                          <div className="text-xs text-muted-foreground p-2">
-                            还有 {phaseDays.length - 7} 天...
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <Button
+                    key={category.id}
+                    variant={selectedCategory === category.id ? 'secondary' : 'ghost'}
+                    className="w-full justify-between"
+                    onClick={() => setSelectedCategory(category.id)}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{category.icon}</span>
+                      <span>{category.name}</span>
+                    </span>
+                    <span className="text-xs text-muted-foreground">{viewedCount}/{pointCount}</span>
+                  </Button>
                 );
               })}
             </div>
           </ScrollArea>
         </aside>
 
-        {/* 中间：学习路径详情 */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <ScrollArea className="flex-1">
+        {/* 中间：知识点列表 */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full">
             <div className="p-6 space-y-6">
-              {/* 当前学习位置 */}
-              {currentLesson && (
-                <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-transparent">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-6">
-                      {/* 天数标识 */}
-                      <div className="flex flex-col items-center">
-                        <div className={`w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold ${phaseConfig[currentLesson.phase].bgColor} ${phaseConfig[currentLesson.phase].color}`}>
-                          {currentLesson.day}
-                        </div>
-                        <span className="text-xs text-muted-foreground mt-1">Day</span>
-                      </div>
+              {Object.entries(groupedPoints).map(([categoryId, points]) => {
+                const category = categories.find(c => c.id === categoryId);
+                const isExpanded = expandedCategory === categoryId;
 
-                      {/* 内容 */}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline" className={phaseConfig[currentLesson.phase].color}>
-                            {currentLesson.phaseName}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {phaseConfig[currentLesson.phase].description}
-                          </span>
-                        </div>
-                        <h2 className="text-xl font-semibold mb-2">{currentLesson.title}</h2>
-                        <p className="text-muted-foreground mb-4">
-                          {currentLesson.description}
-                        </p>
+                return (
+                  <div key={categoryId}>
+                    {/* 分类标题 */}
+                    <button
+                      onClick={() => setExpandedCategory(isExpanded ? null : categoryId)}
+                      className="flex items-center gap-2 w-full text-left mb-3"
+                    >
+                      <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${isExpanded ? '' : '-rotate-90'}`} />
+                      <span className="text-lg font-medium">{category?.icon} {category?.name}</span>
+                      <Badge variant="secondary" className="text-xs">{points.length}</Badge>
+                    </button>
 
-                        {/* 学习目标 */}
-                        <div className="mb-4">
-                          <div className="text-sm font-medium mb-2">学习目标</div>
-                          <div className="grid grid-cols-2 gap-2">
-                            {currentLesson.objectives.map((obj, i) => (
-                              <div key={i} className="flex items-start gap-2 text-sm">
-                                <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                                <span className="text-muted-foreground">{obj}</span>
+                    {/* 知识点卡片网格 */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {points.map((point) => {
+                        const diffConfig = difficultyConfig[point.difficulty];
+                        const isViewed = viewedPoints.has(point.id);
+                        const isBookmarked = bookmarkedPoints.has(point.id);
+
+                        return (
+                          <Card
+                            key={point.id}
+                            className={`cursor-pointer hover:shadow-md transition-shadow ${
+                              isViewed ? 'border-green-200 bg-green-50/30' : ''
+                            }`}
+                            onClick={() => viewPoint(point)}
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xl">{point.icon}</span>
+                                  <h3 className="font-medium">{point.title}</h3>
+                                </div>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleBookmark(point.id);
+                                  }}
+                                  className="p-1 hover:bg-muted rounded"
+                                >
+                                  {isBookmarked ? (
+                                    <BookmarkCheck className="h-4 w-4 text-primary" />
+                                  ) : (
+                                    <Bookmark className="h-4 w-4 text-muted-foreground" />
+                                  )}
+                                </button>
                               </div>
-                            ))}
-                          </div>
-                        </div>
 
-                        {/* 知识点标签 */}
-                        <div className="flex flex-wrap gap-2">
-                          {currentLesson.topics.map((topic) => (
-                            <Badge key={topic.id} variant="secondary" className="text-xs">
-                              {topic.name}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
+                              <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                                {point.brief}
+                              </p>
 
-                      {/* 操作区 */}
-                      <div className="flex flex-col gap-2">
-                        <div className="text-sm text-muted-foreground text-center mb-2">
-                          <Clock className="h-4 w-4 inline mr-1" />
-                          {currentLesson.estimatedMinutes}分钟
-                        </div>
-                        <Button
-                          onClick={() => currentLesson.practiceProblems[0] && onStartProblem?.(currentLesson.practiceProblems[0])}
-                        >
-                          开始学习
-                        </Button>
-                        <Button
-                          variant="outline"
-                          disabled={completedDays.has(currentLesson.day)}
-                          onClick={() => markDayComplete(currentLesson.day)}
-                        >
-                          {completedDays.has(currentLesson.day) ? '已完成' : '标记完成'}
-                        </Button>
-                      </div>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <Badge className={`${diffConfig.bgColor} ${diffConfig.color} border-0`} variant="outline">
+                                    {diffConfig.label}
+                                  </Badge>
+                                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    {point.readTime}分钟
+                                  </span>
+                                </div>
+                                {isViewed && (
+                                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                )}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
                     </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* 今日练习题 */}
-              {currentLesson && currentLesson.practiceProblems.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Target className="h-5 w-5 text-blue-500" />
-                      练习题
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-3">
-                      {currentLesson.practiceProblems.map((problemId, index) => (
-                        <button
-                          key={problemId}
-                          onClick={() => onStartProblem?.(problemId)}
-                          className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors text-left"
-                        >
-                          <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-medium">
-                            {index + 1}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium text-sm">题目 #{problemId}</div>
-                            <div className="text-xs text-muted-foreground">点击开始练习</div>
-                          </div>
-                        </button>
-                      ))}
-                      {currentLesson.challengeProblem && (
-                        <button
-                          onClick={() => onStartProblem?.(currentLesson.challengeProblem!)}
-                          className="flex items-center gap-3 p-3 rounded-lg border-2 border-yellow-300 bg-yellow-50 hover:bg-yellow-100 transition-colors text-left"
-                        >
-                          <Star className="h-8 w-8 text-yellow-500" />
-                          <div className="flex-1">
-                            <div className="font-medium text-sm text-yellow-700">挑战题 #{currentLesson.challengeProblem}</div>
-                            <div className="text-xs text-yellow-600">挑战自我</div>
-                          </div>
-                        </button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* 导航按钮 */}
-              <div className="flex items-center justify-between">
-                <Button
-                  variant="outline"
-                  disabled={currentDay <= 1}
-                  onClick={() => jumpToDay(currentDay - 1)}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  上一天
-                </Button>
-                <div className="text-sm text-muted-foreground">
-                  Day {currentDay} / {totalDays}
-                </div>
-                <Button
-                  variant="outline"
-                  disabled={currentDay >= totalDays}
-                  onClick={() => jumpToDay(currentDay + 1)}
-                >
-                  下一天
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
+                  </div>
+                );
+              })}
             </div>
           </ScrollArea>
         </div>
+      </div>
 
-        {/* 右侧：阶段概览 */}
-        <aside className="w-64 border-l bg-muted/10 shrink-0">
-          <ScrollArea className="h-full">
-            <div className="p-4 space-y-4">
-              <div className="text-xs font-medium text-muted-foreground">
-                学习阶段概览
-              </div>
-
-              {learningPhases.map((phase) => {
-                const config = phaseConfig[phase.id];
-                const phaseDays = dailyLearningPath.filter(d => d.phase === phase.id);
-                const completedInPhase = phaseDays.filter(d => completedDays.has(d.day)).length;
-                const isCurrentPhase = currentLesson?.phase === phase.id;
-
-                return (
-                  <Card 
-                    key={phase.id}
-                    className={`${isCurrentPhase ? config.borderColor + ' border-2' : ''}`}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xl">{config.icon}</span>
-                        <div className={`font-medium ${isCurrentPhase ? config.color : ''}`}>
-                          {phase.name}
-                        </div>
-                      </div>
-                      <div className="text-xs text-muted-foreground mb-2">
-                        Day {phase.startDay} - {phase.endDay}
-                      </div>
-                      <Progress 
-                        value={(completedInPhase / phaseDays.length) * 100}
-                        className="h-1.5 mb-1"
-                      />
-                      <div className="text-xs text-muted-foreground">
-                        {completedInPhase}/{phaseDays.length} 天
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-
-              {/* 总览 */}
-              <Card className="bg-primary/5 border-primary/20">
-                <CardContent className="p-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-primary mb-1">{progressPercent}%</div>
-                    <div className="text-xs text-muted-foreground">总体完成度</div>
-                    <div className="text-sm text-muted-foreground mt-2">
-                      已完成 {completedCount} / {totalDays} 天
+      {/* 知识点详情弹窗 */}
+      <Dialog open={!!selectedPoint} onOpenChange={() => setSelectedPoint(null)}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          {selectedPoint && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">{selectedPoint.icon}</span>
+                  <div>
+                    <DialogTitle className="text-xl">{selectedPoint.title}</DialogTitle>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge className={`${difficultyConfig[selectedPoint.difficulty].bgColor} ${difficultyConfig[selectedPoint.difficulty].color} border-0`}>
+                        {difficultyConfig[selectedPoint.difficulty].label}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="h-3 w-3" />{selectedPoint.readTime}分钟
+                      </span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          </ScrollArea>
-        </aside>
-      </div>
+                </div>
+              </DialogHeader>
+
+              <div className="space-y-6 mt-4">
+                {/* 简介 */}
+                <div>
+                  <h4 className="font-medium mb-2 flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-yellow-500" />
+                    概述
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {selectedPoint.description}
+                  </p>
+                </div>
+
+                <Separator />
+
+                {/* 核心内容 */}
+                <div>
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-blue-500" />
+                    核心内容
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedPoint.content.map((item, index) => (
+                      <div key={index} className="flex items-start gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                        <span className="text-muted-foreground">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* 代码示例 */}
+                {selectedPoint.codeExample && (
+                  <>
+                    <div>
+                      <h4 className="font-medium mb-3 flex items-center gap-2">
+                        <Code className="h-4 w-4 text-purple-500" />
+                        代码示例
+                      </h4>
+                      <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                        <pre className="text-sm text-slate-100 font-mono">
+                          <code>{selectedPoint.codeExample}</code>
+                        </pre>
+                      </div>
+                    </div>
+                    <Separator />
+                  </>
+                )}
+
+                {/* 前置知识 */}
+                {selectedPoint.prerequisites.length > 0 && (
+                  <div>
+                    <h4 className="font-medium mb-3 flex items-center gap-2">
+                      <ArrowRight className="h-4 w-4 text-orange-500" />
+                      前置知识
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedPoint.prerequisites.map((preId) => {
+                        const prePoint = getKnowledgePointById(preId);
+                        if (!prePoint) return null;
+                        return (
+                          <Button
+                            key={preId}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedPoint(prePoint)}
+                            className="gap-2"
+                          >
+                            <span>{prePoint.icon}</span>
+                            {prePoint.title}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 推荐练习 */}
+                {selectedPoint.recommendedProblems.length > 0 && (
+                  <div>
+                    <h4 className="font-medium mb-3 flex items-center gap-2">
+                      <Star className="h-4 w-4 text-yellow-500" />
+                      推荐练习
+                    </h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {selectedPoint.recommendedProblems.map((problemId, index) => (
+                        <Button
+                          key={problemId}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            onStartProblem?.(problemId);
+                            setSelectedPoint(null);
+                          }}
+                          className="justify-start gap-2"
+                        >
+                          <Play className="h-3 w-3" />
+                          题目 #{problemId}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 视频教程 */}
+                {selectedPoint.videoUrl && (
+                  <div>
+                    <h4 className="font-medium mb-3 flex items-center gap-2">
+                      <Video className="h-4 w-4 text-red-500" />
+                      视频教程
+                    </h4>
+                    <a
+                      href={selectedPoint.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-primary hover:underline"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      观看视频讲解
+                    </a>
+                  </div>
+                )}
+
+                {/* 操作按钮 */}
+                <div className="flex items-center justify-between pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => toggleBookmark(selectedPoint.id)}
+                    className="gap-2"
+                  >
+                    {bookmarkedPoints.has(selectedPoint.id) ? (
+                      <>
+                        <BookmarkCheck className="h-4 w-4" />
+                        已收藏
+                      </>
+                    ) : (
+                      <>
+                        <Bookmark className="h-4 w-4" />
+                        收藏
+                      </>
+                    )}
+                  </Button>
+
+                  {selectedPoint.recommendedProblems[0] && (
+                    <Button onClick={() => {
+                      onStartProblem?.(selectedPoint.recommendedProblems[0]);
+                      setSelectedPoint(null);
+                    }}>
+                      开始练习
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

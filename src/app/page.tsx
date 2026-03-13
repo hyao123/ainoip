@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket } from 'lucide-react';
 import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -16,7 +16,7 @@ import { ShortcutsHelp } from '@/components/ShortcutsHelp';
 import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { KnowledgeMapPage } from '@/components/KnowledgeMapPage';
-import { LearningCenter } from '@/components/LearningCenter';
+import { LearningPathView } from '@/components/LearningPathView';
 
 import { UserCenterPage } from '@/components/UserCenterPage';
 import { AILogoWithText } from '@/components/AILogo';
@@ -2524,8 +2524,8 @@ export default function Home() {
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
-            <Compass className="h-4 w-4" />
-            学习中心
+            <Rocket className="h-4 w-4" />
+            学习路径
           </button>
           <button
             onClick={() => setCurrentView('map')}
@@ -2535,7 +2535,7 @@ export default function Home() {
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
-            <Map className="h-4 w-4" />
+            <BookOpen className="h-4 w-4" />
             知识地图
           </button>
           <button
@@ -2546,7 +2546,7 @@ export default function Home() {
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
-            <BookOpen className="h-4 w-4" />
+            <Target className="h-4 w-4" />
             练习题库
           </button>
           <button
@@ -2557,7 +2557,7 @@ export default function Home() {
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
-            <Trophy className="h-4 w-4" />
+            <Flame className="h-4 w-4" />
             个人中心
           </button>
         </nav>
@@ -2642,7 +2642,7 @@ export default function Home() {
         {/* 主内容区 */}
         <main className="flex flex-1 flex-col overflow-hidden">
           {currentView === 'learning' ? (
-            <LearningCenter 
+            <LearningPathView 
               onStartProblem={(problemId) => handleStartProblemById(problemId)}
               onNavigate={(view) => setCurrentView(view)}
             />
