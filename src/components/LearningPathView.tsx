@@ -56,6 +56,7 @@ import {
 interface LearningPathViewProps {
   onStartProblem?: (problemId: number) => void;
   onNavigate?: (view: 'practice' | 'map' | 'user') => void;
+  onNavigateToKnowledge?: (knowledgeSlug: string) => void;
 }
 
 // 阶段配置
@@ -67,7 +68,7 @@ const phaseConfig: Record<string, { color: string; bgColor: string; borderColor:
   competition: { color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-200', icon: '🏆' },
 };
 
-export function LearningPathView({ onStartProblem, onNavigate }: LearningPathViewProps) {
+export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowledge }: LearningPathViewProps) {
   const [currentDay, setCurrentDay] = useState(1);
   const [completedDays, setCompletedDays] = useState<Set<number>>(new Set());
   const [streakDays, setStreakDays] = useState(7);
@@ -434,7 +435,15 @@ export function LearningPathView({ onStartProblem, onNavigate }: LearningPathVie
                         {/* 知识点 */}
                         <div className="flex flex-wrap gap-2">
                           {todayLesson.topics.map((topic) => (
-                            <Badge key={topic.id} variant="secondary" className="text-xs cursor-pointer" onClick={() => onNavigate?.('map')}>
+                            <Badge 
+                              key={topic.id} 
+                              variant="secondary" 
+                              className="text-xs cursor-pointer hover:bg-primary/20 transition-colors" 
+                              onClick={() => {
+                                onNavigate?.('map');
+                                onNavigateToKnowledge?.(topic.id);
+                              }}
+                            >
                               {topic.name}
                             </Badge>
                           ))}
@@ -443,7 +452,13 @@ export function LearningPathView({ onStartProblem, onNavigate }: LearningPathVie
 
                       {/* 操作区 */}
                       <div className="flex flex-col gap-2">
-                        <Button onClick={() => onNavigate?.('map')}>
+                        <Button onClick={() => {
+                          onNavigate?.('map');
+                          // 跳转到第一个知识点
+                          if (todayLesson.topics.length > 0) {
+                            onNavigateToKnowledge?.(todayLesson.topics[0].id);
+                          }
+                        }}>
                           <BookOpen className="h-4 w-4 mr-2" />
                           开始学习
                         </Button>

@@ -2323,6 +2323,7 @@ export default function Home() {
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
   const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map'>('learning');
+  const [initialKnowledgeSlug, setInitialKnowledgeSlug] = useState<string | undefined>(undefined);
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
@@ -2645,9 +2646,13 @@ export default function Home() {
             <LearningPathView 
               onStartProblem={(problemId) => handleStartProblemById(problemId)}
               onNavigate={(view) => setCurrentView(view)}
+              onNavigateToKnowledge={(slug) => setInitialKnowledgeSlug(slug)}
             />
           ) : currentView === 'map' ? (
-            <KnowledgeMapPage onStartProblem={(problemId) => handleStartProblemById(problemId)} />
+            <KnowledgeMapPage 
+              onStartProblem={(problemId) => handleStartProblemById(problemId)}
+              initialPointSlug={initialKnowledgeSlug}
+            />
           ) : currentView === 'user' ? (
             <UserCenterPage onSelectProblem={handleStartProblemById} />
           ) : (

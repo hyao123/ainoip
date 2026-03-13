@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,7 @@ import {
   knowledgePoints,
   categories,
   getKnowledgePointById,
+  getKnowledgePointBySlug,
   searchKnowledgePoints,
   type KnowledgePoint,
 } from '@/lib/knowledge-map';
@@ -44,6 +45,8 @@ import {
 
 interface KnowledgeMapPageProps {
   onStartProblem?: (problemId: number) => void;
+  initialPointId?: number;
+  initialPointSlug?: string;
 }
 
 // 难度配置
@@ -54,7 +57,7 @@ const difficultyConfig: Record<string, { color: string; bgColor: string; label: 
   competition: { color: 'text-red-600', bgColor: 'bg-red-50', label: '竞赛' },
 };
 
-export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
+export function KnowledgeMapPage({ onStartProblem, initialPointId, initialPointSlug }: KnowledgeMapPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
@@ -62,6 +65,22 @@ export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
   const [selectedPoint, setSelectedPoint] = useState<KnowledgePoint | null>(null);
   const [bookmarkedPoints, setBookmarkedPoints] = useState<Set<number>>(new Set());
   const [viewedPoints, setViewedPoints] = useState<Set<number>>(new Set());
+
+  // 当 initialPointId 或 initialPointSlug 变化时自动打开对应知识点
+  useEffect(() => {
+    let point: KnowledgePoint | undefined;
+    
+    if (initialPointId) {
+      point = getKnowledgePointById(initialPointId);
+    } else if (initialPointSlug) {
+      point = getKnowledgePointBySlug(initialPointSlug);
+    }
+    
+    if (point) {
+      setSelectedPoint(point);
+      setViewedPoints(prev => new Set([...prev, point!.id]));
+    }
+  }, [initialPointId, initialPointSlug]);
 
   // 搜索和过滤
   const filteredPoints = useMemo(() => {
@@ -301,7 +320,7 @@ export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
 
       {/* 知识点详情弹窗 */}
       <Dialog open={!!selectedPoint} onOpenChange={() => setSelectedPoint(null)}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
           {selectedPoint && (
             <>
               <DialogHeader>
@@ -322,6 +341,46 @@ export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
               </DialogHeader>
 
               <div className="space-y-6 mt-4">
+                {/* 适合小朋友理解的模块 */}
+                {selectedPoint.kidFriendly && (
+                  <>
+                    {/* 生活类比 */}
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100">
+                      <h4 className="font-medium mb-2 flex items-center gap-2 text-blue-700">
+                        <span className="text-lg">💡</span>
+                        想象一下
+                      </h4>
+                      <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                        {selectedPoint.kidFriendly.analogy}
+                      </p>
+                    </div>
+
+                    {/* 形象化描述 */}
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-green-50 to-teal-50 border border-green-100">
+                      <h4 className="font-medium mb-2 flex items-center gap-2 text-green-700">
+                        <span className="text-lg">🎨</span>
+                        可视化理解
+                      </h4>
+                      <pre className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-mono bg-white/50 p-3 rounded-lg">
+                        {selectedPoint.kidFriendly.visualization}
+                      </pre>
+                    </div>
+
+                    {/* 为什么要学 */}
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-100">
+                      <h4 className="font-medium mb-2 flex items-center gap-2 text-yellow-700">
+                        <span className="text-lg">🎯</span>
+                        为什么学这个？
+                      </h4>
+                      <p className="text-sm text-slate-700 leading-relaxed">
+                        {selectedPoint.kidFriendly.whyLearn}
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                <Separator />
+
                 {/* 简介 */}
                 <div>
                   <h4 className="font-medium mb-2 flex items-center gap-2">
@@ -341,11 +400,11 @@ export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
                     <FileText className="h-4 w-4 text-blue-500" />
                     核心内容
                   </h4>
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {selectedPoint.content.map((item, index) => (
-                      <div key={index} className="flex items-start gap-2 text-sm">
+                      <div key={index} className="flex items-start gap-2 text-sm p-2 rounded-lg bg-slate-50">
                         <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                        <span className="text-muted-foreground">{item}</span>
+                        <span className="text-slate-700">{item}</span>
                       </div>
                     ))}
                   </div>
@@ -353,8 +412,49 @@ export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
 
                 <Separator />
 
-                {/* 代码示例 */}
-                {selectedPoint.codeExample && (
+                {/* 详细代码示例 */}
+                {selectedPoint.codeExamples && selectedPoint.codeExamples.length > 0 && (
+                  <>
+                    <div>
+                      <h4 className="font-medium mb-3 flex items-center gap-2">
+                        <Code className="h-4 w-4 text-purple-500" />
+                        代码示例
+                      </h4>
+                      <div className="space-y-4">
+                        {selectedPoint.codeExamples.map((example, index) => (
+                          <div key={index} className="border rounded-lg overflow-hidden">
+                            <div className="bg-slate-100 px-4 py-2 border-b">
+                              <div className="font-medium text-sm">{example.title}</div>
+                              <div className="text-xs text-muted-foreground">{example.description}</div>
+                            </div>
+                            <div className="bg-slate-900 p-4 overflow-x-auto">
+                              <pre className="text-sm text-slate-100 font-mono whitespace-pre">
+                                <code>{example.code}</code>
+                              </pre>
+                            </div>
+                            {example.explanation && example.explanation.length > 0 && (
+                              <div className="bg-slate-50 px-4 py-3">
+                                <div className="text-xs font-medium text-slate-600 mb-2">💡 代码解释：</div>
+                                <ul className="space-y-1">
+                                  {example.explanation.map((exp, i) => (
+                                    <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
+                                      <span className="text-blue-500 mt-0.5">•</span>
+                                      {exp}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <Separator />
+                  </>
+                )}
+
+                {/* 兼容旧版单个代码示例 */}
+                {!selectedPoint.codeExamples && selectedPoint.codeExample && (
                   <>
                     <div>
                       <h4 className="font-medium mb-3 flex items-center gap-2">
@@ -366,6 +466,72 @@ export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
                           <code>{selectedPoint.codeExample}</code>
                         </pre>
                       </div>
+                    </div>
+                    <Separator />
+                  </>
+                )}
+
+                {/* 常见错误 */}
+                {selectedPoint.commonMistakes && selectedPoint.commonMistakes.length > 0 && (
+                  <>
+                    <div>
+                      <h4 className="font-medium mb-3 flex items-center gap-2 text-red-600">
+                        <span className="text-lg">⚠️</span>
+                        常见错误
+                      </h4>
+                      <div className="space-y-3">
+                        {selectedPoint.commonMistakes.map((mistake, index) => (
+                          <div key={index} className="p-3 rounded-lg bg-red-50 border border-red-100">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-red-500 text-sm">❌</span>
+                              <div className="text-sm font-medium text-red-700">{mistake.mistake}</div>
+                            </div>
+                            <div className="text-xs text-red-600 mb-2 ml-6">
+                              原因：{mistake.why}
+                            </div>
+                            <div className="flex items-start gap-2 ml-6 p-2 bg-green-50 rounded text-green-700">
+                              <span className="text-xs">✅</span>
+                              <span className="text-xs">{mistake.correctWay}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <Separator />
+                  </>
+                )}
+
+                {/* 小测验 */}
+                {selectedPoint.quiz && (
+                  <>
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100">
+                      <h4 className="font-medium mb-3 flex items-center gap-2 text-indigo-700">
+                        <span className="text-lg">📝</span>
+                        小测验
+                      </h4>
+                      <p className="text-sm text-slate-700 mb-3">{selectedPoint.quiz.question}</p>
+                      <div className="space-y-2">
+                        {selectedPoint.quiz.options.map((option, index) => (
+                          <div 
+                            key={index}
+                            className="p-2 rounded-lg bg-white border border-slate-200 text-sm cursor-pointer hover:bg-slate-50 transition-colors"
+                          >
+                            <span className="font-medium mr-2">{String.fromCharCode(65 + index)}.</span>
+                            {option}
+                          </div>
+                        ))}
+                      </div>
+                      <details className="mt-3">
+                        <summary className="text-xs text-indigo-600 cursor-pointer hover:text-indigo-800">
+                          查看答案
+                        </summary>
+                        <div className="mt-2 p-2 bg-white rounded-lg text-sm">
+                          <div className="font-medium text-green-600 mb-1">
+                            正确答案：{String.fromCharCode(65 + selectedPoint.quiz.answer)}
+                          </div>
+                          <div className="text-slate-600">{selectedPoint.quiz.explanation}</div>
+                        </div>
+                      </details>
                     </div>
                     <Separator />
                   </>
