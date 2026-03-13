@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -2315,6 +2316,9 @@ const categories: Category[] = [
 ];
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
   const [selectedProblem, setSelectedProblem] = useState<Problem>(problems[0]);
   const [code, setCode] = useState('#include <iostream>\nusing namespace std;\n\nint main() {\n    // 在此编写你的代码\n    \n    return 0;\n}');
   const [input, setInput] = useState('');
@@ -2344,6 +2348,14 @@ export default function Home() {
   const [userPoints, setUserPoints] = useState(100);
   const [dailyHintsRemaining, setDailyHintsRemaining] = useState(5);
   const [usedHintLevels, setUsedHintLevels] = useState<HintLevel[]>([]);
+
+  // 根据 URL 参数设置当前视图
+  useEffect(() => {
+    const viewParam = searchParams.get('view');
+    if (viewParam && ['practice', 'learning', 'bank', 'user', 'map'].includes(viewParam)) {
+      setCurrentView(viewParam as 'practice' | 'learning' | 'bank' | 'user' | 'map');
+    }
+  }, [searchParams]);
 
   // 初始化用户积分和提示次数
   useEffect(() => {
