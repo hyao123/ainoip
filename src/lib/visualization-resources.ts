@@ -27,22 +27,24 @@ export const visualizationResources: VisualizationResource[] = [
     knowledgeId: 19,
     knowledgeSlug: 'for-loop',
     visualizerUrl: 'https://visualgo.net/zh/sorting',
-    // 翁恺C语言程序设计 - 循环语句
-    bvNumber: 'BV1sT4y1F7vA',
-    videoTitle: 'C语言程序设计 - 循环语句',
+    // 视频链接待补充
+    bvNumber: '',
+    videoTitle: '',
   },
   {
     knowledgeId: 22,
     knowledgeSlug: 'while-loop',
     visualizerUrl: 'https://visualgo.net/zh/sorting',
-    bvNumber: 'BV1sT4y1F7vA',
-    videoTitle: 'C语言程序设计 - while循环',
+    // 视频链接待补充
+    bvNumber: '',
+    videoTitle: '',
   },
   {
     knowledgeId: 25,
     knowledgeSlug: 'nested-loops',
-    bvNumber: 'BV1sT4y1F7vA',
-    videoTitle: 'C语言程序设计 - 嵌套循环',
+    // 视频链接待补充
+    bvNumber: '',
+    videoTitle: '',
   },
   
   // ==================== 数组 ====================
