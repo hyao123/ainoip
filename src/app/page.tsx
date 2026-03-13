@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy } from 'lucide-react';
 import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -2322,7 +2322,7 @@ export default function Home() {
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
-  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user'>('practice');
+  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map'>('learning');
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState('');
@@ -2517,6 +2517,28 @@ export default function Home() {
       <header className="h-12 border-b bg-background flex items-center justify-center px-4 shrink-0">
         <nav className="flex items-center gap-1">
           <button
+            onClick={() => setCurrentView('learning')}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              currentView === 'learning'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <Compass className="h-4 w-4" />
+            学习中心
+          </button>
+          <button
+            onClick={() => setCurrentView('map')}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              currentView === 'map'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <Map className="h-4 w-4" />
+            知识地图
+          </button>
+          <button
             onClick={() => setCurrentView('practice')}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'practice'
@@ -2525,29 +2547,7 @@ export default function Home() {
             }`}
           >
             <BookOpen className="h-4 w-4" />
-            题库练习
-          </button>
-          <button
-            onClick={() => setCurrentView('bank')}
-            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              currentView === 'bank'
-                ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-            }`}
-          >
-            <Database className="h-4 w-4" />
-            智能题库
-          </button>
-          <button
-            onClick={() => setCurrentView('learning')}
-            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              currentView === 'learning'
-                ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-            }`}
-          >
-            <Target className="h-4 w-4" />
-            学习中心
+            练习题库
           </button>
           <button
             onClick={() => setCurrentView('user')}
@@ -2557,7 +2557,7 @@ export default function Home() {
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
-            <User className="h-4 w-4" />
+            <Trophy className="h-4 w-4" />
             个人中心
           </button>
         </nav>
@@ -2643,16 +2643,10 @@ export default function Home() {
         <main className="flex flex-1 flex-col overflow-hidden">
           {currentView === 'learning' ? (
             <LearningCenter onStartProblem={(problemId) => handleStartProblemById(problemId)} />
+          ) : currentView === 'map' ? (
+            <LearningPathPage onStartProblem={(problemId) => handleStartProblemById(problemId)} />
           ) : currentView === 'user' ? (
             <UserCenterPage onSelectProblem={handleStartProblemById} />
-          ) : currentView === 'bank' ? (
-            <div className="flex-1 flex items-center justify-center bg-muted/30">
-              <div className="text-center">
-                <Database className="h-16 w-16 mx-auto mb-4 text-muted-foreground/30" />
-                <h3 className="text-lg font-medium text-muted-foreground">请从左侧选择题目</h3>
-                <p className="text-sm text-muted-foreground/70 mt-1">使用筛选器快速找到适合的题目</p>
-              </div>
-            </div>
           ) : (
             <>
               {/* 顶部导航栏 - 紧凑 */}
