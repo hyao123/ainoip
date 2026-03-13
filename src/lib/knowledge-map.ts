@@ -20,6 +20,7 @@ export interface KnowledgePoint {
   kidFriendly?: {
     analogy: string;
     visualization: string;
+    visualizationGif?: string; // 可视化动图演示URL
     whyLearn: string;
   };
   codeExamples?: {
@@ -44,7 +45,8 @@ export interface KnowledgePoint {
   codeExample?: string;
   prerequisites: number[];
   recommendedProblems: number[];
-  videoUrl?: string;
+  videoUrl?: string; // B站视频讲解链接
+  videoSections?: string[]; // 视频章节时间点
   readTime: number;
 }
 

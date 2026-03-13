@@ -14,6 +14,11 @@ import {
   type KnowledgePoint,
 } from '@/lib/knowledge-map';
 import {
+  getVisualizationResource,
+  getBilibiliEmbedUrl,
+  type VisualizationResource,
+} from '@/lib/visualization-resources';
+import {
   ArrowLeft,
   BookOpen,
   ChevronRight,
@@ -26,6 +31,10 @@ import {
   Lightbulb,
   FileText,
   Code,
+  ExternalLink,
+  Video,
+  Image as ImageIcon,
+  MonitorPlay,
 } from 'lucide-react';
 import { RunnableCodeBlock } from '@/components/RunnableCodeBlock';
 
@@ -74,6 +83,8 @@ export default function KnowledgeDetailPage() {
   const [viewedPoints, setViewedPoints] = useState<Set<number>>(new Set());
   const [bookmarkedPoints, setBookmarkedPoints] = useState<Set<number>>(new Set());
   const [expandedSection, setExpandedSection] = useState<string>('content');
+  const [visualResource, setVisualResource] = useState<VisualizationResource | null>(null);
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
 
   // 加载知识点
   useEffect(() => {
@@ -82,6 +93,11 @@ export default function KnowledgeDetailPage() {
       setPoint(found);
       // 标记为已读
       setViewedPoints(prev => new Set([...prev, found.id]));
+      // 加载可视化资源
+      const resource = getVisualizationResource(found.id);
+      if (resource) {
+        setVisualResource(resource);
+      }
     }
   }, [slug]);
 
@@ -233,6 +249,137 @@ export default function KnowledgeDetailPage() {
                   </p>
                 </div>
               </div>
+            )}
+
+            {/* 可视化资源展示 */}
+            {visualResource && (
+              <>
+                <Separator />
+                <section className="space-y-6">
+                  {/* 动图演示 */}
+                  {visualResource.gifUrl && (
+                    <div className="p-6 rounded-2xl bg-gradient-to-r from-pink-50 via-rose-50 to-red-50 border border-pink-100">
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-pink-800">
+                        <ImageIcon className="h-5 w-5" />
+                        <span className="text-2xl">🎬</span>
+                        动画演示
+                      </h3>
+                      <div className="bg-white rounded-xl p-4 shadow-sm">
+                        <img 
+                          src={visualResource.gifUrl} 
+                          alt={`${point.title}动画演示`}
+                          className="w-full max-w-md mx-auto rounded-lg"
+                        />
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-3 text-center">
+                        观察动画，理解算法执行过程
+                      </p>
+                    </div>
+                  )}
+
+                  {/* 可视化工具链接 */}
+                  {visualResource.visualizerUrl && (
+                    <div className="p-6 rounded-2xl bg-gradient-to-r from-cyan-50 via-sky-50 to-blue-50 border border-cyan-100">
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-cyan-800">
+                        <MonitorPlay className="h-5 w-5" />
+                        <span className="text-2xl">🖥️</span>
+                        交互式可视化
+                      </h3>
+                      <p className="text-slate-600 mb-4">
+                        点击下方链接，打开可视化工具，亲自操作体验算法执行过程：
+                      </p>
+                      <a
+                        href={visualResource.visualizerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-white rounded-xl hover:bg-cyan-600 transition-colors font-medium"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        打开可视化工具
+                      </a>
+                    </div>
+                  )}
+
+                  {/* 视频讲解 */}
+                  {visualResource.bilibiliUrl && (
+                    <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-50 via-violet-50 to-indigo-50 border border-purple-100">
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-purple-800">
+                        <Video className="h-5 w-5" />
+                        <span className="text-2xl">📺</span>
+                        视频讲解
+                      </h3>
+                      
+                      {/* 视频信息 */}
+                      <div className="mb-4 p-4 bg-white rounded-xl">
+                        <div className="font-medium text-slate-800 mb-1">
+                          {visualResource.videoTitle || `${point.title}讲解`}
+                        </div>
+                        {visualResource.videoAuthor && (
+                          <div className="text-sm text-muted-foreground">
+                            UP主：{visualResource.videoAuthor}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 视频章节 */}
+                      {visualResource.videoSections && visualResource.videoSections.length > 0 && (
+                        <div className="mb-4">
+                          <div className="text-sm font-medium text-slate-700 mb-2">📑 视频章节：</div>
+                          <div className="grid grid-cols-2 gap-2">
+                            {visualResource.videoSections.map((section, idx) => (
+                              <a
+                                key={idx}
+                                href={`${visualResource.bilibiliUrl}&t=${section.time.replace(':', 'm')}s`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 p-3 bg-white rounded-lg hover:bg-purple-50 transition-colors text-sm"
+                              >
+                                <Play className="h-3 w-3 text-purple-500" />
+                                <span className="text-muted-foreground font-mono text-xs">{section.time}</span>
+                                <span className="text-slate-700 truncate">{section.title}</span>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 嵌入播放器或链接按钮 */}
+                      <div className="flex flex-wrap gap-3">
+                        <button
+                          onClick={() => setShowVideoPlayer(!showVideoPlayer)}
+                          className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition-colors font-medium"
+                        >
+                          <Play className="h-4 w-4" />
+                          {showVideoPlayer ? '收起播放器' : '在页内播放'}
+                        </button>
+                        <a
+                          href={visualResource.bilibiliUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-6 py-3 border border-purple-300 text-purple-700 rounded-xl hover:bg-purple-50 transition-colors font-medium"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          在B站打开
+                        </a>
+                      </div>
+
+                      {/* 嵌入播放器 */}
+                      {showVideoPlayer && visualResource.bvNumber && (
+                        <div className="mt-4 bg-white rounded-xl overflow-hidden shadow-lg">
+                          <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                            <iframe
+                              src={getBilibiliEmbedUrl(visualResource.bvNumber)}
+                              className="absolute top-0 left-0 w-full h-full"
+                              allowFullScreen
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
+              </>
             )}
 
             <Separator />
