@@ -15,7 +15,6 @@ import {
 } from '@/lib/knowledge-map';
 import {
   getVisualizationResource,
-  getBilibiliEmbedUrl,
   type VisualizationResource,
 } from '@/lib/visualization-resources';
 import {
@@ -84,7 +83,6 @@ export default function KnowledgeDetailPage() {
   const [bookmarkedPoints, setBookmarkedPoints] = useState<Set<number>>(new Set());
   const [expandedSection, setExpandedSection] = useState<string>('content');
   const [visualResource, setVisualResource] = useState<VisualizationResource | null>(null);
-  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
 
   // 加载知识点
   useEffect(() => {
@@ -321,61 +319,16 @@ export default function KnowledgeDetailPage() {
                         )}
                       </div>
 
-                      {/* 视频章节 */}
-                      {visualResource.videoSections && visualResource.videoSections.length > 0 && (
-                        <div className="mb-4">
-                          <div className="text-sm font-medium text-slate-700 mb-2">📑 视频章节：</div>
-                          <div className="grid grid-cols-2 gap-2">
-                            {visualResource.videoSections.map((section, idx) => (
-                              <a
-                                key={idx}
-                                href={`${visualResource.bilibiliUrl}&t=${section.time.replace(':', 'm')}s`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 p-3 bg-white rounded-lg hover:bg-purple-50 transition-colors text-sm"
-                              >
-                                <Play className="h-3 w-3 text-purple-500" />
-                                <span className="text-muted-foreground font-mono text-xs">{section.time}</span>
-                                <span className="text-slate-700 truncate">{section.title}</span>
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 嵌入播放器或链接按钮 */}
-                      <div className="flex flex-wrap gap-3">
-                        <button
-                          onClick={() => setShowVideoPlayer(!showVideoPlayer)}
-                          className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition-colors font-medium"
-                        >
-                          <Play className="h-4 w-4" />
-                          {showVideoPlayer ? '收起播放器' : '在页内播放'}
-                        </button>
-                        <a
-                          href={visualResource.bilibiliUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-6 py-3 border border-purple-300 text-purple-700 rounded-xl hover:bg-purple-50 transition-colors font-medium"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          在B站打开
-                        </a>
-                      </div>
-
-                      {/* 嵌入播放器 */}
-                      {showVideoPlayer && visualResource.bvNumber && (
-                        <div className="mt-4 bg-white rounded-xl overflow-hidden shadow-lg">
-                          <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                            <iframe
-                              src={getBilibiliEmbedUrl(visualResource.bvNumber)}
-                              className="absolute top-0 left-0 w-full h-full"
-                              allowFullScreen
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            />
-                          </div>
-                        </div>
-                      )}
+                      {/* 在B站打开按钮 */}
+                      <a
+                        href={visualResource.bilibiliUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition-colors font-medium"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        在B站打开
+                      </a>
                     </div>
                   )}
                 </section>
