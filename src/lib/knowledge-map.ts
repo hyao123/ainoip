@@ -31,6 +31,8 @@ export interface KnowledgePoint {
     title: string;
     description: string;
     code: string;
+    input?: string;  // 程序输入
+    expectedOutput?: string;  // 预期输出
     explanation: string[];
   }[];
   // 新增：常见错误
@@ -104,6 +106,7 @@ int main() {
     
     return 0;  // 程序正常结束，告诉电脑"我做完了"
 }`,
+        expectedOutput: '你好，世界！',
         explanation: [
           '#include 是"包含"的意思，iostream是"输入输出流"',
           'cout 发音是"C-out"，意思是"从C++输出"',
@@ -268,6 +271,8 @@ int main() {
     
     return 0;
 }`,
+        input: '12',
+        expectedOutput: '请输入你的年龄：你今年12岁啦！',
         explanation: [
           'int age; 声明一个整数变量（相当于准备一个盒子）',
           'cin >> age; 等待用户输入数字，存到age里',
@@ -316,13 +321,9 @@ int main() {
     cout << a << " + " << b << " = " << sum << endl;
     
     return 0;
-}
-
-/*
-运行示例：
-请输入两个整数：3 5
-3 + 5 = 8
-*/`,
+}`,
+        input: '3 5',
+        expectedOutput: '请输入两个整数：3 + 5 = 8',
         explanation: [
           'int a, b; 一次定义多个同类型变量',
           'int sum = a + b; 定义的同时赋值',
@@ -788,23 +789,9 @@ int main() {
     }
     cout << endl;
     
-    // 详细解释for循环的三个部分：
-    // 1. int i = 1;  初始化：设置起点
-    // 2. i <= 5;     条件：设置终点
-    // 3. i++         更新：每圈加1
-    
-    // 执行过程：
-    // 第1次：i=1，1<=5成立，输出1，i变成2
-    // 第2次：i=2，2<=5成立，输出2，i变成3
-    // ...
-    // 第6次：i=6，6<=5不成立，循环结束
-    
     return 0;
-}
-
-/*
-输出：1 2 3 4 5
-*/`,
+}`,
+        expectedOutput: '1 2 3 4 5',
         explanation: [
           'for (初始化; 条件; 更新) 是固定格式',
           'i++ 等价于 i = i + 1',
@@ -823,30 +810,17 @@ int main() {
     // 把1到100加起来
     for (int i = 1; i <= 100; i++) {
         sum = sum + i;  // 把i加到sum里
-        // 也可以写成：sum += i;
     }
     
     cout << "1+2+...+100 = " << sum << endl;
     
-    // 也可以倒着加
-    sum = 0;
-    for (int i = 100; i >= 1; i--) {
-        sum += i;
-    }
-    cout << "倒着加结果一样：" << sum << endl;
-    
     return 0;
-}
-
-/*
-输出：
-1+2+...+100 = 5050
-倒着加结果一样：5050
-*/`,
+}`,
+        expectedOutput: '1+2+...+100 = 5050',
         explanation: [
           'sum 变量用于累加结果',
-          'i-- 表示 i = i - 1，每次减1',
           'sum += i 是 sum = sum + i 的简写',
+          '这个结果5050是著名的"高斯求和"',
         ]
       },
       {

@@ -41,7 +41,9 @@ import {
   ExternalLink,
   Bookmark,
   BookmarkCheck,
+  Terminal,
 } from 'lucide-react';
+import { RunnableCodeBlock } from '@/components/RunnableCodeBlock';
 
 interface KnowledgeMapPageProps {
   onStartProblem?: (problemId: number) => void;
@@ -419,21 +421,22 @@ export function KnowledgeMapPage({ onStartProblem, initialPointId, initialPointS
                       <h4 className="font-medium mb-3 flex items-center gap-2">
                         <Code className="h-4 w-4 text-purple-500" />
                         代码示例
+                        <span className="text-xs text-muted-foreground font-normal ml-2">
+                          （点击运行按钮执行代码）
+                        </span>
                       </h4>
                       <div className="space-y-4">
                         {selectedPoint.codeExamples.map((example, index) => (
-                          <div key={index} className="border rounded-lg overflow-hidden">
-                            <div className="bg-slate-100 px-4 py-2 border-b">
-                              <div className="font-medium text-sm">{example.title}</div>
-                              <div className="text-xs text-muted-foreground">{example.description}</div>
-                            </div>
-                            <div className="bg-slate-900 p-4 overflow-x-auto">
-                              <pre className="text-sm text-slate-100 font-mono whitespace-pre">
-                                <code>{example.code}</code>
-                              </pre>
-                            </div>
+                          <div key={index}>
+                            <RunnableCodeBlock
+                              code={example.code}
+                              title={example.title}
+                              description={example.description}
+                              input={example.input}
+                              expectedOutput={example.expectedOutput}
+                            />
                             {example.explanation && example.explanation.length > 0 && (
-                              <div className="bg-slate-50 px-4 py-3">
+                              <div className="mt-2 bg-slate-50 px-4 py-3 rounded-lg border border-slate-100">
                                 <div className="text-xs font-medium text-slate-600 mb-2">💡 代码解释：</div>
                                 <ul className="space-y-1">
                                   {example.explanation.map((exp, i) => (
@@ -460,12 +463,11 @@ export function KnowledgeMapPage({ onStartProblem, initialPointId, initialPointS
                       <h4 className="font-medium mb-3 flex items-center gap-2">
                         <Code className="h-4 w-4 text-purple-500" />
                         代码示例
+                        <span className="text-xs text-muted-foreground font-normal ml-2">
+                          （点击运行按钮执行代码）
+                        </span>
                       </h4>
-                      <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
-                        <pre className="text-sm text-slate-100 font-mono">
-                          <code>{selectedPoint.codeExample}</code>
-                        </pre>
-                      </div>
+                      <RunnableCodeBlock code={selectedPoint.codeExample} />
                     </div>
                     <Separator />
                   </>
