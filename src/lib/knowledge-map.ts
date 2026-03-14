@@ -6707,6 +6707,1299 @@ int main() {
     recommendedProblems: [63, 64, 65],
     readTime: 25,
   },
+  // ==================== Day 15-35 基础算法扩展知识点 ====================
+  {
+    id: 60,
+    slug: 'prefix-sum',
+    title: '前缀和',
+    icon: '📊',
+    category: 'algorithms',
+    difficulty: 'basic',
+    brief: '快速计算区间和的技巧',
+    description: '前缀和是一种预处理技巧，可以在O(1)时间内求出任意区间的和。',
+    content: [
+      '什么是前缀和？',
+      '前缀和的预处理',
+      '区间和的计算公式',
+      '前缀和的时间复杂度',
+      '前缀和的应用场景',
+    ],
+    kidFriendly: {
+      analogy: `前缀和就像记账。你把每天花的钱记下来，然后算出"到某天为止总共花了多少钱"。
+
+比如：
+- 第1天花了5元，累计5元
+- 第2天花了3元，累计8元
+- 第3天花了2元，累计10元
+
+想知道第2天到第3天花了多少？直接用累计数算：10 - 5 = 5元！`,
+      visualization: `📊 前缀和示意图：
+
+原数组：    [3,  1,  4,  1,  5]
+前缀和：[0, 3,  4,  8,  9,  14]
+          ↑  ↑   ↑   ↑   ↑   ↑
+          0  a₁ a₁+a₂ ...
+
+求区间 [2,4] 的和：
+sum = 前缀和[4] - 前缀和[1] = 9 - 3 = 6
+
+公式：sum[l,r] = prefix[r] - prefix[l-1]`,
+      whyLearn: '很多题目需要频繁查询区间和，前缀和可以把每次查询从O(n)变成O(1)。'
+    },
+    codeExamples: [
+      {
+        title: '前缀和基础',
+        description: '计算数组区间和',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, q;
+    cin >> n >> q;  // 数组长度和查询次数
+    
+    int a[105], prefix[105] = {0};
+    
+    // 读取数组并计算前缀和
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+        prefix[i] = prefix[i-1] + a[i];
+    }
+    
+    // 处理查询
+    while (q--) {
+        int l, r;
+        cin >> l >> r;
+        cout << prefix[r] - prefix[l-1] << endl;
+    }
+    
+    return 0;
+}`,
+        input: '5 3\n1 2 3 4 5\n1 5\n2 4\n3 3',
+        expectedOutput: '15\n9\n3',
+        explanation: [
+          'prefix[i] 存储前i个元素的和',
+          '预处理时间O(n)',
+          '每次查询时间O(1)',
+          '注意：prefix[0] = 0，从1开始存储'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '下标从0开始导致边界错误',
+        why: 'prefix[l-1]会访问到负下标',
+        correctWay: '建议下标从1开始，prefix[0]=0'
+      },
+      {
+        mistake: '忘记long long导致溢出',
+        why: '累加可能超过int范围',
+        correctWay: '数据大时用long long'
+      },
+    ],
+    quiz: {
+      question: '前缀和求区间[l,r]和的公式是？',
+      options: ['prefix[r] - prefix[l]', 'prefix[r] - prefix[l-1]', 'prefix[r-1] - prefix[l]', 'prefix[l] + prefix[r]'],
+      answer: 1,
+      explanation: '区间和 = 右端点前缀和 - 左端点前一位的前缀和'
+    },
+    prerequisites: [26, 19],
+    recommendedProblems: [55, 56],
+    readTime: 20,
+  },
+  {
+    id: 61,
+    slug: 'difference',
+    title: '差分',
+    icon: '📐',
+    category: 'algorithms',
+    difficulty: 'basic',
+    brief: '高效的区间修改技巧',
+    description: '差分是前缀和的逆运算，可以在O(1)时间内完成区间修改。',
+    content: [
+      '什么是差分？',
+      '差分数组的构造',
+      '区间修改操作',
+      '差分与前缀和的关系',
+      '差分的应用场景',
+    ],
+    kidFriendly: {
+      analogy: `差分就像记账的变化。
+
+假设你每天记账：
+原数组（累计花费）：[100, 105, 103, 110, 108]
+差分（每天变化）：  [100, +5, -2, +7, -2]
+
+差分告诉你"今天比昨天多了多少"。
+
+如果你第2天到第4天每笔都多花3元：
+只需要改差分：diff[2] += 3, diff[5] -= 3
+再还原回去就行了！`,
+      visualization: `📐 差分与原数组的关系：
+
+原数组 a：    [1,  3,  6,  10, 15]
+差分 d：      [1,  2,  3,  4,  5]
+
+关系：
+d[i] = a[i] - a[i-1]
+a[i] = d[1] + d[2] + ... + d[i]
+
+区间 [l,r] 加 k：
+d[l] += k
+d[r+1] -= k
+
+然后对 d 求前缀和得到修改后的 a`,
+      whyLearn: '多次区间修改、最后统一查询时，差分可以把O(n)的修改变成O(1)。'
+    },
+    codeExamples: [
+      {
+        title: '差分区间修改',
+        description: '多次区间加值',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    int a[105], diff[105] = {0};
+    
+    // 读取原数组
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+        diff[i] = a[i] - a[i-1];  // 构造差分
+    }
+    
+    // 区间修改
+    while (m--) {
+        int l, r, k;
+        cin >> l >> r >> k;
+        diff[l] += k;
+        diff[r+1] -= k;
+    }
+    
+    // 还原数组并输出
+    int sum = 0;
+    for (int i = 1; i <= n; i++) {
+        sum += diff[i];
+        cout << sum << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}`,
+        input: '5 2\n1 2 3 4 5\n1 3 2\n2 4 1',
+        expectedOutput: '3 5 6 6 5',
+        explanation: [
+          '差分是前缀和的逆运算',
+          '区间[l,r]加k：diff[l]+=k, diff[r+1]-=k',
+          '最后对差分数组求前缀和得到原数组',
+          '原数组：[1,2,3,4,5] → [3,5,6,6,5]'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记还原差分数组',
+        why: '差分数组本身不是最终结果',
+        correctWay: '最后要再求一次前缀和'
+      },
+      {
+        mistake: 'r+1越界',
+        why: '当r=n时，r+1会越界',
+        correctWay: '数组开大一点，或判断r<n才减'
+      },
+    ],
+    quiz: {
+      question: '差分数组diff，区间[2,4]都加3，应该如何操作？',
+      options: ['diff[2]+=3', 'diff[2]+=3, diff[5]-=3', 'diff[1]+=3, diff[4]-=3', '每个位置都加3'],
+      answer: 1,
+      explanation: '区间修改只需改两个端点：左端点加，右端点后一位减'
+    },
+    prerequisites: [60, 26],
+    recommendedProblems: [56, 57],
+    readTime: 20,
+  },
+  {
+    id: 62,
+    slug: 'fast-power',
+    title: '快速幂',
+    icon: '⚡',
+    category: 'algorithms',
+    difficulty: 'basic',
+    brief: '高效计算a的n次方',
+    description: '快速幂利用二进制分解，将O(n)的幂运算优化到O(log n)。',
+    content: [
+      '为什么需要快速幂？',
+      '快速幂的原理',
+      '二进制分解思想',
+      '快速幂的实现',
+      '取模运算',
+    ],
+    kidFriendly: {
+      analogy: `计算 2^10，普通方法是乘10次：2×2×2×2×2×2×2×2×2×2
+
+快速幂的思路：
+2^10 = (2^2)^5 = 4^5
+4^5 = 4 × 4^4 = 4 × 16^2
+16^2 = 256^1
+256^1 = 256 × 1^0 = 256
+
+只算了3次乘法！`,
+      visualization: `⚡ 快速幂原理：
+
+计算 a^n：
+n 写成二进制，比如 13 = 1101
+a^13 = a^8 × a^4 × a^1
+
+过程：
+result = 1
+while (n > 0) {
+    if (n是奇数) result *= a
+    a = a * a    // a², a⁴, a⁸, ...
+    n /= 2
+}
+
+时间复杂度：O(log n)`,
+      whyLearn: '当n很大（如10^18）时，普通方法根本算不完，快速幂只需几十次运算。'
+    },
+    codeExamples: [
+      {
+        title: '快速幂实现',
+        description: '计算 a^n mod m',
+        code: `#include <iostream>
+using namespace std;
+
+// 快速幂取模
+long long fastPower(long long a, long long n, long long m) {
+    long long result = 1;
+    a %= m;  // 先取模防止溢出
+    
+    while (n > 0) {
+        if (n % 2 == 1) {  // n是奇数
+            result = result * a % m;
+        }
+        a = a * a % m;
+        n /= 2;
+    }
+    
+    return result;
+}
+
+int main() {
+    long long a, n, m;
+    cin >> a >> n >> m;
+    cout << fastPower(a, n, m) << endl;
+    return 0;
+}`,
+        input: '2 10 1000000007',
+        expectedOutput: '1024',
+        explanation: [
+          '每次把n除以2，把a平方',
+          '如果n是奇数，把当前a乘到结果里',
+          '全程取模防止溢出',
+          '时间复杂度O(log n)'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '没有用long long',
+        why: '中间结果可能溢出int',
+        correctWay: '全程使用long long'
+      },
+      {
+        mistake: '忘记取模',
+        why: '结果可能超出数据范围',
+        correctWay: '每次乘法后都取模'
+      },
+    ],
+    quiz: {
+      question: '快速幂计算a^n的时间复杂度是？',
+      options: ['O(n)', 'O(log n)', 'O(n²)', 'O(1)'],
+      answer: 1,
+      explanation: '每次n减半，所以是O(log n)'
+    },
+    prerequisites: [3, 4],
+    recommendedProblems: [43, 58],
+    readTime: 25,
+  },
+  {
+    id: 63,
+    slug: 'vector-intro',
+    title: 'vector容器',
+    icon: '📦',
+    category: 'data-structures',
+    difficulty: 'basic',
+    brief: '动态数组的使用',
+    description: 'vector是C++ STL中的动态数组，可以自动扩容，使用方便。',
+    content: [
+      '什么是vector？',
+      'vector的声明和初始化',
+      'vector的基本操作',
+      'vector与数组的区别',
+      'vector的常见应用',
+    ],
+    kidFriendly: {
+      analogy: `vector就像一个会自动变长的数组。
+
+普通数组：开多大就是多大，浪费空间或不够用。
+vector：需要多少就放多少，自动扩容。
+
+就像一个魔法袋子，装多少东西都行！`,
+      visualization: `📦 vector基本操作：
+
+声明：vector<int> v;        // 空vector
+      vector<int> v(10);      // 10个0
+      vector<int> v(10, 5);   // 10个5
+
+添加：v.push_back(3);       // 末尾添加
+删除：v.pop_back();         // 删除末尾
+访问：v[0], v[1], ...       // 像数组一样
+大小：v.size()              // 元素个数
+
+遍历：
+for (int i = 0; i < v.size(); i++) cout << v[i];
+for (int x : v) cout << x;  // 范围for`,
+      whyLearn: '很多时候不知道需要多大的数组，vector可以动态调整，更安全方便。'
+    },
+    codeExamples: [
+      {
+        title: 'vector基础',
+        description: '动态数组操作',
+        code: `#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    vector<int> v;  // 空vector
+    
+    // 添加元素
+    v.push_back(10);
+    v.push_back(20);
+    v.push_back(30);
+    
+    cout << "大小：" << v.size() << endl;
+    
+    // 遍历
+    cout << "元素：";
+    for (int i = 0; i < v.size(); i++) {
+        cout << v[i] << " ";
+    }
+    cout << endl;
+    
+    // 范围for遍历
+    cout << "再次遍历：";
+    for (int x : v) {
+        cout << x << " ";
+    }
+    cout << endl;
+    
+    // 删除末尾
+    v.pop_back();
+    cout << "删除后大小：" << v.size() << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '大小：3\n元素：10 20 30\n再次遍历：10 20 30\n删除后大小：2',
+        explanation: [
+          'push_back()在末尾添加元素',
+          'pop_back()删除末尾元素',
+          'size()返回元素个数',
+          '可以用[]或范围for遍历'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '用[]访问空vector',
+        why: 'vector为空时访问会越界',
+        correctWay: '先检查size()或用at()'
+      },
+      {
+        mistake: '遍历时修改vector',
+        why: '可能导致迭代器失效',
+        correctWay: '遍历和修改分开进行'
+      },
+    ],
+    quiz: {
+      question: 'vector和数组的主要区别是？',
+      options: ['vector不能随机访问', 'vector可以动态扩容', 'vector更快', '数组更安全'],
+      answer: 1,
+      explanation: 'vector可以自动扩容，大小可变；数组大小固定'
+    },
+    prerequisites: [26, 32],
+    recommendedProblems: [30, 60],
+    readTime: 20,
+  },
+  {
+    id: 64,
+    slug: 'pair-intro',
+    title: 'pair类型',
+    icon: '👥',
+    category: 'data-structures',
+    difficulty: 'basic',
+    brief: '存储两个值的组合',
+    description: 'pair可以存储两个不同类型的值，常用于坐标、键值对等场景。',
+    content: [
+      '什么是pair？',
+      'pair的创建和访问',
+      'pair的应用场景',
+      'pair与vector配合',
+      '自定义排序',
+    ],
+    kidFriendly: {
+      analogy: `pair就像一个小盒子，里面放两个东西。
+
+比如：
+- 坐标：(x, y) 是一个pair
+- 学生的姓名和分数：(name, score)
+- 商品的编号和价格：(id, price)
+
+一个pair只能放两个东西，但可以嵌套使用。`,
+      visualization: `👥 pair基本操作：
+
+声明：pair<int, string> p;          // int和string
+      pair<int, int> p(3, 4);       // 坐标(3,4)
+      make_pair(1, "hello");        // 自动推断类型
+
+访问：p.first   // 第一个值
+      p.second  // 第二个值
+
+常用场景：
+- 坐标：pair<int, int>
+- 带下标的排序：pair<值, 下标>
+- map的元素：pair<key, value>`,
+      whyLearn: '很多STL容器（如map）内部用pair存储，理解pair很重要。'
+    },
+    codeExamples: [
+      {
+        title: 'pair基础',
+        description: '坐标和带索引排序',
+        code: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    // 坐标
+    pair<int, int> point(3, 4);
+    cout << "坐标：(" << point.first << ", " << point.second << ")" << endl;
+    
+    // 带索引排序
+    vector<pair<int, int>> v;
+    v.push_back({50, 1});  // 值50，原索引1
+    v.push_back({30, 2});  // 值30，原索引2
+    v.push_back({40, 3});  // 值40，原索引3
+    
+    // 按值排序（默认按first排序）
+    sort(v.begin(), v.end());
+    
+    cout << "排序后的值和原索引：" << endl;
+    for (auto& p : v) {
+        cout << "值=" << p.first << " 原索引=" << p.second << endl;
+    }
+    
+    return 0;
+}`,
+        expectedOutput: '坐标：(3, 4)\n排序后的值和原索引：\n值=30 原索引=2\n值=40 原索引=3\n值=50 原索引=1',
+        explanation: [
+          'pair.first访问第一个值，second访问第二个',
+          'pair默认按first排序',
+          '常用于记录原位置',
+          'auto& 自动推断类型'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记pair的访问方式',
+        why: '容易写成p[0], p[1]',
+        correctWay: '用p.first和p.second访问'
+      },
+      {
+        mistake: '排序方向搞错',
+        why: '默认是升序',
+        correctWay: '需要降序时自定义比较函数'
+      },
+    ],
+    quiz: {
+      question: '访问pair p的两个元素用？',
+      options: ['p[0] 和 p[1]', 'p.first 和 p.second', 'p.a 和 p.b', 'p.get(0) 和 p.get(1)'],
+      answer: 1,
+      explanation: 'pair用.first和.second访问两个元素'
+    },
+    prerequisites: [63],
+    recommendedProblems: [45, 59],
+    readTime: 15,
+  },
+  {
+    id: 65,
+    slug: 'stack-intro',
+    title: '栈',
+    icon: '📚',
+    category: 'data-structures',
+    difficulty: 'basic',
+    brief: '后进先出的数据结构',
+    description: '栈是一种只能在一端进行插入和删除的数据结构，遵循"后进先出"(LIFO)原则。',
+    content: [
+      '什么是栈？',
+      '栈的基本操作',
+      '栈的特性：LIFO',
+      'STL stack的使用',
+      '栈的应用场景',
+    ],
+    kidFriendly: {
+      analogy: `栈就像一摞盘子。
+
+你只能：
+- 在最上面放盘子（push）
+- 从最上面拿盘子（pop）
+- 看最上面是什么（top）
+
+想拿下面的盘子？必须先把上面的都拿走！
+
+这就是"后进先出"：最后放上去的盘子，最先被拿走。`,
+      visualization: `📚 栈的操作示意：
+
+    ┌───┐
+    │ 3 │ ← top（栈顶）
+    ├───┤
+    │ 2 │
+    ├───┤
+    │ 1 │
+    └───┘
+      ↑
+    栈底
+
+操作：
+push(4)：放入元素
+    ┌───┐
+    │ 4 │ ← 新的top
+    ├───┤
+    │ 3 │
+    └───┘
+
+pop()：弹出栈顶
+    取出4，3变成新的top`,
+      whyLearn: '栈在括号匹配、表达式求值、函数调用等场景都有应用。'
+    },
+    codeExamples: [
+      {
+        title: 'STL stack使用',
+        description: '括号匹配',
+        code: `#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+
+int main() {
+    string s;
+    cin >> s;
+    
+    stack<char> st;
+    bool valid = true;
+    
+    for (char c : s) {
+        if (c == '(' || c == '[' || c == '{') {
+            st.push(c);  // 左括号入栈
+        } else {
+            if (st.empty()) {
+                valid = false;
+                break;
+            }
+            char top = st.top();
+            st.pop();
+            // 检查匹配
+            if ((c == ')' && top != '(') ||
+                (c == ']' && top != '[') ||
+                (c == '}' && top != '{')) {
+                valid = false;
+                break;
+            }
+        }
+    }
+    
+    if (valid && st.empty()) {
+        cout << "括号匹配！" << endl;
+    } else {
+        cout << "括号不匹配！" << endl;
+    }
+    
+    return 0;
+}`,
+        input: '{[()]}',
+        expectedOutput: '括号匹配！',
+        explanation: [
+          '遇到左括号入栈',
+          '遇到右括号检查栈顶是否匹配',
+          '最后栈为空才匹配',
+          '这是栈的经典应用'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '对空栈进行top或pop',
+        why: '会导致运行时错误',
+        correctWay: '操作前用empty()检查'
+      },
+      {
+        mistake: '混淆栈和队列',
+        why: '栈是后进先出，队列是先进先出',
+        correctWay: '记住栈像一摞盘子'
+      },
+    ],
+    quiz: {
+      question: '栈的特点是？',
+      options: ['先进先出', '后进先出', '随机访问', '只能存数字'],
+      answer: 1,
+      explanation: '栈是LIFO（Last In First Out），最后放入的最先取出'
+    },
+    prerequisites: [63, 19],
+    recommendedProblems: [61, 62],
+    readTime: 20,
+  },
+  {
+    id: 66,
+    slug: 'queue-intro',
+    title: '队列',
+    icon: '🚶',
+    category: 'data-structures',
+    difficulty: 'basic',
+    brief: '先进先出的数据结构',
+    description: '队列是一种在一端插入、另一端删除的数据结构，遵循"先进先出"(FIFO)原则。',
+    content: [
+      '什么是队列？',
+      '队列的基本操作',
+      '队列的特性：FIFO',
+      'STL queue的使用',
+      '队列的应用场景',
+    ],
+    kidFriendly: {
+      analogy: `队列就像排队买票。
+
+先来的人排在前面，先买票离开。
+后来的人排在后面，等前面的人买完。
+
+这就是"先进先出"：先排队的人，先买到票离开。
+
+公平！就像生活中的排队一样。`,
+      visualization: `🚶 队列的操作示意：
+
+    ┌───┬───┬───┬───┐
+    │ 1 │ 2 │ 3 │ 4 │
+    └───┴───┴───┴───┘
+      ↑           ↑
+    front        back
+    (队首)       (队尾)
+
+操作：
+push(5)：从队尾加入
+    ┌───┬───┬───┬───┬───┐
+    │ 1 │ 2 │ 3 │ 4 │ 5 │
+    └───┴───┴───┴───┴───┘
+
+pop()：从队首移除
+    ┌───┬───┬───┬───┐
+    │ 2 │ 3 │ 4 │ 5 │
+    └───┴───┴───┴───┘`,
+      whyLearn: '队列在BFS广度优先搜索、任务调度等场景非常重要。'
+    },
+    codeExamples: [
+      {
+        title: 'STL queue使用',
+        description: '模拟排队',
+        code: `#include <iostream>
+#include <queue>
+using namespace std;
+
+int main() {
+    queue<int> q;
+    
+    // 入队
+    q.push(1);
+    q.push(2);
+    q.push(3);
+    
+    cout << "队首：" << q.front() << endl;
+    cout << "队尾：" << q.back() << endl;
+    cout << "大小：" << q.size() << endl;
+    
+    // 出队
+    cout << "出队顺序：";
+    while (!q.empty()) {
+        cout << q.front() << " ";
+        q.pop();
+    }
+    cout << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '队首：1\n队尾：3\n大小：3\n出队顺序：1 2 3',
+        explanation: [
+          'push()从队尾加入',
+          'pop()从队首移除',
+          'front()访问队首',
+          'back()访问队尾'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '用[]访问队列',
+        why: '队列不支持随机访问',
+        correctWay: '只能访问front和back'
+      },
+      {
+        mistake: '对空队列操作',
+        why: '会导致运行时错误',
+        correctWay: '操作前用empty()检查'
+      },
+    ],
+    quiz: {
+      question: '队列的特点是？',
+      options: ['后进先出', '先进先出', '随机访问', '只能存数字'],
+      answer: 1,
+      explanation: '队列是FIFO（First In First Out），先进入队列的先出来'
+    },
+    prerequisites: [65, 19],
+    recommendedProblems: [62, 63],
+    readTime: 20,
+  },
+  {
+    id: 67,
+    slug: 'binary-answer',
+    title: '二分答案',
+    icon: '🎯',
+    category: 'algorithms',
+    difficulty: 'intermediate',
+    brief: '对答案进行二分枚举',
+    description: '二分答案是一种重要的思想：当答案满足单调性时，可以对答案进行二分，每次检验是否可行。',
+    content: [
+      '什么是二分答案？',
+      '二分答案的前提条件',
+      '检验函数的设计',
+      '二分答案的实现',
+      '经典例题分析',
+    ],
+    kidFriendly: {
+      analogy: `猜数字游戏：我心里想一个1到100的数字，你来猜。
+
+普通方法：1、2、3、4...最多猜100次。
+
+聪明方法（二分）：
+- 50？太大了！范围变成1-49
+- 25？太大了！范围变成1-24
+- 12？太小了！范围变成13-24
+- ...
+
+最多猜7次就能猜对！
+
+这就是二分答案：答案在某个范围内，我们可以不断缩小范围。`,
+      visualization: `🎯 二分答案流程：
+
+问题：求满足条件的最小值
+
+答案范围：[L, R]
+
+while (L < R) {
+    mid = (L + R) / 2
+    
+    if (check(mid) 满足条件) {
+        R = mid  // 答案可能在左半边
+    } else {
+        L = mid + 1  // 答案一定在右半边
+    }
+}
+
+关键：设计check函数判断mid是否满足条件`,
+      whyLearn: '很多问题的答案很难直接计算，但可以"猜"并检验。二分答案让猜测效率大大提高。'
+    },
+    codeExamples: [
+      {
+        title: '二分答案示例',
+        description: '木材切割问题',
+        code: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int n, k;
+int a[100005];
+
+// 检验：每段长度为len时，能否切出至少k段
+bool check(int len) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        count += a[i] / len;
+    }
+    return count >= k;
+}
+
+int main() {
+    cin >> n >> k;
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+    
+    // 二分答案
+    int L = 1, R = *max_element(a, a + n);
+    int ans = 0;
+    
+    while (L <= R) {
+        int mid = (L + R) / 2;
+        if (check(mid)) {
+            ans = mid;     // 记录答案
+            L = mid + 1;   // 尝试更长的段
+        } else {
+            R = mid - 1;   // 太长了，缩短
+        }
+    }
+    
+    cout << ans << endl;
+    return 0;
+}`,
+        input: '3 7\n10 15 20',
+        expectedOutput: '6',
+        explanation: [
+          '每段长度mid，能切出多少段',
+          '二分答案范围[1, 最长木材]',
+          'check函数检验是否可行',
+          '找最大的可行长度'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '二分边界写错',
+        why: '容易漏掉答案或死循环',
+        correctWay: '根据题目确定用L<=R还是L<R'
+      },
+      {
+        mistake: 'check函数写反',
+        why: '判断条件搞反会得到错误答案',
+        correctWay: '先明确要求的答案方向'
+      },
+    ],
+    quiz: {
+      question: '二分答案的前提是答案满足？',
+      options: ['随机性', '单调性', '周期性', '对称性'],
+      answer: 1,
+      explanation: '答案必须单调（有序），才能二分'
+    },
+    prerequisites: [44, 38],
+    recommendedProblems: [50, 51],
+    readTime: 25,
+  },
+  {
+    id: 68,
+    slug: 'insertion-sort',
+    title: '插入排序',
+    icon: '📥',
+    category: 'algorithms',
+    difficulty: 'basic',
+    brief: '将元素插入到已排序序列中',
+    description: '插入排序通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。',
+    content: [
+      '插入排序的思想',
+      '插入排序的过程',
+      '插入排序的实现',
+      '时间复杂度分析',
+      '插入排序 vs 冒泡排序',
+    ],
+    kidFriendly: {
+      analogy: `插入排序就像整理手牌。
+
+你手里有几张牌已经排好序了，现在拿起一张新牌。
+
+从右往左找：
+- 这张牌比新牌大？往右移
+- 这张牌比新牌小？新牌放它右边
+
+一张一张插进去，最后全部排好序！`,
+      visualization: `📥 插入排序过程：
+
+原数组：[5, 2, 4, 1, 3]
+
+第1步：[5 | 2, 4, 1, 3]  ← 5已排序
+第2步：[2, 5 | 4, 1, 3]  ← 插入2
+第3步：[2, 4, 5 | 1, 3]  ← 插入4
+第4步：[1, 2, 4, 5 | 3]  ← 插入1
+第5步：[1, 2, 3, 4, 5]   ← 插入3
+
+每次把一个元素插入到正确位置`,
+      whyLearn: '插入排序虽然效率不如快排，但对小规模或基本有序的数据效果很好。'
+    },
+    codeExamples: [
+      {
+        title: '插入排序实现',
+        description: '从小到大排序',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    int a[105];
+    
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+    
+    // 插入排序
+    for (int i = 1; i < n; i++) {
+        int key = a[i];  // 要插入的元素
+        int j = i - 1;
+        
+        // 把比key大的元素往右移
+        while (j >= 0 && a[j] > key) {
+            a[j + 1] = a[j];
+            j--;
+        }
+        
+        // 插入key
+        a[j + 1] = key;
+    }
+    
+    // 输出
+    for (int i = 0; i < n; i++) {
+        cout << a[i] << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}`,
+        input: '5\n5 2 4 1 3',
+        expectedOutput: '1 2 3 4 5',
+        explanation: [
+          '从第2个元素开始，逐个插入',
+          '在已排序部分找正确位置',
+          '边比较边移动',
+          '时间复杂度O(n²)'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: 'j的范围写错',
+        why: 'j >= 0 容易漏掉',
+        correctWay: '注意边界条件'
+      },
+      {
+        mistake: '移动方向搞反',
+        why: '应该把大的往右移',
+        correctWay: '画图理解移动过程'
+      },
+    ],
+    quiz: {
+      question: '插入排序的时间复杂度是？',
+      options: ['O(n)', 'O(n²)', 'O(n log n)', 'O(log n)'],
+      answer: 1,
+      explanation: '最坏情况下每个元素都要和前面所有元素比较，是O(n²)'
+    },
+    prerequisites: [38, 19],
+    recommendedProblems: [44, 45],
+    readTime: 20,
+  },
+  {
+    id: 69,
+    slug: 'custom-compare',
+    title: '自定义比较',
+    icon: '⚖️',
+    category: 'algorithms',
+    difficulty: 'basic',
+    brief: '自定义排序规则',
+    description: '学习如何自定义排序规则，包括比较函数和lambda表达式。',
+    content: [
+      '为什么要自定义比较？',
+      '比较函数的写法',
+      'sort的第三个参数',
+      'lambda表达式',
+      '结构体排序',
+    ],
+    kidFriendly: {
+      analogy: `排序默认是"从小到大"。但有时候我们想要：
+- 从大到小
+- 按学生成绩排序
+- 按字符串长度排序
+
+就像老师排座位，可以按身高排，也可以按成绩排。
+
+自定义比较就是告诉程序"谁应该排在前面"。`,
+      visualization: `⚖️ 自定义比较：
+
+// 方法1：比较函数
+bool cmp(int a, int b) {
+    return a > b;  // 从大到小
+}
+sort(v.begin(), v.end(), cmp);
+
+// 方法2：lambda表达式
+sort(v.begin(), v.end(), [](int a, int b) {
+    return a > b;
+});
+
+// 结构体排序
+struct Student {
+    string name;
+    int score;
+};
+
+bool cmp(Student a, Student b) {
+    return a.score > b.score;  // 按分数降序
+}`,
+      whyLearn: '实际问题中的排序往往有特殊要求，自定义比较是必备技能。'
+    },
+    codeExamples: [
+      {
+        title: '自定义比较示例',
+        description: '多种排序方式',
+        code: `#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+using namespace std;
+
+struct Student {
+    string name;
+    int score;
+};
+
+// 按分数降序，分数相同按名字升序
+bool cmp(Student a, Student b) {
+    if (a.score != b.score) {
+        return a.score > b.score;
+    }
+    return a.name < b.name;
+}
+
+int main() {
+    vector<Student> students = {
+        {"Alice", 90},
+        {"Bob", 85},
+        {"Charlie", 90},
+        {"David", 95}
+    };
+    
+    sort(students.begin(), students.end(), cmp);
+    
+    cout << "排名：" << endl;
+    for (int i = 0; i < students.size(); i++) {
+        cout << i + 1 << ". " << students[i].name 
+             << " " << students[i].score << endl;
+    }
+    
+    return 0;
+}`,
+        expectedOutput: '排名：\n1. David 95\n2. Alice 90\n3. Charlie 90\n4. Bob 85',
+        explanation: [
+          '比较函数返回true表示a应该排在b前面',
+          '分数不同按分数排',
+          '分数相同按名字排',
+          '自定义规则灵活应用'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '比较函数返回>=',
+        why: '可能导致相等元素被认为是严格小于',
+        correctWay: '用>或<，不要用>=或<='
+      },
+      {
+        mistake: '排序规则不一致',
+        why: '可能导致排序结果不确定',
+        correctWay: '确保比较函数是严格弱序'
+      },
+    ],
+    quiz: {
+      question: 'sort的比较函数返回true表示？',
+      options: ['a等于b', 'a应该排在b前面', 'a大于b', 'a小于b'],
+      answer: 1,
+      explanation: '返回true表示第一个参数应该排在第二个参数前面'
+    },
+    prerequisites: [38, 35],
+    recommendedProblems: [44, 45],
+    readTime: 20,
+  },
+  {
+    id: 70,
+    slug: 'basic-algo-review',
+    title: '基础算法复习',
+    icon: '📚',
+    category: 'algorithms',
+    difficulty: 'basic',
+    brief: '汇总 Day 15-34 重点难点，巩固基础算法知识',
+    description: '系统回顾模拟、枚举、排序、递归、二分、贪心、前缀和、数论、STL等基础算法知识。',
+    content: [
+      '🎯 Day 15-16：模拟与枚举',
+      '📊 Day 17-18：排序算法',
+      '🔄 Day 19-21：函数与递归',
+      '🔍 Day 22-23：二分查找与二分答案',
+      '💰 Day 24-25：贪心算法',
+      '📈 Day 26-27：前缀和与差分',
+      '🔢 Day 28-30：数论基础',
+      '📦 Day 31-34：STL容器',
+    ],
+    kidFriendly: {
+      analogy: `基础算法阶段完成！你已经学会了很多"招式"：
+
+• 模拟：照着题目做，细心最重要
+• 枚举：一个一个试，但要聪明地试
+• 排序：排好顺序好办事
+• 递归：自己调用自己
+• 二分：猜答案，快速缩小范围
+• 贪心：每一步选当前最好的
+• 前缀和/差分：快速处理区间
+• 数论：数学知识在编程中的应用
+• STL：现成的工具箱
+
+现在，让我们把这些招式串起来！`,
+      visualization: `📚 基础算法知识体系
+
+┌─────────────────────────────────────────────────────┐
+│                   基础算法体系                        │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│   基础思想          数据结构          数论工具       │
+│   ┌─────┐          ┌─────┐          ┌─────┐       │
+│   │模拟 │          │vector│         │ GCD │       │
+│   │枚举 │          │stack│          │ LCM │       │
+│   │递归 │          │queue│          │素数 │       │
+│   │二分 │          │pair │          │快速幂│       │
+│   │贪心 │          └─────┘          └─────┘       │
+│   └─────┘                                          │
+│                                                     │
+│   优化技巧                                          │
+│   ┌──────────┐                                     │
+│   │ 前缀和   │  区间查询 O(1)                      │
+│   │ 差分     │  区间修改 O(1)                      │
+│   │ 二分答案 │  问题转化                            │
+│   └──────────┘                                     │
+│                                                     │
+└─────────────────────────────────────────────────────┘`,
+      whyLearn: '复习是学习的重要环节，温故而知新，巩固基础才能进阶提高。'
+    },
+    reviewContent: {
+      sections: [
+        {
+          day: 'Day 15-16',
+          title: '模拟与枚举',
+          keyPoints: ['模拟：按题目描述实现过程', '枚举：尝试所有可能的情况', '枚举优化：缩小范围、减少重复', '注意边界条件和特殊情况'],
+          commonMistakes: ['漏掉边界情况', '枚举范围过大超时', '题意理解错误'],
+          relatedSlug: 'simulation-intro'
+        },
+        {
+          day: 'Day 17-18',
+          title: '排序算法',
+          keyPoints: ['冒泡排序：相邻元素交换', '选择排序：选最小的放前面', '插入排序：插入到正确位置', 'STL sort：高效便捷'],
+          commonMistakes: ['数组下标错误', '比较函数写错', '忘记包含头文件'],
+          relatedSlug: 'sort-intro'
+        },
+        {
+          day: 'Day 19-21',
+          title: '函数与递归',
+          keyPoints: ['函数定义与调用', '参数传递（值传递）', '递归思想：自己调用自己', '递归终止条件必不可少'],
+          commonMistakes: ['没有终止条件导致无限递归', '参数传递错误', '返回值遗漏'],
+          relatedSlug: 'function-intro'
+        },
+        {
+          day: 'Day 22-23',
+          title: '二分查找与答案',
+          keyPoints: ['二分查找前提：有序数组', '二分答案前提：答案单调', '边界处理：L<=R 还是 L<R', '检验函数的设计'],
+          commonMistakes: ['边界条件错误', '死循环', '检验函数逻辑错误'],
+          relatedSlug: 'binary-search'
+        },
+        {
+          day: 'Day 24-25',
+          title: '贪心算法',
+          keyPoints: ['贪心思想：每步选最优', '贪心正确性需要验证', '经典问题：区间调度、找零钱', '贪心不是万能的'],
+          commonMistakes: ['贪心后没有验证正确性', '局部最优≠全局最优'],
+          relatedSlug: 'greedy-intro'
+        },
+        {
+          day: 'Day 26-27',
+          title: '前缀和与差分',
+          keyPoints: ['前缀和：预处理后O(1)区间查询', '差分：O(1)区间修改', '差分是前缀和的逆运算', '下标从1开始更方便'],
+          commonMistakes: ['下标从0开始导致边界问题', '忘记还原差分数组', '数据溢出'],
+          relatedSlug: 'prefix-sum'
+        },
+        {
+          day: 'Day 28-30',
+          title: '数论基础',
+          keyPoints: ['GCD/LCM：辗转相除法', '素数判定：试除法', '埃氏筛法：批量求素数', '快速幂：O(log n)幂运算'],
+          commonMistakes: ['忘记取模导致溢出', '筛法下标错误', '边界值处理'],
+          relatedSlug: 'gcd-lcm'
+        },
+        {
+          day: 'Day 31-34',
+          title: 'STL容器',
+          keyPoints: ['vector：动态数组', 'stack：后进先出', 'queue：先进先出', 'pair：存储两个值'],
+          commonMistakes: ['空容器访问top/front', '下标越界', '忘记包含头文件'],
+          relatedSlug: 'vector-intro'
+        },
+      ],
+    },
+    codeExamples: [
+      {
+        title: '综合示例：结构体+排序+前缀和',
+        description: '学生成绩统计',
+        code: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Student {
+    string name;
+    int score;
+};
+
+bool cmp(Student a, Student b) {
+    return a.score > b.score;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    
+    vector<Student> stu(n);
+    for (int i = 0; i < n; i++) {
+        cin >> stu[i].name >> stu[i].score;
+    }
+    
+    // 排序
+    sort(stu.begin(), stu.end(), cmp);
+    
+    // 计算前缀和
+    vector<int> prefix(n + 1, 0);
+    for (int i = 0; i < n; i++) {
+        prefix[i + 1] = prefix[i] + stu[i].score;
+    }
+    
+    // 输出
+    cout << "排名榜：" << endl;
+    for (int i = 0; i < n; i++) {
+        cout << i + 1 << ". " << stu[i].name 
+             << " " << stu[i].score << endl;
+    }
+    cout << "总分：" << prefix[n] << endl;
+    cout << "前三名总分：" << prefix[3] << endl;
+    
+    return 0;
+}`,
+        input: '5\nAlice 90\nBob 85\nCharlie 95\nDavid 80\nEve 88',
+        expectedOutput: '排名榜：\n1. Charlie 95\n2. Alice 90\n3. Eve 88\n4. Bob 85\n5. David 80\n总分：438\n前三名总分：273',
+        explanation: [
+          '结构体存储学生信息',
+          '自定义比较函数排序',
+          '前缀和快速求区间和',
+          '综合运用多种技术'
+        ]
+      }
+    ],
+    prerequisites: [41, 42, 38, 44, 59, 60, 61, 62, 63, 65, 66],
+    recommendedProblems: [29, 44, 50, 55, 61],
+    readTime: 40,
+  },
   // ==================== 阶段复习 ====================
   {
     id: 100,

@@ -805,8 +805,7 @@ export const dailyLearningPath: DayLesson[] = [
     phase: 'basic',
     phaseName: '基础算法',
     topics: [
-      { id: 'review-basic-algo', name: '基础算法复习', type: 'algorithm', importance: 'required' },
-      { id: 'practice-basic-algo', name: '综合练习', type: 'algorithm', importance: 'required' },
+      { id: 'basic-algo-review', name: '基础算法复习', type: 'algorithm', importance: 'required' },
     ],
     practiceProblems: [29, 44, 50, 55, 61],
     challengeProblem: 64,
@@ -816,6 +815,59 @@ export const dailyLearningPath: DayLesson[] = [
       '完成基础阶段所有练习',
       '准备进入进阶阶段',
     ],
+    summary: {
+      title: '基础算法知识图谱',
+      sections: [
+        {
+          title: 'Day 15-16：模拟与枚举',
+          topicId: 'simulation-intro',
+          keyPoints: ['模拟：按题目描述直接实现过程', '枚举：尝试所有可能的情况', '枚举优化：缩小范围、减少重复', '注意边界条件和特殊情况'],
+          commonMistakes: ['漏掉边界情况', '枚举范围过大超时', '题意理解错误导致模拟方向错误'],
+        },
+        {
+          title: 'Day 17-18：排序算法',
+          topicId: 'sort-intro',
+          keyPoints: ['冒泡排序：相邻元素交换', '选择排序：选最小的放前面', '插入排序：插入到正确位置', 'STL sort：高效便捷', '自定义比较：控制排序规则'],
+          commonMistakes: ['数组下标错误', '比较函数写错（不要用>=）', '忘记包含<algorithm>头文件'],
+        },
+        {
+          title: 'Day 19-21：函数与递归',
+          topicId: 'function-intro',
+          keyPoints: ['函数定义与调用', '参数传递（值传递）', '递归思想：自己调用自己', '递归终止条件必不可少', '分治：大问题分解为小问题'],
+          commonMistakes: ['没有终止条件导致无限递归', '参数传递错误', '返回值遗漏', '递归深度过大'],
+        },
+        {
+          title: 'Day 22-23：二分查找与答案',
+          topicId: 'binary-search',
+          keyPoints: ['二分查找前提：有序数组', '二分答案前提：答案单调', '边界处理：L<=R 还是 L<R', '检验函数的设计', '时间复杂度：O(log n)'],
+          commonMistakes: ['边界条件错误（死循环）', '二分答案忘记检验函数', '检验函数逻辑错误'],
+        },
+        {
+          title: 'Day 24-25：贪心算法',
+          topicId: 'greedy-intro',
+          keyPoints: ['贪心思想：每步选当前最优', '贪心正确性需要验证', '经典问题：找零钱、区间调度', '排序+贪心是常见套路', '贪心不是万能的'],
+          commonMistakes: ['贪心后没有验证正确性', '局部最优≠全局最优', '排序方向搞错'],
+        },
+        {
+          title: 'Day 26-27：前缀和与差分',
+          topicId: 'prefix-sum',
+          keyPoints: ['前缀和：预处理后O(1)区间查询', '差分：O(1)区间修改', '差分是前缀和的逆运算', '下标从1开始更方便', '公式：sum[l,r] = prefix[r] - prefix[l-1]'],
+          commonMistakes: ['下标从0开始导致边界问题', '忘记还原差分数组', '数据溢出（用long long）'],
+        },
+        {
+          title: 'Day 28-30：数论基础',
+          topicId: 'gcd-lcm',
+          keyPoints: ['GCD：辗转相除法', 'LCM = a × b / GCD(a,b)', '素数判定：试除法', '埃氏筛法：批量求素数', '快速幂：O(log n)幂运算'],
+          commonMistakes: ['忘记取模导致溢出', '筛法下标错误', '快速幂没用long long'],
+        },
+        {
+          title: 'Day 31-34：STL容器',
+          topicId: 'vector-intro',
+          keyPoints: ['vector：动态数组，push_back/pop_back', 'pair：存储两个值，用.first/.second访问', 'stack：后进先出(LIFO)，push/pop/top', 'queue：先进先出(FIFO)，push/pop/front', '使用前检查empty()'],
+          commonMistakes: ['空容器访问top/front', '下标越界', '忘记包含头文件', '混淆栈和队列的特性'],
+        },
+      ],
+    },
   },
 
   // ============ 阶段三：进阶提升（Day 36-70）============
