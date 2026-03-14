@@ -35,6 +35,8 @@ import {
   Image as ImageIcon,
   MonitorPlay,
   Video,
+  Target,
+  Zap,
 } from 'lucide-react';
 import { RunnableCodeBlock } from '@/components/RunnableCodeBlock';
 
@@ -452,6 +454,30 @@ export default function KnowledgeDetailPage() {
                         </div>
                       </details>
                     ))}
+                  </div>
+
+                  {/* 综合测验入口 */}
+                  <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center">
+                          <Target className="h-6 w-6 text-yellow-600" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-yellow-800">基础入门综合测验</div>
+                          <div className="text-sm text-yellow-600">
+                            35道题 · 覆盖Day 1-13所有知识点 · 详细解析
+                          </div>
+                        </div>
+                      </div>
+                      <Button 
+                        onClick={() => router.push('/quiz/foundation?from=knowledge')}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white gap-2"
+                      >
+                        <Zap className="h-4 w-4" />
+                        开始测验
+                      </Button>
+                    </div>
                   </div>
                 </section>
               </>

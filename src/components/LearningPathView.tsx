@@ -617,7 +617,7 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                           </div>
                         </div>
                       </div>
-                      <Button onClick={() => setShowFoundationQuiz(true)} className="gap-2">
+                      <Button onClick={() => router.push('/quiz/foundation?from=learning')} className="gap-2">
                         <Zap className="h-4 w-4" />
                         开始测验
                       </Button>
