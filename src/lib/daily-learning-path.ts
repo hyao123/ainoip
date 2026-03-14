@@ -13,6 +13,15 @@ export interface DayLesson {
   challengeProblem?: number;
   estimatedMinutes: number;
   objectives: string[];
+  // 总结内容（用于复习日）
+  summary?: {
+    title: string;
+    sections: {
+      title: string;
+      keyPoints: string[];
+      commonMistakes: string[];
+    }[];
+  };
 }
 
 // 知识点
@@ -342,21 +351,71 @@ export const dailyLearningPath: DayLesson[] = [
   {
     day: 14,
     title: '基础入门复习',
-    description: '巩固所学，完成入门考核',
+    description: '串联前13天知识，完成入门考核',
     phase: 'foundation',
     phaseName: '基础入门',
     topics: [
-      { id: 'review-basic', name: '基础语法复习', type: 'concept', importance: 'required' },
-      { id: 'practice-basic', name: '综合练习', type: 'algorithm', importance: 'required' },
+      { id: 'review-cpp-basics', name: 'C++基础语法回顾', type: 'concept', importance: 'required' },
+      { id: 'review-data-types', name: '变量与数据类型', type: 'concept', importance: 'required' },
+      { id: 'review-control', name: '流程控制语句', type: 'concept', importance: 'required' },
+      { id: 'review-data-structures', name: '数组与结构体', type: 'data_structure', importance: 'required' },
+      { id: 'review-strings', name: '字符串处理', type: 'data_structure', importance: 'recommended' },
     ],
-    practiceProblems: [1, 2, 3, 24, 30],
+    practiceProblems: [1, 15, 24, 30, 75],
     challengeProblem: 29,
-    estimatedMinutes: 60,
+    estimatedMinutes: 70,
     objectives: [
-      '复习巩固基础语法',
-      '完成入门阶段所有练习',
-      '准备进入基础算法阶段',
+      '回顾C++程序的基本结构',
+      '巩固变量、数据类型和运算符',
+      '熟练掌握三种流程控制结构',
+      '理解数组、字符串和结构体的应用',
+      '完成入门阶段综合测验',
     ],
+    summary: {
+      title: '基础入门知识图谱',
+      sections: [
+        {
+          title: 'Day 1-2：C++入门与变量',
+          keyPoints: ['C++程序结构（头文件、main函数）', 'cout输出、cin输入', '变量命名规则', '基本数据类型（int、double、char、bool、string）'],
+          commonMistakes: ['忘记分号', '变量未初始化就使用', '数据类型选择不当导致精度丢失'],
+        },
+        {
+          title: 'Day 3-4：运算符与表达式',
+          keyPoints: ['算术运算符（+、-、*、/、%）', '自增自减（++、--）', '复合赋值运算符（+=、-=）', '类型转换与精度问题'],
+          commonMistakes: ['整数除法丢失小数部分', '自增自减的前置后置混淆', '运算符优先级错误'],
+        },
+        {
+          title: 'Day 5-6：选择结构',
+          keyPoints: ['if-else语句', 'else if多分支', 'switch-case语句', '逻辑运算符（&&、||、！）', '三元运算符'],
+          commonMistakes: ['条件判断写成赋值（= vs ==）', '忘记else分支', 'switch缺少break'],
+        },
+        {
+          title: 'Day 7-9：循环结构',
+          keyPoints: ['for循环（计数循环）', 'while循环（条件循环）', 'do-while循环', '循环嵌套', 'break和continue'],
+          commonMistakes: ['循环边界错误（< vs <=）', '死循环', '嵌套循环变量混淆'],
+        },
+        {
+          title: 'Day 10：一维数组',
+          keyPoints: ['数组声明与初始化', '数组下标从0开始', '数组遍历', '数组越界问题'],
+          commonMistakes: ['下标越界', '数组未初始化', '混淆数组长度和最大下标'],
+        },
+        {
+          title: 'Day 11：二维数组',
+          keyPoints: ['二维数组声明', '行列遍历', '矩阵操作', '对角线访问'],
+          commonMistakes: ['行列索引混淆', '二维数组初始化格式错误'],
+        },
+        {
+          title: 'Day 12：结构体',
+          keyPoints: ['结构体定义', '成员访问（.运算符）', '结构体初始化', '结构体数组', '结构体排序'],
+          commonMistakes: ['定义后忘记分号', '初始化顺序错误', '值传递vs引用传递'],
+        },
+        {
+          title: 'Day 13：字符串',
+          keyPoints: ['string类型', '字符串输入（cin、getline）', '常用操作（length、substr、find）', '字符数组'],
+          commonMistakes: ['cin遇到空格停止', '字符串比较用==而非strcmp', '忘记字符串以\\0结尾'],
+        },
+      ],
+    },
   },
 
   // ============ 阶段二：基础算法（Day 15-35）============
@@ -2288,6 +2347,8 @@ export interface AssessmentQuestion {
 }
 
 export const assessmentQuestions: AssessmentQuestion[] = [
+  // ==================== 基础入门（Day 1-14）测验 ====================
+  // Day 1: C++简介与Hello World
   {
     id: 1,
     question: '以下哪个是正确的C++输出语句？',
@@ -2299,6 +2360,25 @@ export const assessmentQuestions: AssessmentQuestion[] = [
   },
   {
     id: 2,
+    question: 'C++程序的入口函数是？',
+    options: ['start()', 'main()', 'run()', 'begin()'],
+    correctAnswer: 1,
+    topic: '程序结构',
+    difficulty: 'easy',
+    suggestDay: 1,
+  },
+  {
+    id: 3,
+    question: '下列哪个头文件是正确的？',
+    options: ['#include <iostream>', '#import iostream', '#include iostream', 'using iostream'],
+    correctAnswer: 0,
+    topic: '头文件',
+    difficulty: 'easy',
+    suggestDay: 1,
+  },
+  // Day 2: 变量与数据类型
+  {
+    id: 4,
     question: 'int类型的数据范围大约是？',
     options: ['-128到127', '-32768到32767', '-21亿到21亿', '无限制'],
     correctAnswer: 2,
@@ -2307,16 +2387,155 @@ export const assessmentQuestions: AssessmentQuestion[] = [
     suggestDay: 2,
   },
   {
-    id: 3,
+    id: 5,
+    question: '以下哪个是合法的变量名？',
+    options: ['2name', 'my-name', '_count', 'int'],
+    correctAnswer: 2,
+    topic: '变量命名',
+    difficulty: 'easy',
+    suggestDay: 2,
+  },
+  {
+    id: 6,
+    question: 'double类型比float类型？',
+    options: ['精度更低', '精度更高', '精度相同', '无法比较'],
+    correctAnswer: 1,
+    topic: '数据类型',
+    difficulty: 'easy',
+    suggestDay: 2,
+  },
+  {
+    id: 7,
+    question: 'char类型占用的内存大小是？',
+    options: ['1字节', '2字节', '4字节', '8字节'],
+    correctAnswer: 0,
+    topic: '数据类型',
+    difficulty: 'easy',
+    suggestDay: 2,
+  },
+  // Day 3-4: 运算符
+  {
+    id: 8,
+    question: '表达式 17 / 5 的结果是？',
+    options: ['3', '3.4', '4', '2'],
+    correctAnswer: 0,
+    topic: '算术运算',
+    difficulty: 'easy',
+    suggestDay: 3,
+  },
+  {
+    id: 9,
+    question: '表达式 17 % 5 的结果是？',
+    options: ['3', '2', '3.4', '0'],
+    correctAnswer: 1,
+    topic: '取余运算',
+    difficulty: 'easy',
+    suggestDay: 3,
+  },
+  {
+    id: 10,
+    question: 'int a = 5; int b = a++; 执行后a和b的值分别是？',
+    options: ['a=6, b=6', 'a=6, b=5', 'a=5, b=5', 'a=5, b=6'],
+    correctAnswer: 1,
+    topic: '自增运算',
+    difficulty: 'medium',
+    suggestDay: 3,
+  },
+  {
+    id: 11,
+    question: '表达式 5 > 3 && 2 < 1 的结果是？',
+    options: ['true', 'false', '1', '编译错误'],
+    correctAnswer: 1,
+    topic: '逻辑运算',
+    difficulty: 'easy',
+    suggestDay: 4,
+  },
+  // Day 5-6: 选择结构
+  {
+    id: 12,
+    question: 'if语句后的花括号可以省略的情况是？',
+    options: ['永远不能省略', '只有一条语句时可以省略', '任何时候都可以省略', '有多条语句时可以省略'],
+    correctAnswer: 1,
+    topic: 'if语句',
+    difficulty: 'easy',
+    suggestDay: 5,
+  },
+  {
+    id: 13,
+    question: 'switch语句中，用于跳出当前case的关键字是？',
+    options: ['continue', 'break', 'return', 'exit'],
+    correctAnswer: 1,
+    topic: 'switch语句',
+    difficulty: 'easy',
+    suggestDay: 5,
+  },
+  {
+    id: 14,
+    question: '三元运算符 a > b ? a : b 的作用是？',
+    options: ['返回较小的值', '返回较大的值', '返回a', '返回b'],
+    correctAnswer: 1,
+    topic: '三元运算符',
+    difficulty: 'medium',
+    suggestDay: 6,
+  },
+  {
+    id: 15,
+    question: '以下代码输出什么？\nint x = 10;\nif (x = 5) { cout << "A"; } else { cout << "B"; }',
+    options: ['A', 'B', '编译错误', '无输出'],
+    correctAnswer: 0,
+    topic: '条件判断',
+    difficulty: 'hard',
+    suggestDay: 5,
+  },
+  // Day 7-9: 循环结构
+  {
+    id: 16,
     question: 'for(int i=0; i<10; i++) 循环会执行多少次？',
     options: ['9次', '10次', '11次', '无限次'],
     correctAnswer: 1,
-    topic: '循环结构',
+    topic: 'for循环',
     difficulty: 'easy',
     suggestDay: 7,
   },
   {
-    id: 4,
+    id: 17,
+    question: 'while循环和do-while循环的主要区别是？',
+    options: ['没有区别', 'do-while至少执行一次', 'while至少执行一次', 'do-while执行更快'],
+    correctAnswer: 1,
+    topic: '循环结构',
+    difficulty: 'easy',
+    suggestDay: 8,
+  },
+  {
+    id: 18,
+    question: '以下代码输出什么？\nfor(int i=0; i<5; i++) {\n  if(i==3) break;\n  cout << i;\n}',
+    options: ['01234', '012', '0123', '1234'],
+    correctAnswer: 1,
+    topic: 'break语句',
+    difficulty: 'medium',
+    suggestDay: 9,
+  },
+  {
+    id: 19,
+    question: '以下代码输出什么？\nfor(int i=0; i<5; i++) {\n  if(i==3) continue;\n  cout << i;\n}',
+    options: ['01234', '012', '0124', '1234'],
+    correctAnswer: 2,
+    topic: 'continue语句',
+    difficulty: 'medium',
+    suggestDay: 9,
+  },
+  {
+    id: 20,
+    question: '嵌套循环中，break语句的作用范围是？',
+    options: ['跳出所有循环', '只跳出最内层循环', '只跳出最外层循环', '跳出if语句'],
+    correctAnswer: 1,
+    topic: '嵌套循环',
+    difficulty: 'medium',
+    suggestDay: 9,
+  },
+  // Day 10: 一维数组
+  {
+    id: 21,
     question: '数组a[10]的有效下标范围是？',
     options: ['1到10', '0到9', '0到10', '1到9'],
     correctAnswer: 1,
@@ -2325,7 +2544,110 @@ export const assessmentQuestions: AssessmentQuestion[] = [
     suggestDay: 10,
   },
   {
-    id: 5,
+    id: 22,
+    question: '以下哪种方式可以正确初始化数组？',
+    options: ['int arr[5] = {1,2,3};', 'int arr = {1,2,3,4,5};', 'int arr[5] = 1,2,3,4,5;', 'int arr(5) = {1,2,3,4,5};'],
+    correctAnswer: 0,
+    topic: '数组初始化',
+    difficulty: 'easy',
+    suggestDay: 10,
+  },
+  {
+    id: 23,
+    question: '访问数组时越界会怎样？',
+    options: ['编译错误', '运行时报错', '可能访问到非法内存', '自动返回0'],
+    correctAnswer: 2,
+    topic: '数组越界',
+    difficulty: 'medium',
+    suggestDay: 10,
+  },
+  // Day 11: 二维数组
+  {
+    id: 24,
+    question: 'int arr[3][4] 表示一个？',
+    options: ['3行4列的二维数组', '4行3列的二维数组', '3个元素的一维数组', '4个元素的一维数组'],
+    correctAnswer: 0,
+    topic: '二维数组',
+    difficulty: 'easy',
+    suggestDay: 11,
+  },
+  {
+    id: 25,
+    question: '访问二维数组arr的第i行第j列元素的正确方式是？',
+    options: ['arr[i][j]', 'arr[j][i]', 'arr(i,j)', 'arr[i,j]'],
+    correctAnswer: 0,
+    topic: '二维数组访问',
+    difficulty: 'easy',
+    suggestDay: 11,
+  },
+  {
+    id: 26,
+    question: '3x3数组主对角线上的元素满足？',
+    options: ['i == j', 'i + j == 2', 'i < j', 'i > j'],
+    correctAnswer: 0,
+    topic: '矩阵对角线',
+    difficulty: 'medium',
+    suggestDay: 11,
+  },
+  // Day 12: 结构体
+  {
+    id: 27,
+    question: '定义结构体时，末尾应该有？',
+    options: ['逗号', '分号', '冒号', '什么都没有'],
+    correctAnswer: 1,
+    topic: '结构体定义',
+    difficulty: 'easy',
+    suggestDay: 12,
+  },
+  {
+    id: 28,
+    question: '如何访问结构体变量stu的成员name？',
+    options: ['stu->name', 'stu.name', 'stu[name]', 'stu::name'],
+    correctAnswer: 1,
+    topic: '结构体成员',
+    difficulty: 'easy',
+    suggestDay: 12,
+  },
+  {
+    id: 29,
+    question: '结构体指针ptr访问成员name的正确方式是？',
+    options: ['*ptr.name', 'ptr.name', 'ptr->name', '&ptr->name'],
+    correctAnswer: 2,
+    topic: '结构体指针',
+    difficulty: 'medium',
+    suggestDay: 12,
+  },
+  // Day 13: 字符串
+  {
+    id: 30,
+    question: 'string s = "Hello"; s.length() 返回？',
+    options: ['4', '5', '6', '编译错误'],
+    correctAnswer: 1,
+    topic: '字符串长度',
+    difficulty: 'easy',
+    suggestDay: 13,
+  },
+  {
+    id: 31,
+    question: 'cin >> s 遇到空格会怎样？',
+    options: ['读取整个句子', '停止读取', '跳过空格继续', '报错'],
+    correctAnswer: 1,
+    topic: '字符串输入',
+    difficulty: 'easy',
+    suggestDay: 13,
+  },
+  {
+    id: 32,
+    question: '读取包含空格的字符串应该用？',
+    options: ['cin >> s', 'getline(cin, s)', 'scanf("%s", s)', 'read(s)'],
+    correctAnswer: 1,
+    topic: '字符串输入',
+    difficulty: 'easy',
+    suggestDay: 13,
+  },
+  // ==================== 基础算法（Day 15+）测验 ====================
+  {
+    id: 33,
     question: '冒泡排序的时间复杂度是？',
     options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(log n)'],
     correctAnswer: 2,
@@ -2334,7 +2656,7 @@ export const assessmentQuestions: AssessmentQuestion[] = [
     suggestDay: 17,
   },
   {
-    id: 6,
+    id: 34,
     question: '二分查找的前提条件是？',
     options: ['数组有序', '数组无序', '数组长度为偶数', '数组元素互不相同'],
     correctAnswer: 0,
@@ -2343,7 +2665,7 @@ export const assessmentQuestions: AssessmentQuestion[] = [
     suggestDay: 22,
   },
   {
-    id: 7,
+    id: 35,
     question: 'DFS和BFS分别使用什么数据结构实现？',
     options: ['栈和队列', '队列和栈', '数组和链表', '链表和数组'],
     correctAnswer: 0,
@@ -2352,7 +2674,7 @@ export const assessmentQuestions: AssessmentQuestion[] = [
     suggestDay: 36,
   },
   {
-    id: 8,
+    id: 36,
     question: '01背包问题的时间复杂度是O(nW)，其中W是？',
     options: ['物品数量', '背包容量', '物品总价值', '最大重量'],
     correctAnswer: 1,
@@ -2361,7 +2683,7 @@ export const assessmentQuestions: AssessmentQuestion[] = [
     suggestDay: 42,
   },
   {
-    id: 9,
+    id: 37,
     question: 'Dijkstra算法不能处理哪种情况？',
     options: ['有向图', '无向图', '负权边', '稀疏图'],
     correctAnswer: 2,
@@ -2370,7 +2692,7 @@ export const assessmentQuestions: AssessmentQuestion[] = [
     suggestDay: 48,
   },
   {
-    id: 10,
+    id: 38,
     question: '线段树的时间复杂度优势在于？',
     options: ['建树O(n)', '查询O(1)', '区间操作O(log n)', '空间O(1)'],
     correctAnswer: 2,

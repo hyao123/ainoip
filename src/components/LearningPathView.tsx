@@ -475,6 +475,47 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                 </Card>
               )}
 
+              {/* 知识总结（仅复习日显示） */}
+              {todayLesson?.summary && (
+                <Card className="border-primary/20">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <BookOpen className="h-5 w-5 text-primary" />
+                      {todayLesson.summary.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {todayLesson.summary.sections.map((section, idx) => (
+                      <div key={idx} className="p-4 rounded-lg bg-muted/30">
+                        <h4 className="font-medium text-sm mb-3 text-primary">{section.title}</h4>
+                        <div className="space-y-2">
+                          <div className="text-xs font-medium text-muted-foreground">核心知识点：</div>
+                          <ul className="grid grid-cols-2 gap-1.5">
+                            {section.keyPoints.map((point, i) => (
+                              <li key={i} className="flex items-start gap-2 text-xs">
+                                <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 shrink-0" />
+                                <span>{point}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="space-y-1.5 mt-3">
+                          <div className="text-xs font-medium text-red-500">常见错误：</div>
+                          <ul className="space-y-1">
+                            {section.commonMistakes.map((mistake, i) => (
+                              <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+                                <span className="text-red-400">⚠</span>
+                                <span>{mistake}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+
               {/* 今日练习题 */}
               {todayLesson && todayLesson.practiceProblems.length > 0 && (
                 <Card>
