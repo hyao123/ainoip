@@ -18,6 +18,7 @@ export interface DayLesson {
     title: string;
     sections: {
       title: string;
+      topicId?: string; // 点击可跳转到对应知识点
       keyPoints: string[];
       commonMistakes: string[];
     }[];
@@ -376,41 +377,49 @@ export const dailyLearningPath: DayLesson[] = [
       sections: [
         {
           title: 'Day 1-2：C++入门与变量',
+          topicId: 'intro-cpp',
           keyPoints: ['C++程序结构（头文件、main函数）', 'cout输出、cin输入', '变量命名规则', '基本数据类型（int、double、char、bool、string）'],
           commonMistakes: ['忘记分号', '变量未初始化就使用', '数据类型选择不当导致精度丢失'],
         },
         {
           title: 'Day 3-4：运算符与表达式',
+          topicId: 'operators',
           keyPoints: ['算术运算符（+、-、*、/、%）', '自增自减（++、--）', '复合赋值运算符（+=、-=）', '类型转换与精度问题'],
           commonMistakes: ['整数除法丢失小数部分', '自增自减的前置后置混淆', '运算符优先级错误'],
         },
         {
           title: 'Day 5-6：选择结构',
+          topicId: 'if-else',
           keyPoints: ['if-else语句', 'else if多分支', 'switch-case语句', '逻辑运算符（&&、||、！）', '三元运算符'],
           commonMistakes: ['条件判断写成赋值（= vs ==）', '忘记else分支', 'switch缺少break'],
         },
         {
           title: 'Day 7-9：循环结构',
+          topicId: 'for-loop',
           keyPoints: ['for循环（计数循环）', 'while循环（条件循环）', 'do-while循环', '循环嵌套', 'break和continue'],
           commonMistakes: ['循环边界错误（< vs <=）', '死循环', '嵌套循环变量混淆'],
         },
         {
           title: 'Day 10：一维数组',
+          topicId: 'array-intro',
           keyPoints: ['数组声明与初始化', '数组下标从0开始', '数组遍历', '数组越界问题'],
           commonMistakes: ['下标越界', '数组未初始化', '混淆数组长度和最大下标'],
         },
         {
           title: 'Day 11：二维数组',
+          topicId: '2d-array',
           keyPoints: ['二维数组声明', '行列遍历', '矩阵操作', '对角线访问'],
           commonMistakes: ['行列索引混淆', '二维数组初始化格式错误'],
         },
         {
           title: 'Day 12：结构体',
+          topicId: 'struct-intro',
           keyPoints: ['结构体定义', '成员访问（.运算符）', '结构体初始化', '结构体数组', '结构体排序'],
           commonMistakes: ['定义后忘记分号', '初始化顺序错误', '值传递vs引用传递'],
         },
         {
           title: 'Day 13：字符串',
+          topicId: 'string-intro',
           keyPoints: ['string类型', '字符串输入（cin、getline）', '常用操作（length、substr、find）', '字符数组'],
           commonMistakes: ['cin遇到空格停止', '字符串比较用==而非strcmp', '忘记字符串以\\0结尾'],
         },

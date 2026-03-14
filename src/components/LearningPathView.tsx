@@ -454,13 +454,16 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                       {/* 操作区 */}
                       <div className="flex flex-col gap-2">
                         <Button onClick={() => {
-                          // 跳转到第一个知识点的详情页
-                          if (todayLesson.topics.length > 0) {
+                          // 如果是复习日（有summary），跳转到知识地图
+                          if (todayLesson.summary) {
+                            onNavigate?.('map');
+                          } else if (todayLesson.topics.length > 0) {
+                            // 否则跳转到第一个知识点的详情页
                             router.push(`/knowledge/${todayLesson.topics[0].id}?from=learning&day=${currentDay}`);
                           }
                         }}>
                           <BookOpen className="h-4 w-4 mr-2" />
-                          开始学习
+                          {todayLesson.summary ? '查看知识地图' : '开始学习'}
                         </Button>
                         <Button
                           variant="outline"
@@ -487,7 +490,17 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                   <CardContent className="space-y-4">
                     {todayLesson.summary.sections.map((section, idx) => (
                       <div key={idx} className="p-4 rounded-lg bg-muted/30">
-                        <h4 className="font-medium text-sm mb-3 text-primary">{section.title}</h4>
+                        <h4 
+                          className={`font-medium text-sm mb-3 text-primary ${section.topicId ? 'cursor-pointer hover:underline' : ''}`}
+                          onClick={() => {
+                            if (section.topicId) {
+                              router.push(`/knowledge/${section.topicId}?from=learning&day=${currentDay}`);
+                            }
+                          }}
+                        >
+                          {section.title}
+                          {section.topicId && <ChevronRight className="inline h-4 w-4 ml-1" />}
+                        </h4>
                         <div className="space-y-2">
                           <div className="text-xs font-medium text-muted-foreground">核心知识点：</div>
                           <ul className="grid grid-cols-2 gap-1.5">
