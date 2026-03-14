@@ -360,7 +360,7 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
 
                     {isExpanded && (
                       <div className="ml-4 mt-1 space-y-1 border-l pl-3">
-                        {phaseDays.slice(0, 10).map((lesson) => {
+                        {phaseDays.slice(0, 20).map((lesson) => {
                           const isCompleted = completedDays.has(lesson.day);
                           const isCurrent = currentDay === lesson.day;
                           return (
@@ -380,8 +380,8 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                             </button>
                           );
                         })}
-                        {phaseDays.length > 10 && (
-                          <div className="text-xs text-muted-foreground p-2">还有 {phaseDays.length - 10} 天...</div>
+                        {phaseDays.length > 20 && (
+                          <div className="text-xs text-muted-foreground p-2">还有 {phaseDays.length - 20} 天...</div>
                         )}
                       </div>
                     )}
