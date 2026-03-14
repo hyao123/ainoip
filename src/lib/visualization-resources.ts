@@ -63,6 +63,21 @@ export const visualizationResources: VisualizationResource[] = [
     videoTitle: 'C++二维数组',
   },
   
+  // ==================== 结构体 ====================
+  {
+    knowledgeId: 385,
+    knowledgeSlug: 'struct-intro',
+    // 黑马程序员C++结构体讲解
+    bvNumber: 'BV1et411b7PZ',
+    videoTitle: 'C++结构体详解',
+  },
+  {
+    knowledgeId: 386,
+    knowledgeSlug: 'struct-advanced',
+    bvNumber: 'BV1et411b7PZ',
+    videoTitle: 'C++结构体进阶',
+  },
+  
   // ==================== 排序算法 ====================
   {
     knowledgeId: 38,

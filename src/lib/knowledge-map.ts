@@ -4166,6 +4166,564 @@ int main() {
     recommendedProblems: [32, 70, 71],
     readTime: 20,
   },
+  // ==================== 结构体 ====================
+  {
+    id: 385,
+    slug: 'struct-intro',
+    title: '结构体概念',
+    icon: '🏗️',
+    category: 'data-structures',
+    difficulty: 'basic',
+    brief: '把多个相关的数据打包在一起',
+    description: '结构体可以让我们把不同类型的数据组合成一个整体，就像把姓名、年龄、成绩打包成"学生"这个整体。',
+    content: [
+      '🏗️ 什么是结构体？自定义的数据类型',
+      '📦 结构体的组成：多个成员变量',
+      '✏️ 结构体的定义：struct关键字',
+      '🔍 访问成员：点运算符（.）',
+      '📋 结构体变量：创建和使用',
+    ],
+    kidFriendly: {
+      analogy: `想象你要填写一张学生信息卡：
+
+📋 学生信息卡
+├── 姓名：张三
+├── 年龄：12岁
+├── 成绩：95分
+└── 班级：六年级一班
+
+这张卡片把多个信息打包在一起，形成一个"学生"的整体。
+
+结构体就是这样的"信息卡"，把相关的数据打包成一个整体！`,
+      visualization: `🏗️ 结构体详解
+
+【为什么需要结构体？】
+
+    问题：存储学生信息
+    
+    ❌ 不好的方法（用多个变量）：
+    
+    string name1 = "张三";
+    int age1 = 12;
+    int score1 = 95;
+    
+    string name2 = "李四";
+    int age2 = 13;
+    int score2 = 88;
+    
+    // 变量太多，容易混乱！
+    
+    ✅ 好的方法（用结构体）：
+    
+    Student stu1 = {"张三", 12, 95};
+    Student stu2 = {"李四", 13, 88};
+    
+    // 一个变量包含所有信息，清晰！
+
+【结构体的定义】
+
+    struct 结构体名 {
+        类型1 成员名1;
+        类型2 成员名2;
+        ...
+    };
+    
+    示例：
+    
+    struct Student {
+        string name;   // 姓名
+        int age;       // 年龄
+        int score;     // 成绩
+    };  // 注意分号！
+
+【内存结构可视化】
+
+    struct Student {
+        string name;   // 占用空间：32字节
+        int age;       // 占用空间：4字节
+        int score;     // 占用空间：4字节
+    };
+    
+    内存布局：
+    
+    ┌────────────────────────────────────────┐
+    │              Student stu1               │
+    ├────────────────────────────────────────┤
+    │  name: "张三"          [32字节]        │
+    ├────────────────────────────────────────┤
+    │  age: 12               [4字节]         │
+    ├────────────────────────────────────────┤
+    │  score: 95             [4字节]         │
+    └────────────────────────────────────────┘
+
+【访问成员】
+
+    用点运算符（.）访问：
+    
+    stu1.name   →  "张三"
+    stu1.age    →  12
+    stu1.score  →  95
+    
+    也可以修改：
+    stu1.score = 100;  // 成绩改为100`,
+      whyLearn: `为什么需要结构体？
+
+🎮 游戏中：
+  一个角色有：名字、血量、攻击力、防御力...
+  用结构体打包成一个"角色"整体
+
+📱 学生管理：
+  一个学生有：姓名、年龄、班级、成绩...
+  用结构体打包成一个"学生"整体
+
+📊 点坐标：
+  一个点有：x坐标、y坐标
+  用结构体打包成一个"点"整体
+
+结构体让相关的数据"在一起"，程序更清晰！`
+    },
+    codeExamples: [
+      {
+        title: '示例1：定义和使用结构体',
+        description: '创建学生结构体',
+        code: `#include <iostream>
+#include <string>
+using namespace std;
+
+// 定义学生结构体
+struct Student {
+    string name;   // 姓名
+    int age;       // 年龄
+    int score;     // 成绩
+};
+
+int main() {
+    // 创建结构体变量
+    Student stu1;
+    
+    // 给成员赋值
+    stu1.name = "张三";
+    stu1.age = 12;
+    stu1.score = 95;
+    
+    // 使用成员
+    cout << "姓名：" << stu1.name << endl;
+    cout << "年龄：" << stu1.age << endl;
+    cout << "成绩：" << stu1.score << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '姓名：张三\n年龄：12\n成绩：95',
+        explanation: [
+          'struct Student 定义了一个新的数据类型',
+          'Student stu1 创建了一个结构体变量',
+          'stu1.name 用点运算符访问成员',
+          '结构体成员可以是不同的数据类型',
+        ]
+      },
+      {
+        title: '示例2：结构体初始化',
+        description: '多种初始化方式',
+        code: `#include <iostream>
+#include <string>
+using namespace std;
+
+struct Point {
+    int x;
+    int y;
+};
+
+int main() {
+    // 方式1：定义后逐个赋值
+    Point p1;
+    p1.x = 3;
+    p1.y = 4;
+    
+    // 方式2：定义时初始化（花括号）
+    Point p2 = {5, 6};
+    
+    // 方式3：定义时指定成员名（C++11）
+    Point p3 = {x: 7, y: 8};
+    // 或 Point p3 = {.x = 7, .y = 8};
+    
+    cout << "p1: (" << p1.x << ", " << p1.y << ")" << endl;
+    cout << "p2: (" << p2.x << ", " << p2.y << ")" << endl;
+    cout << "p3: (" << p3.x << ", " << p3.y << ")" << endl;
+    
+    return 0;
+}`,
+        expectedOutput: 'p1: (3, 4)\np2: (5, 6)\np3: (7, 8)',
+        explanation: [
+          '花括号初始化按成员顺序赋值',
+          'Point p2 = {5, 6} 等价于 p2.x=5, p2.y=6',
+          '指定成员名初始化更清晰（推荐）',
+          '初始化后仍可修改成员值',
+        ]
+      },
+      {
+        title: '示例3：结构体数组',
+        description: '存储多个结构体',
+        code: `#include <iostream>
+#include <string>
+using namespace std;
+
+struct Student {
+    string name;
+    int score;
+};
+
+int main() {
+    // 结构体数组
+    Student class1[3] = {
+        {"张三", 95},
+        {"李四", 88},
+        {"王五", 92}
+    };
+    
+    // 遍历输出
+    cout << "班级成绩单：" << endl;
+    for (int i = 0; i < 3; i++) {
+        cout << class1[i].name << ": " << class1[i].score << "分" << endl;
+    }
+    
+    // 计算平均分
+    int total = 0;
+    for (int i = 0; i < 3; i++) {
+        total += class1[i].score;
+    }
+    cout << "平均分：" << total / 3 << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '班级成绩单：\n张三: 95分\n李四: 88分\n王五: 92分\n平均分：91',
+        explanation: [
+          'Student class1[3] 定义结构体数组',
+          'class1[i] 访问第i个结构体',
+          'class1[i].name 访问第i个结构体的成员',
+          '结构体数组可以批量处理同类型数据',
+        ]
+      },
+      {
+        title: '示例4：结构体作为函数参数',
+        description: '传递结构体给函数',
+        code: `#include <iostream>
+#include <string>
+using namespace std;
+
+struct Student {
+    string name;
+    int score;
+};
+
+// 打印学生信息
+void printStudent(Student s) {
+    cout << s.name << ": " << s.score << "分" << endl;
+}
+
+// 计算是否及格
+bool isPassed(Student s) {
+    return s.score >= 60;
+}
+
+// 提高成绩（注意：不会修改原变量）
+void improveScore(Student s, int add) {
+    s.score += add;  // 只修改副本
+}
+
+// 用引用修改原变量
+void improveScoreRef(Student &s, int add) {
+    s.score += add;  // 修改原变量
+}
+
+int main() {
+    Student stu = {"小明", 70};
+    
+    printStudent(stu);
+    
+    if (isPassed(stu)) {
+        cout << "及格了！" << endl;
+    }
+    
+    improveScore(stu, 10);  // 不会修改stu
+    cout << "improveScore后: " << stu.score << endl;  // 还是70
+    
+    improveScoreRef(stu, 10);  // 会修改stu
+    cout << "improveScoreRef后: " << stu.score << endl;  // 变成80
+    
+    return 0;
+}`,
+        expectedOutput: '小明: 70分\n及格了！\nimproveScore后: 70\nimproveScoreRef后: 80',
+        explanation: [
+          '函数可以接收结构体作为参数',
+          '值传递会复制结构体，不修改原变量',
+          '引用传递（&）可以修改原变量',
+          '结构体可以作返回值',
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '定义结构体时忘记分号',
+        why: 'struct定义末尾必须有分号',
+        correctWay: 'struct Name { ... };  // 别忘了分号！'
+      },
+      {
+        mistake: '初始化时顺序写错',
+        why: '花括号初始化按定义顺序赋值',
+        correctWay: '按定义顺序写，或用指定成员名初始化'
+      },
+      {
+        mistake: '用箭头访问成员',
+        why: '箭头(->)用于指针，点(.)用于变量',
+        correctWay: 'stu.name 用点，ptr->name 用箭头'
+      },
+      {
+        mistake: '结构体数组下标越界',
+        why: '结构体数组也是数组，下标从0开始',
+        correctWay: '确保下标在0到size-1范围内'
+      }
+    ],
+    quiz: {
+      question: '如何访问结构体变量stu的成员name？',
+      options: ['stu->name', 'stu.name', 'stu[name]', 'stu::name'],
+      answer: 1,
+      explanation: '结构体变量用点运算符(.)访问成员。箭头运算符(->)用于指针。'
+    },
+    prerequisites: [27, 44],
+    recommendedProblems: [75, 76, 77],
+    readTime: 30,
+  },
+  {
+    id: 386,
+    slug: 'struct-advanced',
+    title: '结构体进阶',
+    icon: '🔧',
+    category: 'data-structures',
+    difficulty: 'intermediate',
+    brief: '深入理解结构体的更多用法',
+    description: '学习结构体的嵌套、指针、动态分配等高级用法。',
+    content: [
+      '🪺 结构体嵌套：结构体里包含结构体',
+      '📍 结构体指针：用指针操作结构体',
+      '🔄 结构体引用：作为函数参数传递',
+      '⚡ 动态分配：new和delete',
+      '⚖️ 结构体比较：如何判断相等',
+    ],
+    kidFriendly: {
+      analogy: `结构体就像俄罗斯套娃：
+
+🪺 大娃娃（结构体）里面有小娃娃（成员）
+   小娃娃里面还可以有更小的娃娃（嵌套结构体）
+
+例如：
+  学生（大结构体）
+  ├── 姓名（字符串）
+  ├── 年龄（整数）
+  └── 成绩（小结构体）
+      ├── 语文
+      ├── 数学
+      └── 英语`,
+      visualization: `🔧 结构体进阶用法
+
+【结构体嵌套】
+
+    struct Score {
+        int chinese;
+        int math;
+        int english;
+    };
+    
+    struct Student {
+        string name;
+        Score score;  // 嵌套结构体
+    };
+    
+    访问方式：
+    stu.score.chinese  // 先访问score，再访问chinese
+    
+    内存布局：
+    ┌─────────────────────────────┐
+    │  Student                    │
+    ├─────────────────────────────┤
+    │  name: "张三"               │
+    ├─────────────────────────────┤
+    │  Score score:               │
+    │    ├── chinese: 90         │
+    │    ├── math: 85            │
+    │    └── english: 92         │
+    └─────────────────────────────┘
+
+【结构体指针】
+
+    Student stu = {"张三", 12, 95};
+    Student* ptr = &stu;  // 指向stu的指针
+    
+    访问成员：
+    
+    方式1：(*ptr).name
+    方式2：ptr->name（推荐）
+    
+    ┌─────────────────────────────────────┐
+    │  ptr ──▶ [stu的地址]                │
+    │              │                      │
+    │              ▼                      │
+    │        ┌──────────┐                 │
+    │        │ name     │                 │
+    │        │ age      │                 │
+    │        │ score    │                 │
+    │        └──────────┘                 │
+    └─────────────────────────────────────┘
+
+【动态分配结构体】
+
+    Student* p = new Student;  // 动态创建
+    p->name = "李四";
+    p->age = 13;
+    p->score = 88;
+    
+    delete p;  // 记得释放！
+
+【结构体数组排序】
+
+    struct Student {
+        string name;
+        int score;
+    };
+    
+    // 按成绩排序
+    bool compare(Student a, Student b) {
+        return a.score > b.score;  // 降序
+    }
+    
+    sort(students, students + n, compare);`,
+      whyLearn: `为什么要学结构体进阶？
+
+🎮 游戏开发：
+  角色包含：位置（x,y）、装备（结构体数组）、属性...
+  需要嵌套结构体组织复杂数据
+
+📊 数据处理：
+  按成绩排序学生、按价格排序商品
+  需要自定义比较函数
+
+💾 动态管理：
+  不知道有多少学生，运行时才创建
+  需要动态分配结构体`
+    },
+    codeExamples: [
+      {
+        title: '示例1：结构体嵌套',
+        description: '结构体包含结构体',
+        code: `#include <iostream>
+#include <string>
+using namespace std;
+
+struct Date {
+    int year;
+    int month;
+    int day;
+};
+
+struct Student {
+    string name;
+    Date birthday;  // 嵌套结构体
+};
+
+int main() {
+    Student stu = {
+        "张三",
+        {2012, 3, 15}  // 嵌套初始化
+    };
+    
+    cout << "姓名：" << stu.name << endl;
+    cout << "生日：" << stu.birthday.year << "年"
+         << stu.birthday.month << "月"
+         << stu.birthday.day << "日" << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '姓名：张三\n生日：2012年3月15日',
+        explanation: [
+          'Date结构体作为Student的成员',
+          '嵌套结构体的初始化用嵌套花括号',
+          '访问时逐层访问：stu.birthday.year',
+          '嵌套可以是多层',
+        ]
+      },
+      {
+        title: '示例2：结构体排序',
+        description: '自定义排序规则',
+        code: `#include <iostream>
+#include <string>
+#include <algorithm>  // for sort
+using namespace std;
+
+struct Student {
+    string name;
+    int score;
+};
+
+// 比较函数：按成绩降序
+bool compareByScore(Student a, Student b) {
+    return a.score > b.score;
+}
+
+// 比较函数：按姓名升序
+bool compareByName(Student a, Student b) {
+    return a.name < b.name;
+}
+
+int main() {
+    Student students[5] = {
+        {"张三", 85},
+        {"李四", 92},
+        {"王五", 78},
+        {"赵六", 95},
+        {"钱七", 88}
+    };
+    
+    // 按成绩排序
+    sort(students, students + 5, compareByScore);
+    
+    cout << "按成绩排名：" << endl;
+    for (int i = 0; i < 5; i++) {
+        cout << i+1 << ". " << students[i].name 
+             << ": " << students[i].score << "分" << endl;
+    }
+    
+    return 0;
+}`,
+        expectedOutput: '按成绩排名：\n1. 赵六: 95分\n2. 李四: 92分\n3. 钱七: 88分\n4. 张三: 85分\n5. 王五: 78分',
+        explanation: [
+          'sort函数需要比较函数',
+          '比较函数返回true表示a应该在b前面',
+          'a.score > b.score 表示降序（大的在前）',
+          'a.name < b.name 表示升序（字典序）',
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记释放动态分配的结构体',
+        why: '会导致内存泄漏',
+        correctWay: 'new和delete成对使用'
+      },
+      {
+        mistake: '比较函数写反',
+        why: '排序结果与预期相反',
+        correctWay: '想要升序用<，想要降序用>'
+      }
+    ],
+    quiz: {
+      question: '结构体指针ptr访问成员name，正确写法是？',
+      options: ['*ptr.name', 'ptr.name', 'ptr->name', '&ptr->name'],
+      answer: 2,
+      explanation: '结构体指针用箭头运算符(->)访问成员，等价于(*ptr).name。'
+    },
+    prerequisites: [385],
+    recommendedProblems: [78, 79, 80],
+    readTime: 25,
+  },
   // ==================== 函数 ====================
   {
     id: 35,
