@@ -48,6 +48,16 @@ export interface KnowledgePoint {
   videoUrl?: string; // B站视频讲解链接
   videoSections?: string[]; // 视频章节时间点
   readTime: number;
+  // 复习专用内容（用于阶段复习知识点）
+  reviewContent?: {
+    sections: {
+      day: string;
+      title: string;
+      keyPoints: string[];
+      commonMistakes: string[];
+      relatedSlug: string;
+    }[];
+  };
 }
 
 // 分类数据
@@ -6696,6 +6706,284 @@ int main() {
     prerequisites: [19, 38],
     recommendedProblems: [63, 64, 65],
     readTime: 25,
+  },
+  // ==================== 阶段复习 ====================
+  {
+    id: 100,
+    slug: 'foundation-review',
+    title: '基础入门复习',
+    icon: '📚',
+    category: 'basics',
+    difficulty: 'basic',
+    brief: '汇总 Day 1-13 重点难点，巩固基础入门知识',
+    description: '系统回顾 C++ 基础语法、数据类型、流程控制、数组、结构体和字符串等核心知识点。',
+    content: [
+      '🎯 Day 1-2：C++入门与变量',
+      '➕ Day 3-4：运算符与表达式',
+      '🔀 Day 5-6：选择结构',
+      '🔄 Day 7-9：循环结构',
+      '📊 Day 10：一维数组',
+      '📋 Day 11：二维数组',
+      '🏗️ Day 12：结构体',
+      '📝 Day 13：字符串',
+    ],
+    kidFriendly: {
+      analogy: `复习就像把散落的拼图块整理成一幅完整的画。
+
+想象你学了很多技能：
+• Day 1-2：学会了认识工具（C++入门、变量）
+• Day 3-4：学会了基本操作（运算符）
+• Day 5-6：学会了做选择（if-else）
+• Day 7-9：学会了重复做事（循环）
+• Day 10-11：学会了收纳整理（数组）
+• Day 12：学会了打包组合（结构体）
+• Day 13：学会了处理文字（字符串）
+
+现在，我们需要把这些技能串联起来，形成完整的编程能力！`,
+      visualization: `📚 基础入门知识图谱
+
+┌─────────────────────────────────────────────────────────────────┐
+│                     基础入门知识体系                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐                  │
+│  │ C++入门  │───▶│  变量    │───▶│ 运算符   │                  │
+│  │  (Day1)  │    │  (Day2)  │    │  (Day4)  │                  │
+│  └──────────┘    └──────────┘    └──────────┘                  │
+│        │                               │                        │
+│        ▼                               ▼                        │
+│  ┌──────────┐                   ┌──────────┐                   │
+│  │ 选择结构 │◀──────────────────│ 循环结构 │                   │
+│  │  (Day5)  │                   │  (Day7)  │                   │
+│  └──────────┘                   └──────────┘                   │
+│        │                               │                        │
+│        └───────────────┬───────────────┘                        │
+│                        ▼                                        │
+│                  ┌──────────┐                                   │
+│                  │   数组   │                                   │
+│                  │  (Day10) │                                   │
+│                  └──────────┘                                   │
+│                        │                                        │
+│          ┌─────────────┼─────────────┐                          │
+│          ▼             ▼             ▼                          │
+│    ┌──────────┐  ┌──────────┐  ┌──────────┐                    │
+│    │ 二维数组 │  │  结构体  │  │  字符串  │                    │
+│    │  (Day11) │  │  (Day12) │  │  (Day13) │                    │
+│    └──────────┘  └──────────┘  └──────────┘                    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+🔗 知识点关联：
+  • 变量是所有数据存储的基础
+  • 运算符用于处理变量
+  • 选择和循环控制程序流程
+  • 数组存储多个同类型变量
+  • 结构体组合多个相关变量
+  • 字符串处理文本数据`,
+      whyLearn: `为什么需要系统复习？
+
+🎮 就像游戏通关：
+  每个知识点是一个关卡，复习就是"通关回顾"
+  确保你没有遗漏任何重要的技能
+
+📚 就像搭积木：
+  每个知识点是一块积木
+  复习让你看到整个城堡的结构
+  发现哪些地方不够牢固
+
+🚀 为进阶做准备：
+  基础不牢，地动山摇
+  只有把基础打扎实，才能学好后面的算法`
+    },
+    codeExamples: [
+      {
+        title: '基础语法综合示例',
+        description: '串联 Day 1-13 的核心知识点',
+        code: `#include <iostream>
+#include <string>
+using namespace std;
+
+// 结构体（Day 12）
+struct Student {
+    string name;      // 字符串（Day 13）
+    int scores[5];    // 数组（Day 10）
+    int scoreCount;
+};
+
+int main() {
+    // 输入输出（Day 1）
+    cout << "=== 学生成绩管理系统 ===" << endl;
+    
+    // 变量（Day 2）
+    int n;
+    cout << "请输入学生人数：";
+    cin >> n;
+    
+    // 结构体数组
+    Student students[100];
+    
+    // 循环（Day 7-9）
+    for (int i = 0; i < n; i++) {
+        cout << "\\n第" << i + 1 << "个学生" << endl;
+        cout << "姓名：";
+        cin >> students[i].name;
+        
+        cout << "请输入5门成绩：";
+        students[i].scoreCount = 5;
+        
+        int sum = 0;
+        // 循环输入成绩
+        for (int j = 0; j < 5; j++) {
+            cin >> students[i].scores[j];
+            sum += students[i].scores[j];  // 运算符（Day 3-4）
+        }
+        
+        // 选择结构（Day 5-6）
+        double avg = sum / 5.0;
+        cout << "平均分：" << avg << " ";
+        
+        if (avg >= 90) {
+            cout << "等级：优秀" << endl;
+        } else if (avg >= 80) {
+            cout << "等级：良好" << endl;
+        } else if (avg >= 60) {
+            cout << "等级：及格" << endl;
+        } else {
+            cout << "等级：不及格" << endl;
+        }
+    }
+    
+    // 找出最高平均分的学生
+    int maxIdx = 0;
+    double maxAvg = 0;
+    for (int i = 0; i < n; i++) {
+        int sum = 0;
+        for (int j = 0; j < students[i].scoreCount; j++) {
+            sum += students[i].scores[j];
+        }
+        double avg = sum / 5.0;
+        if (avg > maxAvg) {
+            maxAvg = avg;
+            maxIdx = i;
+        }
+    }
+    
+    cout << "\\n成绩最好的学生：" << students[maxIdx].name << endl;
+    
+    return 0;
+}`,
+        expectedOutput: '=== 学生成绩管理系统 ===\n请输入学生人数：2\n\n第1个学生\n姓名：张三\n请输入5门成绩：90 85 92 88 95\n平均分：90 等级：优秀\n\n第2个学生\n姓名：李四\n请输入5门成绩：75 80 82 78 85\n平均分：80 等级：良好\n\n成绩最好的学生：张三',
+        explanation: [
+          '这个程序串联了基础入门的所有核心知识点',
+          '结构体组合了字符串和数组',
+          '循环和选择结构控制程序流程',
+          '变量和运算符处理数据',
+          '输入输出与用户交互',
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记变量初始化',
+        why: '未初始化的变量包含随机值',
+        correctWay: '声明变量时就赋初值，如 int sum = 0;'
+      },
+      {
+        mistake: '数组越界访问',
+        why: '访问不存在的下标会导致错误',
+        correctWay: '确保下标在 0 到 length-1 范围内'
+      },
+      {
+        mistake: '循环边界错误',
+        why: '多循环或少循环一次',
+        correctWay: '明确是用 < 还是 <=，画图验证'
+      },
+      {
+        mistake: '结构体定义漏分号',
+        why: 'struct 定义末尾必须有分号',
+        correctWay: 'struct Name { ... };  // 别忘了分号'
+      },
+      {
+        mistake: '字符串输入问题',
+        why: 'cin >> 遇到空格会停止',
+        correctWay: '用 getline(cin, s) 读取含空格的字符串'
+      },
+    ],
+    quiz: {
+      question: '以下哪个说法正确？',
+      options: [
+        '数组下标从1开始',
+        '结构体可以包含不同类型的成员',
+        '循环只能用for实现',
+        '字符串不能用==比较'
+      ],
+      answer: 1,
+      explanation: '结构体的优势就是可以组合不同类型的成员变量。数组下标从0开始，循环可以用for/while/do-while，字符串可以用==比较。'
+    },
+    prerequisites: [1, 2, 15, 19, 27, 33, 385, 44],
+    recommendedProblems: [1, 15, 24, 30, 75],
+    readTime: 40,
+    // 复习专用内容
+    reviewContent: {
+      sections: [
+        {
+          day: 'Day 1-2',
+          title: 'C++入门与变量',
+          keyPoints: ['C++程序结构（头文件、main函数）', 'cout输出、cin输入', '变量命名规则', '基本数据类型（int、double、char、bool、string）'],
+          commonMistakes: ['忘记分号', '变量未初始化就使用', '数据类型选择不当导致精度丢失'],
+          relatedSlug: 'intro-cpp'
+        },
+        {
+          day: 'Day 3-4',
+          title: '运算符与表达式',
+          keyPoints: ['算术运算符（+、-、*、/、%）', '自增自减（++、--）', '复合赋值运算符（+=、-=）', '类型转换与精度问题'],
+          commonMistakes: ['整数除法丢失小数部分', '自增自减的前置后置混淆', '运算符优先级错误'],
+          relatedSlug: 'operators'
+        },
+        {
+          day: 'Day 5-6',
+          title: '选择结构',
+          keyPoints: ['if-else语句', 'else if多分支', 'switch-case语句', '逻辑运算符（&&、||、！）', '三元运算符'],
+          commonMistakes: ['条件判断写成赋值（= vs ==）', '忘记else分支', 'switch缺少break'],
+          relatedSlug: 'if-else'
+        },
+        {
+          day: 'Day 7-9',
+          title: '循环结构',
+          keyPoints: ['for循环（计数循环）', 'while循环（条件循环）', 'do-while循环', '循环嵌套', 'break和continue'],
+          commonMistakes: ['循环边界错误（< vs <=）', '死循环', '嵌套循环变量混淆'],
+          relatedSlug: 'for-loop'
+        },
+        {
+          day: 'Day 10',
+          title: '一维数组',
+          keyPoints: ['数组声明与初始化', '数组下标从0开始', '数组遍历', '数组越界问题'],
+          commonMistakes: ['下标越界', '数组未初始化', '混淆数组长度和最大下标'],
+          relatedSlug: 'array-intro'
+        },
+        {
+          day: 'Day 11',
+          title: '二维数组',
+          keyPoints: ['二维数组声明', '行列遍历', '矩阵操作', '对角线访问'],
+          commonMistakes: ['行列索引混淆', '二维数组初始化格式错误'],
+          relatedSlug: '2d-array'
+        },
+        {
+          day: 'Day 12',
+          title: '结构体',
+          keyPoints: ['结构体定义', '成员访问（.运算符）', '结构体初始化', '结构体数组', '结构体排序'],
+          commonMistakes: ['定义后忘记分号', '初始化顺序错误', '值传递vs引用传递'],
+          relatedSlug: 'struct-intro'
+        },
+        {
+          day: 'Day 13',
+          title: '字符串',
+          keyPoints: ['string类型', '字符串输入（cin、getline）', '常用操作（length、substr、find）', '字符数组'],
+          commonMistakes: ['cin遇到空格停止', '字符串比较用==而非strcmp', '忘记字符串以\\0结尾'],
+          relatedSlug: 'string-intro'
+        },
+      ],
+    },
   },
 ];
 

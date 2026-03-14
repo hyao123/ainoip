@@ -79,26 +79,29 @@ export default function KnowledgeDetailPage() {
   const from = searchParams.get('from'); // 'map' | 'learning'
   const day = searchParams.get('day'); // 如果从学习路径来
   
-  const [point, setPoint] = useState<KnowledgePoint | null>(null);
+  // 直接从 knowledgePoints 数组中查找知识点
+  const initialPoint = React.useMemo(() => {
+    return knowledgePoints.find(k => k.slug === slug) || null;
+  }, [slug]);
+  
+  const [point, setPoint] = useState<KnowledgePoint | null>(initialPoint);
   const [viewedPoints, setViewedPoints] = useState<Set<number>>(new Set());
   const [bookmarkedPoints, setBookmarkedPoints] = useState<Set<number>>(new Set());
   const [expandedSection, setExpandedSection] = useState<string>('content');
   const [visualResource, setVisualResource] = useState<VisualizationResource | null>(null);
 
-  // 加载知识点
+  // 加载可视化和标记已读
   useEffect(() => {
-    const found = getKnowledgePointBySlug(slug);
-    if (found) {
-      setPoint(found);
+    if (initialPoint) {
       // 标记为已读
-      setViewedPoints(prev => new Set([...prev, found.id]));
+      setViewedPoints(prev => new Set([...prev, initialPoint.id]));
       // 加载可视化资源
-      const resource = getVisualizationResource(found.id);
+      const resource = getVisualizationResource(initialPoint.id);
       if (resource) {
         setVisualResource(resource);
       }
     }
-  }, [slug]);
+  }, [initialPoint]);
 
   // 切换收藏
   const toggleBookmark = (id: number) => {
@@ -357,6 +360,102 @@ export default function KnowledgeDetailPage() {
                 </div>
               )}
             </section>
+
+            {/* 阶段复习内容（仅复习知识点显示） */}
+            {point.reviewContent && (
+              <>
+                <Separator />
+                <section>
+                  <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
+                    <span className="text-xl">📚</span>
+                    知识点汇总
+                  </h2>
+                  
+                  {/* 知识点串联流程图 */}
+                  <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-100 mb-6">
+                    <h3 className="font-medium text-blue-800 mb-4">🔗 知识点串联</h3>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {point.reviewContent.sections.map((section, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <button
+                            onClick={() => router.push(`/knowledge/${section.relatedSlug}?from=${from}`)}
+                            className="px-3 py-2 rounded-lg bg-white border border-blue-200 hover:border-blue-400 hover:bg-blue-50 transition-all text-sm"
+                          >
+                            <div className="font-medium text-blue-700">{section.title}</div>
+                            <div className="text-xs text-muted-foreground">{section.day}</div>
+                          </button>
+                          {idx < point.reviewContent!.sections.length - 1 && (
+                            <ChevronRight className="h-4 w-4 text-blue-400" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 详细复习内容 */}
+                  <div className="space-y-4">
+                    {point.reviewContent.sections.map((section, idx) => (
+                      <details key={idx} className="group border rounded-xl overflow-hidden">
+                        <summary className="flex items-center gap-3 p-4 bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors">
+                          <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-open:rotate-90" />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-primary">{section.day}</span>
+                              <span className="font-semibold">{section.title}</span>
+                            </div>
+                          </div>
+                          <Badge variant="secondary" className="text-xs">
+                            {section.keyPoints.length}个知识点
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/knowledge/${section.relatedSlug}?from=${from}`);
+                            }}
+                          >
+                            详情
+                            <ArrowRight className="h-3 w-3 ml-1" />
+                          </Button>
+                        </summary>
+                        <div className="p-4 space-y-3 bg-white">
+                          {/* 核心知识点 */}
+                          <div>
+                            <div className="text-sm font-medium text-green-700 mb-2 flex items-center gap-2">
+                              <CheckCircle2 className="h-4 w-4" />
+                              核心知识点
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {section.keyPoints.map((point, i) => (
+                                <span key={i} className="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm border border-green-100">
+                                  {point}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          {/* 常见错误 */}
+                          <div>
+                            <div className="text-sm font-medium text-red-600 mb-2 flex items-center gap-2">
+                              <span>⚠️</span>
+                              常见错误
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {section.commonMistakes.map((mistake, i) => (
+                                <span key={i} className="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100">
+                                  {mistake}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                </section>
+              </>
+            )}
 
             <Separator />
 
