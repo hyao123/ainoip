@@ -284,25 +284,6 @@ export const dailyLearningPath: DayLesson[] = [
   },
   {
     day: 11,
-    title: '数组应用与结构体',
-    description: '数组应用和结构体基础',
-    phase: 'foundation',
-    phaseName: '基础入门',
-    topics: [
-      { id: 'array-ops', name: '数组操作', type: 'data_structure', importance: 'required' },
-      { id: 'struct-intro', name: '结构体概念', type: 'data_structure', importance: 'required' },
-      { id: 'struct-advanced', name: '结构体进阶', type: 'data_structure', importance: 'recommended' },
-    ],
-    practiceProblems: [30, 31, 75, 76],
-    estimatedMinutes: 55,
-    objectives: [
-      '掌握数组的常见操作',
-      '理解结构体的概念和定义',
-      '学会使用结构体组织相关数据',
-    ],
-  },
-  {
-    day: 12,
     title: '二维数组',
     description: '矩阵和表格数据处理',
     phase: 'foundation',
@@ -318,6 +299,25 @@ export const dailyLearningPath: DayLesson[] = [
       '理解二维数组的概念',
       '掌握二维数组的声明和遍历',
       '能够处理矩阵相关问题',
+    ],
+  },
+  {
+    day: 12,
+    title: '结构体',
+    description: '自定义数据类型',
+    phase: 'foundation',
+    phaseName: '基础入门',
+    topics: [
+      { id: 'struct-intro', name: '结构体概念', type: 'data_structure', importance: 'required' },
+      { id: 'struct-advanced', name: '结构体进阶', type: 'data_structure', importance: 'recommended' },
+      { id: 'struct-sort', name: '结构体排序', type: 'algorithm', importance: 'recommended' },
+    ],
+    practiceProblems: [75, 76, 77],
+    estimatedMinutes: 50,
+    objectives: [
+      '理解结构体的概念和定义',
+      '学会使用结构体组织相关数据',
+      '掌握结构体的常见应用',
     ],
   },
   {
