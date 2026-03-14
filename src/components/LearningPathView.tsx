@@ -512,16 +512,13 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                       {/* 操作区 */}
                       <div className="flex flex-col gap-2">
                         <Button onClick={() => {
-                          // 如果是复习日（有summary），跳转到知识地图
-                          if (todayLesson.summary) {
-                            onNavigate?.('map');
-                          } else if (todayLesson.topics.length > 0) {
-                            // 否则跳转到第一个知识点的详情页
+                          // 跳转到第一个知识点的详情页（复习日也一样）
+                          if (todayLesson.topics.length > 0) {
                             router.push(`/knowledge/${todayLesson.topics[0].id}?from=learning&day=${currentDay}`);
                           }
                         }}>
                           <BookOpen className="h-4 w-4 mr-2" />
-                          {todayLesson.summary ? '查看知识地图' : '开始学习'}
+                          开始学习
                         </Button>
                         <Button
                           variant="outline"
@@ -536,74 +533,89 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
                 </Card>
               )}
 
-              {/* 知识总结（仅复习日显示） */}
+              {/* 知识点串联可视化（仅复习日显示） */}
               {todayLesson?.summary && (
                 <Card className="border-primary/20">
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-2">
                     <CardTitle className="text-base flex items-center gap-2">
                       <BookOpen className="h-5 w-5 text-primary" />
-                      {todayLesson.summary.title}
+                      知识点串联图谱
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ScrollArea className="h-[400px] pr-4">
-                      <div className="space-y-3">
-                        {todayLesson.summary.sections.map((section, idx) => (
-                          <div key={idx} className="p-3 rounded-lg bg-muted/30 border">
-                            <h4 
-                              className={`font-medium text-sm mb-2 text-primary ${section.topicId ? 'cursor-pointer hover:underline' : ''}`}
-                              onClick={() => {
-                                if (section.topicId) {
-                                  router.push(`/knowledge/${section.topicId}?from=learning&day=${currentDay}`);
-                                }
-                              }}
-                            >
-                              {section.title}
-                              {section.topicId && <ChevronRight className="inline h-4 w-4 ml-1" />}
-                            </h4>
-                            <div className="space-y-1.5">
-                              <div className="text-[11px] font-medium text-muted-foreground">核心知识点：</div>
-                              <ul className="grid grid-cols-2 gap-1">
-                                {section.keyPoints.map((point, i) => (
-                                  <li key={i} className="flex items-start gap-1.5 text-[11px]">
-                                    <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 shrink-0" />
-                                    <span>{point}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                            <div className="space-y-1 mt-2">
-                              <div className="text-[11px] font-medium text-red-500">常见错误：</div>
-                              <ul className="space-y-0.5">
-                                {section.commonMistakes.map((mistake, i) => (
-                                  <li key={i} className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
-                                    <span className="text-red-400">⚠</span>
-                                    <span>{mistake}</span>
-                                  </li>
-                                ))}
-                              </ul>
+                    {/* 知识点串联流程图 */}
+                    <div className="flex flex-wrap items-center justify-center gap-2 py-4">
+                      {todayLesson.summary.sections.map((section, idx) => (
+                        <React.Fragment key={idx}>
+                          <div 
+                            className={`px-3 py-2 rounded-lg border text-center cursor-pointer transition-all hover:border-primary hover:bg-primary/5 ${section.topicId ? '' : ''}`}
+                            onClick={() => {
+                              if (section.topicId) {
+                                router.push(`/knowledge/${section.topicId}?from=learning&day=${currentDay}`);
+                              }
+                            }}
+                          >
+                            <div className="text-xs font-medium text-primary">{section.title.split('：')[1] || section.title}</div>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              {section.title.split('：')[0]}
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
+                          {idx < todayLesson.summary!.sections.length - 1 && (
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                    
+                    {/* 快速复习列表 */}
+                    <div className="mt-2 space-y-2">
+                      {todayLesson.summary.sections.map((section, idx) => (
+                        <details key={idx} className="group">
+                          <summary className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 cursor-pointer hover:bg-muted/50 text-sm">
+                            <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
+                            <span className="font-medium">{section.title}</span>
+                            <Badge variant="secondary" className="text-[10px] ml-auto">
+                              {section.keyPoints.length}个知识点
+                            </Badge>
+                          </summary>
+                          <div className="p-3 pl-6 space-y-2">
+                            <div className="flex flex-wrap gap-1.5">
+                              {section.keyPoints.map((point, i) => (
+                                <span key={i} className="text-[11px] px-2 py-1 bg-green-50 text-green-700 rounded">
+                                  {point}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {section.commonMistakes.map((mistake, i) => (
+                                <span key={i} className="text-[11px] px-2 py-1 bg-red-50 text-red-600 rounded">
+                                  ⚠ {mistake}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </details>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               )}
 
-              {/* 综合测验（仅复习日显示） */}
+              {/* 综合测验入口（仅复习日显示） */}
               {todayLesson?.summary && (
-                <Card className="border-yellow-200 bg-yellow-50/30">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Target className="h-5 w-5 text-yellow-600" />
-                      基础入门综合测验
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                <Card className="border-yellow-200 bg-gradient-to-r from-yellow-50/50 to-orange-50/50">
+                  <CardContent className="p-4">
                     <div className="flex items-center justify-between">
-                      <div className="text-sm text-muted-foreground">
-                        共 {foundationQuizQuestions.length} 道题目，覆盖 Day 1-13 所有知识点
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center">
+                          <Target className="h-6 w-6 text-yellow-600" />
+                        </div>
+                        <div>
+                          <div className="font-medium">基础入门综合测验</div>
+                          <div className="text-xs text-muted-foreground">
+                            {foundationQuizQuestions.length}道题 · 覆盖Day 1-13所有知识点
+                          </div>
+                        </div>
                       </div>
                       <Button onClick={() => setShowFoundationQuiz(true)} className="gap-2">
                         <Zap className="h-4 w-4" />
