@@ -2727,3 +2727,24 @@ export function suggestStartDay(correctCount: number, totalQuestions: number): n
     return 71; // 从高级开始
   }
 }
+
+// 获取基础入门阶段（Day 1-14）的测验题目
+export function getFoundationQuizQuestions(): AssessmentQuestion[] {
+  return assessmentQuestions.filter(q => q.suggestDay <= 14);
+}
+
+// 获取指定阶段的测验题目
+export function getPhaseQuizQuestions(phaseId: string): AssessmentQuestion[] {
+  const phaseDayRanges: Record<string, { min: number; max: number }> = {
+    foundation: { min: 1, max: 14 },
+    basic: { min: 15, max: 35 },
+    intermediate: { min: 36, max: 70 },
+    advanced: { min: 71, max: 100 },
+    competition: { min: 101, max: 120 },
+  };
+  
+  const range = phaseDayRanges[phaseId];
+  if (!range) return [];
+  
+  return assessmentQuestions.filter(q => q.suggestDay >= range.min && q.suggestDay <= range.max);
+}

@@ -22,7 +22,9 @@ import {
   getDayLesson,
   assessmentQuestions,
   suggestStartDay,
+  getFoundationQuizQuestions,
   type DayLesson,
+  type AssessmentQuestion,
 } from '@/lib/daily-learning-path';
 import {
   getRealmByExp,
@@ -81,6 +83,16 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
   const [assessmentFinished, setAssessmentFinished] = useState(false);
   const [suggestedStartDay, setSuggestedStartDay] = useState<number | null>(null);
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
+  
+  // 综合测验状态（用于复习日）
+  const [showFoundationQuiz, setShowFoundationQuiz] = useState(false);
+  const [quizStep, setQuizStep] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState<number[]>([]);
+  const [quizFinished, setQuizFinished] = useState(false);
+  const [quizScore, setQuizScore] = useState(0);
+  
+  // 基础入门测验题目
+  const foundationQuizQuestions = getFoundationQuizQuestions();
 
   // 初始化状态
   useEffect(() => {
@@ -168,6 +180,52 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
       setAssessmentAnswers([]);
       setAssessmentFinished(false);
     }
+  };
+
+  // 处理综合测验答案
+  const handleQuizAnswer = (answerIndex: number) => {
+    const newAnswers = [...quizAnswers, answerIndex];
+    setQuizAnswers(newAnswers);
+
+    if (quizStep < foundationQuizQuestions.length - 1) {
+      setQuizStep(quizStep + 1);
+    } else {
+      // 计算得分
+      let correctCount = 0;
+      newAnswers.forEach((answer, index) => {
+        if (answer === foundationQuizQuestions[index].correctAnswer) {
+          correctCount++;
+        }
+      });
+      const score = Math.round((correctCount / foundationQuizQuestions.length) * 100);
+      setQuizScore(score);
+      setQuizFinished(true);
+      
+      // 根据得分奖励经验值
+      if (score >= 80) {
+        const newExp = totalExp + 50;
+        setTotalExp(newExp);
+        localStorage.setItem('noip_total_exp', String(newExp));
+      } else if (score >= 60) {
+        const newExp = totalExp + 30;
+        setTotalExp(newExp);
+        localStorage.setItem('noip_total_exp', String(newExp));
+      }
+    }
+  };
+
+  // 重新开始综合测验
+  const restartFoundationQuiz = () => {
+    setQuizStep(0);
+    setQuizAnswers([]);
+    setQuizFinished(false);
+    setQuizScore(0);
+  };
+
+  // 关闭综合测验
+  const closeFoundationQuiz = () => {
+    setShowFoundationQuiz(false);
+    restartFoundationQuiz();
   };
 
   return (
@@ -481,50 +539,188 @@ export function LearningPathView({ onStartProblem, onNavigate, onNavigateToKnowl
               {/* 知识总结（仅复习日显示） */}
               {todayLesson?.summary && (
                 <Card className="border-primary/20">
-                  <CardHeader>
+                  <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center gap-2">
                       <BookOpen className="h-5 w-5 text-primary" />
                       {todayLesson.summary.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    {todayLesson.summary.sections.map((section, idx) => (
-                      <div key={idx} className="p-4 rounded-lg bg-muted/30">
-                        <h4 
-                          className={`font-medium text-sm mb-3 text-primary ${section.topicId ? 'cursor-pointer hover:underline' : ''}`}
-                          onClick={() => {
-                            if (section.topicId) {
-                              router.push(`/knowledge/${section.topicId}?from=learning&day=${currentDay}`);
-                            }
-                          }}
-                        >
-                          {section.title}
-                          {section.topicId && <ChevronRight className="inline h-4 w-4 ml-1" />}
-                        </h4>
-                        <div className="space-y-2">
-                          <div className="text-xs font-medium text-muted-foreground">核心知识点：</div>
-                          <ul className="grid grid-cols-2 gap-1.5">
-                            {section.keyPoints.map((point, i) => (
-                              <li key={i} className="flex items-start gap-2 text-xs">
-                                <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 shrink-0" />
-                                <span>{point}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="space-y-1.5 mt-3">
-                          <div className="text-xs font-medium text-red-500">常见错误：</div>
-                          <ul className="space-y-1">
-                            {section.commonMistakes.map((mistake, i) => (
-                              <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                                <span className="text-red-400">⚠</span>
-                                <span>{mistake}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                  <CardContent>
+                    <ScrollArea className="h-[400px] pr-4">
+                      <div className="space-y-3">
+                        {todayLesson.summary.sections.map((section, idx) => (
+                          <div key={idx} className="p-3 rounded-lg bg-muted/30 border">
+                            <h4 
+                              className={`font-medium text-sm mb-2 text-primary ${section.topicId ? 'cursor-pointer hover:underline' : ''}`}
+                              onClick={() => {
+                                if (section.topicId) {
+                                  router.push(`/knowledge/${section.topicId}?from=learning&day=${currentDay}`);
+                                }
+                              }}
+                            >
+                              {section.title}
+                              {section.topicId && <ChevronRight className="inline h-4 w-4 ml-1" />}
+                            </h4>
+                            <div className="space-y-1.5">
+                              <div className="text-[11px] font-medium text-muted-foreground">核心知识点：</div>
+                              <ul className="grid grid-cols-2 gap-1">
+                                {section.keyPoints.map((point, i) => (
+                                  <li key={i} className="flex items-start gap-1.5 text-[11px]">
+                                    <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 shrink-0" />
+                                    <span>{point}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            <div className="space-y-1 mt-2">
+                              <div className="text-[11px] font-medium text-red-500">常见错误：</div>
+                              <ul className="space-y-0.5">
+                                {section.commonMistakes.map((mistake, i) => (
+                                  <li key={i} className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
+                                    <span className="text-red-400">⚠</span>
+                                    <span>{mistake}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* 综合测验（仅复习日显示） */}
+              {todayLesson?.summary && (
+                <Card className="border-yellow-200 bg-yellow-50/30">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Target className="h-5 w-5 text-yellow-600" />
+                      基础入门综合测验
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-muted-foreground">
+                        共 {foundationQuizQuestions.length} 道题目，覆盖 Day 1-13 所有知识点
+                      </div>
+                      <Button onClick={() => setShowFoundationQuiz(true)} className="gap-2">
+                        <Zap className="h-4 w-4" />
+                        开始测验
+                      </Button>
+                    </div>
+                    
+                    {/* 综合测验对话框 */}
+                    <Dialog open={showFoundationQuiz} onOpenChange={setShowFoundationQuiz}>
+                      <DialogContent className="max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2">
+                            <Target className="h-5 w-5 text-yellow-600" />
+                            基础入门综合测验
+                          </DialogTitle>
+                          <DialogDescription>
+                            测试你对 Day 1-13 知识点的掌握程度
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        {!quizFinished ? (
+                          <div className="space-y-4 flex-1 overflow-auto">
+                            <Progress value={((quizStep + 1) / foundationQuizQuestions.length) * 100} className="h-2" />
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              <span>题目 {quizStep + 1} / {foundationQuizQuestions.length}</span>
+                              <span className={`px-2 py-0.5 rounded ${
+                                foundationQuizQuestions[quizStep].difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                                foundationQuizQuestions[quizStep].difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-red-100 text-red-700'
+                              }`}>
+                                {foundationQuizQuestions[quizStep].difficulty === 'easy' ? '简单' :
+                                 foundationQuizQuestions[quizStep].difficulty === 'medium' ? '中等' : '困难'}
+                              </span>
+                            </div>
+                            <div className="text-sm font-medium p-3 bg-muted/30 rounded-lg">
+                              {foundationQuizQuestions[quizStep].question}
+                            </div>
+                            <div className="space-y-2">
+                              {foundationQuizQuestions[quizStep].options.map((option, index) => (
+                                <Button
+                                  key={index}
+                                  variant="outline"
+                                  className="w-full justify-start text-left h-auto py-2.5 text-sm"
+                                  onClick={() => handleQuizAnswer(index)}
+                                >
+                                  <span className="w-6 h-6 rounded-full border mr-3 flex items-center justify-center text-xs font-medium shrink-0">
+                                    {String.fromCharCode(65 + index)}
+                                  </span>
+                                  {option}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-4 py-4">
+                            <div className="text-center space-y-4">
+                              <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${
+                                quizScore >= 80 ? 'bg-green-100' : quizScore >= 60 ? 'bg-yellow-100' : 'bg-red-100'
+                              }`}>
+                                <span className={`text-3xl font-bold ${
+                                  quizScore >= 80 ? 'text-green-600' : quizScore >= 60 ? 'text-yellow-600' : 'text-red-600'
+                                }`}>{quizScore}</span>
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-medium">
+                                  {quizScore >= 80 ? '优秀！' : quizScore >= 60 ? '良好！' : '继续加油！'}
+                                </h3>
+                                <p className="text-muted-foreground text-sm mt-1">
+                                  答对 {quizAnswers.filter((a, i) => a === foundationQuizQuestions[i].correctAnswer).length}/{foundationQuizQuestions.length} 题
+                                </p>
+                              </div>
+                              {quizScore >= 60 && (
+                                <div className="flex items-center justify-center gap-2 text-sm text-yellow-600">
+                                  <Star className="h-4 w-4" />
+                                  <span>获得 {quizScore >= 80 ? '50' : '30'} 经验值奖励！</span>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* 答题详情 */}
+                            <div className="max-h-[200px] overflow-auto border rounded-lg p-3 space-y-2">
+                              <div className="text-xs font-medium text-muted-foreground mb-2">答题详情</div>
+                              {foundationQuizQuestions.map((q, i) => {
+                                const isCorrect = quizAnswers[i] === q.correctAnswer;
+                                return (
+                                  <div key={i} className={`text-xs p-2 rounded ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+                                    <div className="flex items-center gap-2">
+                                      {isCorrect ? (
+                                        <CheckCircle2 className="h-3 w-3 text-green-500" />
+                                      ) : (
+                                        <Circle className="h-3 w-3 text-red-500" />
+                                      )}
+                                      <span className="font-medium">第{i + 1}题</span>
+                                      <span className="text-muted-foreground">({q.topic})</span>
+                                    </div>
+                                    {!isCorrect && (
+                                      <div className="mt-1 ml-5 text-muted-foreground">
+                                        正确答案：{String.fromCharCode(65 + q.correctAnswer)}
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            
+                            <div className="flex gap-3">
+                              <Button variant="outline" className="flex-1" onClick={restartFoundationQuiz}>
+                                重新测验
+                              </Button>
+                              <Button className="flex-1" onClick={closeFoundationQuiz}>
+                                完成测验
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </DialogContent>
+                    </Dialog>
                   </CardContent>
                 </Card>
               )}
