@@ -4816,6 +4816,7 @@ int main() {
     },
     prerequisites: [4, 5, 19],
     recommendedProblems: [2, 3, 47],
+    relatedKnowledge: [35, 36, 37, 47], // 函数概念、函数定义、函数调用、递归
     readTime: 25,
   },
   {
@@ -4897,6 +4898,7 @@ int main() {
     },
     prerequisites: [35],
     recommendedProblems: [2, 3, 47],
+    relatedKnowledge: [35, 37], // 函数概念、函数调用
     readTime: 20,
   },
   {
@@ -4974,6 +4976,7 @@ int main() {
     },
     prerequisites: [35, 36],
     recommendedProblems: [2, 3, 47],
+    relatedKnowledge: [35, 36, 37], // 函数概念、函数定义、函数调用
     readTime: 20,
   },
   // ==================== 排序算法 ====================
@@ -5131,6 +5134,7 @@ int main() {
     },
     prerequisites: [38, 27, 25],
     recommendedProblems: [44, 45, 30],
+    relatedKnowledge: [38, 40, 68], // 排序概念、STL sort、插入排序
     readTime: 25,
   },
   {
@@ -5217,6 +5221,7 @@ int main() {
     },
     prerequisites: [38],
     recommendedProblems: [44, 45, 30],
+    relatedKnowledge: [38, 39, 40, 68, 69], // 排序概念、冒泡排序、选择排序、插入排序、自定义比较
     readTime: 20,
   },
   // ==================== 基础算法 ====================
@@ -5292,6 +5297,7 @@ int main() {
     },
     prerequisites: [19, 13],
     recommendedProblems: [29, 70, 72],
+    relatedKnowledge: [42, 43, 44], // 枚举、数组遍历、字符串处理
     readTime: 20,
   },
   {
@@ -5357,6 +5363,7 @@ int main() {
     },
     prerequisites: [19, 13],
     recommendedProblems: [29, 72, 38],
+    relatedKnowledge: [41, 43, 19], // 模拟、二分查找、循环
     readTime: 20,
   },
   {
@@ -5520,6 +5527,7 @@ int main() {
     },
     prerequisites: [4, 27],
     recommendedProblems: [35, 36, 37],
+    relatedKnowledge: [44, 45, 46], // 字符串概念、字符串操作、字符数组
     readTime: 25,
   },
   {
