@@ -45,6 +45,7 @@ export interface KnowledgePoint {
   codeExample?: string;
   prerequisites: number[];
   recommendedProblems: number[];
+  relatedKnowledge?: number[]; // 相关知识点（横向关联）
   videoUrl?: string; // B站视频讲解链接
   videoSections?: string[]; // 视频章节时间点
   readTime: number;
@@ -202,6 +203,7 @@ int main() {
     },
     prerequisites: [],
     recommendedProblems: [1, 2, 3],
+    relatedKnowledge: [2, 3, 4], // Hello World、变量、数据类型
     readTime: 15,
   },
   {
@@ -373,6 +375,7 @@ int main() {
     },
     prerequisites: [1],
     recommendedProblems: [1, 2, 19],
+    relatedKnowledge: [1, 3, 4], // C++入门、变量、数据类型
     readTime: 10,
   },
   {
@@ -428,6 +431,7 @@ int main() {
     },
     prerequisites: [1, 2],
     recommendedProblems: [1, 2, 3],
+    relatedKnowledge: [4, 5], // 数据类型、运算符
     readTime: 15,
   },
   {
@@ -691,6 +695,7 @@ int main() {
     },
     prerequisites: [1, 2],
     recommendedProblems: [1, 2, 21],
+    relatedKnowledge: [4, 5], // 数据类型、运算符
     readTime: 20,
   },
   {
@@ -1039,6 +1044,7 @@ int main() {
     },
     prerequisites: [4],
     recommendedProblems: [1, 21, 22],
+    relatedKnowledge: [3, 5, 38], // 变量、运算符、排序（数据类型选择）
     readTime: 25,
   },
   {
@@ -1106,6 +1112,7 @@ int main() {
     },
     prerequisites: [4, 5],
     recommendedProblems: [21, 22, 38],
+    relatedKnowledge: [3, 4, 5], // 变量、数据类型、运算符
     readTime: 15,
   },
   {
@@ -2186,6 +2193,7 @@ int main() {
     },
     prerequisites: [4, 5, 7],
     recommendedProblems: [24, 25, 26],
+    relatedKnowledge: [14, 15, 16], // 比较运算符、逻辑运算符、switch-case
     readTime: 25,
   },
   {
@@ -3024,6 +3032,7 @@ int main() {
     },
     prerequisites: [13, 14],
     recommendedProblems: [27, 28, 29],
+    relatedKnowledge: [20, 21, 26], // 循环变量、循环嵌套、一维数组
     readTime: 30,
   },
   {
@@ -3615,6 +3624,7 @@ int main() {
     },
     prerequisites: [4, 5, 19],
     recommendedProblems: [30, 31, 32],
+    relatedKnowledge: [27, 28, 29, 60, 63], // 数组声明、数组遍历、二维数组、前缀和、vector
     readTime: 30,
   },
   {
@@ -5042,6 +5052,7 @@ int main() {
     },
     prerequisites: [27],
     recommendedProblems: [30, 44, 45],
+    relatedKnowledge: [39, 40, 69], // 冒泡排序、选择排序、自定义比较
     readTime: 20,
     videoUrl: 'https://www.bilibili.com/video/BV1xW411Y7X3',
   },
@@ -5434,6 +5445,7 @@ int main() {
     },
     prerequisites: [27, 22],
     recommendedProblems: [49, 50, 51],
+    relatedKnowledge: [67, 47], // 二分答案、递归
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1fA41167nY',
   },
@@ -5740,6 +5752,7 @@ int main() {
     },
     prerequisites: [35, 36],
     recommendedProblems: [47, 52, 53],
+    relatedKnowledge: [48, 49, 54], // 递归案例、动态规划、DFS
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1Nx411D712?t=3',
   },
@@ -5904,6 +5917,7 @@ int main() {
     },
     prerequisites: [47, 48],
     recommendedProblems: [52, 53, 54],
+    relatedKnowledge: [47, 48, 50, 51], // 递归概念、递归案例、爬楼梯、背包问题
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1AB4y1w7eT',
   },
@@ -6220,6 +6234,7 @@ int main() {
     },
     prerequisites: [52],
     recommendedProblems: [57, 58, 59],
+    relatedKnowledge: [54, 65, 66], // DFS、栈、队列
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1Ks411g7aL',
   },
@@ -6302,6 +6317,7 @@ int main() {
     },
     prerequisites: [52, 47],
     recommendedProblems: [57, 58, 59],
+    relatedKnowledge: [53, 47, 65], // BFS、递归、栈
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1Ks411g7aL',
   },
@@ -6383,6 +6399,7 @@ int main() {
     },
     prerequisites: [4, 47],
     recommendedProblems: [38, 39, 40],
+    relatedKnowledge: [56, 57, 62], // 素数、素数判定、快速幂
     readTime: 25,
   },
   {
@@ -6710,6 +6727,7 @@ int main() {
     },
     prerequisites: [19, 38],
     recommendedProblems: [63, 64, 65],
+    relatedKnowledge: [49, 67], // 动态规划、二分答案
     readTime: 25,
   },
   // ==================== Day 15-35 基础算法扩展知识点 ====================
@@ -6809,6 +6827,7 @@ int main() {
     },
     prerequisites: [26, 19],
     recommendedProblems: [55, 56],
+    relatedKnowledge: [61, 27, 67], // 差分、一维数组、二分答案
     readTime: 20,
   },
   {
@@ -6922,6 +6941,7 @@ int main() {
     },
     prerequisites: [60, 26],
     recommendedProblems: [56, 57],
+    relatedKnowledge: [60, 27], // 前缀和、一维数组
     readTime: 20,
   },
   {
@@ -7026,6 +7046,7 @@ int main() {
     },
     prerequisites: [3, 4],
     recommendedProblems: [43, 58],
+    relatedKnowledge: [55, 56, 57], // GCD/LCM、素数、素数判定
     readTime: 25,
   },
   {
@@ -7134,6 +7155,7 @@ int main() {
     },
     prerequisites: [26, 32],
     recommendedProblems: [30, 60],
+    relatedKnowledge: [27, 64, 69], // 一维数组、pair、自定义比较
     readTime: 20,
   },
   {
@@ -7235,6 +7257,7 @@ int main() {
     },
     prerequisites: [63],
     recommendedProblems: [45, 59],
+    relatedKnowledge: [63, 38, 69], // vector、排序概念、自定义比较
     readTime: 15,
   },
   {
@@ -7362,6 +7385,7 @@ int main() {
     },
     prerequisites: [63, 19],
     recommendedProblems: [61, 62],
+    relatedKnowledge: [66, 53, 54], // 队列、BFS、DFS
     readTime: 20,
     videoUrl: 'https://www.bilibili.com/video/BV1jW411d7xY',
   },
@@ -7470,6 +7494,7 @@ int main() {
     },
     prerequisites: [65, 19],
     recommendedProblems: [62, 63],
+    relatedKnowledge: [65, 53], // 栈、BFS
     readTime: 20,
     videoUrl: 'https://www.bilibili.com/video/BV1jW411d7xY',
   },
@@ -7595,6 +7620,7 @@ int main() {
     },
     prerequisites: [44, 38],
     recommendedProblems: [50, 51],
+    relatedKnowledge: [43, 59], // 二分查找、贪心
     readTime: 25,
   },
   {
@@ -7705,6 +7731,7 @@ int main() {
     },
     prerequisites: [38, 19],
     recommendedProblems: [44, 45],
+    relatedKnowledge: [38, 39, 40, 69], // 排序概念、冒泡排序、选择排序、自定义比较
     readTime: 20,
   },
   {
@@ -7826,6 +7853,7 @@ int main() {
     },
     prerequisites: [38, 35],
     recommendedProblems: [44, 45],
+    relatedKnowledge: [38, 63, 64], // 排序概念、vector、pair
     readTime: 20,
   },
   {
