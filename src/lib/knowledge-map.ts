@@ -5043,6 +5043,7 @@ int main() {
     prerequisites: [27],
     recommendedProblems: [30, 44, 45],
     readTime: 20,
+    videoUrl: 'https://www.bilibili.com/video/BV1xW411Y7X3',
   },
   {
     id: 39,
@@ -5434,6 +5435,7 @@ int main() {
     prerequisites: [27, 22],
     recommendedProblems: [49, 50, 51],
     readTime: 30,
+    videoUrl: 'https://www.bilibili.com/video/BV1fA41167nY',
   },
   // ==================== 字符串处理 ====================
   {
@@ -5903,6 +5905,7 @@ int main() {
     prerequisites: [47, 48],
     recommendedProblems: [52, 53, 54],
     readTime: 30,
+    videoUrl: 'https://www.bilibili.com/video/BV1AB4y1w7eT',
   },
   {
     id: 50,
@@ -6218,6 +6221,7 @@ int main() {
     prerequisites: [52],
     recommendedProblems: [57, 58, 59],
     readTime: 30,
+    videoUrl: 'https://www.bilibili.com/video/BV1Ks411g7aL',
   },
   {
     id: 54,
@@ -6299,8 +6303,8 @@ int main() {
     prerequisites: [52, 47],
     recommendedProblems: [57, 58, 59],
     readTime: 30,
+    videoUrl: 'https://www.bilibili.com/video/BV1Ks411g7aL',
   },
-  // ==================== 数学基础 ====================
   {
     id: 55,
     slug: 'gcd-lcm',
@@ -7359,6 +7363,7 @@ int main() {
     prerequisites: [63, 19],
     recommendedProblems: [61, 62],
     readTime: 20,
+    videoUrl: 'https://www.bilibili.com/video/BV1jW411d7xY',
   },
   {
     id: 66,
@@ -7466,6 +7471,7 @@ int main() {
     prerequisites: [65, 19],
     recommendedProblems: [62, 63],
     readTime: 20,
+    videoUrl: 'https://www.bilibili.com/video/BV1jW411d7xY',
   },
   {
     id: 67,
