@@ -5739,6 +5739,7 @@ int main() {
     prerequisites: [35, 36],
     recommendedProblems: [47, 52, 53],
     readTime: 30,
+    videoUrl: 'https://www.bilibili.com/video/BV1Nx411D712?t=3',
   },
   {
     id: 48,
