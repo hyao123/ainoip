@@ -6736,6 +6736,7 @@ int main() {
     prerequisites: [19, 38],
     recommendedProblems: [63, 64, 65],
     relatedKnowledge: [49, 67], // 动态规划、二分答案
+    videoUrl: 'https://www.bilibili.com/video/BV12gu3zmEc3?t=17.9',
     readTime: 25,
   },
   // ==================== Day 15-35 基础算法扩展知识点 ====================
