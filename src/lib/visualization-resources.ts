@@ -221,7 +221,7 @@ export const visualizationResources: VisualizationResource[] = [
   {
     knowledgeId: 59,
     knowledgeSlug: 'greedy-intro',
-    bvNumber: 'BV1UE411e7Az',
+    bvNumber: 'BV12gu3zmEc3',
     videoTitle: '贪心算法详解',
   },
 ];
