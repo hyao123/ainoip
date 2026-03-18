@@ -7,6 +7,7 @@ import { LearningRecord } from '@/components/LearningRecord';
 import { LearningReport } from '@/components/LearningReport';
 import { FavoriteProblems } from '@/components/FavoriteProblems';
 import { AchievementSystem } from '@/components/AchievementSystem';
+import { DailyPractice } from '@/components/DailyPractice';
 import { getUserLearningData } from '@/lib/user-learning-data';
 import {
   BookX,
@@ -18,6 +19,7 @@ import {
   Target,
   TrendingUp,
   BarChart3,
+  Calendar,
 } from 'lucide-react';
 
 interface UserCenterPageProps {
@@ -25,7 +27,7 @@ interface UserCenterPageProps {
 }
 
 export function UserCenterPage({ onSelectProblem }: UserCenterPageProps) {
-  const [activeTab, setActiveTab] = useState('report');
+  const [activeTab, setActiveTab] = useState('daily');
   const data = getUserLearningData();
 
   // 计算快速统计
@@ -85,6 +87,10 @@ export function UserCenterPage({ onSelectProblem }: UserCenterPageProps) {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
         <div className="border-b px-4 bg-muted/30 shrink-0">
           <TabsList className="h-11">
+            <TabsTrigger value="daily" className="gap-1.5 data-[state=active]:text-orange-500">
+              <Calendar className="h-4 w-4" />
+              每日一练
+            </TabsTrigger>
             <TabsTrigger value="report" className="gap-1.5 data-[state=active]:text-primary">
               <BarChart3 className="h-4 w-4" />
               学习报告
@@ -109,6 +115,9 @@ export function UserCenterPage({ onSelectProblem }: UserCenterPageProps) {
         </div>
 
         {/* Tab内容 */}
+        <TabsContent value="daily" className="m-0 flex-1 min-h-0 overflow-auto p-4">
+          <DailyPractice onStartProblem={onSelectProblem} />
+        </TabsContent>
         <TabsContent value="report" className="m-0 flex-1 min-h-0 overflow-hidden">
           <LearningReport onSelectProblem={onSelectProblem} />
         </TabsContent>

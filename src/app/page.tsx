@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap } from 'lucide-react';
 import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -20,6 +20,7 @@ import { KnowledgeMapPage } from '@/components/KnowledgeMapPage';
 import { LearningPathView } from '@/components/LearningPathView';
 
 import { UserCenterPage } from '@/components/UserCenterPage';
+import { AlgorithmDemoPage } from '@/components/AlgorithmDemoPage';
 import { AILogoWithText } from '@/components/AILogo';
 import { ProgressiveHint } from '@/components/ProgressiveHint';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
@@ -2326,7 +2327,7 @@ export default function Home() {
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
-  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map'>('learning');
+  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm'>('learning');
   const [initialKnowledgeSlug, setInitialKnowledgeSlug] = useState<string | undefined>(undefined);
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
@@ -2352,8 +2353,8 @@ export default function Home() {
   // 根据 URL 参数设置当前视图
   useEffect(() => {
     const viewParam = searchParams.get('view');
-    if (viewParam && ['practice', 'learning', 'bank', 'user', 'map'].includes(viewParam)) {
-      setCurrentView(viewParam as 'practice' | 'learning' | 'bank' | 'user' | 'map');
+    if (viewParam && ['practice', 'learning', 'bank', 'user', 'map', 'algorithm'].includes(viewParam)) {
+      setCurrentView(viewParam as 'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm');
     }
   }, [searchParams]);
 
@@ -2563,6 +2564,17 @@ export default function Home() {
             练习题库
           </button>
           <button
+            onClick={() => setCurrentView('algorithm')}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              currentView === 'algorithm'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <Zap className="h-4 w-4" />
+            算法演示
+          </button>
+          <button
             onClick={() => setCurrentView('user')}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'user'
@@ -2666,6 +2678,8 @@ export default function Home() {
             />
           ) : currentView === 'user' ? (
             <UserCenterPage onSelectProblem={handleStartProblemById} />
+          ) : currentView === 'algorithm' ? (
+            <AlgorithmDemoPage />
           ) : (
             <>
               {/* 顶部导航栏 - 紧凑 */}
