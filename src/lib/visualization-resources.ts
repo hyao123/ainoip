@@ -224,6 +224,105 @@ export const visualizationResources: VisualizationResource[] = [
     bvNumber: 'BV12gu3zmEc3',
     videoTitle: '贪心算法详解',
   },
+  
+  // ==================== Day 15-35 基础算法扩展 ====================
+  // 模拟算法
+  {
+    knowledgeId: 41,
+    knowledgeSlug: 'simulation-intro',
+    bvNumber: 'BV1NAtZeNEQR',
+    videoTitle: '模拟算法与NOIP解题技巧',
+  },
+  // 枚举算法
+  {
+    knowledgeId: 42,
+    knowledgeSlug: 'enumeration',
+    bvNumber: 'BV1NAtZeNEQR',
+    videoTitle: '枚举算法详解',
+  },
+  // 插入排序
+  {
+    knowledgeId: 68,
+    knowledgeSlug: 'insertion-sort',
+    gifUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Insertion-sort-example-300px.gif',
+    visualizerUrl: 'https://visualgo.net/zh/sorting?slide=3',
+    bvNumber: 'BV1Cz411B7qd',
+    videoTitle: '插入排序详解',
+  },
+  // 自定义比较
+  {
+    knowledgeId: 69,
+    knowledgeSlug: 'custom-compare',
+    bvNumber: 'BV1Cz411B7qd',
+    videoTitle: '自定义比较函数与结构体排序',
+  },
+  // 函数基础
+  {
+    knowledgeId: 35,
+    knowledgeSlug: 'function-intro',
+    bvNumber: 'BV1et411b7PZ',
+    videoTitle: 'C++函数详解',
+  },
+  // 二分答案
+  {
+    knowledgeId: 67,
+    knowledgeSlug: 'binary-answer',
+    visualizerUrl: 'https://visualgo.net/zh/bst',
+    bvNumber: 'BV1AP41137w7',
+    videoTitle: '二分答案算法详解',
+  },
+  // 前缀和
+  {
+    knowledgeId: 60,
+    knowledgeSlug: 'prefix-sum',
+    bvNumber: 'BV1w64y1c7hV',
+    videoTitle: '前缀和算法详解',
+  },
+  // 差分
+  {
+    knowledgeId: 61,
+    knowledgeSlug: 'difference',
+    bvNumber: 'BV1w64y1c7hV',
+    videoTitle: '差分数组详解',
+  },
+  // 快速幂
+  {
+    knowledgeId: 62,
+    knowledgeSlug: 'fast-power',
+    bvNumber: 'BV12r4y1w7tx',
+    videoTitle: '快速幂算法详解',
+  },
+  // vector容器
+  {
+    knowledgeId: 63,
+    knowledgeSlug: 'vector-intro',
+    visualizerUrl: 'https://visualgo.net/zh/array',
+    bvNumber: 'BV1et411b7PZ',
+    videoTitle: 'vector容器详解',
+  },
+  // pair类型
+  {
+    knowledgeId: 64,
+    knowledgeSlug: 'pair-intro',
+    bvNumber: 'BV1et411b7PZ',
+    videoTitle: 'pair与STL容器',
+  },
+  // 栈
+  {
+    knowledgeId: 65,
+    knowledgeSlug: 'stack-intro',
+    visualizerUrl: 'https://visualgo.net/zh/stack',
+    bvNumber: 'BV1Kb411w7qY',
+    videoTitle: '栈数据结构详解',
+  },
+  // 队列
+  {
+    knowledgeId: 66,
+    knowledgeSlug: 'queue-intro',
+    visualizerUrl: 'https://visualgo.net/zh/list',
+    bvNumber: 'BV1Kb411w7qY',
+    videoTitle: '队列数据结构详解',
+  },
 ];
 
 // 根据知识点ID获取可视化资源
