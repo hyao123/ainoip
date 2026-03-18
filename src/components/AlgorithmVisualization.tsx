@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Play, 
@@ -605,13 +604,14 @@ export function AlgorithmVisualization({
             {/* 速度控制 */}
             <div className="flex items-center gap-4 flex-1 max-w-xs">
               <span className="text-sm text-muted-foreground whitespace-nowrap">速度</span>
-              <Slider
-                value={[1100 - speed]}
-                onValueChange={([value]) => setSpeed(1100 - value)}
+              <input
+                type="range"
                 min={100}
                 max={1000}
                 step={100}
-                className="flex-1"
+                value={1100 - speed}
+                onChange={(e) => setSpeed(1100 - parseInt(e.target.value))}
+                className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
               />
               <span className="text-sm text-muted-foreground w-12">
                 {Math.round(1100 / speed)}x
