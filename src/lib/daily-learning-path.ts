@@ -675,8 +675,7 @@ export const dailyLearningPath: DayLesson[] = [
     phaseName: '基础算法',
     topics: [
       { id: 'divisible', name: '整除与余数', type: 'algorithm', importance: 'required' },
-      { id: 'gcd', name: '最大公约数', type: 'algorithm', importance: 'required' },
-      { id: 'lcm', name: '最小公倍数', type: 'algorithm', importance: 'required' },
+      { id: 'gcd-lcm', name: '最大公约数与最小公倍数', type: 'algorithm', importance: 'required' },
     ],
     practiceProblems: [38, 41, 42],
     estimatedMinutes: 55,
@@ -693,7 +692,7 @@ export const dailyLearningPath: DayLesson[] = [
     phase: 'basic',
     phaseName: '基础算法',
     topics: [
-      { id: 'prime-judge', name: '素数判定', type: 'algorithm', importance: 'required' },
+      { id: 'prime', name: '素数判定与筛法', type: 'algorithm', importance: 'required' },
       { id: 'prime-sieve', name: '埃氏筛法', type: 'algorithm', importance: 'required' },
       { id: 'euler-sieve', name: '欧拉筛', type: 'algorithm', importance: 'recommended' },
     ],
@@ -749,8 +748,8 @@ export const dailyLearningPath: DayLesson[] = [
     phase: 'basic',
     phaseName: '基础算法',
     topics: [
-      { id: 'vector', name: 'vector容器', type: 'data_structure', importance: 'required' },
-      { id: 'pair', name: 'pair类型', type: 'data_structure', importance: 'recommended' },
+      { id: 'vector-intro', name: 'vector容器', type: 'data_structure', importance: 'required' },
+      { id: 'pair-intro', name: 'pair类型', type: 'data_structure', importance: 'recommended' },
     ],
     practiceProblems: [30, 60],
     estimatedMinutes: 50,

@@ -263,6 +263,22 @@ export const visualizationResources: VisualizationResource[] = [
     bvNumber: 'BV1et411b7PZ',
     videoTitle: 'C++函数详解',
   },
+  // 选择排序
+  {
+    knowledgeId: 381,
+    knowledgeSlug: 'selection-sort',
+    gifUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/94/Selection-Sort-Animation.gif',
+    visualizerUrl: 'https://visualgo.net/zh/sorting?slide=2',
+    bvNumber: 'BV1Cz411B7qd',
+    videoTitle: '选择排序详解',
+  },
+  // 整除与余数
+  {
+    knowledgeId: 541,
+    knowledgeSlug: 'divisible',
+    bvNumber: 'BV1Jt411V7pF',
+    videoTitle: '整除与取模运算',
+  },
   // 二分答案
   {
     knowledgeId: 67,

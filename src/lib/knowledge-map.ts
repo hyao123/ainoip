@@ -5138,6 +5138,84 @@ int main() {
     readTime: 25,
   },
   {
+    id: 381,
+    slug: 'selection-sort',
+    title: '选择排序',
+    icon: '👆',
+    category: 'algorithms',
+    difficulty: 'basic',
+    brief: '每趟选择最小的元素',
+    description: '选择排序每趟从未排序部分选出最小元素，放到已排序部分的末尾。',
+    content: [
+      '选择排序的原理',
+      '如何找最小元素',
+      '选择排序的实现',
+      '选择排序 vs 冒泡排序',
+    ],
+    kidFriendly: {
+      analogy: '选择排序就像整理卡片。每次从剩下的卡片里选出最小的，放到已经排好的一堆后面。',
+      visualization: '👆 选择排序过程：\n[5,3,8,1,2]\n第1趟：找最小1，交换 → [1,3,8,5,2]\n第2趟：找最小2，交换 → [1,2,8,5,3]\n...',
+      whyLearn: '理解排序的基本思想，为学习更高效的排序打基础。'
+    },
+    codeExamples: [
+      {
+        title: '选择排序实现',
+        description: 'C++选择排序代码',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n = 5;
+    int arr[] = {5, 3, 8, 1, 2};
+    
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIdx]) {
+                minIdx = j;
+            }
+        }
+        // 交换
+        int temp = arr[i];
+        arr[i] = arr[minIdx];
+        arr[minIdx] = temp;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}`,
+        input: '5 3 8 1 2',
+        expectedOutput: '1 2 3 5 8',
+        explanation: [
+          '每趟找到未排序部分的最小元素',
+          '将最小元素放到已排序部分的末尾',
+          '时间复杂度O(n²)',
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记交换元素',
+        why: '只找到了最小元素的下标，没有交换',
+        correctWay: '找到最小元素后要交换到正确位置'
+      },
+    ],
+    quiz: {
+      question: '选择排序对n个元素需要几趟？',
+      options: ['n趟', 'n-1趟', 'n/2趟', 'log n趟'],
+      answer: 1,
+      explanation: '前n-1趟放好n-1个元素，最后一个自动归位。'
+    },
+    prerequisites: [38, 27],
+    recommendedProblems: [44, 45],
+    relatedKnowledge: [38, 39, 68], // 排序概念、冒泡排序、插入排序
+    readTime: 20,
+  },
+  {
     id: 40,
     slug: 'stl-sort',
     title: 'STL sort函数',
@@ -6245,6 +6323,82 @@ int main() {
     relatedKnowledge: [54, 65, 66], // DFS、栈、队列
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1Ks411g7aL',
+  },
+  {
+    id: 541,
+    slug: 'divisible',
+    title: '整除与余数',
+    icon: '➗',
+    category: 'math',
+    difficulty: 'basic',
+    brief: '数论的基础概念',
+    description: '整除和余数是数论的基本概念，是学习GCD、LCM等高级数论知识的基础。',
+    content: [
+      '整除的定义',
+      '余数的概念',
+      '取模运算(%)',
+      '整除的性质',
+      '常见应用场景',
+    ],
+    kidFriendly: {
+      analogy: '整除就像分糖果。12颗糖分给3个人，每人4颗，正好分完，就说12能被3整除。分给5个人，每人2颗，还剩2颗，这个"剩的"就是余数。',
+      visualization: '➗ 整除与余数：\n12 ÷ 3 = 4 ... 余数0（整除）\n12 ÷ 5 = 2 ... 余数2\n\n12 % 3 = 0\n12 % 5 = 2',
+      whyLearn: '判断奇偶、倍数关系、周期问题都离不开取模运算。'
+    },
+    codeExamples: [
+      {
+        title: '取模运算示例',
+        description: '常见的取模应用',
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n = 17;
+    
+    // 判断奇偶
+    if (n % 2 == 0) {
+        cout << n << " 是偶数" << endl;
+    } else {
+        cout << n << " 是奇数" << endl;
+    }
+    
+    // 判断整除
+    int a = 12, b = 4;
+    if (a % b == 0) {
+        cout << a << " 能被 " << b << " 整除" << endl;
+    }
+    
+    // 取最后一位数字
+    cout << n << " 的个位是 " << n % 10 << endl;
+    
+    return 0;
+}`,
+        input: '17',
+        expectedOutput: '17 是奇数\n12 能被 4 整除\n17 的个位是 7',
+        explanation: [
+          'n % 2 判断奇偶',
+          'a % b == 0 判断整除',
+          'n % 10 取个位数字',
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '负数取模结果搞错',
+        why: '不同语言对负数取模的处理不同',
+        correctWay: 'C++中结果的符号与被除数相同'
+      },
+    ],
+    quiz: {
+      question: '2024 % 7 的结果是？',
+      options: ['0', '1', '2', '3'],
+      answer: 1,
+      explanation: '2024 ÷ 7 = 289...1，所以余数是1。'
+    },
+    prerequisites: [4],
+    recommendedProblems: [38, 41],
+    relatedKnowledge: [55, 56], // GCD/LCM、素数
+    readTime: 20,
   },
   {
     id: 54,
