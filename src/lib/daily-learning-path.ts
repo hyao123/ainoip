@@ -433,7 +433,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'simulation-intro', name: '模拟算法', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [29, 70],
+    practiceProblems: [70, 71],
     estimatedMinutes: 55,
     objectives: [
       '理解模拟算法的思想',
@@ -450,7 +450,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'enumeration', name: '枚举算法', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [29, 72],
+    practiceProblems: [29, 54],
     estimatedMinutes: 50,
     objectives: [
       '理解枚举算法的基本思想',
@@ -469,7 +469,7 @@ export const dailyLearningPath: DayLesson[] = [
       { id: 'bubble-sort', name: '冒泡排序', type: 'algorithm', importance: 'required' },
       { id: 'selection-sort', name: '选择排序', type: 'algorithm', importance: 'recommended' },
     ],
-    practiceProblems: [30, 44],
+    practiceProblems: [44, 45],
     estimatedMinutes: 55,
     objectives: [
       '理解排序的意义',
@@ -524,7 +524,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'recursion-intro', name: '递归算法', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [2, 47],
+    practiceProblems: [2, 49],
     estimatedMinutes: 55,
     objectives: [
       '理解递归的思想',
@@ -541,7 +541,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'recursion-examples', name: '递归经典问题', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [47, 48],
+    practiceProblems: [49, 50], // 阶乘、汉诺塔
     estimatedMinutes: 55,
     objectives: [
       '掌握分治思想',
@@ -558,7 +558,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'binary-search', name: '二分思想与查找', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [49, 50],
+    practiceProblems: [47, 32], // 二分查找、数组查找
     estimatedMinutes: 55,
     objectives: [
       '理解二分查找的前提条件',
@@ -575,7 +575,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'binary-answer', name: '二分答案', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [50, 51],
+    practiceProblems: [48, 32],
     estimatedMinutes: 60,
     objectives: [
       '理解二分答案的思想',
@@ -609,7 +609,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'greedy-intro', name: '贪心算法应用', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [53, 54],
+    practiceProblems: [17, 53],
     estimatedMinutes: 55,
     objectives: [
       '掌握排序+贪心的套路',
@@ -626,7 +626,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'prefix-sum', name: '前缀和', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [55, 56],
+    practiceProblems: [27, 30],
     estimatedMinutes: 50,
     objectives: [
       '理解前缀和的概念',
@@ -643,7 +643,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'difference', name: '差分', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [56, 57],
+    practiceProblems: [27, 56],
     estimatedMinutes: 50,
     objectives: [
       '理解差分的概念',
@@ -695,7 +695,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'fast-power', name: '快速幂', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [43, 58],
+    practiceProblems: [43, 68],
     estimatedMinutes: 50,
     objectives: [
       '理解快速幂的原理',
@@ -713,7 +713,7 @@ export const dailyLearningPath: DayLesson[] = [
       { id: 'struct-intro', name: '结构体', type: 'data_structure', importance: 'required' },
       { id: 'struct-advanced', name: '结构体进阶', type: 'data_structure', importance: 'required' },
     ],
-    practiceProblems: [45, 59],
+    practiceProblems: [53, 52],
     estimatedMinutes: 45,
     objectives: [
       '学会定义结构体',
@@ -748,7 +748,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'stack-intro', name: '栈', type: 'data_structure', importance: 'required' },
     ],
-    practiceProblems: [61, 62],
+    practiceProblems: [60, 62],
     estimatedMinutes: 50,
     objectives: [
       '理解栈的特性',
@@ -765,7 +765,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'queue-intro', name: '队列', type: 'data_structure', importance: 'required' },
     ],
-    practiceProblems: [62, 63],
+    practiceProblems: [61, 56],
     estimatedMinutes: 50,
     objectives: [
       '理解队列的特性',
@@ -782,7 +782,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'basic-algo-review', name: '基础算法复习', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [29, 44, 50, 55, 61],
+    practiceProblems: [44, 47, 52, 27, 60],
     challengeProblem: 64,
     estimatedMinutes: 70,
     objectives: [
