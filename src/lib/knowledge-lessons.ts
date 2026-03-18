@@ -4208,6 +4208,3577 @@ cout << *max_element(dp, dp + n) << endl;`,
     tips: ['小数据用O(n²)', '大数据用O(n log n)'],
     relatedProblems: [73, 74],
   },
+
+  // ========== Day 36-70: 进阶知识点补充 ==========
+
+  // Day 36: DFS入门
+  'dfs-order': {
+    id: 'dfs-order',
+    title: '搜索顺序',
+    content: `## 搜索顺序
+
+DFS的搜索顺序决定了搜索树的形态，合理设计搜索顺序可以优化效率。
+
+### 搜索树的概念
+
+DFS可以看作是在搜索树上的遍历，每个节点代表一个状态。
+
+### 常见搜索顺序
+
+1. **位置优先**：先填前面的位置
+2. **数值优先**：先尝试小的数
+3. **分支优先**：先走某个方向
+
+### 设计原则
+
+1. 避免重复搜索
+2. 尽早剪枝
+3. 状态表示要完整`,
+    codeExamples: [
+      {
+        title: '不同的搜索顺序',
+        code: `// 方式1：位置优先
+for (int i = 0; i < n; i++) {
+    for (int num = 1; num <= n; num++) {
+        // 尝试在第i个位置放num
+    }
+}
+
+// 方式2：数值优先
+for (int num = 1; num <= n; num++) {
+    for (int i = 0; i < n; i++) {
+        // 尝试把num放在第i个位置
+    }
+}`,
+        explanation: '不同的搜索顺序会影响效率。',
+      },
+    ],
+    keyPoints: ['理解搜索树概念', '合理设计搜索顺序'],
+    commonMistakes: ['搜索顺序混乱', '遗漏情况'],
+    tips: ['画出搜索树帮助理解', '选择有利剪枝的顺序'],
+    relatedProblems: [66, 67],
+  },
+
+  // Day 37: DFS应用
+  'dfs-combine': {
+    id: 'dfs-combine',
+    title: '组合',
+    content: `## 组合问题
+
+从n个数中选k个的所有组合。
+
+### 与全排列的区别
+
+- 排列：顺序重要，{1,2}和{2,1}不同
+- 组合：顺序不重要，{1,2}和{2,1}相同
+
+### 实现方法
+
+\`\`\`cpp
+void dfs(int start, int k) {
+    if (k == 0) {
+        // 选够了，输出结果
+        return;
+    }
+    for (int i = start; i <= n; i++) {
+        path.push_back(i);
+        dfs(i + 1, k - 1);  // 从i+1开始，避免重复
+        path.pop_back();
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: 'C(n,k)组合',
+        code: `vector<int> path;
+int n, k;
+
+void dfs(int start, int cnt) {
+    if (cnt == k) {
+        for (int x : path) cout << x << " ";
+        cout << endl;
+        return;
+    }
+    for (int i = start; i <= n; i++) {
+        path.push_back(i);
+        dfs(i + 1, cnt + 1);
+        path.pop_back();
+    }
+}`,
+        explanation: '从n个数中选k个的组合。',
+      },
+    ],
+    keyPoints: ['理解组合与排列的区别', '使用start避免重复'],
+    commonMistakes: ['重复选数', 'start参数设置错误'],
+    tips: ['组合数可以用公式计算', 'start参数是关键'],
+    relatedProblems: [66, 67],
+  },
+
+  'dfs-prune': {
+    id: 'dfs-prune',
+    title: '剪枝基础',
+    content: `## 剪枝
+
+剪枝是在搜索过程中提前终止不可能得到解的分支。
+
+### 剪枝的作用
+
+减少搜索空间，提高效率。
+
+### 常见剪枝方法
+
+1. **可行性剪枝**：当前状态无法继续
+2. **最优性剪枝**：当前解不可能更优
+3. **重复状态剪枝**：避免重复搜索
+
+### 示例
+
+\`\`\`cpp
+void dfs(int step) {
+    if (当前解 >= 已知最优解) return;  // 最优性剪枝
+    if (无法完成) return;  // 可行性剪枝
+    // ...
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '剪枝示例',
+        code: `int ans = INT_MAX;
+
+void dfs(int step, int cost) {
+    if (cost >= ans) return;  // 最优性剪枝
+    if (step == n) {
+        ans = min(ans, cost);
+        return;
+    }
+    // 继续搜索...
+}`,
+        explanation: '最优性剪枝示例。',
+      },
+    ],
+    keyPoints: ['理解剪枝的目的', '掌握常见剪枝方法'],
+    commonMistakes: ['剪枝条件写错', '过度剪枝遗漏解'],
+    tips: ['剪枝要保证不遗漏正确解', '多种剪枝可以组合使用'],
+    relatedProblems: [67, 71],
+  },
+
+  // Day 38: BFS入门
+  'bfs-impl': {
+    id: 'bfs-impl',
+    title: 'BFS实现',
+    content: `## BFS实现
+
+BFS使用队列实现，按层次遍历。
+
+### 基本框架
+
+\`\`\`cpp
+void bfs(起点) {
+    queue.push(起点);
+    visited[起点] = true;
+    
+    while (!queue.empty()) {
+        auto cur = queue.front();
+        queue.pop();
+        
+        for (每个相邻状态) {
+            if (!visited[下一状态]) {
+                visited[下一状态] = true;
+                queue.push(下一状态);
+            }
+        }
+    }
+}
+\`\`\`
+
+### 注意事项
+
+1. 入队时标记，不是出队时
+2. 使用vis数组避免重复`,
+    codeExamples: [
+      {
+        title: 'BFS模板',
+        code: `bool visited[1005];
+vector<int> adj[1005];
+
+void bfs(int start) {
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        cout << u << " ";
+        
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                visited[v] = true;
+                q.push(v);
+            }
+        }
+    }
+}`,
+        explanation: '标准BFS模板。',
+      },
+    ],
+    keyPoints: ['使用队列实现', '入队时标记'],
+    commonMistakes: ['出队时才标记', '忘记标记'],
+    tips: ['入队时标记避免重复入队', 'BFS天然求最短路'],
+    relatedProblems: [68, 69],
+  },
+
+  'bfs-level': {
+    id: 'bfs-level',
+    title: '层次遍历',
+    content: `## 层次遍历
+
+BFS可以按层输出结果，常见于树的层次遍历。
+
+### 实现方法
+
+方法一：记录每层大小
+\`\`\`cpp
+while (!q.empty()) {
+    int size = q.size();  // 当前层节点数
+    for (int i = 0; i < size; i++) {
+        auto cur = q.front();
+        q.pop();
+        // 处理cur
+        // 子节点入队
+    }
+    // 一层结束
+}
+\`\`\`
+
+方法二：使用depth数组`,
+    codeExamples: [
+      {
+        title: '树的层次遍历',
+        code: `void levelOrder(TreeNode* root) {
+    if (!root) return;
+    queue<TreeNode*> q;
+    q.push(root);
+    
+    while (!q.empty()) {
+        int size = q.size();
+        for (int i = 0; i < size; i++) {
+            TreeNode* node = q.front();
+            q.pop();
+            cout << node->val << " ";
+            if (node->left) q.push(node->left);
+            if (node->right) q.push(node->right);
+        }
+        cout << endl;  // 一层结束
+    }
+}`,
+        explanation: '树的层次遍历。',
+      },
+    ],
+    keyPoints: ['记录每层节点数', '理解BFS的层次特性'],
+    commonMistakes: ['忘记统计层数', '层次边界不清'],
+    tips: ['每层开始时记录队列大小', '可以用于求树的高度'],
+    relatedProblems: [68, 82],
+  },
+
+  // Day 39: BFS应用
+  'bfs-shortest': {
+    id: 'bfs-shortest',
+    title: '最短路',
+    content: `## BFS求最短路
+
+BFS天然适合求无权图的最短路径。
+
+### 原理
+
+BFS按层扩展，第一次到达某点时的步数就是最短路。
+
+### 实现
+
+\`\`\`cpp
+int dist[MAXN];
+memset(dist, -1, sizeof(dist));
+
+dist[start] = 0;
+queue.push(start);
+
+while (!queue.empty()) {
+    int u = queue.front();
+    queue.pop();
+    
+    for (int v : adj[u]) {
+        if (dist[v] == -1) {
+            dist[v] = dist[u] + 1;
+            queue.push(v);
+        }
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: 'BFS求最短路',
+        code: `int dist[1005];
+vector<int> adj[1005];
+
+int bfs_shortest(int start, int end) {
+    memset(dist, -1, sizeof(dist));
+    queue<int> q;
+    q.push(start);
+    dist[start] = 0;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        if (u == end) return dist[u];
+        
+        for (int v : adj[u]) {
+            if (dist[v] == -1) {
+                dist[v] = dist[u] + 1;
+                q.push(v);
+            }
+        }
+    }
+    return -1;  // 无法到达
+}`,
+        explanation: 'BFS求两点间最短路。',
+      },
+    ],
+    keyPoints: ['BFS天然求最短路', '第一次到达就是最短'],
+    commonMistakes: ['忘记记录距离', '多次更新同一点'],
+    tips: ['dist数组同时作访问标记', '只适用于无权图'],
+    relatedProblems: [69, 71],
+  },
+
+  'bfs-state': {
+    id: 'bfs-state',
+    title: '状态压缩BFS',
+    content: `## 状态压缩BFS
+
+当状态可以用二进制表示时，可以用状态压缩+BFS。
+
+### 适用场景
+
+- 需要记录哪些点已访问
+- 状态可以用bitset表示
+- 状态空间可控
+
+### 实现
+
+\`\`\`cpp
+int dist[1 << n][n];  // 状态压缩+当前位置
+// 状态：(已访问集合, 当前位置)
+\`\`\``,
+    codeExamples: [
+      {
+        title: '旅行商问题BFS',
+        code: `int n;
+int dist[1 << 15][15];
+
+int tsp() {
+    memset(dist, -1, sizeof(dist));
+    queue<pair<int,int>> q;
+    
+    for (int i = 0; i < n; i++) {
+        dist[1 << i][i] = 0;
+        q.push({1 << i, i});
+    }
+    
+    while (!q.empty()) {
+        auto [state, u] = q.front();
+        q.pop();
+        
+        if (state == (1 << n) - 1) {
+            return dist[state][u];
+        }
+        
+        for (int v = 0; v < n; v++) {
+            if (!(state & (1 << v))) {
+                int new_state = state | (1 << v);
+                if (dist[new_state][v] == -1) {
+                    dist[new_state][v] = dist[state][u] + 1;
+                    q.push({new_state, v});
+                }
+            }
+        }
+    }
+    return -1;
+}`,
+        explanation: '状态压缩BFS解TSP。',
+      },
+    ],
+    keyPoints: ['状态用二进制表示', '状态空间可能很大'],
+    commonMistakes: ['状态表示错误', '空间开不够'],
+    tips: ['注意状态空间大小', '可以配合贪心优化'],
+    relatedProblems: [93, 94],
+  },
+
+  // Day 40: 动态规划入门
+  'dp-state': {
+    id: 'dp-state',
+    title: '状态定义',
+    content: `## 状态定义
+
+状态定义是DP的第一步，决定了整个DP的框架。
+
+### 什么是状态
+
+状态是对问题的子问题的描述，通常用dp数组表示。
+
+### 状态定义原则
+
+1. 能描述子问题
+2. 能够推导
+3. 无后效性
+
+### 常见状态定义
+
+\`\`\`cpp
+// dp[i] = 以i结尾的最优解
+// dp[i][j] = 前i个物品容量为j的最优解
+// dp[i][j] = 区间[i,j]的最优解
+\`\`\``,
+    codeExamples: [
+      {
+        title: '状态定义示例',
+        code: `// 最长上升子序列
+int dp[i];  // dp[i] = 以a[i]结尾的LIS长度
+
+// 01背包
+int dp[i][j];  // dp[i][j] = 前i个物品容量为j的最大价值
+
+// 区间DP
+int dp[i][j];  // dp[i][j] = 区间[i,j]合并的最小代价`,
+        explanation: '不同问题的状态定义。',
+      },
+    ],
+    keyPoints: ['状态要有明确含义', '能够递推'],
+    commonMistakes: ['状态定义不清', '遗漏信息'],
+    tips: ['状态定义要能完整描述子问题', '从简单例子推敲'],
+    relatedProblems: [72, 73],
+  },
+
+  'dp-transfer': {
+    id: 'dp-transfer',
+    title: '状态转移',
+    content: `## 状态转移
+
+状态转移方程描述了状态之间的关系。
+
+### 转移方程
+
+从已知状态推导出新状态的公式。
+
+\`\`\`cpp
+// LIS
+dp[i] = max(dp[j] + 1)  for all j < i and a[j] < a[i]
+
+// 01背包
+dp[i][j] = max(dp[i-1][j], dp[i-1][j-w[i]] + v[i])
+
+// 区间DP
+dp[i][j] = min(dp[i][k] + dp[k+1][j])  for i <= k < j
+\`\`\`
+
+### 转移顺序
+
+必须保证转移时用到的状态已经计算过。`,
+    codeExamples: [
+      {
+        title: '状态转移实现',
+        code: `// LIS转移
+for (int i = 0; i < n; i++) {
+    dp[i] = 1;
+    for (int j = 0; j < i; j++) {
+        if (a[j] < a[i]) {
+            dp[i] = max(dp[i], dp[j] + 1);
+        }
+    }
+}
+
+// 01背包转移
+for (int i = 1; i <= n; i++) {
+    for (int j = W; j >= w[i]; j--) {
+        dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
+    }
+}`,
+        explanation: '常见DP转移实现。',
+      },
+    ],
+    keyPoints: ['明确转移来源', '注意转移顺序'],
+    commonMistakes: ['转移方向错误', '边界处理'],
+    tips: ['画出状态转移图', '从简单例子验证'],
+    relatedProblems: [72, 73],
+  },
+
+  // Day 41: 线性DP
+  'lis-optim': {
+    id: 'lis-optim',
+    title: 'LIS优化',
+    content: `## LIS的O(n log n)优化
+
+使用二分查找优化LIS。
+
+### 思路
+
+维护一个数组d，d[i]表示长度为i的LIS的最小结尾元素。
+
+### 实现
+
+\`\`\`cpp
+vector<int> d;
+
+for (int i = 0; i < n; i++) {
+    int pos = lower_bound(d.begin(), d.end(), a[i]) - d.begin();
+    if (pos == d.size()) {
+        d.push_back(a[i]);
+    } else {
+        d[pos] = a[i];
+    }
+}
+
+return d.size();
+\`\`\`
+
+### 变形
+
+- 最长不下降：upper_bound
+- 最长下降：取负或改变比较`,
+    codeExamples: [
+      {
+        title: 'LIS优化版',
+        code: `int LIS(vector<int>& a) {
+    vector<int> d;
+    for (int x : a) {
+        auto it = lower_bound(d.begin(), d.end(), x);
+        if (it == d.end()) {
+            d.push_back(x);
+        } else {
+            *it = x;
+        }
+    }
+    return d.size();
+}`,
+        explanation: 'O(n log n)的LIS。',
+      },
+    ],
+    keyPoints: ['理解d数组的含义', '掌握二分查找'],
+    commonMistakes: ['lower/upper_bound混淆', 'd数组含义理解错误'],
+    tips: ['d数组不是LIS本身', '只能求长度'],
+    relatedProblems: [73, 74],
+  },
+
+  // Day 42: 背包问题
+  'knapsack-intro': {
+    id: 'knapsack-intro',
+    title: '背包问题概念',
+    content: `## 背包问题
+
+给定容量为W的背包和n个物品，每个物品有重量w和价值v，求最大价值。
+
+### 问题分类
+
+| 类型 | 特点 |
+|------|------|
+| 01背包 | 每个物品最多选1个 |
+| 完全背包 | 每个物品可选无限个 |
+| 多重背包 | 每个物品可选有限个 |
+
+### 状态定义
+
+\`\`\`cpp
+dp[i][j] = 前i个物品，容量为j时的最大价值
+\`\`\``,
+    codeExamples: [
+      {
+        title: '背包问题输入',
+        code: `int n, W;
+cin >> n >> W;
+
+int w[105], v[105];
+for (int i = 1; i <= n; i++) {
+    cin >> w[i] >> v[i];
+}
+
+// 求最大价值
+// dp[i][j] = 前i个物品容量j的最大价值`,
+        explanation: '背包问题的基本输入。',
+      },
+    ],
+    keyPoints: ['理解问题模型', '区分不同类型'],
+    commonMistakes: ['类型混淆', '状态定义错误'],
+    tips: ['背包是经典DP模型', '掌握后可以举一反三'],
+    relatedProblems: [75, 76],
+  },
+
+  '01-space': {
+    id: '01-space',
+    title: '空间优化',
+    content: `## 背包问题空间优化
+
+可以将二维dp优化为一维。
+
+### 原理
+
+dp[i][j]只依赖于dp[i-1][...]，可以用滚动数组。
+
+### 01背包
+
+必须**逆序**枚举容量：
+
+\`\`\`cpp
+for (int i = 1; i <= n; i++) {
+    for (int j = W; j >= w[i]; j--) {
+        dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
+    }
+}
+\`\`\`
+
+### 为什么逆序
+
+保证每个物品只选一次。正序会重复选。`,
+    codeExamples: [
+      {
+        title: '01背包空间优化',
+        code: `int dp[10005];  // 一维数组
+
+for (int i = 1; i <= n; i++) {
+    for (int j = W; j >= w[i]; j--) {
+        dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+    }
+}
+
+cout << dp[W] << endl;`,
+        explanation: '一维01背包。',
+      },
+    ],
+    keyPoints: ['理解为什么逆序', '掌握一维优化'],
+    commonMistakes: ['顺序错误', '容量范围错误'],
+    tips: ['画图理解转移过程', '完全背包是正序'],
+    relatedProblems: [75, 76],
+  },
+
+  'multiple-knapsack': {
+    id: 'multiple-knapsack',
+    title: '多重背包',
+    content: `## 多重背包
+
+每个物品有数量限制，可选有限个。
+
+### 朴素解法
+
+把每个物品展开成多个01背包物品：
+
+\`\`\`cpp
+for (int i = 1; i <= n; i++) {
+    for (int k = 1; k <= cnt[i]; k++) {
+        for (int j = W; j >= w[i]; j--) {
+            dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
+        }
+    }
+}
+\`\`\`
+
+### 二进制优化
+
+将数量拆分成1,2,4,8,...的形式，O(n*W*log(cnt))。`,
+    codeExamples: [
+      {
+        title: '多重背包朴素版',
+        code: `int dp[10005];
+
+for (int i = 1; i <= n; i++) {
+    for (int k = 1; k <= cnt[i]; k++) {
+        for (int j = W; j >= w[i]; j--) {
+            dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+        }
+    }
+}`,
+        explanation: '多重背包基础实现。',
+      },
+    ],
+    keyPoints: ['理解与01背包的关系', '知道二进制优化'],
+    commonMistakes: ['数量处理错误', '忘记逆序'],
+    tips: ['可以用二进制优化', '单调队列优化更优'],
+    relatedProblems: [77, 78],
+  },
+
+  // Day 44: 区间DP
+  'interval-order': {
+    id: 'interval-order',
+    title: '枚举顺序',
+    content: `## 区间DP枚举顺序
+
+区间DP必须按正确的顺序枚举。
+
+### 原则
+
+小区间先算，大区间后算。
+
+### 三种枚举顺序
+
+1. **按区间长度**
+\`\`\`cpp
+for (int len = 2; len <= n; len++) {
+    for (int i = 1; i + len - 1 <= n; i++) {
+        int j = i + len - 1;
+        // 计算dp[i][j]
+    }
+}
+\`\`\`
+
+2. **倒序枚举左端点**
+\`\`\`cpp
+for (int i = n; i >= 1; i--) {
+    for (int j = i + 1; j <= n; j++) {
+        // 计算dp[i][j]
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '区间DP模板',
+        code: `// 石子合并
+for (int len = 2; len <= n; len++) {
+    for (int i = 1; i + len - 1 <= n; i++) {
+        int j = i + len - 1;
+        dp[i][j] = INT_MAX;
+        for (int k = i; k < j; k++) {
+            dp[i][j] = min(dp[i][j], 
+                dp[i][k] + dp[k+1][j] + sum[j] - sum[i-1]);
+        }
+    }
+}`,
+        explanation: '按长度枚举的区间DP。',
+      },
+    ],
+    keyPoints: ['理解为什么要按长度枚举', '保证子问题先算'],
+    commonMistakes: ['枚举顺序错误', '边界处理'],
+    tips: ['画出区间表格帮助理解', 'len从2开始'],
+    relatedProblems: [79, 80],
+  },
+
+  'interval-examples': {
+    id: 'interval-examples',
+    title: '区间DP经典问题',
+    content: `## 区间DP经典问题
+
+### 石子合并
+
+合并相邻石子堆，求最小代价。
+
+### 矩阵链乘
+
+计算矩阵乘法的最小次数。
+
+### 回文串
+
+将字符串变成回文串的最小代价。
+
+### 多边形三角剖分
+
+将多边形分成三角形的最小代价。`,
+    codeExamples: [
+      {
+        title: '石子合并',
+        code: `int n, a[105], sum[105], dp[105][105];
+
+int main() {
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+        sum[i] = sum[i-1] + a[i];
+    }
+    
+    memset(dp, 0x3f, sizeof(dp));
+    for (int i = 1; i <= n; i++) dp[i][i] = 0;
+    
+    for (int len = 2; len <= n; len++) {
+        for (int i = 1; i + len - 1 <= n; i++) {
+            int j = i + len - 1;
+            for (int k = i; k < j; k++) {
+                dp[i][j] = min(dp[i][j], 
+                    dp[i][k] + dp[k+1][j] + sum[j] - sum[i-1]);
+            }
+        }
+    }
+    
+    cout << dp[1][n] << endl;
+    return 0;
+}`,
+        explanation: '石子合并问题。',
+      },
+    ],
+    keyPoints: ['掌握标准模板', '学会套用'],
+    commonMistakes: ['初始化错误', '边界条件'],
+    tips: ['区间DP有很多变形', '注意题目条件'],
+    relatedProblems: [79, 80],
+  },
+
+  // Day 45: 树和图基础
+  'graph-store': {
+    id: 'graph-store',
+    title: '图的存储',
+    content: `## 图的存储方式
+
+### 邻接矩阵
+
+\`\`\`cpp
+int g[105][105];  // g[u][v] = 1 表示有边
+\`\`\`
+
+- 优点：实现简单
+- 缺点：空间O(n²)，不适合稀疏图
+
+### 邻接表
+
+\`\`\`cpp
+vector<int> adj[10005];  // adj[u]存储u的所有邻居
+adj[u].push_back(v);
+\`\`\`
+
+- 优点：空间O(n+m)
+- 缺点：判断两点是否有边需要遍历
+
+### 链式前向星
+
+竞赛中常用的存储方式。`,
+    codeExamples: [
+      {
+        title: '邻接表存图',
+        code: `int n, m;
+vector<pair<int,int>> adj[10005];  // (邻居, 边权)
+
+void addEdge(int u, int v, int w) {
+    adj[u].push_back({v, w});
+    adj[v].push_back({u, w});  // 无向图
+}
+
+// 遍历u的所有邻居
+for (auto [v, w] : adj[u]) {
+    // 处理边(u, v)
+}`,
+        explanation: '邻接表存储和遍历。',
+      },
+    ],
+    keyPoints: ['掌握邻接表', '了解邻接矩阵'],
+    commonMistakes: ['无向图忘记加两条边', '数组开小'],
+    tips: ['竞赛中多用邻接表', '注意边数开两倍'],
+    relatedProblems: [81, 82],
+  },
+
+  // Day 46: 树的遍历
+  'tree-dfs': {
+    id: 'tree-dfs',
+    title: '树的DFS',
+    content: `## 树的DFS遍历
+
+### 基本框架
+
+\`\`\`cpp
+void dfs(int u, int parent) {
+    for (int v : adj[u]) {
+        if (v != parent) {
+            dfs(v, u);
+        }
+    }
+}
+\`\`\`
+
+### 应用
+
+1. 求子树大小
+2. 求树的高度
+3. 求树的重心`,
+    codeExamples: [
+      {
+        title: '求子树大小',
+        code: `int sz[10005];
+
+void dfs(int u, int parent) {
+    sz[u] = 1;
+    for (int v : adj[u]) {
+        if (v != parent) {
+            dfs(v, u);
+            sz[u] += sz[v];
+        }
+    }
+}`,
+        explanation: 'DFS求子树大小。',
+      },
+    ],
+    keyPoints: ['用parent避免回走', '递归处理子树'],
+    commonMistakes: ['忘记判断parent', '无限递归'],
+    tips: ['可以传入parent参数', '也可以用vis数组'],
+    relatedProblems: [82, 83],
+  },
+
+  'tree-bfs': {
+    id: 'tree-bfs',
+    title: '树的BFS',
+    content: `## 树的BFS遍历
+
+BFS可以按层次遍历树。
+
+### 应用
+
+1. 层次遍历
+2. 求树的深度
+3. 求两点间距离`,
+    codeExamples: [
+      {
+        title: 'BFS求树的高度',
+        code: `int depth[10005];
+
+int bfs(int root) {
+    queue<int> q;
+    q.push(root);
+    depth[root] = 1;
+    int maxDepth = 1;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        
+        for (int v : adj[u]) {
+            if (depth[v] == 0) {
+                depth[v] = depth[u] + 1;
+                maxDepth = max(maxDepth, depth[v]);
+                q.push(v);
+            }
+        }
+    }
+    
+    return maxDepth;
+}`,
+        explanation: 'BFS求树高度。',
+      },
+    ],
+    keyPoints: ['BFS天然层次遍历', '记录深度'],
+    commonMistakes: ['忘记记录深度', '起点处理'],
+    tips: ['可以同时求最远点', '两次BFS求直径'],
+    relatedProblems: [82, 83],
+  },
+
+  'tree-diameter': {
+    id: 'tree-diameter',
+    title: '树的直径',
+    content: `## 树的直径
+
+树上最长的路径叫直径。
+
+### 求法
+
+1. 从任意点u出发，BFS/DFS找最远点v
+2. 从v出发，BFS/DFS找最远点w
+3. v到w就是直径
+
+### 证明
+
+直径的两个端点一定是最远点。`,
+    codeExamples: [
+      {
+        title: '求树的直径',
+        code: `pair<int,int> bfs_farthest(int start) {
+    memset(dist, -1, sizeof(dist));
+    queue<int> q;
+    q.push(start);
+    dist[start] = 0;
+    int farthest = start, maxDist = 0;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        for (int v : adj[u]) {
+            if (dist[v] == -1) {
+                dist[v] = dist[u] + 1;
+                if (dist[v] > maxDist) {
+                    maxDist = dist[v];
+                    farthest = v;
+                }
+                q.push(v);
+            }
+        }
+    }
+    return {farthest, maxDist};
+}
+
+int getDiameter() {
+    auto [v, _] = bfs_farthest(1);  // 第一次BFS
+    auto [w, d] = bfs_farthest(v);  // 第二次BFS
+    return d;  // 直径长度
+}`,
+        explanation: '两次BFS求直径。',
+      },
+    ],
+    keyPoints: ['两次BFS求直径', '记住这个方法'],
+    commonMistakes: ['只做一次BFS', '起点选择'],
+    tips: ['直径可能有多条', '直径的中点是重心候选'],
+    relatedProblems: [82, 83],
+  },
+
+  // Day 47: 图的遍历
+  'graph-dfs': {
+    id: 'graph-dfs',
+    title: '图的DFS',
+    content: `## 图的DFS遍历
+
+与树的DFS类似，但需要标记已访问的节点。
+
+### 基本框架
+
+\`\`\`cpp
+bool visited[10005];
+
+void dfs(int u) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            dfs(v);
+        }
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '图的DFS遍历',
+        code: `bool visited[10005];
+vector<int> adj[10005];
+
+void dfs(int u) {
+    visited[u] = true;
+    cout << u << " ";
+    
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            dfs(v);
+        }
+    }
+}`,
+        explanation: '图的DFS遍历。',
+      },
+    ],
+    keyPoints: ['必须标记已访问', '防止重复访问'],
+    commonMistakes: ['忘记标记', '导致无限循环'],
+    tips: ['DFS可以判断连通性', '可以用于拓扑排序'],
+    relatedProblems: [84, 85],
+  },
+
+  'graph-bfs': {
+    id: 'graph-bfs',
+    title: '图的BFS',
+    content: `## 图的BFS遍历
+
+按层次遍历图，常用于求最短路径。`,
+    codeExamples: [
+      {
+        title: '图的BFS遍历',
+        code: `bool visited[10005];
+vector<int> adj[10005];
+
+void bfs(int start) {
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        cout << u << " ";
+        
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                visited[v] = true;
+                q.push(v);
+            }
+        }
+    }
+}`,
+        explanation: '图的BFS遍历。',
+      },
+    ],
+    keyPoints: ['入队时标记', '避免重复入队'],
+    commonMistakes: ['出队时标记', '导致重复入队'],
+    tips: ['BFS适合求最短路', '可以分层处理'],
+    relatedProblems: [84, 85],
+  },
+
+  'connected': {
+    id: 'connected',
+    title: '连通分量',
+    content: `## 连通分量
+
+图中的极大连通子图。
+
+### 求法
+
+用DFS/BFS遍历，每次遍历一个连通分量。
+
+\`\`\`cpp
+int cnt = 0;
+for (int i = 1; i <= n; i++) {
+    if (!visited[i]) {
+        cnt++;
+        dfs(i);
+    }
+}
+\`\`\`
+
+### 应用
+
+- 判断图是否连通
+- 统计连通分量个数
+- 处理各连通分量`,
+    codeExamples: [
+      {
+        title: '统计连通分量',
+        code: `bool visited[10005];
+vector<int> adj[10005];
+
+void dfs(int u) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (!visited[v]) dfs(v);
+    }
+}
+
+int countComponents(int n) {
+    int cnt = 0;
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            cnt++;
+            dfs(i);
+        }
+    }
+    return cnt;
+}`,
+        explanation: '统计连通分量个数。',
+      },
+    ],
+    keyPoints: ['每个连通分量做一次DFS', '统计遍历次数'],
+    commonMistakes: ['忘记遍历所有节点', '孤立点也要计数'],
+    tips: ['连通分量个数 = DFS次数', '可以用并查集'],
+    relatedProblems: [84, 89],
+  },
+
+  // Day 48: 最短路
+  'dijkstra-impl': {
+    id: 'dijkstra-impl',
+    title: 'Dijkstra实现',
+    content: `## Dijkstra算法实现
+
+### 基本步骤
+
+1. 初始化距离数组，起点为0，其他为∞
+2. 选择未访问的距离最小的点
+3. 更新其邻居的距离
+4. 重复直到所有点访问
+
+### 朴素实现 O(n²)
+
+\`\`\`cpp
+for (int i = 1; i <= n; i++) {
+    int u = -1, minDist = INT_MAX;
+    for (int j = 1; j <= n; j++) {
+        if (!visited[j] && dist[j] < minDist) {
+            minDist = dist[j];
+            u = j;
+        }
+    }
+    if (u == -1) break;
+    visited[u] = true;
+    for (auto [v, w] : adj[u]) {
+        dist[v] = min(dist[v], dist[u] + w);
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: 'Dijkstra朴素版',
+        code: `int dist[10005];
+bool visited[10005];
+vector<pair<int,int>> adj[10005];  // (邻居, 边权)
+
+void dijkstra(int start) {
+    memset(dist, 0x3f, sizeof(dist));
+    memset(visited, false, sizeof(visited));
+    dist[start] = 0;
+    
+    for (int i = 1; i <= n; i++) {
+        int u = -1, minDist = INT_MAX;
+        for (int j = 1; j <= n; j++) {
+            if (!visited[j] && dist[j] < minDist) {
+                minDist = dist[j];
+                u = j;
+            }
+        }
+        if (u == -1) break;
+        visited[u] = true;
+        for (auto [v, w] : adj[u]) {
+            dist[v] = min(dist[v], dist[u] + w);
+        }
+    }
+}`,
+        explanation: 'Dijkstra朴素实现。',
+      },
+    ],
+    keyPoints: ['每次选最小距离点', '更新邻居距离'],
+    commonMistakes: ['忘记标记已访问', '初始化错误'],
+    tips: ['只适用于非负权图', '可以用堆优化'],
+    relatedProblems: [86, 87],
+  },
+
+  'dijkstra-heap': {
+    id: 'dijkstra-heap',
+    title: 'Dijkstra堆优化',
+    content: `## Dijkstra堆优化
+
+使用优先队列优化，O((n+m)log n)。
+
+### 实现
+
+\`\`\`cpp
+priority_queue<pair<int,int>, vector<pair<int,int>>, 
+               greater<pair<int,int>>> pq;
+// (距离, 节点)
+
+pq.push({0, start});
+while (!pq.empty()) {
+    auto [d, u] = pq.top();
+    pq.pop();
+    if (d > dist[u]) continue;  // 已更新过
+    for (auto [v, w] : adj[u]) {
+        if (dist[u] + w < dist[v]) {
+            dist[v] = dist[u] + w;
+            pq.push({dist[v], v});
+        }
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: 'Dijkstra堆优化',
+        code: `int dist[10005];
+vector<pair<int,int>> adj[10005];
+
+void dijkstra(int start) {
+    memset(dist, 0x3f, sizeof(dist));
+    dist[start] = 0;
+    
+    priority_queue<pair<int,int>, vector<pair<int,int>>, 
+                   greater<pair<int,int>>> pq;
+    pq.push({0, start});
+    
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+        
+        if (d > dist[u]) continue;
+        
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+}`,
+        explanation: '堆优化的Dijkstra。',
+      },
+    ],
+    keyPoints: ['使用小根堆', '判断是否已更新'],
+    commonMistakes: ['忘记判断d > dist[u]', '堆类型错误'],
+    tips: ['greater<pair<int,int>>是小根堆', '这是竞赛常用写法'],
+    relatedProblems: [86, 87],
+  },
+
+  // Day 49: 最短路（二）
+  'spfa': {
+    id: 'spfa',
+    title: 'SPFA算法',
+    content: `## SPFA算法
+
+SPFA是Bellman-Ford的队列优化，可以处理负权边。
+
+### 实现
+
+\`\`\`cpp
+queue<int> q;
+q.push(start);
+inQueue[start] = true;
+
+while (!q.empty()) {
+    int u = q.front();
+    q.pop();
+    inQueue[u] = false;
+    
+    for (auto [v, w] : adj[u]) {
+        if (dist[u] + w < dist[v]) {
+            dist[v] = dist[u] + w;
+            if (!inQueue[v]) {
+                q.push(v);
+                inQueue[v] = true;
+            }
+        }
+    }
+}
+\`\`\`
+
+### 判断负环
+
+如果一个点入队超过n次，存在负环。`,
+    codeExamples: [
+      {
+        title: 'SPFA模板',
+        code: `int dist[10005];
+bool inQueue[10005];
+vector<pair<int,int>> adj[10005];
+
+void spfa(int start) {
+    memset(dist, 0x3f, sizeof(dist));
+    dist[start] = 0;
+    
+    queue<int> q;
+    q.push(start);
+    inQueue[start] = true;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        inQueue[u] = false;
+        
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                if (!inQueue[v]) {
+                    q.push(v);
+                    inQueue[v] = true;
+                }
+            }
+        }
+    }
+}`,
+        explanation: 'SPFA算法。',
+      },
+    ],
+    keyPoints: ['可以处理负权', '判断负环'],
+    commonMistakes: ['忘记inQueue数组', '负环判断条件'],
+    tips: ['SPFA可能退化', '最好用Dijkstra'],
+    relatedProblems: [87, 88],
+  },
+
+  'negative': {
+    id: 'negative',
+    title: '负权边处理',
+    content: `## 负权边处理
+
+### Dijkstra vs SPFA vs Floyd
+
+| 算法 | 负权边 | 复杂度 |
+|------|--------|--------|
+| Dijkstra | 不支持 | O(n²)或O(m log n) |
+| SPFA | 支持 | O(km)，可能退化 |
+| Floyd | 支持 | O(n³) |
+
+### 负环
+
+存在负权环时，可以无限绕圈使距离趋向负无穷。
+
+### 判断方法
+
+- SPFA：入队次数超过n
+- Bellman-Ford：第n次还能松弛`,
+    codeExamples: [
+      {
+        title: '判断负环',
+        code: `int cnt[10005];  // 入队次数
+
+bool hasNegativeCycle(int start) {
+    memset(dist, 0x3f, sizeof(dist));
+    memset(cnt, 0, sizeof(cnt));
+    
+    queue<int> q;
+    q.push(start);
+    dist[start] = 0;
+    cnt[start] = 1;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                cnt[v] = cnt[u] + 1;
+                if (cnt[v] > n) return true;  // 负环
+                q.push(v);
+            }
+        }
+    }
+    return false;
+}`,
+        explanation: '判断图中是否有负环。',
+      },
+    ],
+    keyPoints: ['理解各算法适用场景', '会判断负环'],
+    commonMistakes: ['Dijkstra用于负权图', '负环判断错误'],
+    tips: ['大多数题目用Dijkstra', 'SPFA用于负权或负环'],
+    relatedProblems: [87, 88],
+  },
+
+  // Day 50: 并查集
+  'dsu-path': {
+    id: 'dsu-path',
+    title: '路径压缩',
+    content: `## 路径压缩
+
+并查集的核心优化。
+
+### 原理
+
+查找时，将路径上所有节点直接连到根节点。
+
+### 实现
+
+\`\`\`cpp
+int find(int x) {
+    if (parent[x] != x) {
+        parent[x] = find(parent[x]);  // 路径压缩
+    }
+    return parent[x];
+}
+\`\`\`
+
+### 效果
+
+将查找复杂度从O(n)降到近似O(1)。`,
+    codeExamples: [
+      {
+        title: '路径压缩并查集',
+        code: `int parent[10005];
+
+void init(int n) {
+    for (int i = 1; i <= n; i++) {
+        parent[i] = i;
+    }
+}
+
+int find(int x) {
+    if (parent[x] != x) {
+        parent[x] = find(parent[x]);
+    }
+    return parent[x];
+}
+
+void unite(int x, int y) {
+    int px = find(x);
+    int py = find(y);
+    if (px != py) {
+        parent[px] = py;
+    }
+}
+
+bool connected(int x, int y) {
+    return find(x) == find(y);
+}`,
+        explanation: '路径压缩并查集。',
+      },
+    ],
+    keyPoints: ['递归实现路径压缩', '理解压缩效果'],
+    commonMistakes: ['忘记初始化', 'find写错'],
+    tips: ['路径压缩足够高效', '可以配合按秩合并'],
+    relatedProblems: [89, 90],
+  },
+
+  'dsu-rank': {
+    id: 'dsu-rank',
+    title: '按秩合并',
+    content: `## 按秩合并
+
+另一种并查集优化。
+
+### 原理
+
+合并时，将小树合并到大树下。
+
+### 实现
+
+\`\`\`cpp
+int parent[10005], rank_[10005];
+
+void unite(int x, int y) {
+    int px = find(x);
+    int py = find(y);
+    if (px == py) return;
+    
+    if (rank_[px] < rank_[py]) {
+        parent[px] = py;
+    } else if (rank_[px] > rank_[py]) {
+        parent[py] = px;
+    } else {
+        parent[px] = py;
+        rank_[py]++;
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '按秩合并并查集',
+        code: `int parent[10005], rnk[10005];
+
+void init(int n) {
+    for (int i = 1; i <= n; i++) {
+        parent[i] = i;
+        rnk[i] = 0;
+    }
+}
+
+int find(int x) {
+    if (parent[x] != x) {
+        parent[x] = find(parent[x]);
+    }
+    return parent[x];
+}
+
+void unite(int x, int y) {
+    int px = find(x), py = find(y);
+    if (px == py) return;
+    
+    if (rnk[px] < rnk[py]) swap(px, py);
+    parent[py] = px;
+    if (rnk[px] == rnk[py]) rnk[px]++;
+}`,
+        explanation: '按秩合并。',
+      },
+    ],
+    keyPoints: ['小的合并到大的', '可以和路径压缩配合'],
+    commonMistakes: ['rank关键字冲突', '合并逻辑错误'],
+    tips: ['路径压缩+按秩合并最优', '大多数情况路径压缩够了'],
+    relatedProblems: [89, 90],
+  },
+
+  // Day 51: 最小生成树
+  'kruskal': {
+    id: 'kruskal',
+    title: 'Kruskal算法',
+    content: `## Kruskal算法
+
+### 步骤
+
+1. 将所有边按权值排序
+2. 从小到大选边
+3. 如果边的两端不在同一连通分量，选中
+4. 直到选了n-1条边
+
+### 实现
+
+\`\`\`cpp
+struct Edge {
+    int u, v, w;
+    bool operator<(const Edge& e) const {
+        return w < e.w;
+    }
+};
+
+sort(edges.begin(), edges.end());
+for (auto& e : edges) {
+    if (find(e.u) != find(e.v)) {
+        unite(e.u, e.v);
+        total += e.w;
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: 'Kruskal模板',
+        code: `struct Edge {
+    int u, v, w;
+    bool operator<(const Edge& e) const {
+        return w < e.w;
+    }
+};
+
+int parent[10005];
+
+int find(int x) {
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
+}
+
+long long kruskal(int n, vector<Edge>& edges) {
+    for (int i = 1; i <= n; i++) parent[i] = i;
+    
+    sort(edges.begin(), edges.end());
+    long long total = 0;
+    int cnt = 0;
+    
+    for (auto& e : edges) {
+        int pu = find(e.u), pv = find(e.v);
+        if (pu != pv) {
+            parent[pu] = pv;
+            total += e.w;
+            cnt++;
+            if (cnt == n - 1) break;
+        }
+    }
+    
+    return cnt == n - 1 ? total : -1;  // -1表示不连通
+}`,
+        explanation: 'Kruskal求MST。',
+      },
+    ],
+    keyPoints: ['边排序+并查集', '选n-1条边'],
+    commonMistakes: ['忘记排序', '边数判断'],
+    tips: ['Kruskal适合稀疏图', '时间复杂度O(m log m)'],
+    relatedProblems: [91, 92],
+  },
+
+  'prim': {
+    id: 'prim',
+    title: 'Prim算法',
+    content: `## Prim算法
+
+### 步骤
+
+1. 从任意点开始
+2. 选择连接已选集合和未选集合的最小边
+3. 将新点加入集合
+4. 重复n-1次
+
+### 复杂度
+
+- 朴素：O(n²)
+- 堆优化：O(m log n)`,
+    codeExamples: [
+      {
+        title: 'Prim模板',
+        code: `int dist[10005];
+bool visited[10005];
+vector<pair<int,int>> adj[10005];
+
+long long prim(int n) {
+    memset(dist, 0x3f, sizeof(dist));
+    memset(visited, false, sizeof(visited));
+    dist[1] = 0;
+    
+    long long total = 0;
+    
+    for (int i = 1; i <= n; i++) {
+        int u = -1, minDist = INT_MAX;
+        for (int j = 1; j <= n; j++) {
+            if (!visited[j] && dist[j] < minDist) {
+                minDist = dist[j];
+                u = j;
+            }
+        }
+        
+        if (u == -1) return -1;  // 不连通
+        visited[u] = true;
+        total += dist[u];
+        
+        for (auto [v, w] : adj[u]) {
+            dist[v] = min(dist[v], w);
+        }
+    }
+    
+    return total;
+}`,
+        explanation: 'Prim求MST。',
+      },
+    ],
+    keyPoints: ['类似Dijkstra', '选最小连接边'],
+    commonMistakes: ['与Dijkstra混淆', 'dist更新方式不同'],
+    tips: ['Prim适合稠密图', 'dist存的是到集合的距离'],
+    relatedProblems: [91, 92],
+  },
+
+  // Day 52: DP进阶
+  'bitmask-intro': {
+    id: 'bitmask-intro',
+    title: '位运算基础',
+    content: `## 位运算基础
+
+### 常用操作
+
+\`\`\`cpp
+// 第i位是否为1
+(x >> i) & 1
+
+// 将第i位设为1
+x | (1 << i)
+
+// 将第i位设为0
+x & ~(1 << i)
+
+// 翻转第i位
+x ^ (1 << i)
+
+// 统计1的个数
+__builtin_popcount(x)
+
+// 最低位的1
+x & (-x)
+\`\`\``,
+    codeExamples: [
+      {
+        title: '位运算常用操作',
+        code: `int x = 13;  // 二进制: 1101
+
+// 检查第i位
+for (int i = 0; i < 32; i++) {
+    if ((x >> i) & 1) {
+        cout << "第" << i << "位是1" << endl;
+    }
+}
+
+// 枚举子集
+for (int sub = x; sub; sub = (sub - 1) & x) {
+    // sub是x的子集
+}
+
+// 统计1的个数
+int cnt = __builtin_popcount(x);`,
+        explanation: '位运算基本操作。',
+      },
+    ],
+    keyPoints: ['掌握基本位操作', '理解状态压缩'],
+    commonMistakes: ['优先级问题', '移位溢出'],
+    tips: ['多写多练', '注意运算符优先级'],
+    relatedProblems: [93, 94],
+  },
+
+  'bitmask-examples': {
+    id: 'bitmask-examples',
+    title: '状压DP经典问题',
+    content: `## 状压DP经典问题
+
+### 旅行商问题(TSP)
+
+访问所有城市的最短路径。
+
+### 棋盘问题
+
+在棋盘上放置棋子。
+
+### 集合问题
+
+集合的划分、覆盖等。`,
+    codeExamples: [
+      {
+        title: 'TSP状压DP',
+        code: `int n;
+int dist[20][20];
+int dp[1 << 16][16];
+
+int tsp() {
+    memset(dp, 0x3f, sizeof(dp));
+    
+    for (int i = 0; i < n; i++) {
+        dp[1 << i][i] = 0;
+    }
+    
+    for (int mask = 1; mask < (1 << n); mask++) {
+        for (int u = 0; u < n; u++) {
+            if (!(mask & (1 << u))) continue;
+            for (int v = 0; v < n; v++) {
+                if (mask & (1 << v)) continue;
+                int new_mask = mask | (1 << v);
+                dp[new_mask][v] = min(dp[new_mask][v], 
+                    dp[mask][u] + dist[u][v]);
+            }
+        }
+    }
+    
+    int full = (1 << n) - 1;
+    int ans = INT_MAX;
+    for (int i = 0; i < n; i++) {
+        ans = min(ans, dp[full][i]);
+    }
+    return ans;
+}`,
+        explanation: '状压DP解TSP。',
+      },
+    ],
+    keyPoints: ['状态用二进制表示', '枚举所有状态'],
+    commonMistakes: ['状态转移错误', '空间开不够'],
+    tips: ['状态空间是2^n', '注意n的范围'],
+    relatedProblems: [93, 94],
+  },
+
+  // Day 53: 记忆化搜索
+  'memo-intro': {
+    id: 'memo-intro',
+    title: '记忆化搜索概念',
+    content: `## 记忆化搜索
+
+记忆化搜索 = 递归 + 缓存
+
+### 原理
+
+将已经计算过的结果存储起来，避免重复计算。
+
+### 实现
+
+\`\`\`cpp
+int memo[MAXN];
+
+int solve(int x) {
+    if (x == 0) return 0;
+    if (memo[x] != -1) return memo[x];  // 已计算
+    
+    int result = /* 计算过程 */;
+    memo[x] = result;  // 存储
+    return result;
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '斐波那契记忆化',
+        code: `long long memo[100];
+
+long long fib(int n) {
+    if (n <= 1) return n;
+    if (memo[n] != -1) return memo[n];
+    return memo[n] = fib(n - 1) + fib(n - 2);
+}
+
+int main() {
+    memset(memo, -1, sizeof(memo));
+    cout << fib(50) << endl;
+    return 0;
+}`,
+        explanation: '记忆化搜索求斐波那契。',
+      },
+    ],
+    keyPoints: ['用数组缓存结果', '避免重复计算'],
+    commonMistakes: ['忘记初始化memo', 'memo判断条件错误'],
+    tips: ['记忆化搜索与DP等价', '写起来更直观'],
+    relatedProblems: [95, 96],
+  },
+
+  'memo-vs-dp': {
+    id: 'memo-vs-dp',
+    title: '记忆化与递推',
+    content: `## 记忆化搜索 vs 递推DP
+
+### 对比
+
+| 方面 | 记忆化搜索 | 递推DP |
+|------|-----------|--------|
+| 实现 | 递归 | 循环 |
+| 思维 | 从问题到子问题 | 从子问题到问题 |
+| 效率 | 略慢(递归开销) | 略快 |
+| 空间 | 可能需要更多 | 通常更省 |
+
+### 选择
+
+- 递推容易写循环时选递推
+- 状态转移复杂时选记忆化
+- 拓扑顺序不明确时选记忆化`,
+    codeExamples: [
+      {
+        title: '两种实现对比',
+        code: `// 记忆化搜索
+int memo[10005];
+int dfs(int n) {
+    if (n == 0) return 0;
+    if (memo[n] != -1) return memo[n];
+    return memo[n] = max(dfs(n-1), dfs(n-2) + a[n]);
+}
+
+// 递推DP
+int dp[10005];
+dp[0] = 0;
+dp[1] = a[1];
+for (int i = 2; i <= n; i++) {
+    dp[i] = max(dp[i-1], dp[i-2] + a[i]);
+}`,
+        explanation: '记忆化与递推对比。',
+      },
+    ],
+    keyPoints: ['理解两种方式等价', '根据情况选择'],
+    commonMistakes: ['混淆两种方式', '选择不当'],
+    tips: ['两种方式都要掌握', '各有适用场景'],
+    relatedProblems: [95, 96],
+  },
+
+  'memo-examples': {
+    id: 'memo-examples',
+    title: '记忆化经典问题',
+    content: `## 记忆化搜索经典问题
+
+### 滑雪问题
+
+在矩阵中找最长下降路径。
+
+### 数字三角形
+
+从顶到底的最大路径和。
+
+### 区间DP
+
+很多区间DP可以用记忆化实现。`,
+    codeExamples: [
+      {
+        title: '滑雪问题',
+        code: `int h[105][105];
+int dp[105][105];
+int n, m;
+int dx[] = {-1, 0, 1, 0};
+int dy[] = {0, 1, 0, -1};
+
+int solve(int x, int y) {
+    if (dp[x][y] != 0) return dp[x][y];
+    
+    int best = 1;
+    for (int i = 0; i < 4; i++) {
+        int nx = x + dx[i], ny = y + dy[i];
+        if (nx >= 0 && nx < n && ny >= 0 && ny < m
+            && h[nx][ny] < h[x][y]) {
+            best = max(best, solve(nx, ny) + 1);
+        }
+    }
+    
+    return dp[x][y] = best;
+}`,
+        explanation: '记忆化搜索解滑雪问题。',
+      },
+    ],
+    keyPoints: ['状态是坐标', '四个方向递归'],
+    commonMistakes: ['忘记边界检查', '记忆化数组初始化'],
+    tips: ['滑雪问题是经典记忆化题', '注意避免无限递归'],
+    relatedProblems: [95, 96],
+  },
+
+  // Day 54: 字符串匹配
+  'kmp-intro': {
+    id: 'kmp-intro',
+    title: 'KMP概念',
+    content: `## KMP算法
+
+KMP用于字符串匹配，时间复杂度O(n+m)。
+
+### 核心思想
+
+利用已经匹配的信息，跳过不必要的比较。
+
+### 失败函数
+
+next[i] = 模式串[0..i]的最长相等前后缀长度`,
+    codeExamples: [
+      {
+        title: 'KMP匹配',
+        code: `// 求next数组
+vector<int> getNext(string p) {
+    int m = p.size();
+    vector<int> next(m);
+    for (int i = 1, j = 0; i < m; i++) {
+        while (j > 0 && p[i] != p[j]) j = next[j-1];
+        if (p[i] == p[j]) j++;
+        next[i] = j;
+    }
+    return next;
+}
+
+// KMP匹配
+vector<int> kmp(string s, string p) {
+    auto next = getNext(p);
+    vector<int> matches;
+    for (int i = 0, j = 0; i < s.size(); i++) {
+        while (j > 0 && s[i] != p[j]) j = next[j-1];
+        if (s[i] == p[j]) j++;
+        if (j == p.size()) {
+            matches.push_back(i - p.size() + 1);
+            j = next[j-1];
+        }
+    }
+    return matches;
+}`,
+        explanation: 'KMP字符串匹配。',
+      },
+    ],
+    keyPoints: ['理解next数组', '掌握匹配过程'],
+    commonMistakes: ['next数组计算错误', '边界处理'],
+    tips: ['多画图理解', 'next数组是关键'],
+    relatedProblems: [97, 98],
+  },
+
+  'kmp-next': {
+    id: 'kmp-next',
+    title: 'next数组',
+    content: `## next数组详解
+
+### 定义
+
+next[i] = p[0..i]的最长相等真前后缀长度
+
+### 示例
+
+模式串 "ababac"
+
+| i | p[0..i] | next[i] |
+|---|---------|---------|
+| 0 | a | 0 |
+| 1 | ab | 0 |
+| 2 | aba | 1 |
+| 3 | abab | 2 |
+| 4 | ababa | 3 |
+| 5 | ababac | 0 |`,
+    codeExamples: [
+      {
+        title: '求next数组',
+        code: `vector<int> getNext(string p) {
+    int m = p.size();
+    vector<int> next(m, 0);
+    
+    for (int i = 1, j = 0; i < m; i++) {
+        // 不匹配时回退
+        while (j > 0 && p[i] != p[j]) {
+            j = next[j - 1];
+        }
+        // 匹配时扩展
+        if (p[i] == p[j]) {
+            j++;
+        }
+        next[i] = j;
+    }
+    
+    return next;
+}`,
+        explanation: '计算next数组。',
+      },
+    ],
+    keyPoints: ['理解next数组含义', '掌握计算方法'],
+    commonMistakes: ['j回退位置错误', '边界情况'],
+    tips: ['next数组本质是自匹配', '可以用于其他问题'],
+    relatedProblems: [97, 98],
+  },
+
+  'kmp-match': {
+    id: 'kmp-match',
+    title: 'KMP匹配过程',
+    content: `## KMP匹配过程
+
+### 步骤
+
+1. 预处理模式串，求next数组
+2. 匹配时，失配则根据next跳转
+3. 匹配成功，继续寻找下一个匹配
+
+### 优化
+
+KMP可以用于：
+- 找所有匹配位置
+- 统计匹配次数
+- 求循环节`,
+    codeExamples: [
+      {
+        title: 'KMP完整实现',
+        code: `vector<int> kmpSearch(string text, string pattern) {
+    int n = text.size(), m = pattern.size();
+    if (m == 0) return {};
+    
+    // 求next数组
+    vector<int> next(m);
+    for (int i = 1, j = 0; i < m; i++) {
+        while (j > 0 && pattern[i] != pattern[j]) {
+            j = next[j - 1];
+        }
+        if (pattern[i] == pattern[j]) j++;
+        next[i] = j;
+    }
+    
+    // 匹配
+    vector<int> result;
+    for (int i = 0, j = 0; i < n; i++) {
+        while (j > 0 && text[i] != pattern[j]) {
+            j = next[j - 1];
+        }
+        if (text[i] == pattern[j]) j++;
+        if (j == m) {
+            result.push_back(i - m + 1);
+            j = next[j - 1];
+        }
+    }
+    
+    return result;
+}`,
+        explanation: 'KMP完整匹配过程。',
+      },
+    ],
+    keyPoints: ['失配时用next跳转', '匹配成功后继续'],
+    commonMistakes: ['跳转位置错误', '忘记继续匹配'],
+    tips: ['KMP是重要算法', '很多字符串问题用到'],
+    relatedProblems: [97, 98],
+  },
+
+  // Day 55: 哈希
+  'hash-intro': {
+    id: 'hash-intro',
+    title: '哈希概念',
+    content: `## 哈希
+
+哈希将任意长度的数据映射到固定长度。
+
+### 常用哈希函数
+
+\`\`\`cpp
+// 取模哈希
+hash(x) = x % MOD
+
+// 字符串哈希
+hash(s) = (s[0] * p^(n-1) + s[1] * p^(n-2) + ... + s[n-1]) % MOD
+\`\`\`
+
+### 冲突
+
+不同数据可能得到相同哈希值。`,
+    codeExamples: [
+      {
+        title: '简单哈希',
+        code: `const int MOD = 1e9 + 7;
+
+long long hashString(string s) {
+    long long h = 0;
+    for (char c : s) {
+        h = (h * 31 + c) % MOD;
+    }
+    return h;
+}`,
+        explanation: '字符串哈希。',
+      },
+    ],
+    keyPoints: ['理解哈希映射', '知道冲突问题'],
+    commonMistakes: ['哈希函数选择不当', '冲突处理'],
+    tips: ['选择好的哈希函数', '双哈希减少冲突'],
+    relatedProblems: [99, 100],
+  },
+
+  'str-hash': {
+    id: 'str-hash',
+    title: '字符串哈希',
+    content: `## 字符串哈希
+
+### 多项式哈希
+
+\`\`\`cpp
+hash(s) = s[0] * p^(n-1) + s[1] * p^(n-2) + ... + s[n-1]
+\`\`\`
+
+### 前缀哈希
+
+预处理前缀哈希，可以O(1)求子串哈希：
+
+\`\`\`cpp
+hash(s[l..r]) = (h[r] - h[l-1] * p^(r-l+1)) % MOD
+\`\`\``,
+    codeExamples: [
+      {
+        title: '字符串哈希模板',
+        code: `const long long MOD = 1e9 + 7;
+const long long P = 31;
+
+long long h[100005], p[100005];
+
+void init(string s) {
+    int n = s.size();
+    p[0] = 1;
+    for (int i = 1; i <= n; i++) {
+        p[i] = p[i-1] * P % MOD;
+    }
+    h[0] = 0;
+    for (int i = 1; i <= n; i++) {
+        h[i] = (h[i-1] * P + s[i-1]) % MOD;
+    }
+}
+
+long long getHash(int l, int r) {
+    return (h[r] - h[l-1] * p[r-l+1] % MOD + MOD) % MOD;
+}`,
+        explanation: '字符串前缀哈希。',
+      },
+    ],
+    keyPoints: ['前缀哈希预处理', '子串哈希O(1)'],
+    commonMistakes: ['负数取模处理', 'p的幂次'],
+    tips: ['双哈希减少冲突', 'P选择质数'],
+    relatedProblems: [99, 100],
+  },
+
+  'hash-collision': {
+    id: 'hash-collision',
+    title: '哈希冲突',
+    content: `## 哈希冲突
+
+### 原因
+
+哈希值空间有限，不同数据可能映射到相同值。
+
+### 解决方法
+
+1. **双哈希**：使用两个不同的哈希函数
+2. **大质数**：选择大的质数作为模数
+3. **开放寻址**：冲突时寻找下一个空位
+
+### 双哈希
+
+\`\`\`cpp
+pair<long long, long long> hashPair(s) {
+    return {hash1(s), hash2(s)};
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '双哈希',
+        code: `const long long MOD1 = 1e9 + 7;
+const long long MOD2 = 1e9 + 9;
+const long long P = 31;
+
+pair<long long, long long> hashString(string s) {
+    long long h1 = 0, h2 = 0;
+    for (char c : s) {
+        h1 = (h1 * P + c) % MOD1;
+        h2 = (h2 * P + c) % MOD2;
+    }
+    return {h1, h2};
+}`,
+        explanation: '双哈希减少冲突。',
+      },
+    ],
+    keyPoints: ['理解冲突原因', '掌握解决方法'],
+    commonMistakes: ['忽略冲突', '单哈希被卡'],
+    tips: ['竞赛中常用双哈希', '选择不同的MOD'],
+    relatedProblems: [99, 100],
+  },
+
+  // Day 56: 高精度
+  'bigint-intro': {
+    id: 'bigint-intro',
+    title: '高精度概念',
+    content: `## 高精度
+
+当数字超出long long范围时，需要用数组存储。
+
+### 存储方式
+
+\`\`\`cpp
+// 低位在前，高位在后
+int a[10005];  // a[0]存个位
+\`\`\`
+
+### 基本操作
+
+- 高精度加法
+- 高精度减法
+- 高精度乘法
+- 高精度除法`,
+    codeExamples: [
+      {
+        title: '高精度存储',
+        code: `string s = "12345678901234567890";
+int a[10005] = {0};
+int len = s.size();
+
+// 字符串转高精度
+for (int i = 0; i < len; i++) {
+    a[i] = s[len - 1 - i] - '0';  // 低位在前
+}`,
+        explanation: '高精度数的存储。',
+      },
+    ],
+    keyPoints: ['低位在前存储', '用数组模拟'],
+    commonMistakes: ['存储方向错误', '进位处理'],
+    tips: ['熟练掌握加法和乘法', '减法注意借位'],
+    relatedProblems: [72, 101],
+  },
+
+  'bigint-add': {
+    id: 'bigint-add',
+    title: '高精度加法',
+    content: `## 高精度加法
+
+### 算法
+
+从低位到高位，逐位相加并处理进位。`,
+    codeExamples: [
+      {
+        title: '高精度加法',
+        code: `string add(string a, string b) {
+    // 确保a较长
+    if (a.size() < b.size()) swap(a, b);
+    
+    string result;
+    int carry = 0;
+    int i = a.size() - 1, j = b.size() - 1;
+    
+    while (i >= 0 || j >= 0 || carry) {
+        int sum = carry;
+        if (i >= 0) sum += a[i--] - '0';
+        if (j >= 0) sum += b[j--] - '0';
+        result = char(sum % 10 + '0') + result;
+        carry = sum / 10;
+    }
+    
+    return result;
+}`,
+        explanation: '高精度加法。',
+      },
+    ],
+    keyPoints: ['处理进位', '注意长度不同'],
+    commonMistakes: ['进位忘记', '顺序错误'],
+    tips: ['从低位开始加', '最后检查carry'],
+    relatedProblems: [72, 101],
+  },
+
+  'bigint-mul': {
+    id: 'bigint-mul',
+    title: '高精度乘法',
+    content: `## 高精度乘法
+
+### 算法
+
+模拟竖式乘法，用高精度数乘以普通整数。`,
+    codeExamples: [
+      {
+        title: '高精度乘法',
+        code: `string multiply(string a, int b) {
+    string result;
+    int carry = 0;
+    
+    for (int i = a.size() - 1; i >= 0; i--) {
+        int prod = (a[i] - '0') * b + carry;
+        result = char(prod % 10 + '0') + result;
+        carry = prod / 10;
+    }
+    
+    while (carry) {
+        result = char(carry % 10 + '0') + result;
+        carry /= 10;
+    }
+    
+    return result;
+}
+
+// 阶乘
+string factorial(int n) {
+    string result = "1";
+    for (int i = 2; i <= n; i++) {
+        result = multiply(result, i);
+    }
+    return result;
+}`,
+        explanation: '高精度乘法和阶乘。',
+      },
+    ],
+    keyPoints: ['处理进位', '乘完检查剩余carry'],
+    commonMistakes: ['进位处理错误', '结果顺序'],
+    tips: ['可以扩展为高精度*高精度', '注意效率'],
+    relatedProblems: [72, 101],
+  },
+
+  // Day 57-58: 线段树
+  'segtree-build': {
+    id: 'segtree-build',
+    title: '线段树建树',
+    content: `## 线段树建树
+
+### 结构
+
+线段树是一棵完全二叉树：
+- 根节点表示区间[1,n]
+- 每个节点表示一个区间
+- 左孩子表示左半区间，右孩子表示右半区间
+
+### 数组存储
+
+\`\`\`cpp
+tree[1] = 根节点
+tree[2*i] = 左孩子
+tree[2*i+1] = 右孩子
+\`\`\``,
+    codeExamples: [
+      {
+        title: '建树',
+        code: `int a[10005];
+int tree[40005];
+
+void build(int node, int l, int r) {
+    if (l == r) {
+        tree[node] = a[l];
+        return;
+    }
+    int mid = (l + r) / 2;
+    build(2 * node, l, mid);
+    build(2 * node + 1, mid + 1, r);
+    tree[node] = tree[2 * node] + tree[2 * node + 1];
+}
+
+// 调用
+build(1, 1, n);`,
+        explanation: '线段树建树。',
+      },
+    ],
+    keyPoints: ['递归建树', '理解节点编号'],
+    commonMistakes: ['节点编号错误', '边界处理'],
+    tips: ['数组开4倍大小', '注意下标从1开始'],
+    relatedProblems: [102, 103],
+  },
+
+  'segtree-query': {
+    id: 'segtree-query',
+    title: '区间查询',
+    content: `## 线段树区间查询
+
+### 思路
+
+从根节点开始，判断查询区间与当前节点区间的关系。
+
+### 情况
+
+1. 完全包含：直接返回节点值
+2. 完全不相交：返回0
+3. 部分相交：递归查询子节点`,
+    codeExamples: [
+      {
+        title: '区间查询',
+        code: `int query(int node, int l, int r, int ql, int qr) {
+    if (qr < l || r < ql) return 0;  // 不相交
+    if (ql <= l && r <= qr) return tree[node];  // 完全包含
+    
+    int mid = (l + r) / 2;
+    return query(2 * node, l, mid, ql, qr) +
+           query(2 * node + 1, mid + 1, r, ql, qr);
+}
+
+// 查询区间[ql, qr]的和
+int sum = query(1, 1, n, ql, qr);`,
+        explanation: '线段树区间查询。',
+      },
+    ],
+    keyPoints: ['理解三种情况', '递归处理'],
+    commonMistakes: ['边界条件错误', '区间判断'],
+    tips: ['时间复杂度O(log n)', '代码简洁'],
+    relatedProblems: [102, 103],
+  },
+
+  'segtree-update': {
+    id: 'segtree-update',
+    title: '区间修改',
+    content: `## 线段树区间修改
+
+### 单点修改
+
+找到叶子节点，更新后回溯更新父节点。
+
+### 区间修改
+
+需要懒标记优化。`,
+    codeExamples: [
+      {
+        title: '单点修改',
+        code: `void update(int node, int l, int r, int pos, int val) {
+    if (l == r) {
+        tree[node] = val;
+        return;
+    }
+    int mid = (l + r) / 2;
+    if (pos <= mid) {
+        update(2 * node, l, mid, pos, val);
+    } else {
+        update(2 * node + 1, mid + 1, r, pos, val);
+    }
+    tree[node] = tree[2 * node] + tree[2 * node + 1];
+}
+
+// 将位置pos的值改为val
+update(1, 1, n, pos, val);`,
+        explanation: '线段树单点修改。',
+      },
+    ],
+    keyPoints: ['找到叶子节点', '回溯更新'],
+    commonMistakes: ['忘记更新父节点', '方向判断错误'],
+    tips: ['单点修改是基础', '区间修改需要懒标记'],
+    relatedProblems: [103, 104],
+  },
+
+  // Day 59: 树状数组
+  'bit-intro': {
+    id: 'bit-intro',
+    title: '树状数组概念',
+    content: `## 树状数组
+
+树状数组(BIT)是一种支持单点修改和区间查询的数据结构。
+
+### 特点
+
+- 代码简洁
+- 常数小
+- 功能比线段树少，但够用
+
+### 核心操作
+
+\`\`\`cpp
+int lowbit(int x) {
+    return x & (-x);
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '树状数组结构',
+        code: `// 树状数组结构
+// c[i] 管理 a[i - lowbit(i) + 1] 到 a[i] 的和
+// c[1] = a[1]
+// c[2] = a[1] + a[2]
+// c[3] = a[3]
+// c[4] = a[1] + a[2] + a[3] + a[4]
+// ...
+
+int lowbit(int x) {
+    return x & (-x);
+}`,
+        explanation: '树状数组的结构理解。',
+      },
+    ],
+    keyPoints: ['理解lowbit', '知道管理范围'],
+    commonMistakes: ['下标从0还是1开始', '管理范围理解错误'],
+    tips: ['树状数组从下标1开始', '适合前缀和问题'],
+    relatedProblems: [105, 106],
+  },
+
+  'bit-ops': {
+    id: 'bit-ops',
+    title: '树状数组操作',
+    content: `## 树状数组基本操作
+
+### 单点修改
+
+\`\`\`cpp
+void update(int i, int delta) {
+    while (i <= n) {
+        c[i] += delta;
+        i += lowbit(i);
+    }
+}
+\`\`\`
+
+### 前缀查询
+
+\`\`\`cpp
+int query(int i) {
+    int sum = 0;
+    while (i > 0) {
+        sum += c[i];
+        i -= lowbit(i);
+    }
+    return sum;
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '树状数组模板',
+        code: `int c[10005];
+int n;
+
+int lowbit(int x) {
+    return x & (-x);
+}
+
+void update(int i, int delta) {
+    while (i <= n) {
+        c[i] += delta;
+        i += lowbit(i);
+    }
+}
+
+int query(int i) {
+    int sum = 0;
+    while (i > 0) {
+        sum += c[i];
+        i -= lowbit(i);
+    }
+    return sum;
+}
+
+// 区间查询[l, r]
+int rangeQuery(int l, int r) {
+    return query(r) - query(l - 1);
+}`,
+        explanation: '树状数组基本操作。',
+      },
+    ],
+    keyPoints: ['掌握update和query', '理解跳转方向'],
+    commonMistakes: ['lowbit方向错误', '边界处理'],
+    tips: ['update向上跳', 'query向下跳'],
+    relatedProblems: [105, 106],
+  },
+
+  'bit-vs-seg': {
+    id: 'bit-vs-seg',
+    title: '与线段树对比',
+    content: `## 树状数组 vs 线段树
+
+| 特性 | 树状数组 | 线段树 |
+|------|----------|--------|
+| 代码量 | 少 | 多 |
+| 常数 | 小 | 大 |
+| 功能 | 单点修改+前缀查询 | 区间修改+区间查询 |
+| 空间 | O(n) | O(4n) |
+| 时间 | O(log n) | O(log n) |
+
+### 选择
+
+- 简单前缀和问题：树状数组
+- 复杂区间问题：线段树`,
+    codeExamples: [
+      {
+        title: '对比示例',
+        code: `// 树状数组：适合
+// - 单点修改，前缀查询
+// - 求逆序对
+
+// 线段树：适合
+// - 区间修改
+// - 区间最值
+// - 复杂区间操作`,
+        explanation: '选择合适数据结构。',
+      },
+    ],
+    keyPoints: ['理解各自适用场景', '根据题目选择'],
+    commonMistakes: ['树状数组强行做区间修改', '功能不足时强用'],
+    tips: ['简单问题用树状数组', '复杂问题用线段树'],
+    relatedProblems: [105, 106],
+  },
+
+  // Day 60: Trie树
+  'trie-ops': {
+    id: 'trie-ops',
+    title: 'Trie插入和查询',
+    content: `## Trie操作
+
+### 插入
+
+\`\`\`cpp
+void insert(string s) {
+    int node = 0;
+    for (char c : s) {
+        if (!trie[node][c-'a']) {
+            trie[node][c-'a'] = ++cnt;
+        }
+        node = trie[node][c-'a'];
+    }
+    isEnd[node] = true;
+}
+\`\`\`
+
+### 查询
+
+\`\`\`cpp
+bool search(string s) {
+    int node = 0;
+    for (char c : s) {
+        if (!trie[node][c-'a']) return false;
+        node = trie[node][c-'a'];
+    }
+    return isEnd[node];
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: 'Trie模板',
+        code: `int trie[100005][26];
+bool isEnd[100005];
+int cnt = 0;
+
+void insert(string s) {
+    int node = 0;
+    for (char c : s) {
+        int idx = c - 'a';
+        if (!trie[node][idx]) {
+            trie[node][idx] = ++cnt;
+        }
+        node = trie[node][idx];
+    }
+    isEnd[node] = true;
+}
+
+bool search(string s) {
+    int node = 0;
+    for (char c : s) {
+        int idx = c - 'a';
+        if (!trie[node][idx]) return false;
+        node = trie[node][idx];
+    }
+    return isEnd[node];
+}`,
+        explanation: 'Trie插入和查询。',
+      },
+    ],
+    keyPoints: ['掌握插入和查询', '理解节点编号'],
+    commonMistakes: ['节点编号管理', 'isEnd标记'],
+    tips: ['可以统计出现次数', '空间要开够'],
+    relatedProblems: [107, 108],
+  },
+
+  'trie-apps': {
+    id: 'trie-apps',
+    title: 'Trie应用场景',
+    content: `## Trie应用场景
+
+### 常见应用
+
+1. 字符串查找
+2. 前缀匹配
+3. 词频统计
+4. 异或最值问题
+
+### 异或最值
+
+从高位到低位建Trie，贪心选择相反位。`,
+    codeExamples: [
+      {
+        title: '最大异或对',
+        code: `int trie[4000005][2];
+int cnt = 0;
+
+void insert(int x) {
+    int node = 0;
+    for (int i = 30; i >= 0; i--) {
+        int b = (x >> i) & 1;
+        if (!trie[node][b]) trie[node][b] = ++cnt;
+        node = trie[node][b];
+    }
+}
+
+int query(int x) {
+    int node = 0, result = 0;
+    for (int i = 30; i >= 0; i--) {
+        int b = (x >> i) & 1;
+        if (trie[node][!b]) {
+            result |= (1 << i);
+            node = trie[node][!b];
+        } else {
+            node = trie[node][b];
+        }
+    }
+    return result;
+}`,
+        explanation: 'Trie求最大异或对。',
+      },
+    ],
+    keyPoints: ['理解各种应用', '掌握异或问题'],
+    commonMistakes: ['空间开不够', '异或方向错误'],
+    tips: ['异或问题从高位开始', '可以结合贪心'],
+    relatedProblems: [107, 108],
+  },
+
+  // Day 61: 拓扑排序
+  'topo-intro': {
+    id: 'topo-intro',
+    title: '拓扑排序概念',
+    content: `## 拓扑排序
+
+对有向无环图(DAG)的顶点排序，使得所有边u→v，u在v之前。
+
+### 应用
+
+- 任务调度
+- 课程安排
+- 判断是否有环`,
+    codeExamples: [
+      {
+        title: '拓扑排序概念',
+        code: `// 有向边 u -> v
+// 拓扑序中 u 在 v 之前
+
+// 示例：
+// 边: 1->2, 1->3, 2->4, 3->4
+// 拓扑序: 1, 2, 3, 4 或 1, 3, 2, 4`,
+        explanation: '拓扑排序的基本概念。',
+      },
+    ],
+    keyPoints: ['只适用于DAG', '结果可能不唯一'],
+    commonMistakes: ['有环图不能拓扑排序', '结果不唯一'],
+    tips: ['可以判断图是否有环', 'Kahn算法实现简单'],
+    relatedProblems: [109, 110],
+  },
+
+  'topo-impl': {
+    id: 'topo-impl',
+    title: '拓扑排序实现',
+    content: `## Kahn算法
+
+### 步骤
+
+1. 计算所有顶点的入度
+2. 将入度为0的点加入队列
+3. 取出队首，删除其出边
+4. 若新的入度为0的点，加入队列
+5. 重复直到队列为空`,
+    codeExamples: [
+      {
+        title: 'Kahn算法',
+        code: `vector<int> adj[10005];
+int inDegree[10005];
+
+vector<int> topoSort(int n) {
+    vector<int> result;
+    queue<int> q;
+    
+    for (int i = 1; i <= n; i++) {
+        if (inDegree[i] == 0) {
+            q.push(i);
+        }
+    }
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        result.push_back(u);
+        
+        for (int v : adj[u]) {
+            inDegree[v]--;
+            if (inDegree[v] == 0) {
+                q.push(v);
+            }
+        }
+    }
+    
+    return result;  // 如果result.size() < n，说明有环
+}`,
+        explanation: 'Kahn算法实现拓扑排序。',
+      },
+    ],
+    keyPoints: ['入度为0入队', '删边更新入度'],
+    commonMistakes: ['忘记更新入度', '环的判断'],
+    tips: ['可以用优先队列求字典序最小的', 'DFS也可以实现'],
+    relatedProblems: [109, 110],
+  },
+
+  'topo-apps': {
+    id: 'topo-apps',
+    title: '拓扑排序应用',
+    content: `## 拓扑排序应用
+
+### 判断环
+
+如果拓扑排序结果不足n个点，说明图中有环。
+
+### 任务调度
+
+按拓扑序执行任务，保证依赖关系。
+
+### 关键路径
+
+求任务的最早/最晚开始时间。`,
+    codeExamples: [
+      {
+        title: '判断是否有环',
+        code: `bool hasCycle(int n) {
+    vector<int> result = topoSort(n);
+    return result.size() < n;
+}
+
+// 关键路径示例
+// 最早开始时间: 按拓扑序正向求
+// 最晚开始时间: 按拓扑序逆向求`,
+        explanation: '拓扑排序判断环。',
+      },
+    ],
+    keyPoints: ['判断环', '任务调度'],
+    commonMistakes: ['环的判断条件', '结果不唯一'],
+    tips: ['很多问题需要先拓扑排序', '可以配合DP'],
+    relatedProblems: [109, 110],
+  },
+
+  // Day 62: LCA
+  'lca-intro': {
+    id: 'lca-intro',
+    title: 'LCA概念',
+    content: `## 最近公共祖先(LCA)
+
+树上两点的最近公共祖先。
+
+### 定义
+
+u和v的LCA是同时是u和v祖先的深度最大的节点。
+
+### 应用
+
+- 求两点间距离
+- 树上路径问题
+- 树链剖分基础`,
+    codeExamples: [
+      {
+        title: 'LCA概念',
+        code: `// 示例树：
+//       1
+//      / \\
+//     2   3
+//    / \\
+//   4   5
+// LCA(4, 5) = 2
+// LCA(4, 3) = 1
+// LCA(2, 4) = 2`,
+        explanation: 'LCA的基本概念。',
+      },
+    ],
+    keyPoints: ['理解LCA定义', '知道应用场景'],
+    commonMistakes: ['LCA可以是u或v本身', '深度判断'],
+    tips: ['LCA是重要问题', '有多种解法'],
+    relatedProblems: [111, 112],
+  },
+
+  'lca-naive': {
+    id: 'lca-naive',
+    title: 'LCA朴素算法',
+    content: `## LCA朴素算法
+
+### 方法
+
+1. 先将较深的点向上跳到同一深度
+2. 然后两点同时向上跳
+3. 直到相遇
+
+### 复杂度
+
+O(n)每次查询`,
+    codeExamples: [
+      {
+        title: 'LCA朴素实现',
+        code: `int parent[10005], depth[10005];
+
+int lca(int u, int v) {
+    // 保证u较深
+    if (depth[u] < depth[v]) swap(u, v);
+    
+    // u向上跳到同一深度
+    while (depth[u] > depth[v]) {
+        u = parent[u];
+    }
+    
+    // 同时向上跳
+    while (u != v) {
+        u = parent[u];
+        v = parent[v];
+    }
+    
+    return u;
+}`,
+        explanation: 'LCA朴素实现。',
+      },
+    ],
+    keyPoints: ['先对齐深度', '再同时跳'],
+    commonMistakes: ['深度对齐错误', '跳过LCA'],
+    tips: ['可以预处理parent和depth', '复杂度高但简单'],
+    relatedProblems: [111, 112],
+  },
+
+  'lca-binary': {
+    id: 'lca-binary',
+    title: 'LCA倍增算法',
+    content: `## LCA倍增算法
+
+预处理每个点向上跳2^k步到达的点，O(log n)查询。
+
+### 预处理
+
+\`\`\`cpp
+up[u][k] = u向上跳2^k步到达的点
+up[u][0] = parent[u]
+up[u][k] = up[up[u][k-1]][k-1]
+\`\`\`
+
+### 查询
+
+按二进制从大到小跳。`,
+    codeExamples: [
+      {
+        title: 'LCA倍增',
+        code: `int up[10005][15];  // 2^14 > 10000
+int depth[10005];
+
+void dfs(int u, int p, int d) {
+    depth[u] = d;
+    up[u][0] = p;
+    for (int k = 1; k < 15; k++) {
+        up[u][k] = up[up[u][k-1]][k-1];
+    }
+    for (int v : adj[u]) {
+        if (v != p) dfs(v, u, d + 1);
+    }
+}
+
+int lca(int u, int v) {
+    if (depth[u] < depth[v]) swap(u, v);
+    
+    // u跳到同一深度
+    int diff = depth[u] - depth[v];
+    for (int k = 0; k < 15; k++) {
+        if ((diff >> k) & 1) u = up[u][k];
+    }
+    
+    if (u == v) return u;
+    
+    // 同时向上跳
+    for (int k = 14; k >= 0; k--) {
+        if (up[u][k] != up[v][k]) {
+            u = up[u][k];
+            v = up[v][k];
+        }
+    }
+    
+    return up[u][0];
+}`,
+        explanation: 'LCA倍增算法。',
+      },
+    ],
+    keyPoints: ['预处理up数组', '二进制跳转'],
+    commonMistakes: ['k的范围', '跳转顺序'],
+    tips: ['预处理O(n log n)', '查询O(log n)'],
+    relatedProblems: [111, 112],
+  },
+
+  // Day 63: 数位DP
+  'digit-dp-intro': {
+    id: 'digit-dp-intro',
+    title: '数位DP概念',
+    content: `## 数位DP
+
+对数字的各位进行动态规划。
+
+### 适用问题
+
+- 求区间[l,r]中满足条件的数的个数
+- 条件通常与数字的各位有关
+
+### 基本思想
+
+- 数位限制
+- 从高位到低位DP
+- 用记忆化搜索实现`,
+    codeExamples: [
+      {
+        title: '数位DP概念',
+        code: `// 典型问题：求[1,n]中不包含数字4的数的个数
+// 
+// 思路：
+// 从高位到低位枚举
+// 每位可以填0-9（但受limit限制）
+// 如果某位填了4，就不满足条件`,
+        explanation: '数位DP的基本概念。',
+      },
+    ],
+    keyPoints: ['数位限制', '记忆化搜索'],
+    commonMistakes: ['limit处理错误', '前导零'],
+    tips: ['数位DP是套路题', '掌握模板'],
+    relatedProblems: [113, 114],
+  },
+
+  'digit-dp-state': {
+    id: 'digit-dp-state',
+    title: '数位DP状态设计',
+    content: `## 数位DP状态设计
+
+### 常见状态
+
+\`\`\`cpp
+// pos: 当前位
+// limit: 是否达到上限
+// lead: 是否有前导零
+// state: 其他状态（根据题目）
+\`\`\`
+
+### 记忆化
+
+不含limit和lead的状态可以记忆化。`,
+    codeExamples: [
+      {
+        title: '数位DP模板',
+        code: `int dp[20][2];  // pos, state
+int digit[20];
+
+int dfs(int pos, bool limit, bool lead, int state) {
+    if (pos == 0) return 1;  // 根据题目返回
+    
+    if (!limit && !lead && dp[pos][state] != -1) {
+        return dp[pos][state];
+    }
+    
+    int up = limit ? digit[pos] : 9;
+    int result = 0;
+    
+    for (int i = 0; i <= up; i++) {
+        // 根据题目条件判断
+        if (i == 4) continue;  // 不选4
+        
+        result += dfs(pos - 1, limit && i == up, 
+                      lead && i == 0, newState);
+    }
+    
+    if (!limit && !lead) {
+        dp[pos][state] = result;
+    }
+    
+    return result;
+}`,
+        explanation: '数位DP记忆化模板。',
+      },
+    ],
+    keyPoints: ['状态设计', 'limit和lead的处理'],
+    commonMistakes: ['记忆化条件', 'limit传递'],
+    tips: ['limit=true不能记忆化', '多练习经典题'],
+    relatedProblems: [113, 114],
+  },
+
+  'digit-dp-examples': {
+    id: 'digit-dp-examples',
+    title: '数位DP经典问题',
+    content: `## 数位DP经典问题
+
+### 不含4
+
+求[1,n]中不含数字4的数的个数。
+
+### 含62
+
+求[1,n]中不含"62"子串的数的个数。
+
+### 数位和
+
+求数位和满足条件的数的个数。`,
+    codeExamples: [
+      {
+        title: '不含4的数',
+        code: `int dp[20];
+int digit[20];
+
+int dfs(int pos, bool limit) {
+    if (pos == 0) return 1;
+    if (!limit && dp[pos] != -1) return dp[pos];
+    
+    int up = limit ? digit[pos] : 9;
+    int result = 0;
+    
+    for (int i = 0; i <= up; i++) {
+        if (i == 4) continue;  // 不选4
+        result += dfs(pos - 1, limit && i == up);
+    }
+    
+    if (!limit) dp[pos] = result;
+    return result;
+}
+
+int solve(int n) {
+    memset(dp, -1, sizeof(dp));
+    int len = 0;
+    while (n) {
+        digit[++len] = n % 10;
+        n /= 10;
+    }
+    return dfs(len, true);
+}`,
+        explanation: '求不含4的数的个数。',
+      },
+    ],
+    keyPoints: ['掌握经典问题', '灵活变形'],
+    commonMistakes: ['状态遗漏', '边界条件'],
+    tips: ['多做模板题', '注意题目条件'],
+    relatedProblems: [113, 114],
+  },
+
+  // Day 64: 博弈论DP
+  'game-dp-intro': {
+    id: 'game-dp-intro',
+    title: '博弈论基础',
+    content: `## 博弈论基础
+
+### 公平组合游戏
+
+- 两人轮流操作
+- 信息完全公开
+- 无平局
+
+### 必胜态与必败态
+
+- 必胜态：存在一种走法到达必败态
+- 必败态：所有走法都到达必胜态`,
+    codeExamples: [
+      {
+        title: '简单博弈',
+        code: `// 取石子游戏：n个石子，每次取1-3个
+// dp[i] = true 表示有i个石子时先手必胜
+
+bool dp[10005];
+
+void init(int n) {
+    for (int i = 1; i <= n; i++) {
+        // 如果能到达必败态，则必胜
+        if (i >= 1 && !dp[i-1]) dp[i] = true;
+        else if (i >= 2 && !dp[i-2]) dp[i] = true;
+        else if (i >= 3 && !dp[i-3]) dp[i] = true;
+        else dp[i] = false;
+    }
+}`,
+        explanation: '简单取石子博弈。',
+      },
+    ],
+    keyPoints: ['必胜必败态', 'DP求解'],
+    commonMistakes: ['状态定义错误', '转移遗漏'],
+    tips: ['很多博弈问题用DP', '注意先手后手'],
+    relatedProblems: [115, 116],
+  },
+
+  'sg-function': {
+    id: 'sg-function',
+    title: 'SG函数',
+    content: `## SG函数
+
+### 定义
+
+SG(x) = mex({SG(y) | x可以到达y})
+
+mex(S) = 不在集合S中的最小非负整数
+
+### 性质
+
+- 必败态: SG = 0
+- 必胜态: SG > 0
+
+### SG定理
+
+多个独立游戏的SG值等于各游戏SG值的异或。`,
+    codeExamples: [
+      {
+        title: 'SG函数',
+        code: `int sg[10005];
+bool vis[10005];
+
+int getSG(int n, vector<int>& moves) {
+    memset(sg, 0, sizeof(sg));
+    
+    for (int i = 1; i <= n; i++) {
+        memset(vis, false, sizeof(vis));
+        for (int m : moves) {
+            if (i >= m) {
+                vis[sg[i - m]] = true;
+            }
+        }
+        // mex
+        for (int j = 0; ; j++) {
+            if (!vis[j]) {
+                sg[i] = j;
+                break;
+            }
+        }
+    }
+    
+    return sg[n];
+}`,
+        explanation: 'SG函数计算。',
+      },
+    ],
+    keyPoints: ['理解mex操作', '掌握SG定理'],
+    commonMistakes: ['mex计算错误', '忘记清vis'],
+    tips: ['SG定理解决多堆问题', '很多博弈题的通法'],
+    relatedProblems: [115, 116],
+  },
+
+  'nim-game': {
+    id: 'nim-game',
+    title: 'Nim游戏',
+    content: `## Nim游戏
+
+### 规则
+
+n堆石子，每次从一堆中取任意个，取最后一个者胜。
+
+### 结论
+
+先手必胜当且仅当所有堆石子数的异或和不为0。
+
+### 证明
+
+这实际上是SG定理的特例，每堆石子的SG值就是石子数。`,
+    codeExamples: [
+      {
+        title: 'Nim游戏',
+        code: `bool nim(vector<int>& piles) {
+    int xorSum = 0;
+    for (int x : piles) {
+        xorSum ^= x;
+    }
+    return xorSum != 0;  // 异或和不为0则先手必胜
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> piles(n);
+    for (int i = 0; i < n; i++) {
+        cin >> piles[i];
+    }
+    
+    if (nim(piles)) {
+        cout << "先手必胜" << endl;
+    } else {
+        cout << "后手必胜" << endl;
+    }
+    return 0;
+}`,
+        explanation: 'Nim游戏判断。',
+      },
+    ],
+    keyPoints: ['记住Nim结论', '理解与SG的关系'],
+    commonMistakes: ['异或和计算错误', '结论记反'],
+    tips: ['Nim是最经典的博弈', '很多博弈可以转化为Nim'],
+    relatedProblems: [115, 116],
+  },
+
+  // Day 65-70: 复习和考核
+  'review-search': {
+    id: 'review-search',
+    title: '搜索算法复习',
+    content: `## 搜索算法复习
+
+### DFS
+
+- 递归实现
+- 适合求方案数、方案输出
+- 需要回溯
+
+### BFS
+
+- 队列实现
+- 适合求最短路
+- 入队时标记
+
+### 剪枝
+
+- 可行性剪枝
+- 最优性剪枝
+- 减少搜索空间`,
+    codeExamples: [
+      {
+        title: '搜索复习要点',
+        code: `// DFS模板
+void dfs(int state) {
+    if (目标状态) { 处理; return; }
+    for (所有可能的下一步) {
+        if (可行) {
+            标记;
+            dfs(新状态);
+            回溯;
+        }
+    }
+}
+
+// BFS模板
+void bfs() {
+    q.push(起点);
+    visited[起点] = true;
+    while (!q.empty()) {
+        auto cur = q.front(); q.pop();
+        for (所有相邻状态) {
+            if (!visited[下一状态]) {
+                visited[下一状态] = true;
+                q.push(下一状态);
+            }
+        }
+    }
+}`,
+        explanation: '搜索算法模板回顾。',
+      },
+    ],
+    keyPoints: ['掌握两种搜索模板', '理解适用场景'],
+    commonMistakes: ['忘记标记', '忘记回溯'],
+    tips: ['画搜索树理解', '注意剪枝优化'],
+    relatedProblems: [65, 68, 69, 71],
+  },
+
+  'review-dp': {
+    id: 'review-dp',
+    title: '动态规划复习',
+    content: `## 动态规划复习
+
+### 基本步骤
+
+1. 状态定义
+2. 状态转移方程
+3. 边界条件
+4. 计算顺序
+
+### 常见类型
+
+- 线性DP（LIS、LCS）
+- 背包问题
+- 区间DP
+- 树形DP
+- 状压DP`,
+    codeExamples: [
+      {
+        title: 'DP复习要点',
+        code: `// 状态定义要明确
+// dp[i] 表示什么？
+
+// 转移方程要正确
+// dp[i] = 从哪些状态转移来？
+
+// 边界要处理好
+// dp[0] = ? dp[1] = ?
+
+// 顺序要正确
+// 保证转移时用到的状态已计算`,
+        explanation: 'DP核心要点回顾。',
+      },
+    ],
+    keyPoints: ['掌握DP思路', '多练习典型题'],
+    commonMistakes: ['状态定义不清', '转移错误', '边界错误'],
+    tips: ['从简单例子验证', '画表格理解转移'],
+    relatedProblems: [73, 75, 79, 93],
+  },
+
+  'review-graph': {
+    id: 'review-graph',
+    title: '图论复习',
+    content: `## 图论复习
+
+### 图的存储
+
+- 邻接矩阵
+- 邻接表（推荐）
+
+### 图的遍历
+
+- DFS
+- BFS
+
+### 最短路
+
+- Dijkstra（非负权）
+- Floyd（全源）
+- SPFA（负权）
+
+### 生成树
+
+- Kruskal
+- Prim`,
+    codeExamples: [
+      {
+        title: '图论算法回顾',
+        code: `// 存储方式选择
+// 稀疏图：邻接表
+// 稠密图：邻接矩阵
+
+// 最短路选择
+// 单源非负权：Dijkstra
+// 全源：Floyd
+// 负权：SPFA
+
+// 生成树选择
+// 稀疏图：Kruskal
+// 稠密图：Prim`,
+        explanation: '图论算法选择。',
+      },
+    ],
+    keyPoints: ['掌握各算法适用场景', '正确选择算法'],
+    commonMistakes: ['算法选择错误', '实现细节错误'],
+    tips: ['理解算法原理', '多写模板'],
+    relatedProblems: [86, 89, 91, 111],
+  },
+
+  'review-ds': {
+    id: 'review-ds',
+    title: '数据结构复习',
+    content: `## 数据结构复习
+
+### 基础数据结构
+
+- 数组
+- 栈
+- 队列
+
+### 高级数据结构
+
+- 并查集
+- 线段树
+- 树状数组
+- Trie树`,
+    codeExamples: [
+      {
+        title: '数据结构选择',
+        code: `// 并查集：连通性问题
+// 线段树：区间修改+区间查询
+// 树状数组：单点修改+前缀查询
+// Trie：字符串问题、异或问题`,
+        explanation: '数据结构适用场景。',
+      },
+    ],
+    keyPoints: ['理解各数据结构特点', '正确选择'],
+    commonMistakes: ['数据结构选择不当', '实现错误'],
+    tips: ['掌握常用模板', '注意空间复杂度'],
+    relatedProblems: [102, 105, 107, 61],
+  },
+
+  'practice-intermediate': {
+    id: 'practice-intermediate',
+    title: '进阶综合练习',
+    content: `## 进阶综合练习
+
+综合运用进阶阶段所学的算法和数据结构，解决复杂问题。
+
+### 涉及知识点
+
+- 搜索算法
+- 动态规划
+- 图论算法
+- 高级数据结构`,
+    codeExamples: [
+      {
+        title: '综合练习建议',
+        code: `// 1. 分析题目类型
+// 2. 选择合适的算法
+// 3. 设计算法流程
+// 4. 注意边界情况
+// 5. 优化时间空间`,
+        explanation: '综合练习思路。',
+      },
+    ],
+    keyPoints: ['综合运用知识', '分析问题能力'],
+    commonMistakes: ['算法选择错误', '实现细节错误'],
+    tips: ['多做综合题', '总结解题思路'],
+    relatedProblems: [117, 118, 119, 120],
+  },
+
+  'exam-intermediate': {
+    id: 'exam-intermediate',
+    title: '阶段考核',
+    content: `## 进阶阶段考核
+
+检验进阶阶段学习成果。
+
+### 考核内容
+
+- 搜索算法应用
+- 动态规划问题
+- 图论问题
+- 数据结构应用
+
+### 要求
+
+能够独立分析问题并选择合适的算法解决。`,
+    codeExamples: [
+      {
+        title: '考核要求',
+        code: `// 1. 正确理解题意
+// 2. 选择合适算法
+// 3. 正确实现代码
+// 4. 处理边界情况
+// 5. 通过测试用例`,
+        explanation: '考核标准。',
+      },
+    ],
+    keyPoints: ['独立解决问题', '综合运用知识'],
+    commonMistakes: ['审题不清', '算法选择错误'],
+    tips: ['先分析再编码', '注意特殊情况'],
+    relatedProblems: [121, 122, 123, 124],
+  },
 };
 
 // 获取知识点讲解
