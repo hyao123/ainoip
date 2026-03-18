@@ -3544,6 +3544,670 @@ int main() {
     ],
     relatedProblems: [108],
   },
+
+  // ========== Day 1-2: C++基础补充 ==========
+  'intro-cpp': {
+    id: 'intro-cpp',
+    title: 'C++简介',
+    content: `## C++语言简介
+
+C++是一种强大的编程语言，在NOIP竞赛中广泛使用。
+
+### 为什么选择C++
+
+1. **执行效率高**：编译型语言，运行速度快
+2. **STL强大**：标准模板库提供丰富算法和数据结构
+3. **竞赛主流**：NOIP/CSP等竞赛的主流语言
+
+### 程序的基本结构
+
+\`\`\`cpp
+#include <iostream>  // 头文件
+using namespace std; // 使用标准命名空间
+
+int main() {         // 主函数
+    // 你的代码
+    return 0;        // 返回值
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '最小C++程序',
+        code: `int main() {
+    return 0;
+}`,
+        explanation: '最简单的C++程序，只包含main函数。',
+      },
+    ],
+    keyPoints: ['理解程序的基本结构', '知道头文件的作用', '掌握编译运行流程'],
+    commonMistakes: ['忘记分号', 'main函数拼写错误', '中英文符号混淆'],
+    tips: ['多练习输入输出', '注意代码规范', '学会看编译错误'],
+    relatedProblems: [1],
+  },
+
+  'hello-world': {
+    id: 'hello-world',
+    title: 'Hello World',
+    content: `## 第一个程序
+
+经典的入门程序：输出"Hello World"。
+
+### 代码实现
+
+\`\`\`cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello World" << endl;
+    return 0;
+}
+\`\`\`
+
+### 代码解析
+
+- \`#include <iostream>\`：包含输入输出流库
+- \`using namespace std;\`：使用标准命名空间
+- \`cout\`：标准输出流对象
+- \`<<\`：插入运算符
+- \`endl\`：换行并刷新缓冲区`,
+    codeExamples: [
+      {
+        title: '输出个人信息',
+        code: `cout << "姓名：小明" << endl;
+cout << "年龄：12岁" << endl;`,
+        explanation: '使用cout输出多行信息。',
+      },
+    ],
+    keyPoints: ['掌握cout的基本用法', '理解endl的作用'],
+    commonMistakes: ['忘记#include', '忘记using namespace std'],
+    tips: ['endl会刷新缓冲区', '中文需要正确的编码'],
+    relatedProblems: [1],
+  },
+
+  'variables': {
+    id: 'variables',
+    title: '变量的概念',
+    content: `## 变量
+
+变量是存储数据的容器，每个变量都有名字和类型。
+
+### 变量命名规则
+
+1. 只能包含字母、数字、下划线
+2. 必须以字母或下划线开头
+3. 不能是C++关键字
+4. 区分大小写
+
+### 声明和初始化
+
+\`\`\`cpp
+int a;        // 声明
+int a = 10;   // 声明并初始化
+int a = 10, b = 20;  // 声明多个变量
+\`\`\``,
+    codeExamples: [
+      {
+        title: '变量基本操作',
+        code: `int a = 10;    // 初始化
+a = 20;        // 赋值
+int b = a;     // 用a初始化b`,
+        explanation: '变量的声明、赋值和使用。',
+      },
+    ],
+    keyPoints: ['理解变量是存储数据的容器', '掌握命名规则'],
+    commonMistakes: ['使用关键字作变量名', '变量未初始化就使用'],
+    tips: ['变量名要有意义', '初始化是好习惯'],
+    relatedProblems: [1, 2],
+  },
+
+  'data-types': {
+    id: 'data-types',
+    title: '基本数据类型',
+    content: `## 数据类型
+
+C++提供了多种数据类型来存储不同类型的数据。
+
+### 整数类型
+
+| 类型 | 字节 | 范围 |
+|------|------|------|
+| int | 4 | -2.1×10⁹ ~ 2.1×10⁹ |
+| long long | 8 | -9.2×10¹⁸ ~ 9.2×10¹⁸ |
+
+### 浮点类型
+
+| 类型 | 字节 | 精度 |
+|------|------|------|
+| float | 4 | 6-7位有效数字 |
+| double | 8 | 15-16位有效数字 |`,
+    codeExamples: [
+      {
+        title: '数据类型使用',
+        code: `int a = 100000;
+long long b = 10000000000LL;  // 注意LL后缀
+double c = 3.14159;`,
+        explanation: '不同数据类型的声明和初始化。',
+      },
+    ],
+    keyPoints: ['了解各类型的范围', '选择合适的类型'],
+    commonMistakes: ['int溢出', '浮点精度问题'],
+    tips: ['大数用long long', '浮点用double'],
+    relatedProblems: [1, 2, 3],
+  },
+
+  'int-range': {
+    id: 'int-range',
+    title: '整数范围',
+    content: `## 整数范围详解
+
+理解整数范围对于竞赛编程至关重要！
+
+### 各类型的范围
+
+\`\`\`cpp
+// int 范围
+int max_int = 2147483647;      // 约 2.1×10⁹
+
+// long long 范围
+long long max_ll = 9223372036854775807LL;  // 约 9.2×10¹⁸
+\`\`\`
+
+### 溢出问题
+
+\`\`\`cpp
+int a = 2147483647;
+a = a + 1;  // 溢出！变成 -2147483648
+
+// 正确做法
+long long b = 2147483647LL;
+b = b + 1;  // 正确：2147483648
+\`\`\``,
+    codeExamples: [
+      {
+        title: '防止溢出',
+        code: `long long factorial(int n) {
+    long long result = 1;
+    for (int i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}`,
+        explanation: '阶乘结果很大，必须用long long。',
+      },
+    ],
+    keyPoints: ['记住int范围约21亿', '知道何时用long long'],
+    commonMistakes: ['忘记用long long', '乘法溢出'],
+    tips: ['不确定就用long long', '学会估算范围'],
+    relatedProblems: [2, 3],
+  },
+
+  'arithmetic': {
+    id: 'arithmetic',
+    title: '算术运算符',
+    content: `## 算术运算符
+
+### 基本运算符
+
+| 运算符 | 说明 | 示例 |
+|--------|------|------|
+| + | 加法 | 3 + 2 = 5 |
+| - | 减法 | 5 - 3 = 2 |
+| * | 乘法 | 4 * 3 = 12 |
+| / | 除法 | 7 / 2 = 3 |
+| % | 取余 | 7 % 2 = 1 |
+
+### 整数除法
+
+\`\`\`cpp
+int a = 7 / 2;    // 结果是3，不是3.5
+double c = 7.0 / 2;  // 3.5
+\`\`\``,
+    codeExamples: [
+      {
+        title: '数字分离',
+        code: `int n = 12345;
+int ge = n % 10;        // 5 (个位)
+int shi = n / 10 % 10;  // 4 (十位)`,
+        explanation: '使用除法和取余分离数字各位。',
+      },
+    ],
+    keyPoints: ['掌握五种运算符', '理解整数除法'],
+    commonMistakes: ['整数除法丢失精度', '除数为0'],
+    tips: ['取余有很多妙用', '注意运算优先级'],
+    relatedProblems: [4, 22],
+  },
+
+  'if-else': {
+    id: 'if-else',
+    title: 'if-else语句',
+    content: `## 条件语句
+
+根据条件执行不同的代码。
+
+### 基本语法
+
+\`\`\`cpp
+if (条件) {
+    // 条件为真时执行
+} else {
+    // 条件为假时执行
+}
+\`\`\`
+
+### 比较运算符
+
+| 运算符 | 说明 |
+|--------|------|
+| == | 等于 |
+| != | 不等于 |
+| < | 小于 |
+| > | 大于 |`,
+    codeExamples: [
+      {
+        title: '判断成绩等级',
+        code: `if (score >= 90) {
+    cout << "优秀" << endl;
+} else if (score >= 60) {
+    cout << "及格" << endl;
+} else {
+    cout << "不及格" << endl;
+}`,
+        explanation: '多分支条件判断。',
+      },
+    ],
+    keyPoints: ['掌握if-else语法', '理解比较运算符'],
+    commonMistakes: ['==写成=', '忘记花括号'],
+    tips: ['善用else if', '注意条件顺序'],
+    relatedProblems: [24, 25],
+  },
+
+  'comparison': {
+    id: 'comparison',
+    title: '比较运算符',
+    content: `## 比较运算符详解
+
+比较运算符用于比较两个值，返回布尔结果。
+
+### 运算符列表
+
+| 运算符 | 含义 | 示例 | 结果 |
+|--------|------|------|------|
+| == | 等于 | 5 == 5 | true |
+| != | 不等于 | 5 != 3 | true |
+| < | 小于 | 3 < 5 | true |
+| > | 大于 | 5 > 3 | true |
+
+### 常见错误
+
+\`\`\`cpp
+// 错误：把==写成=
+if (a = 5) { }  // 这是赋值！永远为真
+
+// 正确
+if (a == 5) { }
+\`\`\``,
+    codeExamples: [
+      {
+        title: '比较三个数大小',
+        code: `int max_val = a;
+if (b > max_val) max_val = b;
+if (c > max_val) max_val = c;`,
+        explanation: '比较求最大值。',
+      },
+    ],
+    keyPoints: ['区分=和==', '理解比较结果为布尔值'],
+    commonMistakes: ['==写成=', '浮点数直接比较'],
+    tips: ['建议把常量放左边：5 == a'],
+    relatedProblems: [24, 25],
+  },
+
+  'for-loop': {
+    id: 'for-loop',
+    title: 'for循环',
+    content: `## for循环
+
+for循环是最常用的循环结构，适合已知循环次数的情况。
+
+### 基本语法
+
+\`\`\`cpp
+for (初始化; 条件; 更新) {
+    // 循环体
+}
+
+// 示例：输出1到10
+for (int i = 1; i <= 10; i++) {
+    cout << i << " ";
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '求和',
+        code: `int sum = 0;
+for (int i = 1; i <= n; i++) {
+    sum += i;
+}`,
+        explanation: '使用for循环求1到n的和。',
+      },
+    ],
+    keyPoints: ['理解执行顺序', '掌握循环变量'],
+    commonMistakes: ['边界写错', '死循环'],
+    tips: ['习惯从0开始', '注意循环次数'],
+    relatedProblems: [5, 6],
+  },
+
+  'while-loop': {
+    id: 'while-loop',
+    title: 'while循环',
+    content: `## while循环
+
+适合不确定循环次数，根据条件决定是否继续。
+
+### 基本语法
+
+\`\`\`cpp
+while (条件) {
+    // 循环体
+}
+
+// do-while至少执行一次
+do {
+    // 循环体
+} while (条件);
+\`\`\``,
+    codeExamples: [
+      {
+        title: '读入直到0',
+        code: `int n;
+while (cin >> n && n != 0) {
+    cout << n * 2 << endl;
+}`,
+        explanation: '持续读入直到遇到0。',
+      },
+    ],
+    keyPoints: ['理解条件控制', '避免死循环'],
+    commonMistakes: ['忘记更新条件', '条件永远为真'],
+    tips: ['确保循环能结束'],
+    relatedProblems: [5, 6],
+  },
+
+  'array-intro': {
+    id: 'array-intro',
+    title: '数组基础',
+    content: `## 数组
+
+数组是存储同类型元素的连续内存空间。
+
+### 声明数组
+
+\`\`\`cpp
+int arr[100];        // 声明100个int元素
+int arr[5] = {1,2,3,4,5};  // 声明并初始化
+int arr[5] = {0};    // 全部初始化为0
+\`\`\`
+
+### 访问元素
+
+\`\`\`cpp
+arr[0] = 10;     // 下标从0开始
+cout << arr[0];  // 输出10
+\`\`\``,
+    codeExamples: [
+      {
+        title: '数组基本操作',
+        code: `int arr[100];
+for (int i = 0; i < n; i++) {
+    cin >> arr[i];
+}`,
+        explanation: '数组的读入。',
+      },
+    ],
+    keyPoints: ['数组下标从0开始', '不能越界'],
+    commonMistakes: ['越界访问', '忘记初始化'],
+    tips: ['数组开大一点留余量'],
+    relatedProblems: [19, 20],
+  },
+
+  'prefix-sum': {
+    id: 'prefix-sum',
+    title: '前缀和',
+    content: `## 前缀和
+
+前缀和是数组前i项的和，可以快速计算区间和。
+
+### 计算前缀和
+
+\`\`\`cpp
+int sum[MAXN];
+for (int i = 1; i <= n; i++) {
+    sum[i] = sum[i-1] + a[i];
+}
+\`\`\`
+
+### 求区间和
+
+\`\`\`cpp
+// 区间[l, r]的和
+int rangeSum(int l, int r) {
+    return sum[r] - sum[l-1];
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '前缀和模板',
+        code: `long long sum[100005];
+for (int i = 1; i <= n; i++) {
+    sum[i] = sum[i-1] + a[i];
+}
+cout << sum[r] - sum[l-1] << endl;`,
+        explanation: '标准前缀和模板。',
+      },
+    ],
+    keyPoints: ['理解前缀和定义', '掌握区间和计算'],
+    commonMistakes: ['下标处理错误', '溢出问题'],
+    tips: ['建议从下标1开始', '注意long long'],
+    relatedProblems: [73, 74],
+  },
+
+  'difference': {
+    id: 'difference',
+    title: '差分',
+    content: `## 差分
+
+差分是前缀和的逆运算，用于快速区间修改。
+
+### 区间修改
+
+给区间[l, r]的每个元素加x：
+
+\`\`\`cpp
+d[l] += x;
+d[r+1] -= x;
+\`\`\`
+
+### 还原原数组
+
+\`\`\`cpp
+for (int i = 1; i <= n; i++) {
+    a[i] = a[i-1] + d[i];
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: '差分模板',
+        code: `int d[100005];
+d[l] += x;
+d[r+1] -= x;
+for (int i = 1; i <= n; i++) {
+    a[i] = a[i-1] + d[i];
+}`,
+        explanation: '差分数组进行区间修改。',
+      },
+    ],
+    keyPoints: ['理解差分与前缀和的关系', '掌握区间修改方法'],
+    commonMistakes: ['忘记还原', '边界处理'],
+    tips: ['差分适合多次修改一次查询'],
+    relatedProblems: [76, 77],
+  },
+
+  'enumeration': {
+    id: 'enumeration',
+    title: '枚举算法',
+    content: `## 枚举算法
+
+枚举是最基本的算法思想：尝试所有可能的情况。
+
+### 基本思想
+
+1. 列出所有可能的情况
+2. 逐一检验是否满足条件
+3. 统计或输出符合条件的解`,
+    codeExamples: [
+      {
+        title: '百钱买百鸡',
+        code: `for (int x = 0; x <= 20; x++) {
+    for (int y = 0; y <= 33; y++) {
+        int z = 100 - x - y;
+        if (z % 3 == 0 && 5*x + 3*y + z/3 == 100) {
+            cout << x << " " << y << " " << z << endl;
+        }
+    }
+}`,
+        explanation: '经典枚举问题：百钱买百鸡。',
+      },
+    ],
+    keyPoints: ['尝试所有情况', '合理缩小范围'],
+    commonMistakes: ['范围过大超时', '遗漏情况'],
+    tips: ['先写暴力再优化'],
+    relatedProblems: [79, 80, 81],
+  },
+
+  'bfs-maze': {
+    id: 'bfs-maze',
+    title: 'BFS迷宫问题',
+    content: `## BFS解决迷宫问题
+
+BFS天然适合求迷宫最短路径。
+
+### 基本思路
+
+1. 从起点开始BFS
+2. 每扩展一层，步数+1
+3. 到达终点时的步数就是最短路`,
+    codeExamples: [
+      {
+        title: '迷宫BFS',
+        code: `int dx[] = {-1, 0, 1, 0};
+int dy[] = {0, 1, 0, -1};
+
+queue<pair<int,int>> q;
+q.push({sx, sy});
+dist[sx][sy] = 0;
+
+while (!q.empty()) {
+    auto [x, y] = q.front();
+    q.pop();
+    if (x == ex && y == ey) return dist[x][y];
+    for (int i = 0; i < 4; i++) {
+        int nx = x + dx[i], ny = y + dy[i];
+        if (valid(nx, ny) && dist[nx][ny] == -1) {
+            dist[nx][ny] = dist[x][y] + 1;
+            q.push({nx, ny});
+        }
+    }
+}`,
+        explanation: 'BFS求迷宫最短路径。',
+      },
+    ],
+    keyPoints: ['BFS天然求最短路', '正确处理边界'],
+    commonMistakes: ['忘记标记已访问', '边界判断错误'],
+    tips: ['dist数组同时作访问标记'],
+    relatedProblems: [68, 69],
+  },
+
+  'dfs-permute': {
+    id: 'dfs-permute',
+    title: '全排列',
+    content: `## 全排列问题
+
+输出n个数的所有排列。
+
+### DFS思路
+
+1. 每个位置选择一个未使用的数
+2. 递归填下一个位置
+3. 所有位置填完后输出`,
+    codeExamples: [
+      {
+        title: '全排列',
+        code: `int path[10];
+bool used[10];
+
+void dfs(int step) {
+    if (step == n) {
+        for (int i = 0; i < n; i++) cout << path[i] << " ";
+        cout << endl;
+        return;
+    }
+    for (int i = 1; i <= n; i++) {
+        if (!used[i]) {
+            used[i] = true;
+            path[step] = i;
+            dfs(step + 1);
+            used[i] = false;  // 回溯
+        }
+    }
+}`,
+        explanation: '输出1到n的全排列。',
+      },
+    ],
+    keyPoints: ['理解回溯过程', '正确标记和撤销'],
+    commonMistakes: ['忘记回溯', '标记错误'],
+    tips: ['画出搜索树理解'],
+    relatedProblems: [66, 67],
+  },
+
+  'lis': {
+    id: 'lis',
+    title: '最长上升子序列',
+    content: `## LIS问题
+
+最长上升子序列(Longest Increasing Subsequence)是经典DP问题。
+
+### O(n²)解法
+
+\`\`\`cpp
+for (int i = 0; i < n; i++) {
+    dp[i] = 1;
+    for (int j = 0; j < i; j++) {
+        if (a[j] < a[i]) {
+            dp[i] = max(dp[i], dp[j] + 1);
+        }
+    }
+}
+\`\`\``,
+    codeExamples: [
+      {
+        title: 'LIS模板',
+        code: `int dp[10005];
+for (int i = 0; i < n; i++) {
+    dp[i] = 1;
+    for (int j = 0; j < i; j++) {
+        if (a[j] < a[i]) {
+            dp[i] = max(dp[i], dp[j] + 1);
+        }
+    }
+}
+cout << *max_element(dp, dp + n) << endl;`,
+        explanation: 'O(n²)的LIS解法。',
+      },
+    ],
+    keyPoints: ['理解状态定义', '掌握转移方程'],
+    commonMistakes: ['状态定义不清', '比较方向错误'],
+    tips: ['小数据用O(n²)', '大数据用O(n log n)'],
+    relatedProblems: [73, 74],
+  },
 };
 
 // 获取知识点讲解
