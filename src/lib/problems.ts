@@ -3388,6 +3388,581 @@ int main() {
     ],
     similarProblems: [70, 71],
   },
+  // ========== 新增题目 - 前缀和专项 ==========
+  {
+    id: 73,
+    title: '前缀和求区间和',
+    titleEn: 'Prefix Sum Range Query',
+    difficulty: 'beginner',
+    description: '给定一个长度为n的数组，有m次查询，每次查询区间[l,r]的和。使用前缀和优化查询。',
+    inputFormat: '第一行n和m，第二行n个整数表示数组，接下来m行每行两个整数l和r（下标从1开始）。',
+    outputFormat: '对于每个查询，输出区间和。',
+    sampleInput: '5 3\n1 2 3 4 5\n1 5\n2 4\n3 3',
+    sampleOutput: '15\n9\n3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("prefixsum.in", "r", stdin);
+    freopen("prefixsum.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    long long a[100001], prefix[100001] = {0};
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+        prefix[i] = prefix[i-1] + a[i];
+    }
+    
+    for (int i = 0; i < m; i++) {
+        int l, r;
+        cin >> l >> r;
+        cout << prefix[r] - prefix[l-1] << endl;
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['前缀和'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 2 3 4 5\n1 5\n2 4\n3 3', expectedOutput: '15\n9\n3' },
+      { id: 2, input: '3 2\n10 20 30\n1 3\n2 2', expectedOutput: '60\n20' },
+    ],
+    similarProblems: [74, 75],
+  },
+  {
+    id: 74,
+    title: '前缀和求子数组和',
+    titleEn: 'Subarray Sum',
+    difficulty: 'intermediate',
+    description: '给定一个数组，求有多少个连续子数组的和等于目标值k。',
+    inputFormat: '第一行n和k，第二行n个整数。',
+    outputFormat: '输出满足条件的子数组个数。',
+    sampleInput: '5 7\n2 3 1 2 4',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <map>
+using namespace std;
+
+int main() {
+    freopen("subarray.in", "r", stdin);
+    freopen("subarray.out", "w", stdout);
+    
+    int n, k;
+    cin >> n >> k;
+    
+    map<long long, int> cnt;
+    cnt[0] = 1;
+    
+    long long sum = 0;
+    int result = 0;
+    
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        sum += x;
+        result += cnt[sum - k];
+        cnt[sum]++;
+    }
+    
+    cout << result << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['前缀和'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 7\n2 3 1 2 4', expectedOutput: '2' },
+      { id: 2, input: '3 3\n1 1 1', expectedOutput: '2' },
+    ],
+    similarProblems: [73, 75],
+  },
+  {
+    id: 75,
+    title: '二维前缀和',
+    titleEn: '2D Prefix Sum',
+    difficulty: 'intermediate',
+    description: '给定一个n×m的矩阵，有q次查询，每次查询子矩阵(x1,y1)到(x2,y2)的和。',
+    inputFormat: '第一行n、m、q，接下来n行每行m个整数，最后q行每行四个整数x1,y1,x2,y2。',
+    outputFormat: '对于每个查询，输出子矩阵的和。',
+    sampleInput: '3 3 2\n1 2 3\n4 5 6\n7 8 9\n1 1 2 2\n2 2 3 3',
+    sampleOutput: '12\n28',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("prefix2d.in", "r", stdin);
+    freopen("prefix2d.out", "w", stdout);
+    
+    int n, m, q;
+    cin >> n >> m >> q;
+    
+    long long a[101][101], prefix[101][101] = {0};
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            cin >> a[i][j];
+            prefix[i][j] = a[i][j] + prefix[i-1][j] + prefix[i][j-1] - prefix[i-1][j-1];
+        }
+    }
+    
+    for (int i = 0; i < q; i++) {
+        int x1, y1, x2, y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+        cout << prefix[x2][y2] - prefix[x1-1][y2] - prefix[x2][y1-1] + prefix[x1-1][y1-1] << endl;
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['前缀和'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 3 2\n1 2 3\n4 5 6\n7 8 9\n1 1 2 2\n2 2 3 3', expectedOutput: '12\n28' },
+    ],
+    similarProblems: [73, 74],
+  },
+  // ========== 新增题目 - 差分专项 ==========
+  {
+    id: 76,
+    title: '差分数组基础',
+    titleEn: 'Difference Array Basics',
+    difficulty: 'beginner',
+    description: '给定一个长度为n的初始全0数组，进行m次区间加操作，每次将区间[l,r]的所有元素加c，最后输出最终的数组。',
+    inputFormat: '第一行n和m，接下来m行每行三个整数l、r、c。',
+    outputFormat: '输出最终的数组。',
+    sampleInput: '5 3\n1 3 2\n2 5 1\n1 5 3',
+    sampleOutput: '5 6 6 4 4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("diff.in", "r", stdin);
+    freopen("diff.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    long long diff[100001] = {0};
+    
+    for (int i = 0; i < m; i++) {
+        int l, r, c;
+        cin >> l >> r >> c;
+        diff[l] += c;
+        diff[r + 1] -= c;
+    }
+    
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        sum += diff[i];
+        cout << sum;
+        if (i < n) cout << " ";
+    }
+    cout << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['差分'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 3 2\n2 5 1\n1 5 3', expectedOutput: '5 6 6 4 4' },
+    ],
+    similarProblems: [77, 78],
+  },
+  {
+    id: 77,
+    title: '差分求最终值',
+    titleEn: 'Difference Final Values',
+    difficulty: 'intermediate',
+    description: '有n个小朋友站成一排，进行m次操作，每次给区间[a,b]的小朋友每人发一颗糖，问最后每个小朋友有多少颗糖。',
+    inputFormat: '第一行n和m，接下来m行每行两个整数a和b。',
+    outputFormat: '输出n个整数，表示每个小朋友的糖果数。',
+    sampleInput: '5 3\n1 3\n2 4\n3 5',
+    sampleOutput: '1 2 3 2 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("candy.in", "r", stdin);
+    freopen("candy.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    int diff[100001] = {0};
+    
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        cin >> a >> b;
+        diff[a]++;
+        diff[b + 1]--;
+    }
+    
+    int sum = 0;
+    for (int i = 1; i <= n; i++) {
+        sum += diff[i];
+        cout << sum;
+        if (i < n) cout << " ";
+    }
+    cout << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['差分'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 3\n2 4\n3 5', expectedOutput: '1 2 3 2 1' },
+    ],
+    similarProblems: [76, 78],
+  },
+  {
+    id: 78,
+    title: '差分与前缀和结合',
+    titleEn: 'Difference and Prefix Sum',
+    difficulty: 'intermediate',
+    description: '给定一个数组，有两种操作：1. 区间[l,r]加c；2. 查询区间[l,r]的和。需要高效处理。',
+    inputFormat: '第一行n和m，第二行n个整数表示初始数组，接下来m行，每行一个操作。格式为"1 l r c"表示加操作，"2 l r"表示查询。',
+    outputFormat: '对于每个查询操作，输出区间和。',
+    sampleInput: '4 3\n1 2 3 4\n1 1 3 2\n2 1 4\n2 2 3',
+    sampleOutput: '16\n9',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("diffquery.in", "r", stdin);
+    freopen("diffquery.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    long long a[100001], prefix[100001] = {0}, diff[100001] = {0};
+    
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+        prefix[i] = prefix[i-1] + a[i];
+    }
+    
+    for (int i = 0; i < m; i++) {
+        int op;
+        cin >> op;
+        if (op == 1) {
+            int l, r;
+            long long c;
+            cin >> l >> r >> c;
+            diff[l] += c;
+            diff[r + 1] -= c;
+        } else {
+            int l, r;
+            cin >> l >> r;
+            // 基础和 + 差分贡献
+            long long base = prefix[r] - prefix[l-1];
+            // 计算差分贡献（简化版，实际需要树状数组）
+            long long extra = 0, d = 0;
+            for (int j = 1; j <= r; j++) {
+                d += diff[j];
+                if (j >= l) extra += d;
+            }
+            cout << base + extra << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['差分', '前缀和'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 3\n1 2 3 4\n1 1 3 2\n2 1 4\n2 2 3', expectedOutput: '16\n9' },
+    ],
+    similarProblems: [76, 77],
+  },
+  // ========== 新增题目 - 枚举专项 ==========
+  {
+    id: 79,
+    title: '百钱百鸡',
+    titleEn: 'Hundred Chickens Problem',
+    difficulty: 'beginner',
+    description: '用一百元钱买一百只鸡，公鸡5元一只，母鸡3元一只，小鸡1元三只。问公鸡、母鸡、小鸡各买多少只？',
+    inputFormat: '无输入。',
+    outputFormat: '输出所有可能的方案，每行三个整数表示公鸡、母鸡、小鸡的数量。',
+    sampleInput: '',
+    sampleOutput: '0 25 75\n4 18 78\n8 11 81\n12 4 84',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("chicken.in", "r", stdin);
+    freopen("chicken.out", "w", stdout);
+    
+    // 公鸡x只，母鸡y只，小鸡z只
+    // x + y + z = 100
+    // 5x + 3y + z/3 = 100
+    for (int x = 0; x <= 20; x++) {
+        for (int y = 0; y <= 33; y++) {
+            int z = 100 - x - y;
+            if (z % 3 == 0 && 5 * x + 3 * y + z / 3 == 100) {
+                cout << x << " " << y << " " << z << endl;
+            }
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '', expectedOutput: '0 25 75\n4 18 78\n8 11 81\n12 4 84' },
+    ],
+    similarProblems: [80, 81],
+  },
+  {
+    id: 80,
+    title: '水仙花数',
+    titleEn: 'Narcissistic Number',
+    difficulty: 'beginner',
+    description: '水仙花数是指一个三位数，其各位数字的立方和等于该数本身。输出所有的水仙花数。',
+    inputFormat: '无输入。',
+    outputFormat: '输出所有的水仙花数，每行一个。',
+    sampleInput: '',
+    sampleOutput: '153\n370\n371\n407',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("narcissistic.in", "r", stdin);
+    freopen("narcissistic.out", "w", stdout);
+    
+    for (int n = 100; n <= 999; n++) {
+        int a = n / 100;
+        int b = (n / 10) % 10;
+        int c = n % 10;
+        if (a*a*a + b*b*b + c*c*c == n) {
+            cout << n << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '', expectedOutput: '153\n370\n371\n407' },
+    ],
+    similarProblems: [79, 81],
+  },
+  {
+    id: 81,
+    title: '完美立方',
+    titleEn: 'Perfect Cube',
+    difficulty: 'intermediate',
+    description: '给定一个正整数N，求所有满足a³=b³+c³+d³的四元组(a,b,c,d)，其中1<a,b,c,d≤N，且b≤c≤d。',
+    inputFormat: '输入一个正整数N（N≤100）。',
+    outputFormat: '输出所有满足条件的四元组，每行格式为"Cube = a, Triple = (b,c,d)"。',
+    sampleInput: '24',
+    sampleOutput: 'Cube = 6, Triple = (3,4,5)\nCube = 12, Triple = (6,8,10)\nCube = 18, Triple = (2,12,16)\nCube = 18, Triple = (9,12,15)\nCube = 19, Triple = (3,10,18)\nCube = 20, Triple = (7,14,17)\nCube = 24, Triple = (12,16,20)',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("cube.in", "r", stdin);
+    freopen("cube.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    for (int a = 2; a <= n; a++) {
+        for (int b = 2; b < a; b++) {
+            for (int c = b; c < a; c++) {
+                for (int d = c; d < a; d++) {
+                    if ((long long)a*a*a == (long long)b*b*b + c*c*c + d*d*d) {
+                        cout << "Cube = " << a << ", Triple = (" << b << "," << c << "," << d << ")" << endl;
+                    }
+                }
+            }
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举'],
+    source: 'Other',
+    timeLimit: 2000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '24', expectedOutput: 'Cube = 6, Triple = (3,4,5)\nCube = 12, Triple = (6,8,10)\nCube = 18, Triple = (2,12,16)\nCube = 18, Triple = (9,12,15)\nCube = 19, Triple = (3,10,18)\nCube = 20, Triple = (7,14,17)\nCube = 24, Triple = (12,16,20)' },
+    ],
+    similarProblems: [79, 80],
+  },
+  {
+    id: 82,
+    title: '选数',
+    titleEn: 'Select Numbers',
+    difficulty: 'intermediate',
+    description: '给定n个正整数，从中选出k个数，使得它们的和为素数。问有多少种选法。',
+    inputFormat: '第一行n和k，第二行n个正整数。',
+    outputFormat: '输出选法的数量。',
+    sampleInput: '4 3\n3 7 12 19',
+    sampleOutput: '1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cmath>
+using namespace std;
+
+int n, k;
+int a[20];
+int cnt = 0;
+
+bool isPrime(int x) {
+    if (x < 2) return false;
+    for (int i = 2; i * i <= x; i++) {
+        if (x % i == 0) return false;
+    }
+    return true;
+}
+
+void dfs(int pos, int selected, int sum) {
+    if (selected == k) {
+        if (isPrime(sum)) cnt++;
+        return;
+    }
+    if (pos >= n || selected + (n - pos) < k) return;
+    
+    // 选当前位置
+    dfs(pos + 1, selected + 1, sum + a[pos]);
+    // 不选当前位置
+    dfs(pos + 1, selected, sum);
+}
+
+int main() {
+    freopen("select.in", "r", stdin);
+    freopen("select.out", "w", stdout);
+    
+    cin >> n >> k;
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    dfs(0, 0, 0);
+    cout << cnt << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举', '递归'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 3\n3 7 12 19', expectedOutput: '1' },
+    ],
+    similarProblems: [79, 80],
+  },
+  {
+    id: 83,
+    title: '三连击',
+    titleEn: 'Triple Strike',
+    difficulty: 'intermediate',
+    description: '用1到9这9个数字组成三个三位数，使得第二个数是第一个数的2倍，第三个数是第一个数的3倍。求所有可能的组合。',
+    inputFormat: '无输入。',
+    outputFormat: '输出所有可能的组合，每行三个数，第一个数按从小到大排列。',
+    sampleInput: '',
+    sampleOutput: '192 384 576\n219 438 657\n273 546 819\n327 654 981',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int main() {
+    freopen("triple.in", "r", stdin);
+    freopen("triple.out", "w", stdout);
+    
+    for (int a = 123; a <= 329; a++) {
+        int b = a * 2;
+        int c = a * 3;
+        
+        int used[10] = {0};
+        int temp = a;
+        while (temp > 0) { used[temp % 10]++; temp /= 10; }
+        temp = b;
+        while (temp > 0) { used[temp % 10]++; temp /= 10; }
+        temp = c;
+        while (temp > 0) { used[temp % 10]++; temp /= 10; }
+        
+        bool valid = true;
+        for (int i = 1; i <= 9; i++) {
+            if (used[i] != 1) { valid = false; break; }
+        }
+        
+        if (valid) {
+            cout << a << " " << b << " " << c << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '', expectedOutput: '192 384 576\n219 438 657\n273 546 819\n327 654 981' },
+    ],
+    similarProblems: [79, 80],
+  },
 ];
 
 // 获取所有分类

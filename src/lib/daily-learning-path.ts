@@ -450,7 +450,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'enumeration', name: '枚举算法', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [29, 54],
+    practiceProblems: [79, 80], // 百钱百鸡、水仙花数
     estimatedMinutes: 50,
     objectives: [
       '理解枚举算法的基本思想',
@@ -626,7 +626,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'prefix-sum', name: '前缀和', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [27, 30],
+    practiceProblems: [73, 74], // 前缀和求区间和、子数组和
     estimatedMinutes: 50,
     objectives: [
       '理解前缀和的概念',
@@ -643,7 +643,7 @@ export const dailyLearningPath: DayLesson[] = [
     topics: [
       { id: 'difference', name: '差分', type: 'algorithm', importance: 'required' },
     ],
-    practiceProblems: [27, 56],
+    practiceProblems: [76, 77], // 差分数组基础、差分求最终值
     estimatedMinutes: 50,
     objectives: [
       '理解差分的概念',
