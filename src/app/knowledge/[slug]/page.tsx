@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   knowledgePoints,
   categories,
@@ -18,6 +19,10 @@ import {
   getBilibiliEmbedUrl,
   type VisualizationResource,
 } from '@/lib/visualization-resources';
+import {
+  getKnowledgeLesson,
+  type KnowledgeLesson,
+} from '@/lib/knowledge-lessons';
 import {
   ArrowLeft,
   BookOpen,
@@ -37,6 +42,7 @@ import {
   Video,
   Target,
   Zap,
+  AlertCircle,
 } from 'lucide-react';
 import { RunnableCodeBlock } from '@/components/RunnableCodeBlock';
 
@@ -81,12 +87,23 @@ export default function KnowledgeDetailPage() {
   const from = searchParams.get('from'); // 'map' | 'learning'
   const day = searchParams.get('day'); // 如果从学习路径来
   
-  // 直接从 knowledgePoints 数组中查找知识点
-  const initialPoint = React.useMemo(() => {
-    return knowledgePoints.find(k => k.slug === slug) || null;
+  // 同时从 knowledgePoints 和 knowledge-lessons 中查找知识点
+  const { point, lesson } = useMemo(() => {
+    // 先从 knowledge-map 查找
+    const mapPoint = knowledgePoints.find(k => k.slug === slug) || null;
+    if (mapPoint) {
+      return { point: mapPoint, lesson: null };
+    }
+    
+    // 再从 knowledge-lessons 查找
+    const lessonData = getKnowledgeLesson(slug);
+    if (lessonData) {
+      return { point: null, lesson: lessonData };
+    }
+    
+    return { point: null, lesson: null };
   }, [slug]);
   
-  const [point, setPoint] = useState<KnowledgePoint | null>(initialPoint);
   const [viewedPoints, setViewedPoints] = useState<Set<number>>(new Set());
   const [bookmarkedPoints, setBookmarkedPoints] = useState<Set<number>>(new Set());
   const [expandedSection, setExpandedSection] = useState<string>('content');
@@ -94,16 +111,16 @@ export default function KnowledgeDetailPage() {
 
   // 加载可视化和标记已读
   useEffect(() => {
-    if (initialPoint) {
+    if (point) {
       // 标记为已读
-      setViewedPoints(prev => new Set([...prev, initialPoint.id]));
+      setViewedPoints(prev => new Set([...prev, point.id]));
       // 加载可视化资源
-      const resource = getVisualizationResource(initialPoint.id);
+      const resource = getVisualizationResource(point.id);
       if (resource) {
         setVisualResource(resource);
       }
     }
-  }, [initialPoint]);
+  }, [point]);
 
   // 切换收藏
   const toggleBookmark = (id: number) => {
@@ -127,12 +144,27 @@ export default function KnowledgeDetailPage() {
     }
   };
 
-  if (!point) {
+  // 如果有 lesson 数据，使用 LessonView 渲染
+  if (lesson && !point) {
+    return (
+      <LessonView 
+        lesson={lesson} 
+        day={day} 
+        from={from} 
+        onBack={goBack}
+        onStartProblem={(problemId) => router.push(`/?view=practice&problem=${problemId}`)}
+      />
+    );
+  }
+
+  // 两者都没有找到
+  if (!point && !lesson) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">🔍</div>
-          <p className="text-muted-foreground">知识点未找到</p>
+          <p className="text-muted-foreground mb-2">知识点未找到</p>
+          <p className="text-sm text-muted-foreground mb-4">找不到 "{slug}" 对应的知识点</p>
           <Button variant="outline" className="mt-4" onClick={goBack}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             返回
@@ -732,6 +764,212 @@ export default function KnowledgeDetailPage() {
                       <button
                         key={problemId}
                         onClick={() => router.push(`/?view=practice&problem=${problemId}`)}
+                        className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-muted text-left text-sm"
+                      >
+                        <Play className="h-3 w-3 text-blue-500" />
+                        <span>题目 #{problemId}</span>
+                        <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// LessonView 组件 - 用于渲染 knowledge-lessons.ts 的内容
+interface LessonViewProps {
+  lesson: KnowledgeLesson;
+  day: string | null;
+  from: string | null;
+  onBack: () => void;
+  onStartProblem: (problemId: number) => void;
+}
+
+function LessonView({ lesson, day, from, onBack, onStartProblem }: LessonViewProps) {
+  const [activeTab, setActiveTab] = useState<'content' | 'code' | 'points' | 'mistakes'>('content');
+  
+  return (
+    <div className="min-h-screen bg-background">
+      {/* 顶部导航栏 */}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
+        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={onBack}>
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              {from === 'learning' ? '返回学习路径' : '返回'}
+            </Button>
+            {day && (
+              <Badge variant="outline" className="text-xs">
+                Day {day}
+              </Badge>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* 主内容 */}
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* 左侧主要内容 */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* 标题区 */}
+            <div className="space-y-3">
+              <h1 className="text-2xl font-bold">{lesson.title}</h1>
+              {day && (
+                <Badge variant="outline">Day {day}</Badge>
+              )}
+            </div>
+
+            <Separator />
+
+            {/* 内容区域 */}
+            <div className="prose prose-slate max-w-none">
+              <div 
+                className="whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ 
+                  __html: lesson.content
+                    .replace(/```cpp\n([\s\S]*?)```/g, '<pre class="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto"><code>$1</code></pre>')
+                    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto"><code>$2</code></pre>')
+                    .replace(/`([^`]+)`/g, '<code class="bg-slate-100 px-1.5 py-0.5 rounded text-sm">$1</code>')
+                    .replace(/## (.+)/g, '<h2 class="text-xl font-bold mt-6 mb-3">$1</h2>')
+                    .replace(/### (.+)/g, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br/>')
+                }}
+              />
+            </div>
+
+            {/* 代码示例 */}
+            {lesson.codeExamples && lesson.codeExamples.length > 0 && (
+              <>
+                <Separator />
+                <section>
+                  <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
+                    <Code className="h-5 w-5 text-purple-500" />
+                    代码示例
+                  </h2>
+                  <div className="space-y-4">
+                    {lesson.codeExamples.map((example, index) => (
+                      <div key={index} className="border rounded-lg overflow-hidden">
+                        <div className="bg-muted px-4 py-2 border-b">
+                          <h4 className="font-medium">{example.title}</h4>
+                        </div>
+                        <RunnableCodeBlock
+                          code={example.code}
+                          title={example.title}
+                          description={example.explanation}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </>
+            )}
+
+            {/* 要点总结 */}
+            {lesson.keyPoints && lesson.keyPoints.length > 0 && (
+              <>
+                <Separator />
+                <section>
+                  <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
+                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    要点总结
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {lesson.keyPoints.map((point, index) => (
+                      <div key={index} className="flex items-start gap-3 p-4 rounded-xl bg-green-50 border border-green-100">
+                        <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                        <span className="text-slate-700">{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </>
+            )}
+
+            {/* 常见错误 */}
+            {lesson.commonMistakes && lesson.commonMistakes.length > 0 && (
+              <>
+                <Separator />
+                <section>
+                  <h2 className="text-xl font-semibold flex items-center gap-2 mb-4 text-red-600">
+                    <AlertCircle className="h-5 w-5" />
+                    常见错误
+                  </h2>
+                  <div className="space-y-3">
+                    {lesson.commonMistakes.map((mistake, index) => (
+                      <div key={index} className="p-4 rounded-xl bg-red-50 border border-red-100">
+                        <div className="flex items-start gap-3">
+                          <span className="text-red-500">❌</span>
+                          <span className="text-slate-700">{mistake}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </>
+            )}
+
+            {/* 学习提示 */}
+            {lesson.tips && lesson.tips.length > 0 && (
+              <>
+                <Separator />
+                <section>
+                  <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
+                    <Lightbulb className="h-5 w-5 text-yellow-500" />
+                    学习提示
+                  </h2>
+                  <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-100">
+                    <ul className="space-y-2">
+                      {lesson.tips.map((tip, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="text-yellow-500">💡</span>
+                          <span className="text-slate-700">{tip}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </section>
+              </>
+            )}
+
+            {/* 底部导航 */}
+            <div className="flex items-center justify-between pt-8">
+              <Button variant="outline" onClick={onBack}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {from === 'learning' ? '返回学习路径' : '返回'}
+              </Button>
+              
+              {lesson.relatedProblems && lesson.relatedProblems.length > 0 && (
+                <Button onClick={() => onStartProblem(lesson.relatedProblems[0])}>
+                  开始练习
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* 右侧边栏 */}
+          <aside className="lg:col-span-1 space-y-6">
+            <div className="sticky top-20 space-y-4">
+              {/* 相关题目 */}
+              {lesson.relatedProblems && lesson.relatedProblems.length > 0 && (
+                <div className="p-4 rounded-xl bg-muted/50">
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <Play className="h-4 w-4 text-blue-500" />
+                    相关题目
+                  </h4>
+                  <div className="space-y-2">
+                    {lesson.relatedProblems.map(problemId => (
+                      <button
+                        key={problemId}
+                        onClick={() => onStartProblem(problemId)}
                         className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-muted text-left text-sm"
                       >
                         <Play className="h-3 w-3 text-blue-500" />
