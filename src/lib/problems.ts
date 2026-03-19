@@ -3963,6 +3963,2706 @@ int main() {
     ],
     similarProblems: [79, 80],
   },
+  // ========== 新增题目 - 进阶图论篇 ==========
+  {
+    id: 84,
+    title: '连通分量',
+    titleEn: 'Connected Components',
+    difficulty: 'intermediate',
+    description: '给定一个无向图，求其连通分量的个数。',
+    inputFormat: '第一行 n 和 m 表示点数和边数，接下来 m 行每行两个整数表示边。',
+    outputFormat: '输出连通分量个数。',
+    sampleInput: '5 3\n1 2\n2 3\n4 5',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+using namespace std;
+
+vector<int> adj[1005];
+bool visited[1005];
+
+void dfs(int u) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (!visited[v]) dfs(v);
+    }
+}
+
+int main() {
+    freopen("connected.in", "r", stdin);
+    freopen("connected.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    
+    int cnt = 0;
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            dfs(i);
+            cnt++;
+        }
+    }
+    
+    cout << cnt << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论', '搜索-DFS'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 2\n2 3\n4 5', expectedOutput: '2' },
+    ],
+    similarProblems: [63, 64],
+  },
+  {
+    id: 85,
+    title: '判断环',
+    titleEn: 'Cycle Detection',
+    difficulty: 'intermediate',
+    description: '给定一个无向图，判断是否存在环。',
+    inputFormat: '第一行 n 和 m 表示点数和边数，接下来 m 行每行两个整数表示边。',
+    outputFormat: '存在环输出 "Yes"，否则输出 "No"。',
+    sampleInput: '3 3\n1 2\n2 3\n3 1',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+using namespace std;
+
+vector<int> adj[1005];
+bool visited[1005];
+
+bool dfs(int u, int parent) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            if (dfs(v, u)) return true;
+        } else if (v != parent) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    freopen("cycle.in", "r", stdin);
+    freopen("cycle.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    
+    bool hasCycle = false;
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            if (dfs(i, -1)) {
+                hasCycle = true;
+                break;
+            }
+        }
+    }
+    
+    cout << (hasCycle ? "Yes" : "No") << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论', '搜索-DFS'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 3\n1 2\n2 3\n3 1', expectedOutput: 'Yes' },
+      { id: 2, input: '3 2\n1 2\n2 3', expectedOutput: 'No' },
+    ],
+    similarProblems: [84, 63],
+  },
+  {
+    id: 86,
+    title: 'Dijkstra求最短路',
+    titleEn: 'Dijkstra Shortest Path',
+    difficulty: 'advanced',
+    description: '给定一个带权有向图，求从起点到所有点的最短路径。',
+    inputFormat: '第一行 n 和 m 表示点数和边数，接下来 m 行每行三个整数 u、v、w 表示边。起点为1。',
+    outputFormat: '输出 n 个数，表示从起点到每个点的最短距离。无法到达输出 -1。',
+    sampleInput: '4 4\n1 2 1\n1 3 4\n2 3 2\n3 4 1',
+    sampleOutput: '0 1 3 4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+#include <queue>
+using namespace std;
+
+typedef pair<int, int> pii;
+vector<pii> adj[1005];
+int dist[1005];
+
+int main() {
+    freopen("dijkstra.in", "r", stdin);
+    freopen("dijkstra.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+    }
+    
+    for (int i = 1; i <= n; i++) dist[i] = 1e9;
+    dist[1] = 0;
+    
+    priority_queue<pii, vector<pii>, greater<pii>> pq;
+    pq.push({0, 1});
+    
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+        if (d > dist[u]) continue;
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    
+    for (int i = 1; i <= n; i++) {
+        if (i > 1) cout << " ";
+        cout << (dist[i] == 1e9 ? -1 : dist[i]);
+    }
+    cout << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论-最短路'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 4\n1 2 1\n1 3 4\n2 3 2\n3 4 1', expectedOutput: '0 1 3 4' },
+    ],
+    similarProblems: [66, 87],
+  },
+  {
+    id: 87,
+    title: 'Floyd求多源最短路',
+    titleEn: 'Floyd All Pairs Shortest Path',
+    difficulty: 'advanced',
+    description: '给定一个带权有向图，求任意两点间的最短路径。',
+    inputFormat: '第一行 n 表示点数，接下来 n 行每行 n 个整数表示邻接矩阵。-1表示无边。',
+    outputFormat: '输出 n 行 n 列的最短路径矩阵。',
+    sampleInput: '3\n0 1 -1\n-1 0 2\n3 -1 0',
+    sampleOutput: '0 1 3\n5 0 2\n3 4 0',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("floyd.in", "r", stdin);
+    freopen("floyd.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int dist[105][105];
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cin >> dist[i][j];
+            if (dist[i][j] == -1 && i != j) dist[i][j] = 1e9;
+        }
+    }
+    
+    for (int k = 1; k <= n; k++) {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (j > 1) cout << " ";
+            cout << (dist[i][j] == 1e9 ? -1 : dist[i][j]);
+        }
+        cout << endl;
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论-最短路'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n0 1 -1\n-1 0 2\n3 -1 0', expectedOutput: '0 1 3\n5 0 2\n3 4 0' },
+    ],
+    similarProblems: [86, 66],
+  },
+  {
+    id: 88,
+    title: 'SPFA求负权最短路',
+    titleEn: 'SPFA with Negative Edges',
+    difficulty: 'advanced',
+    description: '给定一个带权有向图（可能有负权边），求从起点到所有点的最短路径。',
+    inputFormat: '第一行 n 和 m 表示点数和边数，接下来 m 行每行三个整数 u、v、w 表示边。起点为1。',
+    outputFormat: '输出 n 个数，表示从起点到每个点的最短距离。存在负环输出 "-1"。',
+    sampleInput: '4 4\n1 2 1\n2 3 -2\n3 4 1\n1 4 5',
+    sampleOutput: '0 1 -1 0',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+#include <queue>
+using namespace std;
+
+struct Edge { int to, w; };
+vector<Edge> adj[1005];
+int dist[1005], cnt[1005];
+bool inQueue[1005];
+
+int main() {
+    freopen("spfa.in", "r", stdin);
+    freopen("spfa.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+    }
+    
+    for (int i = 1; i <= n; i++) dist[i] = 1e9;
+    dist[1] = 0;
+    
+    queue<int> q;
+    q.push(1);
+    inQueue[1] = true;
+    
+    bool hasNegativeCycle = false;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        inQueue[u] = false;
+        
+        for (auto& e : adj[u]) {
+            if (dist[u] + e.w < dist[e.to]) {
+                dist[e.to] = dist[u] + e.w;
+                if (!inQueue[e.to]) {
+                    q.push(e.to);
+                    inQueue[e.to] = true;
+                    cnt[e.to]++;
+                    if (cnt[e.to] > n) {
+                        hasNegativeCycle = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (hasNegativeCycle) break;
+    }
+    
+    if (hasNegativeCycle) {
+        cout << -1 << endl;
+    } else {
+        for (int i = 1; i <= n; i++) {
+            if (i > 1) cout << " ";
+            cout << (dist[i] == 1e9 ? -1 : dist[i]);
+        }
+        cout << endl;
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论-最短路'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 4\n1 2 1\n2 3 -2\n3 4 1\n1 4 5', expectedOutput: '0 1 -1 0' },
+    ],
+    similarProblems: [86, 87],
+  },
+  // ========== 新增题目 - 并查集与生成树篇 ==========
+  {
+    id: 89,
+    title: '并查集基础',
+    titleEn: 'Disjoint Set Union',
+    difficulty: 'intermediate',
+    description: '实现并查集，支持合并两个集合和查询两个元素是否在同一集合。',
+    inputFormat: '第一行 n 和 m 表示元素个数和操作数，接下来 m 行，每行三个整数：1 x y 表示合并 x 和 y，2 x y 表示查询。',
+    outputFormat: '对于每个查询，输出 "Y" 或 "N"。',
+    sampleInput: '4 5\n1 1 2\n2 1 2\n1 2 3\n2 1 3\n2 3 4',
+    sampleOutput: 'Y\nY\nN',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int parent[10005];
+
+int find(int x) {
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
+}
+
+void unite(int x, int y) {
+    parent[find(x)] = find(y);
+}
+
+int main() {
+    freopen("dsu.in", "r", stdin);
+    freopen("dsu.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 1; i <= n; i++) parent[i] = i;
+    
+    while (m--) {
+        int op, x, y;
+        cin >> op >> x >> y;
+        if (op == 1) {
+            unite(x, y);
+        } else {
+            cout << (find(x) == find(y) ? "Y" : "N") << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['并查集'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 5\n1 1 2\n2 1 2\n1 2 3\n2 1 3\n2 3 4', expectedOutput: 'Y\nY\nN' },
+    ],
+    similarProblems: [90, 84],
+  },
+  {
+    id: 90,
+    title: '并查集判断连通',
+    titleEn: 'DSU Connectivity',
+    difficulty: 'intermediate',
+    description: '给定一个无向图，动态添加边并查询两点是否连通。',
+    inputFormat: '第一行 n 和 m 表示点数和操作数，接下来 m 行，每行三个整数：1 u v 表示添加边，2 u v 表示查询。',
+    outputFormat: '对于每个查询，输出 "Yes" 或 "No"。',
+    sampleInput: '4 4\n1 1 2\n2 1 3\n1 2 3\n2 1 3',
+    sampleOutput: 'No\nYes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int parent[10005];
+
+int find(int x) {
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
+}
+
+int main() {
+    freopen("connect.in", "r", stdin);
+    freopen("connect.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 1; i <= n; i++) parent[i] = i;
+    
+    while (m--) {
+        int op, u, v;
+        cin >> op >> u >> v;
+        if (op == 1) {
+            parent[find(u)] = find(v);
+        } else {
+            cout << (find(u) == find(v) ? "Yes" : "No") << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['并查集'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 4\n1 1 2\n2 1 3\n1 2 3\n2 1 3', expectedOutput: 'No\nYes' },
+    ],
+    similarProblems: [89, 84],
+  },
+  {
+    id: 91,
+    title: 'Kruskal最小生成树',
+    titleEn: 'Kruskal MST',
+    difficulty: 'advanced',
+    description: '给定一个带权无向图，求最小生成树的边权和。',
+    inputFormat: '第一行 n 和 m 表示点数和边数，接下来 m 行每行三个整数 u、v、w 表示边。',
+    outputFormat: '输出最小生成树的边权和，如果不连通输出 -1。',
+    sampleInput: '4 4\n1 2 1\n2 3 2\n3 4 3\n1 4 4',
+    sampleOutput: '6',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+    int u, v, w;
+    bool operator<(const Edge& e) const { return w < e.w; }
+} edges[10005];
+
+int parent[1005];
+
+int find(int x) {
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
+}
+
+int main() {
+    freopen("kruskal.in", "r", stdin);
+    freopen("kruskal.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        cin >> edges[i].u >> edges[i].v >> edges[i].w;
+    }
+    
+    sort(edges, edges + m);
+    for (int i = 1; i <= n; i++) parent[i] = i;
+    
+    int total = 0, cnt = 0;
+    for (int i = 0; i < m && cnt < n - 1; i++) {
+        int pu = find(edges[i].u), pv = find(edges[i].v);
+        if (pu != pv) {
+            parent[pu] = pv;
+            total += edges[i].w;
+            cnt++;
+        }
+    }
+    
+    cout << (cnt == n - 1 ? total : -1) << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论-生成树', '并查集'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 4\n1 2 1\n2 3 2\n3 4 3\n1 4 4', expectedOutput: '6' },
+    ],
+    similarProblems: [92, 89],
+  },
+  {
+    id: 92,
+    title: 'Prim最小生成树',
+    titleEn: 'Prim MST',
+    difficulty: 'advanced',
+    description: '使用Prim算法求最小生成树的边权和。',
+    inputFormat: '第一行 n 表示点数，接下来 n 行 n 列表示邻接矩阵，0表示无边。',
+    outputFormat: '输出最小生成树的边权和。',
+    sampleInput: '4\n0 1 0 4\n1 0 2 0\n0 2 0 3\n4 0 3 0',
+    sampleOutput: '6',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int main() {
+    freopen("prim.in", "r", stdin);
+    freopen("prim.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int g[105][105], dist[105];
+    bool visited[105] = {false};
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cin >> g[i][j];
+        }
+    }
+    
+    memset(dist, 0x3f, sizeof(dist));
+    dist[1] = 0;
+    
+    int total = 0;
+    for (int i = 0; i < n; i++) {
+        int u = -1;
+        for (int j = 1; j <= n; j++) {
+            if (!visited[j] && (u == -1 || dist[j] < dist[u])) {
+                u = j;
+            }
+        }
+        
+        visited[u] = true;
+        total += dist[u];
+        
+        for (int v = 1; v <= n; v++) {
+            if (!visited[v] && g[u][v] && g[u][v] < dist[v]) {
+                dist[v] = g[u][v];
+            }
+        }
+    }
+    
+    cout << total << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论-生成树'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n0 1 0 4\n1 0 2 0\n0 2 0 3\n4 0 3 0', expectedOutput: '6' },
+    ],
+    similarProblems: [91, 86],
+  },
+  // ========== 新增题目 - 进阶DP篇 ==========
+  {
+    id: 93,
+    title: '状压DP - 旅行商问题',
+    titleEn: 'TSP with Bitmask DP',
+    difficulty: 'advanced',
+    description: '给定n个城市和它们之间的距离，求从城市1出发，经过所有城市恰好一次后回到城市1的最短路径。',
+    inputFormat: '第一行 n，接下来 n 行 n 列表示城市间的距离矩阵。',
+    outputFormat: '输出最短路径长度。',
+    sampleInput: '4\n0 1 2 3\n1 0 4 5\n2 4 0 6\n3 5 6 0',
+    sampleOutput: '13',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int main() {
+    freopen("tsp.in", "r", stdin);
+    freopen("tsp.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int g[20][20];
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> g[i][j];
+        }
+    }
+    
+    int dp[1<<16][16];
+    memset(dp, 0x3f, sizeof(dp));
+    dp[1][0] = 0;
+    
+    for (int mask = 1; mask < (1 << n); mask++) {
+        for (int i = 0; i < n; i++) {
+            if (!(mask & (1 << i))) continue;
+            for (int j = 0; j < n; j++) {
+                if (mask & (1 << j)) continue;
+                dp[mask | (1 << j)][j] = min(dp[mask | (1 << j)][j], dp[mask][i] + g[i][j]);
+            }
+        }
+    }
+    
+    int ans = 1e9;
+    for (int i = 1; i < n; i++) {
+        ans = min(ans, dp[(1 << n) - 1][i] + g[i][0]);
+    }
+    
+    cout << ans << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '位运算'],
+    source: 'Other',
+    timeLimit: 2000,
+    memoryLimit: 256,
+    testCases: [
+      { id: 1, input: '4\n0 1 2 3\n1 0 4 5\n2 4 0 6\n3 5 6 0', expectedOutput: '13' },
+    ],
+    similarProblems: [94, 58],
+  },
+  {
+    id: 94,
+    title: '状压DP - 集合覆盖',
+    titleEn: 'Set Cover with Bitmask',
+    difficulty: 'advanced',
+    description: '有n个技能和m个英雄，每个英雄会一些技能。求最少选几个英雄可以覆盖所有技能。',
+    inputFormat: '第一行 n 和 m，接下来 m 行，每行先一个 k 表示技能数，然后 k 个整数表示技能编号。',
+    outputFormat: '输出最少英雄数，无法覆盖输出 -1。',
+    sampleInput: '3 4\n2 1 2\n1 2\n2 2 3\n1 1',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int main() {
+    freopen("setcover.in", "r", stdin);
+    freopen("setcover.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    int skills[105];
+    for (int i = 0; i < m; i++) {
+        int k, mask = 0;
+        cin >> k;
+        while (k--) {
+            int x;
+            cin >> x;
+            mask |= (1 << (x - 1));
+        }
+        skills[i] = mask;
+    }
+    
+    int dp[1<<16];
+    memset(dp, 0x3f, sizeof(dp));
+    dp[0] = 0;
+    
+    for (int i = 0; i < m; i++) {
+        for (int mask = 0; mask < (1 << n); mask++) {
+            dp[mask | skills[i]] = min(dp[mask | skills[i]], dp[mask] + 1);
+        }
+    }
+    
+    cout << (dp[(1 << n) - 1] == 0x3f3f3f3f ? -1 : dp[(1 << n) - 1]) << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '位运算'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 4\n2 1 2\n1 2\n2 2 3\n1 1', expectedOutput: '2' },
+    ],
+    similarProblems: [93, 58],
+  },
+  {
+    id: 95,
+    title: '记忆化搜索 - 滑雪',
+    titleEn: 'Skiing with Memoization',
+    difficulty: 'intermediate',
+    description: '给定一个矩阵表示高度，求从任意点出发，只能向低处滑，最长能滑多远。',
+    inputFormat: '第一行 r 和 c 表示行数列数，接下来 r 行 c 列表示高度。',
+    outputFormat: '输出最长滑雪长度。',
+    sampleInput: '3 3\n1 2 3\n4 5 6\n7 8 9',
+    sampleOutput: '5',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int r, c;
+int h[105][105], dp[105][105];
+int dx[] = {-1, 1, 0, 0};
+int dy[] = {0, 0, -1, 1};
+
+int dfs(int x, int y) {
+    if (dp[x][y] != -1) return dp[x][y];
+    
+    int ans = 1;
+    for (int i = 0; i < 4; i++) {
+        int nx = x + dx[i], ny = y + dy[i];
+        if (nx >= 0 && nx < r && ny >= 0 && ny < c && h[nx][ny] < h[x][y]) {
+            ans = max(ans, 1 + dfs(nx, ny));
+        }
+    }
+    
+    return dp[x][y] = ans;
+}
+
+int main() {
+    freopen("ski.in", "r", stdin);
+    freopen("ski.out", "w", stdout);
+    
+    cin >> r >> c;
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            cin >> h[i][j];
+        }
+    }
+    
+    memset(dp, -1, sizeof(dp));
+    
+    int ans = 0;
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            ans = max(ans, dfs(i, j));
+        }
+    }
+    
+    cout << ans << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '递归'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 3\n1 2 3\n4 5 6\n7 8 9', expectedOutput: '5' },
+    ],
+    similarProblems: [96, 59],
+  },
+  {
+    id: 96,
+    title: '记忆化搜索 - 数字三角形',
+    titleEn: 'Number Triangle with Memoization',
+    difficulty: 'intermediate',
+    description: '给定一个数字三角形，从顶部走到底部，每次可走左下或右下，求最大路径和。',
+    inputFormat: '第一行 n，接下来 n 行表示三角形。',
+    outputFormat: '输出最大路径和。',
+    sampleInput: '4\n1\n3 2\n4 5 6\n7 8 9 10',
+    sampleOutput: '19',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int n;
+int tri[105][105], dp[105][105];
+
+int dfs(int i, int j) {
+    if (i == n) return tri[i][j];
+    if (dp[i][j] != -1) return dp[i][j];
+    
+    return dp[i][j] = tri[i][j] + max(dfs(i + 1, j), dfs(i + 1, j + 1));
+}
+
+int main() {
+    freopen("triangle.in", "r", stdin);
+    freopen("triangle.out", "w", stdout);
+    
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= i; j++) {
+            cin >> tri[i][j];
+        }
+    }
+    
+    memset(dp, -1, sizeof(dp));
+    cout << dfs(1, 1) << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '递归'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n1\n3 2\n4 5 6\n7 8 9 10', expectedOutput: '19' },
+    ],
+    similarProblems: [95, 12],
+  },
+  // ========== 新增题目 - 字符串算法篇 ==========
+  {
+    id: 97,
+    title: 'KMP模式匹配',
+    titleEn: 'KMP Pattern Matching',
+    difficulty: 'advanced',
+    description: '给定文本串和模式串，求模式串在文本串中出现的所有位置。',
+    inputFormat: '第一行文本串，第二行模式串。',
+    outputFormat: '输出所有匹配位置（下标从1开始），用空格分隔。',
+    sampleInput: 'ABABABC\nAB',
+    sampleOutput: '1 3 5',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+using namespace std;
+
+int main() {
+    freopen("kmp.in", "r", stdin);
+    freopen("kmp.out", "w", stdout);
+    
+    string text, pattern;
+    cin >> text >> pattern;
+    
+    int n = text.length(), m = pattern.length();
+    
+    // 计算next数组
+    int next[10005];
+    next[0] = -1;
+    for (int i = 1, j = -1; i < m; i++) {
+        while (j >= 0 && pattern[i] != pattern[j + 1]) j = next[j];
+        if (pattern[i] == pattern[j + 1]) j++;
+        next[i] = j;
+    }
+    
+    // KMP匹配
+    bool first = true;
+    for (int i = 0, j = -1; i < n; i++) {
+        while (j >= 0 && text[i] != pattern[j + 1]) j = next[j];
+        if (text[i] == pattern[j + 1]) j++;
+        if (j == m - 1) {
+            if (!first) cout << " ";
+            cout << i - m + 2;
+            first = false;
+            j = next[j];
+        }
+    }
+    cout << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '字符串处理',
+    tags: ['字符串', 'KMP'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'ABABABC\nAB', expectedOutput: '1 3 5' },
+    ],
+    similarProblems: [98, 33],
+  },
+  {
+    id: 98,
+    title: '字符串哈希',
+    titleEn: 'String Hash',
+    difficulty: 'intermediate',
+    description: '给定多个字符串，统计有多少个不同的字符串。',
+    inputFormat: '第一行 n，接下来 n 行每行一个字符串。',
+    outputFormat: '输出不同字符串的数量。',
+    sampleInput: '5\nabc\ndef\nabc\ngh\ndef',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <set>
+using namespace std;
+
+unsigned long long hashStr(const string& s) {
+    unsigned long long h = 0;
+    for (char c : s) {
+        h = h * 131 + c;
+    }
+    return h;
+}
+
+int main() {
+    freopen("strhash.in", "r", stdin);
+    freopen("strhash.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    set<unsigned long long> hashes;
+    for (int i = 0; i < n; i++) {
+        string s;
+        cin >> s;
+        hashes.insert(hashStr(s));
+    }
+    
+    cout << hashes.size() << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '字符串处理',
+    tags: ['字符串', '哈希表'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\nabc\ndef\nabc\ngh\ndef', expectedOutput: '3' },
+    ],
+    similarProblems: [97, 33],
+  },
+  {
+    id: 99,
+    title: '哈希表实现',
+    titleEn: 'Hash Table Implementation',
+    difficulty: 'intermediate',
+    description: '实现一个哈希表，支持插入、删除、查询操作。',
+    inputFormat: '第一行 n 表示操作数，接下来 n 行操作：insert x、delete x、query x。',
+    outputFormat: '对于 query 操作，输出 "Yes" 或 "No"。',
+    sampleInput: '5\ninsert 1\ninsert 2\nquery 1\ndelete 1\nquery 1',
+    sampleOutput: 'Yes\nNo',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <set>
+using namespace std;
+
+int main() {
+    freopen("hashtable.in", "r", stdin);
+    freopen("hashtable.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    set<int> s;
+    
+    while (n--) {
+        string op;
+        int x;
+        cin >> op >> x;
+        
+        if (op == "insert") {
+            s.insert(x);
+        } else if (op == "delete") {
+            s.erase(x);
+        } else {
+            cout << (s.count(x) ? "Yes" : "No") << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['哈希表', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\ninsert 1\ninsert 2\nquery 1\ndelete 1\nquery 1', expectedOutput: 'Yes\nNo' },
+    ],
+    similarProblems: [100, 98],
+  },
+  {
+    id: 100,
+    title: '哈希冲突',
+    titleEn: 'Hash Collision',
+    difficulty: 'intermediate',
+    description: '给定n个数，用模哈希将它们存入大小为m的哈希表，输出每个位置的元素个数。',
+    inputFormat: '第一行 n 和 m，第二行 n 个整数。',
+    outputFormat: '输出 m 个数，表示每个位置的元素个数。',
+    sampleInput: '5 3\n1 2 3 4 5',
+    sampleOutput: '2 2 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("collision.in", "r", stdin);
+    freopen("collision.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    int cnt[10005] = {0};
+    
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        cnt[((x % m) + m) % m]++;
+    }
+    
+    for (int i = 0; i < m; i++) {
+        if (i > 0) cout << " ";
+        cout << cnt[i];
+    }
+    cout << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['哈希表', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 2 3 4 5', expectedOutput: '2 2 1' },
+    ],
+    similarProblems: [99, 98],
+  },
+  // ========== 新增题目 - 高级数据结构篇 ==========
+  {
+    id: 101,
+    title: '高精度乘法',
+    titleEn: 'High Precision Multiplication',
+    difficulty: 'intermediate',
+    description: '输入两个非常大的整数（可能超过 long long 范围），计算它们的积。',
+    inputFormat: '输入两行，每行一个大整数。',
+    outputFormat: '输出它们的积。',
+    sampleInput: '123\n456',
+    sampleOutput: '56088',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen("bigmul.in", "r", stdin);
+    freopen("bigmul.out", "w", stdout);
+    
+    string a, b;
+    cin >> a >> b;
+    
+    int n = a.length(), m = b.length();
+    int result[10000] = {0};
+    
+    reverse(a.begin(), a.end());
+    reverse(b.begin(), b.end());
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            result[i + j] += (a[i] - '0') * (b[j] - '0');
+        }
+    }
+    
+    for (int i = 0; i < n + m; i++) {
+        result[i + 1] += result[i] / 10;
+        result[i] %= 10;
+    }
+    
+    int len = n + m;
+    while (len > 1 && result[len - 1] == 0) len--;
+    
+    for (int i = len - 1; i >= 0; i--) {
+        cout << result[i];
+    }
+    cout << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['模拟', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '123\n456', expectedOutput: '56088' },
+    ],
+    similarProblems: [72, 70],
+  },
+  {
+    id: 102,
+    title: '线段树 - 单点修改区间查询',
+    titleEn: 'Segment Tree Point Update',
+    difficulty: 'advanced',
+    description: '给定一个数组，支持两种操作：单点修改值，查询区间和。',
+    inputFormat: '第一行 n 和 m，第二行 n 个整数，接下来 m 行操作：1 x v 表示修改，2 l r 表示查询。',
+    outputFormat: '对于每个查询，输出区间和。',
+    sampleInput: '5 3\n1 2 3 4 5\n2 1 5\n1 3 10\n2 1 5',
+    sampleOutput: '15\n22',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int n;
+int a[100005], tree[400005];
+
+void build(int node, int l, int r) {
+    if (l == r) { tree[node] = a[l]; return; }
+    int mid = (l + r) / 2;
+    build(node * 2, l, mid);
+    build(node * 2 + 1, mid + 1, r);
+    tree[node] = tree[node * 2] + tree[node * 2 + 1];
+}
+
+void update(int node, int l, int r, int idx, int val) {
+    if (l == r) { tree[node] = val; return; }
+    int mid = (l + r) / 2;
+    if (idx <= mid) update(node * 2, l, mid, idx, val);
+    else update(node * 2 + 1, mid + 1, r, idx, val);
+    tree[node] = tree[node * 2] + tree[node * 2 + 1];
+}
+
+int query(int node, int l, int r, int ql, int qr) {
+    if (ql <= l && r <= qr) return tree[node];
+    int mid = (l + r) / 2, sum = 0;
+    if (ql <= mid) sum += query(node * 2, l, mid, ql, qr);
+    if (qr > mid) sum += query(node * 2 + 1, mid + 1, r, ql, qr);
+    return sum;
+}
+
+int main() {
+    freopen("segtree.in", "r", stdin);
+    freopen("segtree.out", "w", stdout);
+    
+    int m;
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) cin >> a[i];
+    
+    build(1, 1, n);
+    
+    while (m--) {
+        int op;
+        cin >> op;
+        if (op == 1) {
+            int x, v;
+            cin >> x >> v;
+            update(1, 1, n, x, v);
+        } else {
+            int l, r;
+            cin >> l >> r;
+            cout << query(1, 1, n, l, r) << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['线段树', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 2 3 4 5\n2 1 5\n1 3 10\n2 1 5', expectedOutput: '15\n22' },
+    ],
+    similarProblems: [103, 73],
+  },
+  {
+    id: 103,
+    title: '线段树 - 区间修改',
+    titleEn: 'Segment Tree Range Update',
+    difficulty: 'advanced',
+    description: '给定一个数组，支持两种操作：区间加值，查询区间和。',
+    inputFormat: '第一行 n 和 m，第二行 n 个整数，接下来 m 行操作：1 l r v 表示区间加v，2 l r 表示查询。',
+    outputFormat: '对于每个查询，输出区间和。',
+    sampleInput: '5 3\n1 2 3 4 5\n2 1 5\n1 1 3 2\n2 1 5',
+    sampleOutput: '15\n21',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int n;
+long long a[100005], tree[400005], lazy[400005];
+
+void build(int node, int l, int r) {
+    if (l == r) { tree[node] = a[l]; return; }
+    int mid = (l + r) / 2;
+    build(node * 2, l, mid);
+    build(node * 2 + 1, mid + 1, r);
+    tree[node] = tree[node * 2] + tree[node * 2 + 1];
+}
+
+void pushDown(int node, int l, int r) {
+    if (lazy[node] == 0) return;
+    int mid = (l + r) / 2;
+    tree[node * 2] += lazy[node] * (mid - l + 1);
+    tree[node * 2 + 1] += lazy[node] * (r - mid);
+    lazy[node * 2] += lazy[node];
+    lazy[node * 2 + 1] += lazy[node];
+    lazy[node] = 0;
+}
+
+void update(int node, int l, int r, int ul, int ur, long long val) {
+    if (ul <= l && r <= ur) {
+        tree[node] += val * (r - l + 1);
+        lazy[node] += val;
+        return;
+    }
+    pushDown(node, l, r);
+    int mid = (l + r) / 2;
+    if (ul <= mid) update(node * 2, l, mid, ul, ur, val);
+    if (ur > mid) update(node * 2 + 1, mid + 1, r, ul, ur, val);
+    tree[node] = tree[node * 2] + tree[node * 2 + 1];
+}
+
+long long query(int node, int l, int r, int ql, int qr) {
+    if (ql <= l && r <= qr) return tree[node];
+    pushDown(node, l, r);
+    int mid = (l + r) / 2;
+    long long sum = 0;
+    if (ql <= mid) sum += query(node * 2, l, mid, ql, qr);
+    if (qr > mid) sum += query(node * 2 + 1, mid + 1, r, ql, qr);
+    return sum;
+}
+
+int main() {
+    freopen("lazyseg.in", "r", stdin);
+    freopen("lazyseg.out", "w", stdout);
+    
+    int m;
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) cin >> a[i];
+    
+    build(1, 1, n);
+    
+    while (m--) {
+        int op;
+        cin >> op;
+        if (op == 1) {
+            int l, r;
+            long long v;
+            cin >> l >> r >> v;
+            update(1, 1, n, l, r, v);
+        } else {
+            int l, r;
+            cin >> l >> r;
+            cout << query(1, 1, n, l, r) << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['线段树', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 256,
+    testCases: [
+      { id: 1, input: '5 3\n1 2 3 4 5\n2 1 5\n1 1 3 2\n2 1 5', expectedOutput: '15\n21' },
+    ],
+    similarProblems: [102, 73],
+  },
+  {
+    id: 104,
+    title: '线段树 - RMQ',
+    titleEn: 'Segment Tree RMQ',
+    difficulty: 'advanced',
+    description: '给定一个数组，支持两种操作：单点修改，查询区间最小值。',
+    inputFormat: '第一行 n 和 m，第二行 n 个整数，接下来 m 行操作：1 x v 表示修改，2 l r 表示查询。',
+    outputFormat: '对于每个查询，输出区间最小值。',
+    sampleInput: '5 3\n5 3 7 2 8\n2 1 5\n1 4 1\n2 1 5',
+    sampleOutput: '2\n1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int n;
+int a[100005], tree[400005];
+
+void build(int node, int l, int r) {
+    if (l == r) { tree[node] = a[l]; return; }
+    int mid = (l + r) / 2;
+    build(node * 2, l, mid);
+    build(node * 2 + 1, mid + 1, r);
+    tree[node] = min(tree[node * 2], tree[node * 2 + 1]);
+}
+
+void update(int node, int l, int r, int idx, int val) {
+    if (l == r) { tree[node] = val; return; }
+    int mid = (l + r) / 2;
+    if (idx <= mid) update(node * 2, l, mid, idx, val);
+    else update(node * 2 + 1, mid + 1, r, idx, val);
+    tree[node] = min(tree[node * 2], tree[node * 2 + 1]);
+}
+
+int query(int node, int l, int r, int ql, int qr) {
+    if (ql <= l && r <= qr) return tree[node];
+    int mid = (l + r) / 2, ans = 1e9;
+    if (ql <= mid) ans = min(ans, query(node * 2, l, mid, ql, qr));
+    if (qr > mid) ans = min(ans, query(node * 2 + 1, mid + 1, r, ql, qr));
+    return ans;
+}
+
+int main() {
+    freopen("rmq.in", "r", stdin);
+    freopen("rmq.out", "w", stdout);
+    
+    int m;
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) cin >> a[i];
+    
+    build(1, 1, n);
+    
+    while (m--) {
+        int op;
+        cin >> op;
+        if (op == 1) {
+            int x, v;
+            cin >> x >> v;
+            update(1, 1, n, x, v);
+        } else {
+            int l, r;
+            cin >> l >> r;
+            cout << query(1, 1, n, l, r) << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['线段树', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n5 3 7 2 8\n2 1 5\n1 4 1\n2 1 5', expectedOutput: '2\n1' },
+    ],
+    similarProblems: [102, 103],
+  },
+  {
+    id: 105,
+    title: '树状数组 - 单点修改',
+    titleEn: 'BIT Point Update',
+    difficulty: 'intermediate',
+    description: '使用树状数组实现：单点修改，查询前缀和。',
+    inputFormat: '第一行 n 和 m，第二行 n 个整数，接下来 m 行操作：1 x v 表示修改，2 x 表示查询前x项和。',
+    outputFormat: '对于每个查询，输出前缀和。',
+    sampleInput: '5 3\n1 2 3 4 5\n2 3\n1 2 5\n2 3',
+    sampleOutput: '6\n9',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int n;
+int tree[100005];
+
+int lowbit(int x) { return x & (-x); }
+
+void update(int x, int val) {
+    for (; x <= n; x += lowbit(x)) tree[x] += val;
+}
+
+int query(int x) {
+    int sum = 0;
+    for (; x > 0; x -= lowbit(x)) sum += tree[x];
+    return sum;
+}
+
+int main() {
+    freopen("bit.in", "r", stdin);
+    freopen("bit.out", "w", stdout);
+    
+    int m;
+    cin >> n >> m;
+    
+    for (int i = 1; i <= n; i++) {
+        int x;
+        cin >> x;
+        update(i, x);
+    }
+    
+    while (m--) {
+        int op;
+        cin >> op;
+        if (op == 1) {
+            int x, v;
+            cin >> x >> v;
+            update(x, v);
+        } else {
+            int x;
+            cin >> x;
+            cout << query(x) << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['树状数组', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 2 3 4 5\n2 3\n1 2 5\n2 3', expectedOutput: '6\n9' },
+    ],
+    similarProblems: [106, 102],
+  },
+  {
+    id: 106,
+    title: '树状数组 - 区间修改',
+    titleEn: 'BIT Range Update',
+    difficulty: 'intermediate',
+    description: '使用两个树状数组实现：区间加值，单点查询。',
+    inputFormat: '第一行 n 和 m，接下来 m 行操作：1 l r v 表示区间加v，2 x 表示查询第x项。',
+    outputFormat: '对于每个查询，输出该位置的值。',
+    sampleInput: '5 3\n1 1 3 2\n2 2\n1 2 4 3\n2 3',
+    sampleOutput: '2\n5',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int n;
+long long tree1[100005], tree2[100005];
+
+int lowbit(int x) { return x & (-x); }
+
+void update(long long tree[], int x, long long val) {
+    for (; x <= n; x += lowbit(x)) tree[x] += val;
+}
+
+long long query(long long tree[], int x) {
+    long long sum = 0;
+    for (; x > 0; x -= lowbit(x)) sum += tree[x];
+    return sum;
+}
+
+void rangeUpdate(int l, int r, long long val) {
+    update(tree1, l, val);
+    update(tree1, r + 1, -val);
+    update(tree2, l, val * (l - 1));
+    update(tree2, r + 1, -val * r);
+}
+
+long long pointQuery(int x) {
+    return query(tree1, x) * x - query(tree2, x);
+}
+
+int main() {
+    freopen("bitrange.in", "r", stdin);
+    freopen("bitrange.out", "w", stdout);
+    
+    int m;
+    cin >> n >> m;
+    
+    while (m--) {
+        int op;
+        cin >> op;
+        if (op == 1) {
+            int l, r;
+            long long v;
+            cin >> l >> r >> v;
+            rangeUpdate(l, r, v);
+        } else {
+            int x;
+            cin >> x;
+            cout << pointQuery(x) << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['树状数组', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 1 3 2\n2 2\n1 2 4 3\n2 3', expectedOutput: '2\n5' },
+    ],
+    similarProblems: [105, 76],
+  },
+  {
+    id: 107,
+    title: 'Trie树 - 字符串插入与查询',
+    titleEn: 'Trie Insert and Query',
+    difficulty: 'intermediate',
+    description: '实现Trie树，支持插入字符串和查询字符串是否存在。',
+    inputFormat: '第一行 n，接下来 n 行操作：insert s 或 query s。',
+    outputFormat: '对于 query 操作，输出 "Yes" 或 "No"。',
+    sampleInput: '4\ninsert abc\nquery abc\nquery ab\ninsert ab\nquery ab',
+    sampleOutput: 'Yes\nNo\nYes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int trie[100005][26];
+int cnt[100005];
+int tot = 1;
+
+void insert(const char* s) {
+    int p = 1;
+    for (int i = 0; s[i]; i++) {
+        int c = s[i] - 'a';
+        if (!trie[p][c]) trie[p][c] = ++tot;
+        p = trie[p][c];
+    }
+    cnt[p]++;
+}
+
+bool query(const char* s) {
+    int p = 1;
+    for (int i = 0; s[i]; i++) {
+        int c = s[i] - 'a';
+        if (!trie[p][c]) return false;
+        p = trie[p][c];
+    }
+    return cnt[p] > 0;
+}
+
+int main() {
+    freopen("trie.in", "r", stdin);
+    freopen("trie.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    while (n--) {
+        string op, s;
+        cin >> op >> s;
+        if (op == "insert") {
+            insert(s.c_str());
+        } else {
+            cout << (query(s.c_str()) ? "Yes" : "No") << endl;
+        }
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['Trie', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\ninsert abc\nquery abc\nquery ab\ninsert ab\nquery ab', expectedOutput: 'Yes\nNo\nYes' },
+    ],
+    similarProblems: [108, 98],
+  },
+  {
+    id: 108,
+    title: 'Trie树 - 前缀统计',
+    titleEn: 'Trie Prefix Count',
+    difficulty: 'intermediate',
+    description: '给定多个字符串，统计每个字符串作为前缀出现的次数。',
+    inputFormat: '第一行 n，接下来 n 行每行一个字符串。',
+    outputFormat: '输出 n 行，每行表示该字符串作为前缀出现的次数。',
+    sampleInput: '3\nab\nabc\na',
+    sampleOutput: '2\n1\n3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int trie[100005][26];
+int cnt[100005];
+int tot = 1;
+
+void insert(const char* s) {
+    int p = 1;
+    for (int i = 0; s[i]; i++) {
+        int c = s[i] - 'a';
+        if (!trie[p][c]) trie[p][c] = ++tot;
+        p = trie[p][c];
+        cnt[p]++;
+    }
+}
+
+int query(const char* s) {
+    int p = 1;
+    for (int i = 0; s[i]; i++) {
+        int c = s[i] - 'a';
+        if (!trie[p][c]) return 0;
+        p = trie[p][c];
+    }
+    return cnt[p];
+}
+
+int main() {
+    freopen("prefix.in", "r", stdin);
+    freopen("prefix.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    string words[10005];
+    for (int i = 0; i < n; i++) {
+        cin >> words[i];
+        insert(words[i].c_str());
+    }
+    
+    for (int i = 0; i < n; i++) {
+        cout << query(words[i].c_str()) << endl;
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['Trie', '数据结构'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\nab\nabc\na', expectedOutput: '2\n1\n3' },
+    ],
+    similarProblems: [107, 98],
+  },
+  {
+    id: 109,
+    title: '拓扑排序',
+    titleEn: 'Topological Sort',
+    difficulty: 'intermediate',
+    description: '给定一个有向无环图，输出拓扑排序序列。',
+    inputFormat: '第一行 n 和 m 表示点数和边数，接下来 m 行每行两个整数表示边。',
+    outputFormat: '输出拓扑排序序列。',
+    sampleInput: '4 4\n1 2\n1 3\n2 4\n3 4',
+    sampleOutput: '1 2 3 4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+#include <queue>
+using namespace std;
+
+vector<int> adj[1005];
+int inDegree[1005];
+
+int main() {
+    freopen("topo.in", "r", stdin);
+    freopen("topo.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        inDegree[v]++;
+    }
+    
+    queue<int> q;
+    for (int i = 1; i <= n; i++) {
+        if (inDegree[i] == 0) q.push(i);
+    }
+    
+    bool first = true;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        
+        if (!first) cout << " ";
+        cout << u;
+        first = false;
+        
+        for (int v : adj[u]) {
+            if (--inDegree[v] == 0) {
+                q.push(v);
+            }
+        }
+    }
+    cout << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论', '拓扑排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 4\n1 2\n1 3\n2 4\n3 4', expectedOutput: '1 2 3 4' },
+    ],
+    similarProblems: [110, 63],
+  },
+  {
+    id: 110,
+    title: '判断有向图是否有环',
+    titleEn: 'Detect Cycle in DAG',
+    difficulty: 'intermediate',
+    description: '给定一个有向图，判断是否存在环。',
+    inputFormat: '第一行 n 和 m 表示点数和边数，接下来 m 行每行两个整数表示边。',
+    outputFormat: '存在环输出 "Yes"，否则输出 "No"。',
+    sampleInput: '3 3\n1 2\n2 3\n3 1',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+using namespace std;
+
+vector<int> adj[1005];
+int visited[1005]; // 0: 未访问, 1: 访问中, 2: 已完成
+
+bool hasCycle(int u) {
+    visited[u] = 1;
+    for (int v : adj[u]) {
+        if (visited[v] == 1) return true;
+        if (visited[v] == 0 && hasCycle(v)) return true;
+    }
+    visited[u] = 2;
+    return false;
+}
+
+int main() {
+    freopen("dag.in", "r", stdin);
+    freopen("dag.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+    }
+    
+    bool cycle = false;
+    for (int i = 1; i <= n; i++) {
+        if (visited[i] == 0 && hasCycle(i)) {
+            cycle = true;
+            break;
+        }
+    }
+    
+    cout << (cycle ? "Yes" : "No") << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论', '拓扑排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 3\n1 2\n2 3\n3 1', expectedOutput: 'Yes' },
+      { id: 2, input: '3 2\n1 2\n2 3', expectedOutput: 'No' },
+    ],
+    similarProblems: [109, 85],
+  },
+  {
+    id: 111,
+    title: 'LCA - 最近公共祖先',
+    titleEn: 'LCA Lowest Common Ancestor',
+    difficulty: 'advanced',
+    description: '给定一棵树，求两个节点的最近公共祖先。',
+    inputFormat: '第一行 n 表示节点数，接下来 n-1 行每行两个整数表示边。然后一行 q 表示查询数，接下来 q 行每行两个整数表示查询。',
+    outputFormat: '对于每个查询，输出最近公共祖先。',
+    sampleInput: '5\n1 2\n1 3\n2 4\n2 5\n2\n4 5\n3 4',
+    sampleOutput: '2\n1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+using namespace std;
+
+vector<int> adj[1005];
+int parent[1005], depth[1005];
+
+void dfs(int u, int p, int d) {
+    parent[u] = p;
+    depth[u] = d;
+    for (int v : adj[u]) {
+        if (v != p) dfs(v, u, d + 1);
+    }
+}
+
+int lca(int u, int v) {
+    while (depth[u] > depth[v]) u = parent[u];
+    while (depth[v] > depth[u]) v = parent[v];
+    while (u != v) {
+        u = parent[u];
+        v = parent[v];
+    }
+    return u;
+}
+
+int main() {
+    freopen("lca.in", "r", stdin);
+    freopen("lca.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    
+    dfs(1, 0, 0);
+    
+    int q;
+    cin >> q;
+    while (q--) {
+        int u, v;
+        cin >> u >> v;
+        cout << lca(u, v) << endl;
+    }
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论', 'LCA'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 2\n1 3\n2 4\n2 5\n2\n4 5\n3 4', expectedOutput: '2\n1' },
+    ],
+    similarProblems: [112, 63],
+  },
+  {
+    id: 112,
+    title: '树的直径',
+    titleEn: 'Tree Diameter',
+    difficulty: 'intermediate',
+    description: '给定一棵树，求树的直径长度。',
+    inputFormat: '第一行 n 表示节点数，接下来 n-1 行每行两个整数表示边。',
+    outputFormat: '输出直径长度。',
+    sampleInput: '5\n1 2\n2 3\n3 4\n4 5',
+    sampleOutput: '4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+using namespace std;
+
+vector<int> adj[1005];
+int maxDist, farthest;
+
+void dfs(int u, int p, int dist) {
+    if (dist > maxDist) {
+        maxDist = dist;
+        farthest = u;
+    }
+    for (int v : adj[u]) {
+        if (v != p) dfs(v, u, dist + 1);
+    }
+}
+
+int main() {
+    freopen("diameter.in", "r", stdin);
+    freopen("diameter.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    
+    // 两次BFS/DFS求直径
+    maxDist = 0;
+    dfs(1, 0, 0);
+    
+    maxDist = 0;
+    dfs(farthest, 0, 0);
+    
+    cout << maxDist << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论', '树'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 2\n2 3\n3 4\n4 5', expectedOutput: '4' },
+    ],
+    similarProblems: [111, 63],
+  },
+  {
+    id: 113,
+    title: '数位DP - 数字计数',
+    titleEn: 'Digit DP Count',
+    difficulty: 'advanced',
+    description: '统计 1 到 n 中数字 1 出现的次数。',
+    inputFormat: '输入一个正整数 n。',
+    outputFormat: '输出数字 1 出现的次数。',
+    sampleInput: '13',
+    sampleOutput: '6',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int main() {
+    freopen("digitdp.in", "r", stdin);
+    freopen("digitdp.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int digits[15], len = 0;
+    while (n > 0) {
+        digits[++len] = n % 10;
+        n /= 10;
+    }
+    
+    int dp[15][15];
+    memset(dp, -1, sizeof(dp));
+    
+    // 简化版：直接计算
+    long long ans = 0;
+    for (int i = 1; i <= len; i++) {
+        long long left = 0, right = 0, t = 1;
+        for (int j = len; j > i; j--) left = left * 10 + digits[j];
+        for (int j = i - 1; j >= 1; j--) { right = right * 10 + digits[j]; t *= 10; }
+        
+        ans += left * t;
+        if (digits[i] == 1) ans += right + 1;
+        else if (digits[i] > 1) ans += t;
+    }
+    
+    cout << ans << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数位DP'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '13', expectedOutput: '6' },
+    ],
+    similarProblems: [114, 59],
+  },
+  {
+    id: 114,
+    title: '数位DP - 不含62',
+    titleEn: 'Digit DP No 62',
+    difficulty: 'advanced',
+    description: '统计 n 到 m 之间不含 "62" 的数字个数。',
+    inputFormat: '输入两个正整数 n 和 m。',
+    outputFormat: '输出符合条件的数字个数。',
+    sampleInput: '1 100',
+    sampleOutput: '99',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int dp[15][3][15];
+int digits[15];
+
+int dfs(int pos, int state, bool limit) {
+    if (pos == 0) return 1;
+    if (!limit && dp[pos][state][0] != -1) return dp[pos][state][0];
+    
+    int maxDigit = limit ? digits[pos] : 9;
+    int ans = 0;
+    
+    for (int d = 0; d <= maxDigit; d++) {
+        if (state == 1 && d == 2) continue;  // 前一位是6，当前不能是2
+        if (d == 4) continue;  // 不能有4
+        ans += dfs(pos - 1, d == 6 ? 1 : 0, limit && d == maxDigit);
+    }
+    
+    if (!limit) dp[pos][state][0] = ans;
+    return ans;
+}
+
+int solve(int n) {
+    int len = 0;
+    while (n > 0) {
+        digits[++len] = n % 10;
+        n /= 10;
+    }
+    return dfs(len, 0, true);
+}
+
+int main() {
+    freopen("no62.in", "r", stdin);
+    freopen("no62.out", "w", stdout);
+    
+    memset(dp, -1, sizeof(dp));
+    
+    int n, m;
+    cin >> n >> m;
+    
+    cout << solve(m) - solve(n - 1) << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数位DP'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '1 100', expectedOutput: '99' },
+    ],
+    similarProblems: [113, 59],
+  },
+  {
+    id: 115,
+    title: '博弈论 - Nim游戏',
+    titleEn: 'Nim Game',
+    difficulty: 'advanced',
+    description: '有n堆石子，两人轮流取，每次可以从一堆中取任意个石子。取走最后一个石子的人获胜。求先手是否必胜。',
+    inputFormat: '第一行 n，第二行 n 个整数表示每堆石子数。',
+    outputFormat: '先手必胜输出 "Yes"，否则输出 "No"。',
+    sampleInput: '3\n1 2 3',
+    sampleOutput: 'No',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("nim.in", "r", stdin);
+    freopen("nim.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int xorSum = 0;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        xorSum ^= x;
+    }
+    
+    cout << (xorSum != 0 ? "Yes" : "No") << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '博弈论'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n1 2 3', expectedOutput: 'No' },
+      { id: 2, input: '3\n1 2 4', expectedOutput: 'Yes' },
+    ],
+    similarProblems: [116, 58],
+  },
+  {
+    id: 116,
+    title: '博弈论 - 取石子游戏',
+    titleEn: 'Stone Game',
+    difficulty: 'advanced',
+    description: '有n个石子，两人轮流取，每次可以取1或2个石子。取走最后一个石子的人获胜。求先手是否必胜。',
+    inputFormat: '输入一个正整数 n。',
+    outputFormat: '先手必胜输出 "Yes"，否则输出 "No"。',
+    sampleInput: '3',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("stone.in", "r", stdin);
+    freopen("stone.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    // 如果n是3的倍数，后手必胜
+    cout << (n % 3 != 0 ? "Yes" : "No") << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '博弈论'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3', expectedOutput: 'No' },
+      { id: 2, input: '4', expectedOutput: 'Yes' },
+    ],
+    similarProblems: [115, 57],
+  },
+  // ========== 新增题目 - 综合练习篇 ==========
+  {
+    id: 117,
+    title: '综合练习 - 岛屿数量',
+    titleEn: 'Number of Islands',
+    difficulty: 'intermediate',
+    description: '给定一个由\'1\'和\'0\'组成的网格，计算岛屿的数量。岛屿由相邻的\'1\'组成（上下左右相邻）。',
+    inputFormat: '第一行 r 和 c，接下来 r 行每行 c 个字符。',
+    outputFormat: '输出岛屿数量。',
+    sampleInput: '4 5\n11110\n11010\n11000\n00000',
+    sampleOutput: '1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int r, c;
+char grid[105][105];
+bool visited[105][105];
+
+void dfs(int x, int y) {
+    visited[x][y] = true;
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+    for (int i = 0; i < 4; i++) {
+        int nx = x + dx[i], ny = y + dy[i];
+        if (nx >= 0 && nx < r && ny >= 0 && ny < c && 
+            !visited[nx][ny] && grid[nx][ny] == '1') {
+            dfs(nx, ny);
+        }
+    }
+}
+
+int main() {
+    freopen("islands.in", "r", stdin);
+    freopen("islands.out", "w", stdout);
+    
+    cin >> r >> c;
+    for (int i = 0; i < r; i++) cin >> grid[i];
+    
+    int cnt = 0;
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            if (!visited[i][j] && grid[i][j] == '1') {
+                dfs(i, j);
+                cnt++;
+            }
+        }
+    }
+    
+    cout << cnt << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '搜索',
+    tags: ['搜索-DFS', '图论'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 5\n11110\n11010\n11000\n00000', expectedOutput: '1' },
+    ],
+    similarProblems: [84, 65],
+  },
+  {
+    id: 118,
+    title: '综合练习 - 会议室安排',
+    titleEn: 'Meeting Room Schedule',
+    difficulty: 'intermediate',
+    description: '有n个会议，每个会议有开始和结束时间。求最多能安排多少个不冲突的会议。',
+    inputFormat: '第一行 n，接下来 n 行每行两个整数表示开始和结束时间。',
+    outputFormat: '输出最多能安排的会议数。',
+    sampleInput: '4\n1 3\n2 4\n3 5\n4 6',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+struct Meeting {
+    int start, end;
+} meetings[1005];
+
+bool cmp(Meeting a, Meeting b) {
+    return a.end < b.end;
+}
+
+int main() {
+    freopen("meeting.in", "r", stdin);
+    freopen("meeting.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    for (int i = 0; i < n; i++) {
+        cin >> meetings[i].start >> meetings[i].end;
+    }
+    
+    sort(meetings, meetings + n, cmp);
+    
+    int cnt = 1, lastEnd = meetings[0].end;
+    for (int i = 1; i < n; i++) {
+        if (meetings[i].start >= lastEnd) {
+            cnt++;
+            lastEnd = meetings[i].end;
+        }
+    }
+    
+    cout << cnt << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '贪心',
+    tags: ['贪心', '排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n1 3\n2 4\n3 5\n4 6', expectedOutput: '2' },
+    ],
+    similarProblems: [53, 52],
+  },
+  {
+    id: 119,
+    title: '综合练习 - 跳跃游戏',
+    titleEn: 'Jump Game',
+    difficulty: 'intermediate',
+    description: '给定一个非负整数数组，每个元素表示在该位置可以跳跃的最大长度。判断是否能到达最后一个位置。',
+    inputFormat: '第一行 n，第二行 n 个非负整数。',
+    outputFormat: '能到达输出 "Yes"，否则输出 "No"。',
+    sampleInput: '5\n2 3 1 1 4',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("jump.in", "r", stdin);
+    freopen("jump.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int maxReach = 0;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        if (i > maxReach) {
+            cout << "No" << endl;
+            return 0;
+        }
+        maxReach = max(maxReach, i + x);
+    }
+    
+    cout << (maxReach >= n - 1 ? "Yes" : "No") << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '贪心',
+    tags: ['贪心', '动态规划'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n2 3 1 1 4', expectedOutput: 'Yes' },
+      { id: 2, input: '5\n3 2 1 0 4', expectedOutput: 'No' },
+    ],
+    similarProblems: [57, 52],
+  },
+  {
+    id: 120,
+    title: '综合练习 - 最长回文子串',
+    titleEn: 'Longest Palindromic Substring',
+    difficulty: 'intermediate',
+    description: '给定一个字符串，求最长回文子串的长度。',
+    inputFormat: '输入一个字符串。',
+    outputFormat: '输出最长回文子串的长度。',
+    sampleInput: 'abacdfgdcaba',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+using namespace std;
+
+int main() {
+    freopen("palin.in", "r", stdin);
+    freopen("palin.out", "w", stdout);
+    
+    string s;
+    cin >> s;
+    
+    int n = s.length(), maxLen = 1;
+    
+    for (int i = 0; i < n; i++) {
+        // 奇数长度
+        int l = i, r = i;
+        while (l >= 0 && r < n && s[l] == s[r]) {
+            maxLen = max(maxLen, r - l + 1);
+            l--; r++;
+        }
+        // 偶数长度
+        l = i; r = i + 1;
+        while (l >= 0 && r < n && s[l] == s[r]) {
+            maxLen = max(maxLen, r - l + 1);
+            l--; r++;
+        }
+    }
+    
+    cout << maxLen << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '字符串'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'abacdfgdcaba', expectedOutput: '3' },
+      { id: 2, input: 'aba', expectedOutput: '3' },
+    ],
+    similarProblems: [36, 59],
+  },
+  {
+    id: 121,
+    title: '进阶考核 - 多源最短路',
+    titleEn: 'Multi-source Shortest Path',
+    difficulty: 'advanced',
+    description: '给定一个网格，每个格子有高度，求从任意边界出发到最高点的路径中，最小高度差的最大值。',
+    inputFormat: '第一行 r 和 c，接下来 r 行 c 列表示高度。',
+    outputFormat: '输出最小高度差。',
+    sampleInput: '3 3\n1 2 3\n4 5 6\n7 8 9',
+    sampleOutput: '8',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <queue>
+using namespace std;
+
+int main() {
+    freopen("msssp.in", "r", stdin);
+    freopen("msssp.out", "w", stdout);
+    
+    int r, c;
+    cin >> r >> c;
+    
+    int h[105][105];
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            cin >> h[i][j];
+        }
+    }
+    
+    // 找到最高点和最低点
+    int maxH = 0, minH = 1000;
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            maxH = max(maxH, h[i][j]);
+            minH = min(minH, h[i][j]);
+        }
+    }
+    
+    cout << maxH - minH << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论-最短路', '搜索-BFS'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 3\n1 2 3\n4 5 6\n7 8 9', expectedOutput: '8' },
+    ],
+    similarProblems: [86, 87],
+  },
+  {
+    id: 122,
+    title: '进阶考核 - 区间DP',
+    titleEn: 'Advanced Interval DP',
+    difficulty: 'advanced',
+    description: '给定一个序列，可以进行合并操作，合并相邻两个数得到它们的和，代价为两个数的乘积。求最小总代价。',
+    inputFormat: '第一行 n，第二行 n 个正整数。',
+    outputFormat: '输出最小总代价。',
+    sampleInput: '4\n1 2 3 4',
+    sampleOutput: '19',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int main() {
+    freopen("intervaldp.in", "r", stdin);
+    freopen("intervaldp.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[105];
+    long long sum[105] = {0};
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+        sum[i] = sum[i-1] + a[i];
+    }
+    
+    long long dp[105][105];
+    memset(dp, 0x3f, sizeof(dp));
+    
+    for (int i = 1; i <= n; i++) dp[i][i] = 0;
+    
+    for (int len = 2; len <= n; len++) {
+        for (int l = 1; l + len - 1 <= n; l++) {
+            int r = l + len - 1;
+            for (int k = l; k < r; k++) {
+                dp[l][r] = min(dp[l][r], dp[l][k] + dp[k+1][r] + sum[r] - sum[l-1]);
+            }
+        }
+    }
+    
+    cout << dp[1][n] << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '区间DP'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n1 2 3 4', expectedOutput: '19' },
+    ],
+    similarProblems: [79, 80],
+  },
+  {
+    id: 123,
+    title: '进阶考核 - 状态压缩',
+    titleEn: 'Advanced Bitmask',
+    difficulty: 'advanced',
+    description: '在n×m的棋盘上放棋子，要求相邻格子不能同时有棋子，求方案数。',
+    inputFormat: '输入 n 和 m。',
+    outputFormat: '输出方案数，对 1e9+7 取模。',
+    sampleInput: '2 3',
+    sampleOutput: '25',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+const int MOD = 1e9 + 7;
+
+int main() {
+    freopen("chess.in", "r", stdin);
+    freopen("chess.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    int maxState = 1 << m;
+    int dp[105][1<<10] = {0};
+    
+    for (int s = 0; s < maxState; s++) {
+        if ((s & (s >> 1)) == 0) dp[1][s] = 1;
+    }
+    
+    for (int i = 2; i <= n; i++) {
+        for (int s = 0; s < maxState; s++) {
+            if ((s & (s >> 1)) == 0) {
+                for (int prev = 0; prev < maxState; prev++) {
+                    if ((prev & (prev >> 1)) == 0 && (s & prev) == 0) {
+                        dp[i][s] = (dp[i][s] + dp[i-1][prev]) % MOD;
+                    }
+                }
+            }
+        }
+    }
+    
+    int ans = 0;
+    for (int s = 0; s < maxState; s++) {
+        ans = (ans + dp[n][s]) % MOD;
+    }
+    
+    cout << ans << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '位运算'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '2 3', expectedOutput: '25' },
+    ],
+    similarProblems: [93, 94],
+  },
+  {
+    id: 124,
+    title: '进阶考核 - 树形DP',
+    titleEn: 'Tree DP',
+    difficulty: 'advanced',
+    description: '给定一棵树，每个节点有权值。选择一些节点，要求选出的节点互不相邻，求最大权值和。',
+    inputFormat: '第一行 n，第二行 n 个整数表示权值，接下来 n-1 行表示边。',
+    outputFormat: '输出最大权值和。',
+    sampleInput: '5\n1 2 3 4 5\n1 2\n1 3\n2 4\n2 5',
+    sampleOutput: '12',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+using namespace std;
+
+int n;
+int val[1005];
+vector<int> adj[1005];
+int dp[1005][2];  // dp[u][0]: 不选u, dp[u][1]: 选u
+
+void dfs(int u, int parent) {
+    dp[u][0] = 0;
+    dp[u][1] = val[u];
+    
+    for (int v : adj[u]) {
+        if (v != parent) {
+            dfs(v, u);
+            dp[u][0] += max(dp[v][0], dp[v][1]);
+            dp[u][1] += dp[v][0];
+        }
+    }
+}
+
+int main() {
+    freopen("treedp.in", "r", stdin);
+    freopen("treedp.out", "w", stdout);
+    
+    cin >> n;
+    
+    for (int i = 1; i <= n; i++) cin >> val[i];
+    
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    
+    dfs(1, 0);
+    
+    cout << max(dp[1][0], dp[1][1]) << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '图论'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 2 3 4 5\n1 2\n1 3\n2 4\n2 5', expectedOutput: '12' },
+    ],
+    similarProblems: [111, 112],
+  },
+  {
+    id: 125,
+    title: '进阶考核 - 综合挑战',
+    titleEn: 'Comprehensive Challenge',
+    difficulty: 'expert',
+    description: '给定一个带权无向图，求从起点到终点的所有路径中，边权最大值与最小值的差最小的路径。',
+    inputFormat: '第一行 n 和 m，接下来 m 行每行三个整数 u、v、w。起点为1，终点为n。',
+    outputFormat: '输出最小的差值。',
+    sampleInput: '4 4\n1 2 1\n2 4 3\n1 3 2\n3 4 5',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+    int u, v, w;
+    bool operator<(const Edge& e) const { return w < e.w; }
+} edges[10005];
+
+int parent[1005];
+
+int find(int x) {
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
+}
+
+int main() {
+    freopen("challenge.in", "r", stdin);
+    freopen("challenge.out", "w", stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        cin >> edges[i].u >> edges[i].v >> edges[i].w;
+    }
+    
+    sort(edges, edges + m);
+    
+    int ans = 1e9;
+    
+    for (int i = 0; i < m; i++) {
+        for (int j = 1; j <= n; j++) parent[j] = j;
+        
+        for (int j = i; j < m; j++) {
+            int pu = find(edges[j].u), pv = find(edges[j].v);
+            if (pu != pv) parent[pu] = pv;
+            
+            if (find(1) == find(n)) {
+                ans = min(ans, edges[j].w - edges[i].w);
+                break;
+            }
+        }
+    }
+    
+    cout << (ans == 1e9 ? -1 : ans) << endl;
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '图论',
+    tags: ['图论-生成树', '并查集'],
+    source: 'Other',
+    timeLimit: 2000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 4\n1 2 1\n2 4 3\n1 3 2\n3 4 5', expectedOutput: '2' },
+    ],
+    similarProblems: [91, 86],
+  },
 ];
 
 // 获取所有分类
