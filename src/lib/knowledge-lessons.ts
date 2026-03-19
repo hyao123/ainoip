@@ -12,6 +12,7 @@ export interface KnowledgeLesson {
   keyPoints: string[]; // 关键要点
   commonMistakes: string[]; // 常见错误
   tips: string[]; // 学习建议
+  relatedKnowledge?: string[]; // 相关知识点ID（可选）
   relatedProblems: number[]; // 相关题目ID
 }
 
@@ -4215,47 +4216,131 @@ cout << *max_element(dp, dp + n) << endl;`,
   'dfs-order': {
     id: 'dfs-order',
     title: '搜索顺序',
-    content: `## 搜索顺序
+    content: `## 搜索顺序详解
 
 DFS的搜索顺序决定了搜索树的形态，合理设计搜索顺序可以优化效率。
 
 ### 搜索树的概念
 
-DFS可以看作是在搜索树上的遍历，每个节点代表一个状态。
+DFS可以看作是在搜索树上的遍历，每个节点代表一个状态，边代表状态转移。
+
+**搜索树的特点：**
+- 根节点：初始状态
+- 叶节点：终止状态（成功或失败）
+- 路径：从根到某个节点的路径代表一个部分解
 
 ### 常见搜索顺序
 
-1. **位置优先**：先填前面的位置
-2. **数值优先**：先尝试小的数
-3. **分支优先**：先走某个方向
+#### 1. 位置优先
+先确定前面的位置，再确定后面的位置。
+\`\`\`
+填第1位 → 填第2位 → ... → 填第n位
+\`\`\`
+
+**适用场景：** 排列、组合问题
+
+#### 2. 数值优先
+先尝试小的数值，再尝试大的数值。
+\`\`\`
+尝试放1 → 尝试放2 → ... → 尝试放n
+\`\`\`
+
+**适用场景：** 求最小/最大方案、字典序
+
+#### 3. 分支优先
+按特定优先级选择分支方向。
+\`\`\`
+上下左右 → 右下左上 → ...
+\`\`\`
+
+**适用场景：** 迷宫、路径搜索
 
 ### 设计原则
 
-1. 避免重复搜索
-2. 尽早剪枝
-3. 状态表示要完整`,
+1. **避免重复搜索**：通过参数控制范围（如start）
+2. **尽早剪枝**：把必然失败的情况排除
+3. **状态表示完整**：确保能恢复现场
+
+### 经典示例：全排列
+
+**位置优先 vs 数值优先：**
+
+位置优先（填位置）：
+\`\`\`
+第1位放1 → 第2位放2 → 第3位放3 → 输出[1,2,3]
+                    → 第3位不能放1,2，回溯
+        → 第2位放3 → 第3位放2 → 输出[1,3,2]
+\`\`\`
+
+数值优先（放数值）：
+\`\`\`
+放1在第1位 → 放2在第2位 → ... 
+放1在第2位 → ...
+\`\`\`
+
+### 优化策略
+
+1. **选择分支少的先搜索**：减少搜索树规模
+2. **优先选约束多的位置**：更容易剪枝
+3. **记录已选状态**：避免重复`,
     codeExamples: [
       {
-        title: '不同的搜索顺序',
-        code: `// 方式1：位置优先
-for (int i = 0; i < n; i++) {
-    for (int num = 1; num <= n; num++) {
-        // 尝试在第i个位置放num
-    }
-}
+        title: '位置优先 - 全排列',
+        code: `// 按位置填数：依次确定每个位置放什么
+int n;
+int a[20];        // 当前排列
+bool used[20];    // used[i]表示数字i是否已使用
 
-// 方式2：数值优先
-for (int num = 1; num <= n; num++) {
-    for (int i = 0; i < n; i++) {
-        // 尝试把num放在第i个位置
+void dfs(int pos) {
+    if (pos > n) {
+        // 输出排列
+        for (int i = 1; i <= n; i++) cout << a[i] << " ";
+        cout << endl;
+        return;
+    }
+    // 尝试在位置pos放每个可用数字
+    for (int num = 1; num <= n; num++) {
+        if (!used[num]) {
+            a[pos] = num;
+            used[num] = true;
+            dfs(pos + 1);    // 填下一个位置
+            used[num] = false;  // 回溯
+        }
     }
 }`,
-        explanation: '不同的搜索顺序会影响效率。',
+        explanation: '位置优先：确定当前放什么，再递归下一个位置',
+      },
+      {
+        title: '数值优先 - 全排列',
+        code: `// 按数值填位置：依次确定每个数放在哪
+int n;
+int pos[20];      // pos[num]表示数字num放在哪个位置
+bool occupied[20]; // occupied[p]表示位置p是否被占用
+
+void dfs(int num) {
+    if (num > n) {
+        // 输出排列
+        for (int i = 1; i <= n; i++) cout << pos[i] << " ";
+        cout << endl;
+        return;
+    }
+    // 尝试把num放在每个可用位置
+    for (int p = 1; p <= n; p++) {
+        if (!occupied[p]) {
+            pos[num] = p;
+            occupied[p] = true;
+            dfs(num + 1);    // 放下一个数
+            occupied[p] = false;  // 回溯
+        }
+    }
+}`,
+        explanation: '数值优先：确定当前数放哪，再递归下一个数',
       },
     ],
-    keyPoints: ['理解搜索树概念', '合理设计搜索顺序'],
-    commonMistakes: ['搜索顺序混乱', '遗漏情况'],
-    tips: ['画出搜索树帮助理解', '选择有利剪枝的顺序'],
+    keyPoints: ['搜索树是理解DFS的关键', '搜索顺序影响效率和实现复杂度', '位置优先最常用，适合大多数问题'],
+    commonMistakes: ['搜索顺序混乱导致重复或遗漏', '回溯不彻底导致状态错误', '没有利用搜索顺序剪枝'],
+    tips: ['画出小规模搜索树帮助理解', '选择能使剪枝更早的顺序', '根据题目要求选择合适顺序'],
+    relatedKnowledge: ['dfs-intro', 'dfs-impl', 'dfs-prune'],
     relatedProblems: [66, 67],
   },
 
@@ -4263,102 +4348,324 @@ for (int num = 1; num <= n; num++) {
   'dfs-combine': {
     id: 'dfs-combine',
     title: '组合',
-    content: `## 组合问题
+    content: `## 组合问题详解
 
-从n个数中选k个的所有组合。
+从n个不同元素中选出k个元素的所有组合方式。
 
-### 与全排列的区别
+### 组合与排列的区别
 
-- 排列：顺序重要，{1,2}和{2,1}不同
-- 组合：顺序不重要，{1,2}和{2,1}相同
+| 类型 | 特点 | 示例 |
+|------|------|------|
+| 排列 | 有序 | {1,2,3}和{3,2,1}是不同排列 |
+| 组合 | 无序 | {1,2,3}和{3,2,1}是同一组合 |
+
+**数学表示：**
+- 排列数：P(n,k) = n!/(n-k)!
+- 组合数：C(n,k) = n!/(k!(n-k)!)
+
+### 组合的核心思想
+
+避免重复的关键：**保证选数的顺序是递增的**
+
+如果每次都从比上一个数更大的位置开始选，就不会选到重复的组合。
 
 ### 实现方法
 
+#### 方法一：start参数
 \`\`\`cpp
-void dfs(int start, int k) {
-    if (k == 0) {
-        // 选够了，输出结果
-        return;
-    }
-    for (int i = start; i <= n; i++) {
-        path.push_back(i);
-        dfs(i + 1, k - 1);  // 从i+1开始，避免重复
-        path.pop_back();
-    }
+void dfs(int start, int cnt) {
+    // start: 从哪个数开始选
+    // cnt: 已经选了几个数
 }
-\`\`\``,
-    codeExamples: [
-      {
-        title: 'C(n,k)组合',
-        code: `vector<int> path;
+\`\`\`
+
+#### 方法二：二进制枚举
+用n位二进制数表示选择状态，1表示选，0表示不选。
+
+### 经典模板
+
+**C(n,k) - 从1到n中选k个数的组合：**
+\`\`\`cpp
 int n, k;
+int path[20];  // 存储当前组合
 
 void dfs(int start, int cnt) {
     if (cnt == k) {
-        for (int x : path) cout << x << " ";
+        // 选够了k个，输出
+        for (int i = 0; i < k; i++) 
+            cout << path[i] << " ";
         cout << endl;
         return;
     }
+    // 从start开始选，保证递增
     for (int i = start; i <= n; i++) {
-        path.push_back(i);
+        path[cnt] = i;
+        dfs(i + 1, cnt + 1);  // 从i+1开始，不会重复
+    }
+}
+\`\`\`
+
+### 剪枝优化
+
+当剩余数不够选时，可以提前终止：
+\`\`\`cpp
+// 剩余可选数：n - i + 1
+// 还需要选：k - cnt
+if (n - i + 1 < k - cnt) continue;  // 剪枝
+\`\`\`
+
+### 变形问题
+
+1. **可重复组合**：每个数可选多次
+2. **子集问题**：输出所有子集（每个数选或不选）
+3. **组合求和**：组合的和等于目标值`,
+    codeExamples: [
+      {
+        title: '基础组合 C(n,k)',
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+int n, k;
+int path[20];
+
+void dfs(int start, int cnt) {
+    // 剪枝：剩余数不够选
+    if (n - start + 1 < k - cnt) return;
+    
+    if (cnt == k) {
+        for (int i = 0; i < k; i++) 
+            cout << path[i] << " ";
+        cout << endl;
+        return;
+    }
+    
+    for (int i = start; i <= n; i++) {
+        path[cnt] = i;
         dfs(i + 1, cnt + 1);
+    }
+}
+
+int main() {
+    cin >> n >> k;
+    dfs(1, 0);
+    return 0;
+}`,
+        explanation: '从1到n中选k个数，使用start保证递增避免重复',
+      },
+      {
+        title: '子集问题 - 每个数选或不选',
+        code: `int n;
+int a[20];
+
+void dfs(int pos) {
+    if (pos > n) {
+        // 输出当前子集
+        for (int i = 1; i <= n; i++)
+            if (a[i]) cout << i << " ";
+        cout << endl;
+        return;
+    }
+    // 不选pos
+    a[pos] = 0;
+    dfs(pos + 1);
+    // 选pos
+    a[pos] = 1;
+    dfs(pos + 1);
+}`,
+        explanation: '每个位置有选或不选两种选择，共2^n个子集',
+      },
+      {
+        title: '组合求和',
+        code: `// 从candidates中选若干数，和为target
+void dfs(vector<int>& candidates, int start, int target, 
+         vector<int>& path, vector<vector<int>>& res) {
+    if (target == 0) {
+        res.push_back(path);
+        return;
+    }
+    for (int i = start; i < candidates.size(); i++) {
+        if (candidates[i] > target) break;  // 剪枝
+        path.push_back(candidates[i]);
+        dfs(candidates, i, target - candidates[i], path, res);
         path.pop_back();
     }
 }`,
-        explanation: '从n个数中选k个的组合。',
+        explanation: '找出所有和为target的组合（可重复选）',
       },
     ],
-    keyPoints: ['理解组合与排列的区别', '使用start避免重复'],
-    commonMistakes: ['重复选数', 'start参数设置错误'],
-    tips: ['组合数可以用公式计算', 'start参数是关键'],
+    keyPoints: ['start参数是避免重复的关键', '组合是无序的，排列是有序的', '剪枝可大幅提高效率'],
+    commonMistakes: ['忘记设置start参数导致重复', '递归参数传递错误', '剪枝条件写错导致遗漏解'],
+    tips: ['组合数C(n,k)增长很快，注意数据规模', '可以用公式验证输出数量是否正确', '处理大数据时必须剪枝'],
+    relatedKnowledge: ['dfs-intro', 'dfs-permute', 'dfs-prune'],
     relatedProblems: [66, 67],
   },
 
   'dfs-prune': {
     id: 'dfs-prune',
     title: '剪枝基础',
-    content: `## 剪枝
+    content: `## 剪枝技术详解
 
-剪枝是在搜索过程中提前终止不可能得到解的分支。
+剪枝（Pruning）是在搜索过程中提前终止不可能得到解的分支，从而减少搜索空间的优化技术。
 
-### 剪枝的作用
+### 剪枝的核心思想
 
-减少搜索空间，提高效率。
+**如果当前状态已经无法产生有效解，就没必要继续搜索。**
 
-### 常见剪枝方法
+就像修剪树枝一样，剪掉"死枝"（无解分支），让搜索树更小。
 
-1. **可行性剪枝**：当前状态无法继续
-2. **最优性剪枝**：当前解不可能更优
-3. **重复状态剪枝**：避免重复搜索
+### 剪枝的分类
 
-### 示例
+#### 1. 可行性剪枝
+
+判断当前状态是否能继续发展成有效解。
 
 \`\`\`cpp
-void dfs(int step) {
-    if (当前解 >= 已知最优解) return;  // 最优性剪枝
-    if (无法完成) return;  // 可行性剪枝
-    // ...
+// 示例：选数和为target
+if (currentSum > target) return;  // 和已超过，不可能
+if (currentSum + maxRemaining < target) return;  // 全选最大也不够
+\`\`\`
+
+#### 2. 最优性剪枝
+
+判断当前解是否可能比已知最优解更好。
+
+\`\`\`cpp
+// 示例：求最小代价
+if (currentCost >= bestCost) return;  // 当前代价已不优
+\`\`\`
+
+#### 3. 重复状态剪枝
+
+避免搜索相同的状态。
+
+\`\`\`cpp
+// 使用vis数组或哈希表记录已访问状态
+if (visited[state]) return;
+visited[state] = true;
+\`\`\`
+
+#### 4. 顺序剪枝
+
+通过排序或特定顺序提前终止。
+
+\`\`\`cpp
+// 从小到大排序后，后面的数更大
+for (int i = start; i <= n; i++) {
+    if (candidates[i] > target) break;  // 后面更大，不用试了
+    dfs(...);
 }
-\`\`\``,
+\`\`\`
+
+### 经典应用场景
+
+1. **全排列**：vis数组避免重复
+2. **组合求和**：和超限就剪
+3. **最短路径**：距离超限就剪
+4. **N皇后**：冲突就剪
+5. **数独**：不合法就剪
+
+### 剪枝三原则
+
+1. **正确性**：不能剪掉有解的分支
+2. **高效性**：判断剪枝的开销要小于节省的时间
+3. **简洁性**：条件清晰，易于实现
+
+### 实战技巧
+
+1. **提前排序**：配合顺序剪枝
+2. **预处理**：计算上下界
+3. **贪心初值**：先找个可行解作为上界
+4. **迭代加深**：限制深度`,
     codeExamples: [
       {
-        title: '剪枝示例',
-        code: `int ans = INT_MAX;
+        title: '可行性剪枝 - 组合求和',
+        code: `// 从nums中选若干数，和等于target
+int target;
+vector<int> nums, path;
 
-void dfs(int step, int cost) {
-    if (cost >= ans) return;  // 最优性剪枝
-    if (step == n) {
-        ans = min(ans, cost);
+void dfs(int start, int sum) {
+    // 可行性剪枝
+    if (sum > target) return;  // 和已超，剪掉
+    if (sum == target) {
+        // 找到解
+        output(path);
         return;
     }
-    // 继续搜索...
+    
+    for (int i = start; i < nums.size(); i++) {
+        // 顺序剪枝（假设nums已排序）
+        if (sum + nums[i] > target) break;
+        
+        path.push_back(nums[i]);
+        dfs(i, sum + nums[i]);
+        path.pop_back();
+    }
 }`,
-        explanation: '最优性剪枝示例。',
+        explanation: '双重剪枝：和超限剪 + 顺序剪枝',
+      },
+      {
+        title: '最优性剪枝 - 最小路径',
+        code: `int n, m;
+int maze[105][105];
+int minCost = INT_MAX;
+int dx[] = {0, 1, 0, -1};
+int dy[] = {1, 0, -1, 0};
+
+void dfs(int x, int y, int cost) {
+    // 最优性剪枝
+    if (cost >= minCost) return;  // 当前代价已不优
+    
+    if (x == n && y == m) {
+        minCost = min(minCost, cost);
+        return;
+    }
+    
+    for (int i = 0; i < 4; i++) {
+        int nx = x + dx[i], ny = y + dy[i];
+        if (valid(nx, ny)) {
+            dfs(nx, ny, cost + maze[nx][ny]);
+        }
+    }
+}`,
+        explanation: '当前代价已超过已知最优，不再继续',
+      },
+      {
+        title: '剪枝综合 - N皇后',
+        code: `int n;
+int queen[20];  // queen[i]表示第i行皇后放在第几列
+int ans = 0;
+
+bool check(int row, int col) {
+    for (int i = 1; i < row; i++) {
+        // 同列冲突
+        if (queen[i] == col) return false;
+        // 对角线冲突
+        if (abs(queen[i] - col) == abs(i - row)) return false;
+    }
+    return true;
+}
+
+void dfs(int row) {
+    if (row > n) {
+        ans++;
+        return;
+    }
+    
+    for (int col = 1; col <= n; col++) {
+        // 可行性剪枝：冲突就跳过
+        if (!check(row, col)) continue;
+        
+        queen[row] = col;
+        dfs(row + 1);
+    }
+}`,
+        explanation: 'N皇后：冲突检测是最经典的剪枝',
       },
     ],
-    keyPoints: ['理解剪枝的目的', '掌握常见剪枝方法'],
-    commonMistakes: ['剪枝条件写错', '过度剪枝遗漏解'],
-    tips: ['剪枝要保证不遗漏正确解', '多种剪枝可以组合使用'],
+    keyPoints: ['剪枝是DFS优化的核心手段', '正确性第一，不能漏解', '多种剪枝可以组合使用'],
+    commonMistakes: ['剪枝条件错误导致漏解', '剪枝判断开销过大适得其反', '忘记回溯导致状态错误'],
+    tips: ['先写朴素DFS，再加剪枝', '用小数据验证剪枝正确性', '排序是剪枝的好帮手'],
+    relatedKnowledge: ['dfs-intro', 'dfs-order', 'dfs-combine'],
     relatedProblems: [67, 71],
   },
 
@@ -4366,40 +4673,99 @@ void dfs(int step, int cost) {
   'bfs-impl': {
     id: 'bfs-impl',
     title: 'BFS实现',
-    content: `## BFS实现
+    content: `## BFS实现详解
 
-BFS使用队列实现，按层次遍历。
+BFS（广度优先搜索）使用队列实现，按照"先访问的先扩展"的原则进行搜索。
+
+### BFS核心思想
+
+**层次扩展**：先访问距离起点近的节点，再访问距离远的节点。
+
+就像水波纹一样，从起点向外一圈一圈扩展。
+
+### BFS vs DFS
+
+| 特性 | BFS | DFS |
+|------|-----|-----|
+| 数据结构 | 队列 | 栈/递归 |
+| 搜索方式 | 层次遍历 | 深度探索 |
+| 最短路 | 天然支持 | 需要记录 |
+| 空间复杂度 | O(宽度) | O(深度) |
+| 适用场景 | 最短路、层次 | 路径、方案 |
 
 ### 基本框架
 
 \`\`\`cpp
 void bfs(起点) {
+    // 1. 初始化
     queue.push(起点);
-    visited[起点] = true;
+    visited[起点] = true;  // 入队时标记！
     
+    // 2. 循环处理队列
     while (!queue.empty()) {
         auto cur = queue.front();
         queue.pop();
         
-        for (每个相邻状态) {
-            if (!visited[下一状态]) {
-                visited[下一状态] = true;
-                queue.push(下一状态);
+        // 3. 扩展相邻状态
+        for (每个相邻状态 next) {
+            if (!visited[next]) {
+                visited[next] = true;  // 入队时标记！
+                queue.push(next);
             }
         }
     }
 }
 \`\`\`
 
-### 注意事项
+### 关键注意事项
 
-1. 入队时标记，不是出队时
-2. 使用vis数组避免重复`,
+#### 1. 入队时标记（非常重要！）
+
+❌ 错误写法（出队时标记）：
+\`\`\`cpp
+while (!q.empty()) {
+    int u = q.front(); q.pop();
+    visited[u] = true;  // 太晚了！可能重复入队
+    ...
+}
+\`\`\`
+
+✅ 正确写法（入队时标记）：
+\`\`\`cpp
+q.push(start);
+visited[start] = true;  // 入队时就标记
+while (!q.empty()) {
+    int u = q.front(); q.pop();
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            visited[v] = true;  // 入队时标记
+            q.push(v);
+        }
+    }
+}
+\`\`\`
+
+#### 2. 为什么必须入队时标记？
+
+如果出队时才标记，同一个节点可能在队列中出现多次：
+- 第一次入队时visited=false
+- 第二次入队时visited还是false
+- 导致重复处理，效率降低甚至死循环
+
+### BFS的性质
+
+1. **最短路径**：BFS保证第一次到达某点时路径最短（无权图）
+2. **层次性**：可以按层输出结果
+3. **完备性**：如果解存在，BFS一定能找到`,
     codeExamples: [
       {
-        title: 'BFS模板',
-        code: `bool visited[1005];
-vector<int> adj[1005];
+        title: '基础BFS模板 - 图遍历',
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 1005;
+bool visited[MAXN];
+vector<int> adj[MAXN];
 
 void bfs(int start) {
     queue<int> q;
@@ -4409,7 +4775,45 @@ void bfs(int start) {
     while (!q.empty()) {
         int u = q.front();
         q.pop();
-        cout << u << " ";
+        cout << u << " ";  // 处理节点
+        
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                visited[v] = true;  // 入队时标记
+                q.push(v);
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);  // 无向图
+    }
+    
+    memset(visited, false, sizeof(visited));
+    bfs(1);  // 从节点1开始BFS
+    return 0;
+}`,
+        explanation: '标准BFS模板：入队时标记，队列实现层次遍历',
+      },
+      {
+        title: 'BFS判断连通性',
+        code: `// 判断图是否连通（所有点都能从起点到达）
+bool isConnected(int n, int start) {
+    int cnt = 0;
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+    
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        cnt++;  // 统计访问的节点数
         
         for (int v : adj[u]) {
             if (!visited[v]) {
@@ -4418,66 +4822,179 @@ void bfs(int start) {
             }
         }
     }
+    
+    return cnt == n;  // 访问了n个点则连通
 }`,
-        explanation: '标准BFS模板。',
+        explanation: 'BFS统计可达节点数，判断图是否连通',
       },
     ],
-    keyPoints: ['使用队列实现', '入队时标记'],
-    commonMistakes: ['出队时才标记', '忘记标记'],
-    tips: ['入队时标记避免重复入队', 'BFS天然求最短路'],
+    keyPoints: ['BFS使用队列，先入先出', '必须在入队时标记visited', 'BFS天然支持求无权图最短路'],
+    commonMistakes: ['出队时才标记导致重复入队', '忘记初始化visited数组', '队列元素类型写错'],
+    tips: ['入队时标记是BFS最重要的细节', 'BFS适合求最短路，DFS适合求方案', '可以用数组模拟队列提高效率'],
+    relatedKnowledge: ['bfs-intro', 'dfs-intro', 'bfs-shortest'],
     relatedProblems: [68, 69],
   },
 
   'bfs-level': {
     id: 'bfs-level',
     title: '层次遍历',
-    content: `## 层次遍历
+    content: `## 层次遍历详解
 
-BFS可以按层输出结果，常见于树的层次遍历。
+BFS天然按层次扩展，可以用于输出每层的节点、计算层数等。
+
+### 层次遍历的核心思想
+
+BFS过程中，同一时刻队列中的元素属于"当前层"或"下一层"。
+通过记录每层的节点数，可以区分层次。
 
 ### 实现方法
 
-方法一：记录每层大小
+#### 方法一：队列大小法（推荐）
+
+每次处理一整层：
 \`\`\`cpp
 while (!q.empty()) {
-    int size = q.size();  // 当前层节点数
+    int size = q.size();  // 当前层的节点数
     for (int i = 0; i < size; i++) {
-        auto cur = q.front();
-        q.pop();
-        // 处理cur
-        // 子节点入队
+        auto cur = q.front(); q.pop();
+        // 处理当前节点
+        // 子节点入队（属于下一层）
     }
-    // 一层结束
+    // 一层处理完毕
 }
 \`\`\`
 
-方法二：使用depth数组`,
+#### 方法二：depth数组法
+
+记录每个节点的深度：
+\`\`\`cpp
+dist[start] = 0;
+while (!q.empty()) {
+    int u = q.front(); q.pop();
+    for (int v : adj[u]) {
+        if (dist[v] == -1) {
+            dist[v] = dist[u] + 1;  // 深度+1
+            q.push(v);
+        }
+    }
+}
+\`\`\`
+
+#### 方法三：双队列法
+
+用两个队列交替：
+\`\`\`cpp
+queue<int> cur, next;
+cur.push(start);
+while (!cur.empty()) {
+    int u = cur.front(); cur.pop();
+    for (int v : adj[u]) {
+        if (!vis[v]) {
+            vis[v] = true;
+            next.push(v);  // 放入下一层队列
+        }
+    }
+    if (cur.empty()) swap(cur, next);  // 换层
+}
+\`\`\`
+
+### 经典应用
+
+1. **树的层次遍历**：按层输出节点
+2. **求树的高度**：统计层数
+3. **判断完全二叉树**：检查每层是否填满
+4. **最短路径**：记录到达每层的步数`,
     codeExamples: [
       {
         title: '树的层次遍历',
-        code: `void levelOrder(TreeNode* root) {
-    if (!root) return;
+        code: `// LeetCode 102. 二叉树的层序遍历
+struct TreeNode {
+    int val;
+    TreeNode *left, *right;
+};
+
+vector<vector<int>> levelOrder(TreeNode* root) {
+    vector<vector<int>> result;
+    if (!root) return result;
+    
+    queue<TreeNode*> q;
+    q.push(root);
+    
+    while (!q.empty()) {
+        int size = q.size();  // 当前层节点数
+        vector<int> level;
+        
+        for (int i = 0; i < size; i++) {
+            TreeNode* node = q.front(); q.pop();
+            level.push_back(node->val);
+            
+            if (node->left) q.push(node->left);
+            if (node->right) q.push(node->right);
+        }
+        result.push_back(level);
+    }
+    
+    return result;
+}`,
+        explanation: '每层单独处理，输出二维数组',
+      },
+      {
+        title: '求树的高度/最大深度',
+        code: `int maxDepth(TreeNode* root) {
+    if (!root) return 0;
+    
+    queue<TreeNode*> q;
+    q.push(root);
+    int depth = 0;
+    
+    while (!q.empty()) {
+        int size = q.size();
+        depth++;  // 每处理一层，深度+1
+        
+        for (int i = 0; i < size; i++) {
+            TreeNode* node = q.front(); q.pop();
+            if (node->left) q.push(node->left);
+            if (node->right) q.push(node->right);
+        }
+    }
+    
+    return depth;
+}`,
+        explanation: '层次遍历，统计层数即为高度',
+      },
+      {
+        title: '每层最大值',
+        code: `// 找出二叉树每层的最大值
+vector<int> largestValues(TreeNode* root) {
+    vector<int> result;
+    if (!root) return result;
+    
     queue<TreeNode*> q;
     q.push(root);
     
     while (!q.empty()) {
         int size = q.size();
+        int maxVal = INT_MIN;
+        
         for (int i = 0; i < size; i++) {
-            TreeNode* node = q.front();
-            q.pop();
-            cout << node->val << " ";
+            TreeNode* node = q.front(); q.pop();
+            maxVal = max(maxVal, node->val);
+            
             if (node->left) q.push(node->left);
             if (node->right) q.push(node->right);
         }
-        cout << endl;  // 一层结束
+        result.push_back(maxVal);
     }
+    
+    return result;
 }`,
-        explanation: '树的层次遍历。',
+        explanation: '层次遍历时维护每层最大值',
       },
     ],
-    keyPoints: ['记录每层节点数', '理解BFS的层次特性'],
-    commonMistakes: ['忘记统计层数', '层次边界不清'],
-    tips: ['每层开始时记录队列大小', '可以用于求树的高度'],
+    keyPoints: ['用队列大小区分层次', '处理完一层后再处理下一层', 'depth数组法更简洁但需要额外空间'],
+    commonMistakes: ['混淆当前层和下一层', '忘记更新层数', '处理完一层后没有重置状态'],
+    tips: ['队列大小法最通用', '层次遍历常用于树的题目', '可以配合其他操作（求和、找最值等）'],
+    relatedKnowledge: ['bfs-impl', 'tree-bfs'],
     relatedProblems: [68, 82],
   },
 
@@ -4485,51 +5002,99 @@ while (!q.empty()) {
   'bfs-shortest': {
     id: 'bfs-shortest',
     title: '最短路',
-    content: `## BFS求最短路
+    content: `## BFS求最短路详解
 
 BFS天然适合求无权图的最短路径。
 
-### 原理
+### 核心原理
 
-BFS按层扩展，第一次到达某点时的步数就是最短路。
+**BFS按层次扩展，第一次到达某点的步数就是最短路。**
 
-### 实现
+这是因为：
+- 第0层：起点本身，距离=0
+- 第1层：与起点直接相连的点，距离=1
+- 第2层：距离起点2步的点，距离=2
+- ...
+
+**第一次到达时，必然是经过最少步数的路径。**
+
+### 为什么DFS不行？
+
+DFS可能走很长的路才到达某点，无法保证是最短。
+BFS按层扩展，保证了路径最优性。
+
+### 实现要点
+
+1. **dist数组**：记录到每个点的距离，初始化为-1（未访问）
+2. **入队时更新距离**：dist[v] = dist[u] + 1
+3. **第一次到达即最短**：不需要后续更新
+
+### 模板代码
 
 \`\`\`cpp
 int dist[MAXN];
 memset(dist, -1, sizeof(dist));
 
+queue<int> q;
+q.push(start);
 dist[start] = 0;
-queue.push(start);
 
-while (!queue.empty()) {
-    int u = queue.front();
-    queue.pop();
+while (!q.empty()) {
+    int u = q.front(); q.pop();
     
     for (int v : adj[u]) {
-        if (dist[v] == -1) {
-            dist[v] = dist[u] + 1;
-            queue.push(v);
+        if (dist[v] == -1) {  // 未访问过
+            dist[v] = dist[u] + 1;  // 更新距离
+            q.push(v);
         }
     }
+}
+
+// dist[end]就是最短路，-1表示无法到达
+\`\`\`
+
+### 路径还原
+
+如果要输出最短路径本身，需要记录前驱节点：
+\`\`\`cpp
+int pre[MAXN];  // pre[v]表示v的前驱节点
+
+// BFS过程中
+if (dist[v] == -1) {
+    dist[v] = dist[u] + 1;
+    pre[v] = u;  // 记录前驱
+    q.push(v);
+}
+
+// 还原路径
+void printPath(int end) {
+    if (end == start) {
+        cout << start;
+        return;
+    }
+    printPath(pre[end]);
+    cout << " -> " << end;
 }
 \`\`\``,
     codeExamples: [
       {
-        title: 'BFS求最短路',
-        code: `int dist[1005];
-vector<int> adj[1005];
+        title: '无权图最短路',
+        code: `#include <bits/stdc++.h>
+using namespace std;
 
-int bfs_shortest(int start, int end) {
+const int MAXN = 1005;
+int dist[MAXN];
+vector<int> adj[MAXN];
+
+int bfs_shortest(int start, int end, int n) {
     memset(dist, -1, sizeof(dist));
     queue<int> q;
     q.push(start);
     dist[start] = 0;
     
     while (!q.empty()) {
-        int u = q.front();
-        q.pop();
-        if (u == end) return dist[u];
+        int u = q.front(); q.pop();
+        if (u == end) return dist[u];  // 找到终点
         
         for (int v : adj[u]) {
             if (dist[v] == -1) {
@@ -4539,14 +5104,97 @@ int bfs_shortest(int start, int end) {
         }
     }
     return -1;  // 无法到达
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    
+    int s, t;
+    cin >> s >> t;
+    cout << bfs_shortest(s, t, n) << endl;
+    return 0;
 }`,
-        explanation: 'BFS求两点间最短路。',
+        explanation: 'BFS求无权图中两点间最短路径',
+      },
+      {
+        title: '迷宫最短路',
+        code: `// 给定n×m的迷宫，求从起点到终点的最短步数
+// '#'是墙，'.'是路，'S'是起点，'E'是终点
+int n, m;
+char maze[105][105];
+int dist[105][105];
+int dx[] = {0, 1, 0, -1};
+int dy[] = {1, 0, -1, 0};
+
+int bfs_maze(int sx, int sy, int ex, int ey) {
+    memset(dist, -1, sizeof(dist));
+    queue<pair<int,int>> q;
+    q.push({sx, sy});
+    dist[sx][sy] = 0;
+    
+    while (!q.empty()) {
+        auto [x, y] = q.front(); q.pop();
+        if (x == ex && y == ey) return dist[x][y];
+        
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i], ny = y + dy[i];
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m &&
+                maze[nx][ny] != '#' && dist[nx][ny] == -1) {
+                dist[nx][ny] = dist[x][y] + 1;
+                q.push({nx, ny});
+            }
+        }
+    }
+    return -1;  // 无法到达
+}`,
+        explanation: 'BFS解决迷宫最短路问题',
+      },
+      {
+        title: '还原最短路径',
+        code: `// 不仅求最短路长度，还要输出路径
+int pre[MAXN];
+
+void bfs_with_path(int start) {
+    memset(dist, -1, sizeof(dist));
+    memset(pre, -1, sizeof(pre));
+    
+    queue<int> q;
+    q.push(start);
+    dist[start] = 0;
+    
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        for (int v : adj[u]) {
+            if (dist[v] == -1) {
+                dist[v] = dist[u] + 1;
+                pre[v] = u;  // 记录前驱
+                q.push(v);
+            }
+        }
+    }
+}
+
+void printPath(int u) {
+    if (u == -1) return;
+    printPath(pre[u]);  // 先递归到起点
+    if (pre[u] != -1) cout << " -> ";
+    cout << u;
+}`,
+        explanation: 'BFS求最短路并还原路径',
       },
     ],
-    keyPoints: ['BFS天然求最短路', '第一次到达就是最短'],
-    commonMistakes: ['忘记记录距离', '多次更新同一点'],
-    tips: ['dist数组同时作访问标记', '只适用于无权图'],
-    relatedProblems: [69, 71],
+    keyPoints: ['BFS天然求最短路，第一次到达即最优', 'dist数组初始为-1，表示未访问', '可以用pre数组还原路径'],
+    commonMistakes: ['忘记初始化dist为-1', '把DFS当成求最短路', '路径还原时顺序反了'],
+    tips: ['无权图最短路首选BFS', '有权图要用Dijkstra等算法', '迷宫问题注意边界检查'],
+    relatedKnowledge: ['bfs-impl', 'dijkstra'],
+    relatedProblems: [68, 69],
   },
 
   'bfs-state': {
@@ -4616,97 +5264,306 @@ int tsp() {
   'dp-state': {
     id: 'dp-state',
     title: '状态定义',
-    content: `## 状态定义
+    content: `## 状态定义详解
 
-状态定义是DP的第一步，决定了整个DP的框架。
+状态定义是DP的第一步，也是最关键的一步。一个好的状态定义能让问题迎刃而解。
 
 ### 什么是状态
 
-状态是对问题的子问题的描述，通常用dp数组表示。
+**状态是对子问题的完整描述。**
+
+DP的本质是把大问题拆成小问题，状态就是描述每个小问题的"身份信息"。
+
+### 状态的三要素
+
+1. **维度**：需要几个变量来描述
+2. **含义**：每个维度代表什么
+3. **值**：状态值代表什么（最优解、方案数等）
 
 ### 状态定义原则
 
-1. 能描述子问题
-2. 能够推导
-3. 无后效性
+#### 1. 完整性
+状态必须能完整描述子问题，不遗漏关键信息。
 
-### 常见状态定义
-
+❌ 错误示例：
 \`\`\`cpp
-// dp[i] = 以i结尾的最优解
-// dp[i][j] = 前i个物品容量为j的最优解
-// dp[i][j] = 区间[i,j]的最优解
-\`\`\``,
+dp[i] = 前i个物品的最大价值  // 缺少容量信息
+\`\`\`
+
+✅ 正确示例：
+\`\`\`cpp
+dp[i][j] = 前i个物品、容量为j时的最大价值
+\`\`\`
+
+#### 2. 无后效性
+"未来与过去无关，只与现在有关"
+
+当前状态确定后，之前如何到达这个状态不会影响未来的决策。
+
+#### 3. 可推导性
+状态之间要有明确的转移关系。
+
+### 常见状态模式
+
+#### 一维状态
+\`\`\`cpp
+dp[i]     // 以第i个位置结尾的最优解
+dp[i]     // 前i个元素的最优解
+dp[i]     // 第i阶段的最优解
+\`\`\`
+
+#### 二维状态
+\`\`\`cpp
+dp[i][j]  // 前i个物品容量为j
+dp[i][j]  // 区间[i,j]的最优解
+dp[i][j]  // 位置(i,j)的最优解
+\`\`\`
+
+#### 三维及以上
+\`\`\`cpp
+dp[i][j][k]  // 更复杂的场景
+\`\`\`
+
+### 状态定义的技巧
+
+1. **从答案出发**：最终答案需要什么信息？
+2. **从决策出发**：每一步决策需要什么信息？
+3. **从约束出发**：题目有什么限制条件？
+4. **从小例子推敲**：手推几个例子`,
     codeExamples: [
       {
-        title: '状态定义示例',
-        code: `// 最长上升子序列
-int dp[i];  // dp[i] = 以a[i]结尾的LIS长度
+        title: '最长上升子序列 (LIS)',
+        code: `// 问题：求最长上升子序列长度
+// 状态定义：dp[i] = 以a[i]结尾的最长上升子序列长度
+int dp[MAXN];
 
-// 01背包
-int dp[i][j];  // dp[i][j] = 前i个物品容量为j的最大价值
+int LIS(vector<int>& a) {
+    int n = a.size();
+    int ans = 0;
+    
+    for (int i = 0; i < n; i++) {
+        dp[i] = 1;  // 至少包含自己
+        for (int j = 0; j < i; j++) {
+            if (a[j] < a[i]) {
+                dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+        ans = max(ans, dp[i]);
+    }
+    
+    return ans;
+}`,
+        explanation: 'dp[i]表示以a[i]结尾的LIS长度，这是最经典的一维状态定义',
+      },
+      {
+        title: '01背包问题',
+        code: `// 问题：n个物品，容量W，求最大价值
+// 状态定义：dp[i][j] = 前i个物品、容量为j时的最大价值
+int dp[105][10005];
 
-// 区间DP
-int dp[i][j];  // dp[i][j] = 区间[i,j]合并的最小代价`,
-        explanation: '不同问题的状态定义。',
+int knapsack(int n, int W, int w[], int v[]) {
+    for (int i = 1; i <= n; i++) {
+        for (int j = 0; j <= W; j++) {
+            // 不选第i个物品
+            dp[i][j] = dp[i-1][j];
+            // 选第i个物品（如果容量够）
+            if (j >= w[i]) {
+                dp[i][j] = max(dp[i][j], dp[i-1][j-w[i]] + v[i]);
+            }
+        }
+    }
+    return dp[n][W];
+}`,
+        explanation: '二维状态：物品数和容量两个维度',
+      },
+      {
+        title: '区间DP - 石子合并',
+        code: `// 问题：合并n堆石子，相邻两堆合并代价为两堆之和
+// 状态定义：dp[i][j] = 合并区间[i,j]石子的最小代价
+int dp[205][205];
+int sum[205];  // 前缀和
+
+int mergeStone(int n, int a[]) {
+    // 计算前缀和
+    for (int i = 1; i <= n; i++) sum[i] = sum[i-1] + a[i];
+    
+    // 枚举区间长度
+    for (int len = 2; len <= n; len++) {
+        for (int i = 1; i + len - 1 <= n; i++) {
+            int j = i + len - 1;
+            dp[i][j] = INT_MAX;
+            // 枚举分割点
+            for (int k = i; k < j; k++) {
+                dp[i][j] = min(dp[i][j], 
+                    dp[i][k] + dp[k+1][j] + sum[j] - sum[i-1]);
+            }
+        }
+    }
+    return dp[1][n];
+}`,
+        explanation: '区间DP：状态表示一个区间的最优解',
       },
     ],
-    keyPoints: ['状态要有明确含义', '能够递推'],
-    commonMistakes: ['状态定义不清', '遗漏信息'],
-    tips: ['状态定义要能完整描述子问题', '从简单例子推敲'],
+    keyPoints: ['状态是对子问题的完整描述', '必须满足无后效性', '从答案、决策、约束三个角度思考状态'],
+    commonMistakes: ['状态遗漏关键信息', '忽略了无后效性要求', '状态维度过多导致空间爆炸'],
+    tips: ['先用二维三维思考，再考虑优化', '小例子手动推演验证', '状态定义不唯一，选最直观的'],
+    relatedKnowledge: ['linear-dp', 'dp-transfer'],
     relatedProblems: [72, 73],
   },
 
   'dp-transfer': {
     id: 'dp-transfer',
     title: '状态转移',
-    content: `## 状态转移
+    content: `## 状态转移详解
 
-状态转移方程描述了状态之间的关系。
+状态转移方程描述了状态之间的推导关系，是DP的核心。
 
-### 转移方程
+### 转移方程的本质
 
-从已知状态推导出新状态的公式。
+**从已知状态推导出新状态的数学表达式。**
+
+就像递推一样，当前状态 = 某种运算(之前的状态)。
+
+### 转移方程的形式
 
 \`\`\`cpp
-// LIS
-dp[i] = max(dp[j] + 1)  for all j < i and a[j] < a[i]
-
-// 01背包
-dp[i][j] = max(dp[i-1][j], dp[i-1][j-w[i]] + v[i])
-
-// 区间DP
-dp[i][j] = min(dp[i][k] + dp[k+1][j])  for i <= k < j
+dp[当前状态] = 最优值(所有可能的转移来源)
 \`\`\`
+
+### 常见转移模式
+
+#### 1. 线性转移
+从前面几个状态转移：
+\`\`\`cpp
+dp[i] = f(dp[i-1], dp[i-2], ...)
+\`\`\`
+
+#### 2. 区间转移
+从子区间转移：
+\`\`\`cpp
+dp[i][j] = f(dp[i][k], dp[k+1][j])
+\`\`\`
+
+#### 3. 树形转移
+从子节点转移：
+\`\`\`cpp
+dp[u] = f(dp[v]) for all children v of u
+\`\`\`
+
+### 推导转移方程的方法
+
+#### 方法1：从决策出发
+
+每一步有哪些选择？每种选择对应什么状态？
+
+**示例：01背包**
+- 决策：选或不选当前物品
+- 不选：dp[i][j] = dp[i-1][j]
+- 选：dp[i][j] = dp[i-1][j-w[i]] + v[i]
+- 取最优：dp[i][j] = max(不选, 选)
+
+#### 方法2：从最后一步出发
+
+最后一步做了什么？之前的状态是什么？
+
+**示例：LIS**
+- 最后一步：选了a[i]作为结尾
+- 之前的状态：某个以a[j]结尾的LIS（j < i 且 a[j] < a[i]）
+- 转移：dp[i] = max(dp[j] + 1)
 
 ### 转移顺序
 
-必须保证转移时用到的状态已经计算过。`,
+**必须保证转移时用到的状态已经计算过！**
+
+不同DP类型的计算顺序：
+- **线性DP**：从前往后或从后往前
+- **区间DP**：先算小区间，再算大区间
+- **背包DP**：先遍历物品，再遍历容量
+- **树形DP**：先算子树，再算根（DFS后序）
+
+### 转移优化
+
+有些转移可以优化：
+- **二分优化**：LIS的O(n²) → O(n log n)
+- **单调队列优化**：滑动窗口最大值
+- **数据结构优化**：线段树、树状数组`,
     codeExamples: [
       {
-        title: '状态转移实现',
-        code: `// LIS转移
-for (int i = 0; i < n; i++) {
-    dp[i] = 1;
-    for (int j = 0; j < i; j++) {
-        if (a[j] < a[i]) {
-            dp[i] = max(dp[i], dp[j] + 1);
+        title: 'LIS状态转移',
+        code: `// dp[i] = 以a[i]结尾的最长上升子序列长度
+// 转移：dp[i] = max(dp[j] + 1) for all j < i and a[j] < a[i]
+
+int LIS(vector<int>& a) {
+    int n = a.size();
+    vector<int> dp(n, 1);  // 初始每个至少为1
+    
+    for (int i = 0; i < n; i++) {
+        // 枚举所有可能的转移来源
+        for (int j = 0; j < i; j++) {
+            if (a[j] < a[i]) {
+                dp[i] = max(dp[i], dp[j] + 1);
+            }
         }
     }
-}
-
-// 01背包转移
-for (int i = 1; i <= n; i++) {
-    for (int j = W; j >= w[i]; j--) {
-        dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
-    }
+    
+    return *max_element(dp.begin(), dp.end());
 }`,
-        explanation: '常见DP转移实现。',
+        explanation: '从前面所有满足条件的j转移过来',
+      },
+      {
+        title: '01背包状态转移',
+        code: `// dp[i][j] = 前i个物品容量为j的最大价值
+// 转移：dp[i][j] = max(dp[i-1][j], dp[i-1][j-w[i]] + v[i])
+
+int knapsack(int n, int W, vector<int>& w, vector<int>& v) {
+    vector<vector<int>> dp(n+1, vector<int>(W+1, 0));
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 0; j <= W; j++) {
+            // 不选第i个物品
+            dp[i][j] = dp[i-1][j];
+            // 选第i个物品（如果容量够）
+            if (j >= w[i]) {
+                dp[i][j] = max(dp[i][j], dp[i-1][j-w[i]] + v[i]);
+            }
+        }
+    }
+    
+    return dp[n][W];
+}`,
+        explanation: '每个物品有两种选择，取最优',
+      },
+      {
+        title: '区间DP转移 - 矩阵链乘',
+        code: `// dp[i][j] = 计算区间[i,j]矩阵链乘的最小代价
+// 转移：dp[i][j] = min(dp[i][k] + dp[k+1][j] + 代价)
+
+int matrixChain(int n, vector<int>& p) {
+    vector<vector<int>> dp(n+1, vector<int>(n+1, 0));
+    
+    // 枚举区间长度
+    for (int len = 2; len <= n; len++) {
+        for (int i = 1; i + len - 1 <= n; i++) {
+            int j = i + len - 1;
+            dp[i][j] = INT_MAX;
+            
+            // 枚举分割点
+            for (int k = i; k < j; k++) {
+                int cost = dp[i][k] + dp[k+1][j] + p[i-1] * p[k] * p[j];
+                dp[i][j] = min(dp[i][j], cost);
+            }
+        }
+    }
+    
+    return dp[1][n];
+}`,
+        explanation: '区间DP：先算小区间，再合并成大区间',
       },
     ],
-    keyPoints: ['明确转移来源', '注意转移顺序'],
-    commonMistakes: ['转移方向错误', '边界处理'],
-    tips: ['画出状态转移图', '从简单例子验证'],
+    keyPoints: ['转移方程描述状态间的关系', '转移顺序必须保证依赖状态已计算', '可以从决策或最后一步推导转移'],
+    commonMistakes: ['转移方向错误导致使用未计算的值', '忘记初始化边界状态', '转移方程遗漏情况'],
+    tips: ['画状态转移图帮助理解', '用简单例子验证转移正确性', '注意边界条件处理'],
+    relatedKnowledge: ['dp-state', 'linear-dp'],
     relatedProblems: [72, 73],
   },
 
@@ -4716,37 +5573,35 @@ for (int i = 1; i <= n; i++) {
     title: 'LIS优化',
     content: `## LIS的O(n log n)优化
 
-使用二分查找优化LIS。
+朴素LIS是O(n²)，可以通过二分优化到O(n log n)。
 
-### 思路
+### 贪心+二分的思想
 
-维护一个数组d，d[i]表示长度为i的LIS的最小结尾元素。
+**关键观察：** 对于同样长度的上升子序列，结尾元素越小越好（更有机会接上后面的元素）。
 
-### 实现
+### 辅助数组d的定义
+
+d[i] = 长度为i的所有上升子序列中，结尾元素的最小值
+
+**性质：** d数组是严格递增的
+
+### 算法流程
+
+对于每个元素a[i]：
+1. 在d中找第一个 >= a[i] 的位置（lower_bound）
+2. 如果找到了，用a[i]替换d[pos]
+3. 如果没找到，把a[i]追加到d末尾
+4. 最终d的长度就是LIS长度
+
+### 为什么正确？
+
+- 如果a[i]可以替换d[pos]，说明存在一个长度为pos的子序列可以以a[i]结尾
+- 如果a[i]比所有d都大，说明可以扩展最长子序列
+
+### 代码实现
 
 \`\`\`cpp
-vector<int> d;
-
-for (int i = 0; i < n; i++) {
-    int pos = lower_bound(d.begin(), d.end(), a[i]) - d.begin();
-    if (pos == d.size()) {
-        d.push_back(a[i]);
-    } else {
-        d[pos] = a[i];
-    }
-}
-
-return d.size();
-\`\`\`
-
-### 变形
-
-- 最长不下降：upper_bound
-- 最长下降：取负或改变比较`,
-    codeExamples: [
-      {
-        title: 'LIS优化版',
-        code: `int LIS(vector<int>& a) {
+int LIS(vector<int>& a) {
     vector<int> d;
     for (int x : a) {
         auto it = lower_bound(d.begin(), d.end(), x);
@@ -4757,13 +5612,109 @@ return d.size();
         }
     }
     return d.size();
+}
+\`\`\`
+
+### 变形问题
+
+| 问题 | 修改 |
+|------|------|
+| 最长不下降子序列 | lower_bound改为upper_bound |
+| 最长下降子序列 | 对负数做LIS或改变比较方向 |
+| 输出LIS方案 | 需要额外记录，d数组只是长度 |
+
+### 注意事项
+
+⚠️ **d数组不是LIS本身！** 它只是辅助计算长度的。
+
+要输出方案，需要额外维护pre数组。`,
+    codeExamples: [
+      {
+        title: 'LIS优化版 O(n log n)',
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+int LIS(vector<int>& a) {
+    vector<int> d;  // d[i] = 长度为i+1的LIS的最小结尾元素
+    
+    for (int x : a) {
+        // 找第一个 >= x 的位置
+        auto it = lower_bound(d.begin(), d.end(), x);
+        
+        if (it == d.end()) {
+            // x比所有d都大，可以扩展最长子序列
+            d.push_back(x);
+        } else {
+            // 用x替换，保持d[pos]最小
+            *it = x;
+        }
+    }
+    
+    return d.size();
+}
+
+int main() {
+    vector<int> a = {10, 9, 2, 5, 3, 7, 101, 18};
+    cout << LIS(a) << endl;  // 输出: 4
+    return 0;
 }`,
-        explanation: 'O(n log n)的LIS。',
+        explanation: '使用贪心+二分，时间复杂度O(n log n)',
+      },
+      {
+        title: '最长不下降子序列',
+        code: `// 允许相等元素
+int LNDS(vector<int>& a) {
+    vector<int> d;
+    for (int x : a) {
+        // upper_bound找第一个 > x 的位置
+        auto it = upper_bound(d.begin(), d.end(), x);
+        if (it == d.end()) {
+            d.push_back(x);
+        } else {
+            *it = x;
+        }
+    }
+    return d.size();
+}`,
+        explanation: '改用upper_bound，允许相等元素',
+      },
+      {
+        title: '输出LIS方案',
+        code: `// 需要额外记录，O(n²)方法更适合输出方案
+int LIS_with_path(vector<int>& a, vector<int>& path) {
+    int n = a.size();
+    vector<int> dp(n, 1), pre(n, -1);
+    
+    int maxLen = 1, endPos = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (a[j] < a[i] && dp[j] + 1 > dp[i]) {
+                dp[i] = dp[j] + 1;
+                pre[i] = j;  // 记录前驱
+            }
+        }
+        if (dp[i] > maxLen) {
+            maxLen = dp[i];
+            endPos = i;
+        }
+    }
+    
+    // 还原路径
+    while (endPos != -1) {
+        path.push_back(a[endPos]);
+        endPos = pre[endPos];
+    }
+    reverse(path.begin(), path.end());
+    
+    return maxLen;
+}`,
+        explanation: '要输出方案，用O(n²)方法更方便',
       },
     ],
-    keyPoints: ['理解d数组的含义', '掌握二分查找'],
-    commonMistakes: ['lower/upper_bound混淆', 'd数组含义理解错误'],
-    tips: ['d数组不是LIS本身', '只能求长度'],
+    keyPoints: ['d数组存储的是最小结尾元素', 'lower_bound找位置是关键', 'd数组不是LIS本身，只是长度'],
+    commonMistakes: ['混淆lower_bound和upper_bound', '误以为d数组就是LIS', '忘记d是严格递增的'],
+    tips: ['优化后只能求长度，求方案用O(n²)', '理解贪心思想：越小的结尾越有利', '二分优化思想可推广到其他问题'],
+    relatedKnowledge: ['linear-dp', 'dp-transfer'],
     relatedProblems: [73, 74],
   },
 
@@ -4771,42 +5722,116 @@ return d.size();
   'knapsack-intro': {
     id: 'knapsack-intro',
     title: '背包问题概念',
-    content: `## 背包问题
+    content: `## 背包问题详解
 
-给定容量为W的背包和n个物品，每个物品有重量w和价值v，求最大价值。
+背包问题是DP最经典的模型，考查频率极高。
 
-### 问题分类
+### 问题背景
 
-| 类型 | 特点 |
-|------|------|
-| 01背包 | 每个物品最多选1个 |
-| 完全背包 | 每个物品可选无限个 |
-| 多重背包 | 每个物品可选有限个 |
+有一个容量为W的背包，n个物品，每个物品有重量w和价值v。如何选择物品使总价值最大？
 
-### 状态定义
+### 背包问题分类
 
+| 类型 | 特点 | 示例场景 |
+|------|------|----------|
+| 01背包 | 每个物品最多选1个 | 选或不选 |
+| 完全背包 | 每个物品可选无限个 | 钱币找零 |
+| 多重背包 | 每个物品可选有限个 | 购物限额 |
+| 分组背包 | 物品分组，每组最多选1个 | 套餐选择 |
+| 混合背包 | 以上混合 | 综合场景 |
+
+### 01背包详解
+
+**状态定义：**
 \`\`\`cpp
 dp[i][j] = 前i个物品，容量为j时的最大价值
-\`\`\``,
+\`\`\`
+
+**状态转移：**
+对于第i个物品，有两种选择：
+1. 不选：dp[i][j] = dp[i-1][j]
+2. 选（如果容量够）：dp[i][j] = dp[i-1][j-w[i]] + v[i]
+
+取最优：
+\`\`\`cpp
+dp[i][j] = max(dp[i-1][j], dp[i-1][j-w[i]] + v[i])
+\`\`\`
+
+**初始条件：**
+dp[0][j] = 0（没有物品时价值为0）
+dp[i][0] = 0（容量为0时价值为0）
+
+### 时间复杂度
+
+- 时间：O(n × W)
+- 空间：O(n × W)，可优化到O(W)
+
+### 变形问题
+
+1. **恰好装满**：初始化dp[0][0]=0，其他为-∞
+2. **求方案数**：max改为count
+3. **输出方案**：记录转移路径`,
     codeExamples: [
       {
-        title: '背包问题输入',
-        code: `int n, W;
-cin >> n >> W;
+        title: '01背包基础版',
+        code: `#include <bits/stdc++.h>
+using namespace std;
 
-int w[105], v[105];
-for (int i = 1; i <= n; i++) {
-    cin >> w[i] >> v[i];
-}
-
-// 求最大价值
-// dp[i][j] = 前i个物品容量j的最大价值`,
-        explanation: '背包问题的基本输入。',
+int main() {
+    int n, W;
+    cin >> n >> W;
+    
+    vector<int> w(n+1), v(n+1);
+    for (int i = 1; i <= n; i++) {
+        cin >> w[i] >> v[i];
+    }
+    
+    // dp[i][j] = 前i个物品容量为j的最大价值
+    vector<vector<int>> dp(n+1, vector<int>(W+1, 0));
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 0; j <= W; j++) {
+            // 不选第i个物品
+            dp[i][j] = dp[i-1][j];
+            // 选第i个物品（如果容量够）
+            if (j >= w[i]) {
+                dp[i][j] = max(dp[i][j], dp[i-1][j-w[i]] + v[i]);
+            }
+        }
+    }
+    
+    cout << dp[n][W] << endl;
+    return 0;
+}`,
+        explanation: '基础01背包，二维DP实现',
+      },
+      {
+        title: '恰好装满版本',
+        code: `// 要求背包恰好装满
+int knapsack_exact(int n, int W, vector<int>& w, vector<int>& v) {
+    const int INF = 1e9;
+    vector<vector<int>> dp(n+1, vector<int>(W+1, -INF));
+    
+    dp[0][0] = 0;  // 只有容量0恰好装满是合法的
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 0; j <= W; j++) {
+            dp[i][j] = dp[i-1][j];  // 不选
+            if (j >= w[i] && dp[i-1][j-w[i]] != -INF) {
+                dp[i][j] = max(dp[i][j], dp[i-1][j-w[i]] + v[i]);
+            }
+        }
+    }
+    
+    return dp[n][W] < 0 ? -1 : dp[n][W];
+}`,
+        explanation: '初始化为-∞，只有dp[0][0]=0是合法状态',
       },
     ],
-    keyPoints: ['理解问题模型', '区分不同类型'],
-    commonMistakes: ['类型混淆', '状态定义错误'],
-    tips: ['背包是经典DP模型', '掌握后可以举一反三'],
+    keyPoints: ['理解"选或不选"的决策模型', '状态表示要完整（物品+容量）', '注意边界初始化'],
+    commonMistakes: ['容量枚举方向错误', '忘记判断容量是否够', '恰好装满初始化错误'],
+    tips: ['先画表格理解状态转移', '二维熟练后再学一维优化', '背包问题有很多变形'],
+    relatedKnowledge: ['01-knapsack', 'complete-knapsack'],
     relatedProblems: [75, 76],
   },
 
@@ -4815,40 +5840,70 @@ for (int i = 1; i <= n; i++) {
     title: '空间优化',
     content: `## 背包问题空间优化
 
-可以将二维dp优化为一维。
+可以将二维dp优化为一维，节省空间。
 
-### 原理
+### 优化原理
 
-dp[i][j]只依赖于dp[i-1][...]，可以用滚动数组。
+观察转移方程：
+\`\`\`cpp
+dp[i][j] = max(dp[i-1][j], dp[i-1][j-w[i]] + v[i])
+\`\`\`
 
-### 01背包
+dp[i][j]只依赖于dp[i-1][...]，即上一层的状态。
 
-必须**逆序**枚举容量：
+**滚动数组思想：** 只需要保存一层，用完就覆盖。
+
+### 01背包：必须逆序枚举！
 
 \`\`\`cpp
 for (int i = 1; i <= n; i++) {
-    for (int j = W; j >= w[i]; j--) {
+    for (int j = W; j >= w[i]; j--) {  // 逆序！
         dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
     }
 }
 \`\`\`
 
-### 为什么逆序
+### 为什么必须逆序？
 
-保证每个物品只选一次。正序会重复选。`,
+**正序的问题：** 同一轮中，dp[j-w[i]]可能已经被更新过，相当于重复选了第i个物品！
+
+**例子：** w[i]=2, v[i]=3
+- 正序：dp[2] = dp[0]+3 = 3，dp[4] = dp[2]+3 = 6（错误！选了两次）
+- 逆序：dp[4] = dp[2]+3 = 3（正确，dp[2]是上一轮的值）
+
+### 完全背包：正序枚举！
+
+完全背包允许重复选，所以正好利用正序的特点：
+\`\`\`cpp
+for (int i = 1; i <= n; i++) {
+    for (int j = w[i]; j <= W; j++) {  // 正序！
+        dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
+    }
+}
+\`\`\`
+
+### 空间优化总结
+
+| 类型 | 枚举顺序 | 原因 |
+|------|----------|------|
+| 01背包 | 逆序 | 避免重复选 |
+| 完全背包 | 正序 | 利用重复选 |`,
     codeExamples: [
       {
         title: '01背包空间优化',
-        code: `int dp[10005];  // 一维数组
-
-for (int i = 1; i <= n; i++) {
-    for (int j = W; j >= w[i]; j--) {
-        dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+        code: `int knapsack_01(int n, int W, vector<int>& w, vector<int>& v) {
+    vector<int> dp(W + 1, 0);
+    
+    for (int i = 1; i <= n; i++) {
+        // 逆序枚举，保证每个物品只选一次
+        for (int j = W; j >= w[i]; j--) {
+            dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+        }
     }
-}
-
-cout << dp[W] << endl;`,
-        explanation: '一维01背包。',
+    
+    return dp[W];
+}`,
+        explanation: '一维数组，逆序枚举容量',
       },
     ],
     keyPoints: ['理解为什么逆序', '掌握一维优化'],
@@ -5018,51 +6073,134 @@ int main() {
   'graph-store': {
     id: 'graph-store',
     title: '图的存储',
-    content: `## 图的存储方式
+    content: `## 图的存储方式详解
+
+选择合适的存储方式对解决问题至关重要。
+
+### 常见存储方式对比
+
+| 存储方式 | 空间复杂度 | 判断是否有边 | 遍历邻居 | 适用场景 |
+|----------|------------|--------------|----------|----------|
+| 邻接矩阵 | O(n²) | O(1) | O(n) | 稠密图 |
+| 邻接表 | O(n+m) | O(度) | O(度) | 稀疏图 |
+| 链式前向星 | O(m) | O(度) | O(度) | 竞赛推荐 |
 
 ### 邻接矩阵
 
+用二维数组表示：
 \`\`\`cpp
-int g[105][105];  // g[u][v] = 1 表示有边
+int g[105][105];  // g[u][v] = w 表示u到v有边，权值为w
+g[u][v] = w;      // 添加边
 \`\`\`
 
-- 优点：实现简单
-- 缺点：空间O(n²)，不适合稀疏图
+**优点：**
+- 实现简单
+- 判断两点是否有边：O(1)
+- 适合Floyd等算法
 
-### 邻接表
+**缺点：**
+- 空间O(n²)，n=10000时约需要400MB
+- 不适合稀疏图
 
+### 邻接表（推荐）
+
+用vector数组存储每个点的邻居：
 \`\`\`cpp
-vector<int> adj[10005];  // adj[u]存储u的所有邻居
-adj[u].push_back(v);
+vector<int> adj[N];          // 无权图
+vector<pair<int,int>> adj[N]; // 有权图：(邻居, 权值)
 \`\`\`
 
-- 优点：空间O(n+m)
-- 缺点：判断两点是否有边需要遍历
+**优点：**
+- 空间O(n+m)，适合稀疏图
+- 遍历邻居高效
 
-### 链式前向星
+**缺点：**
+- 判断两点是否有边需要遍历
 
-竞赛中常用的存储方式。`,
-    codeExamples: [
-      {
-        title: '邻接表存图',
-        code: `int n, m;
-vector<pair<int,int>> adj[10005];  // (邻居, 边权)
+### 链式前向星（竞赛常用）
 
-void addEdge(int u, int v, int w) {
-    adj[u].push_back({v, w});
-    adj[v].push_back({u, w});  // 无向图
+用静态数组模拟链表：
+\`\`\`cpp
+int head[N], to[M], nxt[M], val[M], tot;
+
+void add(int u, int v, int w) {
+    to[++tot] = v;
+    val[tot] = w;
+    nxt[tot] = head[u];
+    head[u] = tot;
 }
 
-// 遍历u的所有邻居
-for (auto [v, w] : adj[u]) {
-    // 处理边(u, v)
+// 遍历u的邻居
+for (int i = head[u]; i; i = nxt[i]) {
+    int v = to[i], w = val[i];
+}
+\`\`\`
+
+**优点：**
+- 空间紧凑
+- 常数小，效率高
+- 适合重边、自环`,
+    codeExamples: [
+      {
+        title: '邻接表完整示例',
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 10005;
+vector<pair<int,int>> adj[N];  // (邻居, 边权)
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});  // 有向图
+        // adj[v].push_back({u, w}); // 无向图加上这行
+    }
+    
+    // 遍历节点u的所有邻居
+    int u = 1;
+    for (auto [v, w] : adj[u]) {
+        cout << u << " -> " << v << " : " << w << endl;
+    }
+    
+    return 0;
 }`,
-        explanation: '邻接表存储和遍历。',
+        explanation: '邻接表存图，支持边权，遍历高效',
+      },
+      {
+        title: '链式前向星存图',
+        code: `const int N = 10005, M = 20005;
+int head[N], to[M], nxt[M], val[M], tot;
+
+void init() {
+    memset(head, 0, sizeof(head));
+    tot = 0;
+}
+
+void addEdge(int u, int v, int w) {
+    to[++tot] = v;
+    val[tot] = w;
+    nxt[tot] = head[u];
+    head[u] = tot;
+}
+
+// 遍历u的邻居
+void traverse(int u) {
+    for (int i = head[u]; i; i = nxt[i]) {
+        int v = to[i], w = val[i];
+        cout << u << " -> " << v << " : " << w << endl;
+    }
+}`,
+        explanation: '链式前向星：静态数组模拟链表，效率最高',
       },
     ],
-    keyPoints: ['掌握邻接表', '了解邻接矩阵'],
-    commonMistakes: ['无向图忘记加两条边', '数组开小'],
-    tips: ['竞赛中多用邻接表', '注意边数开两倍'],
+    keyPoints: ['邻接表是最常用的存储方式', '无向图边数要开两倍', '注意数组大小防止越界'],
+    commonMistakes: ['无向图只加一条边', '数组开小导致越界', '忘记初始化'],
+    tips: ['竞赛优先用邻接表或链式前向星', '边数M一般开为点数N的2倍以上', '有权图用pair存储'],
+    relatedKnowledge: ['graph-intro', 'dfs-intro', 'bfs-intro'],
     relatedProblems: [81, 82],
   },
 
@@ -5070,66 +6208,217 @@ for (auto [v, w] : adj[u]) {
   'tree-dfs': {
     id: 'tree-dfs',
     title: '树的DFS',
-    content: `## 树的DFS遍历
+    content: `## 树的DFS遍历详解
+
+树是一种特殊的图：连通、无环、n个点n-1条边。
+
+### 树DFS的特点
+
+与普通图不同，树DFS不需要visited数组，因为：
+- 树无环，不会重复访问
+- 只需要避免"回头"到父节点
 
 ### 基本框架
 
 \`\`\`cpp
 void dfs(int u, int parent) {
+    // 处理当前节点u
     for (int v : adj[u]) {
-        if (v != parent) {
+        if (v != parent) {  // 不走回头路
             dfs(v, u);
         }
     }
 }
 \`\`\`
 
-### 应用
+### 树DFS的应用
 
-1. 求子树大小
-2. 求树的高度
-3. 求树的重心`,
+#### 1. 求子树大小
+\`\`\`cpp
+void getSize(int u, int parent) {
+    sz[u] = 1;
+    for (int v : adj[u]) {
+        if (v != parent) {
+            getSize(v, u);
+            sz[u] += sz[v];
+        }
+    }
+}
+\`\`\`
+
+#### 2. 求树的高度
+\`\`\`cpp
+void getHeight(int u, int parent) {
+    height[u] = 0;
+    for (int v : adj[u]) {
+        if (v != parent) {
+            getHeight(v, u);
+            height[u] = max(height[u], height[v] + 1);
+        }
+    }
+}
+\`\`\`
+
+#### 3. 求树的重心
+重心：删除后最大子树最小的节点。
+\`\`\`cpp
+void findCentroid(int u, int parent) {
+    sz[u] = 1;
+    maxSubtree[u] = 0;
+    for (int v : adj[u]) {
+        if (v != parent) {
+            findCentroid(v, u);
+            sz[u] += sz[v];
+            maxSubtree[u] = max(maxSubtree[u], sz[v]);
+        }
+    }
+    maxSubtree[u] = max(maxSubtree[u], n - sz[u]);  // 上面的部分
+    if (maxSubtree[u] < minMax) {
+        minMax = maxSubtree[u];
+        centroid = u;
+    }
+}
+\`\`\``,
     codeExamples: [
       {
         title: '求子树大小',
-        code: `int sz[10005];
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 10005;
+vector<int> adj[N];
+int sz[N];
+
+void dfs(int u, int parent) {
+    sz[u] = 1;  // 自己算1个
+    for (int v : adj[u]) {
+        if (v != parent) {
+            dfs(v, u);
+            sz[u] += sz[v];  // 累加子树大小
+        }
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    
+    dfs(1, 0);  // 从根节点开始
+    
+    for (int i = 1; i <= n; i++) {
+        cout << "子树" << i << "的大小：" << sz[i] << endl;
+    }
+    return 0;
+}`,
+        explanation: 'DFS求每个节点的子树大小，可用于树的重心、树形DP等',
+      },
+      {
+        title: '求树的重心',
+        code: `const int N = 10005;
+vector<int> adj[N];
+int sz[N], maxSubtree[N];
+int n, centroid, minMax = N;
 
 void dfs(int u, int parent) {
     sz[u] = 1;
+    maxSubtree[u] = 0;
+    
     for (int v : adj[u]) {
         if (v != parent) {
             dfs(v, u);
             sz[u] += sz[v];
+            maxSubtree[u] = max(maxSubtree[u], sz[v]);
         }
     }
+    
+    // 还要考虑u上方的那部分
+    maxSubtree[u] = max(maxSubtree[u], n - sz[u]);
+    
+    if (maxSubtree[u] < minMax) {
+        minMax = maxSubtree[u];
+        centroid = u;
+    }
 }`,
-        explanation: 'DFS求子树大小。',
+        explanation: '重心是删除后最大子树最小的节点',
       },
     ],
-    keyPoints: ['用parent避免回走', '递归处理子树'],
-    commonMistakes: ['忘记判断parent', '无限递归'],
-    tips: ['可以传入parent参数', '也可以用vis数组'],
+    keyPoints: ['树DFS用parent参数避免回头', '递归处理子树', '后序遍历先处理子节点再处理父节点'],
+    commonMistakes: ['忘记判断parent导致无限递归', '把parent误当成已访问标记', '子树大小初始化错误'],
+    tips: ['树的DFS天然是后序遍历', '可以用父节点参数代替vis数组', '处理子树信息时注意累积顺序'],
+    relatedKnowledge: ['tree-intro', 'dfs-intro'],
     relatedProblems: [82, 83],
   },
 
   'tree-bfs': {
     id: 'tree-bfs',
     title: '树的BFS',
-    content: `## 树的BFS遍历
+    content: `## 树的BFS遍历详解
 
-BFS可以按层次遍历树。
+BFS按层次遍历树，适合处理与深度相关的问题。
 
-### 应用
+### 树BFS的特点
 
-1. 层次遍历
-2. 求树的深度
-3. 求两点间距离`,
+- 天然按层遍历
+- 不需要visited数组（树无环）
+- 第一次到达的深度就是最短距离
+
+### 基本框架
+
+\`\`\`cpp
+void bfs(int root) {
+    queue<int> q;
+    q.push(root);
+    depth[root] = 1;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        
+        for (int v : adj[u]) {
+            if (depth[v] == 0) {  // 未访问
+                depth[v] = depth[u] + 1;
+                q.push(v);
+            }
+        }
+    }
+}
+\`\`\`
+
+### 树BFS的应用
+
+#### 1. 层次遍历
+按层输出节点，常见于树的题目。
+
+#### 2. 求树的高度
+最大的depth值就是树的高度。
+
+#### 3. 求最远点
+BFS可以找到距离起点最远的点。
+
+#### 4. 求两点间距离
+从起点BFS，终点的depth差就是距离。
+
+### 两次BFS求直径
+
+树的直径是最长路径，可以通过两次BFS找到：
+1. 从任意点出发，找最远点v
+2. 从v出发，找最远点w
+3. v-w就是直径`,
     codeExamples: [
       {
         title: 'BFS求树的高度',
-        code: `int depth[10005];
+        code: `const int N = 10005;
+vector<int> adj[N];
+int depth[N];
 
-int bfs(int root) {
+int treeHeight(int root) {
+    memset(depth, 0, sizeof(depth));
     queue<int> q;
     q.push(root);
     depth[root] = 1;
@@ -5150,44 +6439,109 @@ int bfs(int root) {
     
     return maxDepth;
 }`,
-        explanation: 'BFS求树高度。',
+        explanation: 'BFS遍历时记录最大深度',
+      },
+      {
+        title: '层次遍历输出',
+        code: `vector<vector<int>> levelOrder(int root) {
+    vector<vector<int>> result;
+    queue<int> q;
+    q.push(root);
+    depth[root] = 1;
+    
+    while (!q.empty()) {
+        int size = q.size();  // 当前层节点数
+        vector<int> level;
+        
+        for (int i = 0; i < size; i++) {
+            int u = q.front();
+            q.pop();
+            level.push_back(u);
+            
+            for (int v : adj[u]) {
+                if (depth[v] == 0) {
+                    depth[v] = depth[u] + 1;
+                    q.push(v);
+                }
+            }
+        }
+        result.push_back(level);
+    }
+    
+    return result;
+}`,
+        explanation: '按层输出节点，每层一个vector',
       },
     ],
-    keyPoints: ['BFS天然层次遍历', '记录深度'],
-    commonMistakes: ['忘记记录深度', '起点处理'],
-    tips: ['可以同时求最远点', '两次BFS求直径'],
+    keyPoints: ['BFS天然按层次遍历', 'depth数组既记录深度又标记访问', '可以用于求最远点'],
+    commonMistakes: ['忘记初始化depth数组', '把depth用于其他用途时冲突', '起点深度设置错误'],
+    tips: ['两次BFS可以求树的直径', 'BFS可以用于求树上两点距离', '层次遍历时注意记录每层大小'],
+    relatedKnowledge: ['tree-dfs', 'bfs-intro'],
     relatedProblems: [82, 83],
   },
 
   'tree-diameter': {
     id: 'tree-diameter',
     title: '树的直径',
-    content: `## 树的直径
+    content: `## 树的直径详解
 
-树上最长的路径叫直径。
+树的直径是树上最长路径的长度。
 
-### 求法
+### 性质
 
-1. 从任意点u出发，BFS/DFS找最远点v
-2. 从v出发，BFS/DFS找最远点w
+1. 直径的两个端点一定是叶子节点
+2. 一棵树可能有多个直径
+3. 所有直径的中点（或中心边）相同
+
+### 求直径的方法
+
+#### 方法一：两次BFS/DFS（推荐）
+
+1. 从任意点u出发，找最远点v
+2. 从v出发，找最远点w
 3. v到w就是直径
 
-### 证明
+**时间复杂度：** O(n)
 
-直径的两个端点一定是最远点。`,
+**为什么正确？**
+- 直径的两个端点一定是最远的点对
+- 从任意点出发，最远点一定是直径端点之一
+
+#### 方法二：树形DP
+
+对每个节点，求经过它的最长路径：
+\`\`\`cpp
+dp[u] = 向下最长链 + 向下次长链
+\`\`\`
+
+### 直径的应用
+
+1. 求树的"长度"
+2. 判断树是否平衡
+3. 作为树的某种"半径"的基准`,
     codeExamples: [
       {
-        title: '求树的直径',
-        code: `pair<int,int> bfs_farthest(int start) {
+        title: '两次BFS求直径',
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 10005;
+vector<int> adj[N];
+int dist[N];
+int n;
+
+pair<int,int> bfs(int start) {
     memset(dist, -1, sizeof(dist));
     queue<int> q;
     q.push(start);
     dist[start] = 0;
+    
     int farthest = start, maxDist = 0;
     
     while (!q.empty()) {
         int u = q.front();
         q.pop();
+        
         for (int v : adj[u]) {
             if (dist[v] == -1) {
                 dist[v] = dist[u] + 1;
@@ -5199,20 +6553,54 @@ int bfs(int root) {
             }
         }
     }
+    
     return {farthest, maxDist};
 }
 
 int getDiameter() {
-    auto [v, _] = bfs_farthest(1);  // 第一次BFS
-    auto [w, d] = bfs_farthest(v);  // 第二次BFS
-    return d;  // 直径长度
+    // 第一次BFS：找最远点v
+    auto [v, _] = bfs(1);
+    
+    // 第二次BFS：从v找最远点
+    auto [w, diameter] = bfs(v);
+    
+    return diameter;
 }`,
-        explanation: '两次BFS求直径。',
+        explanation: '两次BFS求直径，时间复杂度O(n)',
+      },
+      {
+        title: '树形DP求直径',
+        code: `const int N = 10005;
+vector<int> adj[N];
+int diameter = 0;
+
+int dfs(int u, int parent) {
+    int max1 = 0, max2 = 0;  // 最长链和次长链
+    
+    for (int v : adj[u]) {
+        if (v != parent) {
+            int d = dfs(v, u) + 1;
+            if (d > max1) {
+                max2 = max1;
+                max1 = d;
+            } else if (d > max2) {
+                max2 = d;
+            }
+        }
+    }
+    
+    // 经过u的最长路径
+    diameter = max(diameter, max1 + max2);
+    
+    return max1;  // 返回最长链
+}`,
+        explanation: '树形DP：维护最长链和次长链',
       },
     ],
-    keyPoints: ['两次BFS求直径', '记住这个方法'],
-    commonMistakes: ['只做一次BFS', '起点选择'],
-    tips: ['直径可能有多条', '直径的中点是重心候选'],
+    keyPoints: ['两次BFS是最简单的方法', '直径端点一定是最远点', '树形DP可以同时求方案'],
+    commonMistakes: ['只做一次BFS', '忘记是从最远点再找一次', '树形DP时更新顺序错误'],
+    tips: ['直径可能有多条', '直径的中点(或中心边)是唯一的', '可以用直径来判断树的平衡性'],
+    relatedKnowledge: ['tree-dfs', 'tree-bfs'],
     relatedProblems: [82, 83],
   },
 
@@ -5220,66 +6608,210 @@ int getDiameter() {
   'graph-dfs': {
     id: 'graph-dfs',
     title: '图的DFS',
-    content: `## 图的DFS遍历
+    content: `## 图的DFS遍历详解
 
-与树的DFS类似，但需要标记已访问的节点。
+图的DFS比树复杂，因为图可能有环，必须标记已访问的节点。
 
 ### 基本框架
 
 \`\`\`cpp
-bool visited[10005];
+bool visited[N];
 
 void dfs(int u) {
-    visited[u] = true;
+    visited[u] = true;  // 标记已访问
+    // 处理节点u
+    
     for (int v : adj[u]) {
         if (!visited[v]) {
             dfs(v);
         }
     }
 }
-\`\`\``,
+\`\`\`
+
+### 图DFS的应用
+
+#### 1. 判断连通性
+从某点出发DFS，看能否到达所有点。
+
+#### 2. 求连通分量
+多次DFS，每次DFS访问的点属于一个连通分量。
+
+#### 3. 检测环
+如果DFS过程中遇到已访问但不是父节点的点，说明有环。
+
+#### 4. 拓扑排序
+DFS后序的逆序就是拓扑序（DAG）。
+
+#### 5. 判断二分图
+DFS染色，相邻节点颜色不同。
+
+### DFS的时间戳
+
+记录进入和离开每个节点的时间：
+\`\`\`cpp
+int timer = 0, tin[N], tout[N];
+
+void dfs(int u) {
+    tin[u] = ++timer;  // 进入时间
+    visited[u] = true;
+    
+    for (int v : adj[u]) {
+        if (!visited[v]) dfs(v);
+    }
+    
+    tout[u] = ++timer;  // 离开时间
+}
+\`\`\`
+
+时间戳的应用：
+- 判断祖先-后代关系
+- 求LCA
+- 欧拉序`,
     codeExamples: [
       {
         title: '图的DFS遍历',
-        code: `bool visited[10005];
-vector<int> adj[10005];
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 10005;
+vector<int> adj[N];
+bool visited[N];
 
 void dfs(int u) {
     visited[u] = true;
-    cout << u << " ";
+    cout << u << " ";  // 访问节点
     
     for (int v : adj[u]) {
         if (!visited[v]) {
             dfs(v);
         }
     }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);  // 无向图
+    }
+    
+    cout << "DFS遍历结果: ";
+    dfs(1);  // 从节点1开始
+    cout << endl;
+    
+    return 0;
 }`,
-        explanation: '图的DFS遍历。',
+        explanation: '标准图的DFS遍历',
+      },
+      {
+        title: '求连通分量个数',
+        code: `int countComponents(int n) {
+    memset(visited, false, sizeof(visited));
+    int cnt = 0;
+    
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            dfs(i);
+            cnt++;  // 每次DFS覆盖一个连通分量
+        }
+    }
+    
+    return cnt;
+}`,
+        explanation: '每个连通分量需要一次DFS',
+      },
+      {
+        title: '检测无向图是否有环',
+        code: `bool hasCycle = false;
+
+void dfs(int u, int parent) {
+    visited[u] = true;
+    
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            dfs(v, u);
+        } else if (v != parent) {
+            // 访问到非父节点的已访问节点，有环
+            hasCycle = true;
+        }
+    }
+}`,
+        explanation: '遇到已访问的非父节点，说明有环',
       },
     ],
-    keyPoints: ['必须标记已访问', '防止重复访问'],
-    commonMistakes: ['忘记标记', '导致无限循环'],
-    tips: ['DFS可以判断连通性', '可以用于拓扑排序'],
+    keyPoints: ['图DFS必须标记已访问', '与树DFS的区别是图可能有环', '可以判断连通性、环、二分图等'],
+    commonMistakes: ['忘记标记visited导致无限循环', '混淆有向图和无向图的环检测', '重边/自环处理不当'],
+    tips: ['DFS适合求方案，BFS适合求最短路', '时间戳可以解决很多树上问题', '连通分量用并查集也可以求'],
+    relatedKnowledge: ['dfs-intro', 'tree-dfs', 'connected'],
     relatedProblems: [84, 85],
   },
 
   'graph-bfs': {
     id: 'graph-bfs',
     title: '图的BFS',
-    content: `## 图的BFS遍历
+    content: `## 图的BFS遍历详解
 
-按层次遍历图，常用于求最短路径。`,
-    codeExamples: [
-      {
-        title: '图的BFS遍历',
-        code: `bool visited[10005];
-vector<int> adj[10005];
+BFS按层次遍历图，天然适合求最短路径。
+
+### 基本框架
+
+\`\`\`cpp
+bool visited[N];
 
 void bfs(int start) {
     queue<int> q;
     q.push(start);
+    visited[start] = true;  // 入队时标记
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                visited[v] = true;  // 入队时标记
+                q.push(v);
+            }
+        }
+    }
+}
+\`\`\`
+
+### 图BFS的应用
+
+#### 1. 求无权图最短路
+第一次到达某点的距离就是最短距离。
+
+#### 2. 判断连通性
+BFS能到达的点与起点连通。
+
+#### 3. 层次遍历
+记录每层的节点数，分层处理。
+
+#### 4. 拓扑排序
+BFS可以处理DAG的拓扑排序（Kahn算法）。
+
+#### 5. 判断二分图
+BFS染色，相邻节点颜色不同。`,
+    codeExamples: [
+      {
+        title: '图的BFS遍历',
+        code: `const int N = 10005;
+vector<int> adj[N];
+bool visited[N];
+
+void bfs(int start) {
+    memset(visited, false, sizeof(visited));
+    queue<int> q;
+    q.push(start);
     visited[start] = true;
     
+    cout << "BFS遍历: ";
     while (!q.empty()) {
         int u = q.front();
         q.pop();
@@ -5292,13 +6824,43 @@ void bfs(int start) {
             }
         }
     }
+    cout << endl;
 }`,
-        explanation: '图的BFS遍历。',
+        explanation: '标准图的BFS遍历',
+      },
+      {
+        title: 'BFS求最短路',
+        code: `int dist[N];
+
+int shortestPath(int start, int end) {
+    memset(dist, -1, sizeof(dist));
+    queue<int> q;
+    q.push(start);
+    dist[start] = 0;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        
+        if (u == end) return dist[u];
+        
+        for (int v : adj[u]) {
+            if (dist[v] == -1) {
+                dist[v] = dist[u] + 1;
+                q.push(v);
+            }
+        }
+    }
+    
+    return -1;  // 无法到达
+}`,
+        explanation: 'BFS天然求最短路，dist数组同时表示距离和访问状态',
       },
     ],
-    keyPoints: ['入队时标记', '避免重复入队'],
-    commonMistakes: ['出队时标记', '导致重复入队'],
-    tips: ['BFS适合求最短路', '可以分层处理'],
+    keyPoints: ['入队时必须标记visited', 'BFS天然按层次扩展', '第一次到达的距离最短'],
+    commonMistakes: ['出队时才标记导致重复入队', '忘记初始化dist/visited', '最短路问题用DFS而非BFS'],
+    tips: ['无权图最短路首选BFS', 'BFS可以处理很多图论问题', '配合队列实现层次遍历'],
+    relatedKnowledge: ['bfs-intro', 'bfs-shortest', 'graph-dfs'],
     relatedProblems: [84, 85],
   },
 
@@ -5364,19 +6926,38 @@ int countComponents(int n) {
   'dijkstra-impl': {
     id: 'dijkstra-impl',
     title: 'Dijkstra实现',
-    content: `## Dijkstra算法实现
+    content: `## Dijkstra算法详解
 
-### 基本步骤
+Dijkstra是求单源最短路的经典算法，适用于非负权图。
 
-1. 初始化距离数组，起点为0，其他为∞
-2. 选择未访问的距离最小的点
-3. 更新其邻居的距离
-4. 重复直到所有点访问
+### 核心思想
+
+**贪心选择**：每次选择距离最小的未访问点，其距离就是最短路。
+
+**正确性**：由于没有负权边，距离最小的点不可能再被更新更小。
+
+### 算法步骤
+
+1. 初始化：dist[起点] = 0，其他 = ∞
+2. 选择未访问中距离最小的点u
+3. 标记u为已访问
+4. 用u更新其邻居的距离（松弛操作）
+5. 重复2-4直到所有点访问完
+
+### 松弛操作
+
+\`\`\`cpp
+if (dist[u] + w < dist[v]) {
+    dist[v] = dist[u] + w;
+}
+\`\`\`
 
 ### 朴素实现 O(n²)
 
+适合稠密图（m ≈ n²）：
 \`\`\`cpp
 for (int i = 1; i <= n; i++) {
+    // 找距离最小的未访问点
     int u = -1, minDist = INT_MAX;
     for (int j = 1; j <= n; j++) {
         if (!visited[j] && dist[j] < minDist) {
@@ -5385,18 +6966,37 @@ for (int i = 1; i <= n; i++) {
         }
     }
     if (u == -1) break;
+    
     visited[u] = true;
+    // 松弛邻居
     for (auto [v, w] : adj[u]) {
-        dist[v] = min(dist[v], dist[u] + w);
+        if (dist[u] + w < dist[v]) {
+            dist[v] = dist[u] + w;
+        }
     }
 }
-\`\`\``,
+\`\`\`
+
+### 不能处理负权边
+
+如果有负权边，Dijkstra可能得到错误结果。原因：已经确定最短路的点可能被负边更新更小。
+
+### 复杂度分析
+
+- 时间：O(n²)
+- 空间：O(n + m)`,
     codeExamples: [
       {
-        title: 'Dijkstra朴素版',
-        code: `int dist[10005];
-bool visited[10005];
-vector<pair<int,int>> adj[10005];  // (邻居, 边权)
+        title: 'Dijkstra朴素版完整代码',
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 10005;
+const int INF = 0x3f3f3f3f;
+int dist[N];
+bool visited[N];
+vector<pair<int,int>> adj[N];  // (邻居, 边权)
+int n, m;
 
 void dijkstra(int start) {
     memset(dist, 0x3f, sizeof(dist));
@@ -5404,64 +7004,162 @@ void dijkstra(int start) {
     dist[start] = 0;
     
     for (int i = 1; i <= n; i++) {
-        int u = -1, minDist = INT_MAX;
+        // 找未访问中距离最小的点
+        int u = -1, minDist = INF;
         for (int j = 1; j <= n; j++) {
             if (!visited[j] && dist[j] < minDist) {
                 minDist = dist[j];
                 u = j;
             }
         }
-        if (u == -1) break;
+        
+        if (u == -1) break;  // 剩余点不可达
         visited[u] = true;
+        
+        // 松弛邻居
         for (auto [v, w] : adj[u]) {
-            dist[v] = min(dist[v], dist[u] + w);
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+            }
         }
     }
+}
+
+int main() {
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+        // adj[v].push_back({u, w}); // 无向图
+    }
+    
+    int s, t;
+    cin >> s >> t;
+    dijkstra(s);
+    cout << dist[t] << endl;
+    return 0;
 }`,
-        explanation: 'Dijkstra朴素实现。',
+        explanation: '朴素Dijkstra，适合稠密图',
       },
     ],
-    keyPoints: ['每次选最小距离点', '更新邻居距离'],
-    commonMistakes: ['忘记标记已访问', '初始化错误'],
-    tips: ['只适用于非负权图', '可以用堆优化'],
+    keyPoints: ['每次选最小距离点', '松弛更新邻居', '只适用于非负权图'],
+    commonMistakes: ['忘记标记已访问', '初始化错误用INT_MAX', '负权边会得到错误结果'],
+    tips: ['n小时用朴素版', 'm小时用堆优化', 'INF用0x3f3f3f3f'],
+    relatedKnowledge: ['dijkstra', 'dijkstra-heap'],
     relatedProblems: [86, 87],
   },
 
   'dijkstra-heap': {
     id: 'dijkstra-heap',
     title: 'Dijkstra堆优化',
-    content: `## Dijkstra堆优化
+    content: `## Dijkstra堆优化详解
 
-使用优先队列优化，O((n+m)log n)。
+使用优先队列（堆）优化选点过程，时间复杂度从O(n²)降到O(m log n)。
 
-### 实现
+### 优化思路
 
+朴素做法每次选最小距离需要O(n)，用堆可以降到O(log n)。
+
+### 堆的选择
+
+使用小根堆，堆顶是距离最小的点：
 \`\`\`cpp
 priority_queue<pair<int,int>, vector<pair<int,int>>, 
                greater<pair<int,int>>> pq;
-// (距离, 节点)
+// 存储 (距离, 节点编号)
+\`\`\`
 
-pq.push({0, start});
-while (!pq.empty()) {
-    auto [d, u] = pq.top();
-    pq.pop();
-    if (d > dist[u]) continue;  // 已更新过
-    for (auto [v, w] : adj[u]) {
-        if (dist[u] + w < dist[v]) {
-            dist[v] = dist[u] + w;
-            pq.push({dist[v], v});
-        }
-    }
-}
-\`\`\``,
+### 关键优化：延迟删除
+
+同一个点可能在堆中存在多次（多次更新距离），但只有距离最小的那个有用。
+
+**处理方法**：取出时检查是否已过时：
+\`\`\`cpp
+auto [d, u] = pq.top();
+pq.pop();
+if (d > dist[u]) continue;  // 已过时，跳过
+\`\`\`
+
+### 算法流程
+
+1. 起点入堆
+2. 取堆顶(d, u)
+3. 如果d > dist[u]，跳过（过时的）
+4. 否则松弛邻居，更新距离并入堆
+5. 重复直到堆空
+
+### 复杂度
+
+- 时间：O(m log n)
+- 空间：O(n + m)
+
+适合稀疏图（m << n²）`,
     codeExamples: [
       {
-        title: 'Dijkstra堆优化',
-        code: `int dist[10005];
-vector<pair<int,int>> adj[10005];
+        title: 'Dijkstra堆优化完整代码',
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 100005;
+const int INF = 0x3f3f3f3f;
+int dist[N];
+vector<pair<int,int>> adj[N];  // (邻居, 边权)
 
 void dijkstra(int start) {
     memset(dist, 0x3f, sizeof(dist));
+    dist[start] = 0;
+    
+    // 小根堆：(距离, 节点)
+    priority_queue<pair<int,int>, vector<pair<int,int>>, 
+                   greater<pair<int,int>>> pq;
+    pq.push({0, start});
+    
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+        
+        // 过时的点，跳过
+        if (d > dist[u]) continue;
+        
+        // 松弛邻居
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+    }
+    
+    int s, t;
+    cin >> s >> t;
+    dijkstra(s);
+    
+    if (dist[t] == INF) cout << -1 << endl;
+    else cout << dist[t] << endl;
+    
+    return 0;
+}`,
+        explanation: '堆优化Dijkstra，竞赛最常用',
+      },
+      {
+        title: '还原最短路径',
+        code: `int pre[N];  // pre[v] = 到达v的前一个点
+
+void dijkstra_with_path(int start) {
+    memset(dist, 0x3f, sizeof(dist));
+    memset(pre, -1, sizeof(pre));
     dist[start] = 0;
     
     priority_queue<pair<int,int>, vector<pair<int,int>>, 
@@ -5471,23 +7169,34 @@ void dijkstra(int start) {
     while (!pq.empty()) {
         auto [d, u] = pq.top();
         pq.pop();
-        
         if (d > dist[u]) continue;
         
         for (auto [v, w] : adj[u]) {
             if (dist[u] + w < dist[v]) {
                 dist[v] = dist[u] + w;
+                pre[v] = u;  // 记录前驱
                 pq.push({dist[v], v});
             }
         }
     }
+}
+
+// 输出从start到end的路径
+void printPath(int end) {
+    vector<int> path;
+    for (int u = end; u != -1; u = pre[u]) {
+        path.push_back(u);
+    }
+    reverse(path.begin(), path.end());
+    for (int u : path) cout << u << " ";
 }`,
-        explanation: '堆优化的Dijkstra。',
+        explanation: '用pre数组记录前驱，可还原路径',
       },
     ],
-    keyPoints: ['使用小根堆', '判断是否已更新'],
-    commonMistakes: ['忘记判断d > dist[u]', '堆类型错误'],
-    tips: ['greater<pair<int,int>>是小根堆', '这是竞赛常用写法'],
+    keyPoints: ['小根堆greater<pair<int,int>>', '判断d > dist[u]跳过过时点', '时间复杂度O(m log n)'],
+    commonMistakes: ['忘记判断过时点导致超时', '堆类型用错', '入堆时更新了错误距离'],
+    tips: ['竞赛首选堆优化版本', 'greater<>是小根堆，默认是大根堆', '延迟删除比删除更高效'],
+    relatedKnowledge: ['dijkstra-impl', 'spfa'],
     relatedProblems: [86, 87],
   },
 
@@ -5495,11 +7204,33 @@ void dijkstra(int start) {
   'spfa': {
     id: 'spfa',
     title: 'SPFA算法',
-    content: `## SPFA算法
+    content: `## SPFA算法详解
 
-SPFA是Bellman-Ford的队列优化，可以处理负权边。
+SPFA (Shortest Path Faster Algorithm) 是Bellman-Ford的队列优化版本，可以处理负权边。
 
-### 实现
+### 与Dijkstra的区别
+
+| 特性 | Dijkstra | SPFA |
+|------|----------|------|
+| 负权边 | 不支持 | 支持 |
+| 复杂度 | O(m log n) | O(km)，可能退化到O(nm) |
+| 适用场景 | 非负权图 | 有负权边或判断负环 |
+
+### 算法思想
+
+Bellman-Ford每轮松弛所有边，SPFA只松弛可能有效的边：
+- 只有被更新的点才可能更新邻居
+- 用队列维护待处理的点
+
+### 算法步骤
+
+1. 起点入队，标记在队中
+2. 取队首u，取消标记
+3. 松弛u的邻居：
+   - 如果更新成功且邻居不在队中，入队
+4. 重复直到队空
+
+### 代码框架
 
 \`\`\`cpp
 queue<int> q;
@@ -5525,16 +7256,26 @@ while (!q.empty()) {
 
 ### 判断负环
 
-如果一个点入队超过n次，存在负环。`,
+如果一个点入队次数超过n次，说明存在负环。
+
+### 注意事项
+
+⚠️ SPFA可能退化到O(nm)，如网格图。非必要不用。`,
     codeExamples: [
       {
         title: 'SPFA模板',
-        code: `int dist[10005];
-bool inQueue[10005];
-vector<pair<int,int>> adj[10005];
+        code: `#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 10005;
+const int INF = 0x3f3f3f3f;
+int dist[N];
+bool inQueue[N];
+vector<pair<int,int>> adj[N];
 
 void spfa(int start) {
     memset(dist, 0x3f, sizeof(dist));
+    memset(inQueue, false, sizeof(inQueue));
     dist[start] = 0;
     
     queue<int> q;
@@ -5557,71 +7298,158 @@ void spfa(int start) {
         }
     }
 }`,
-        explanation: 'SPFA算法。',
+        explanation: 'SPFA算法，可处理负权边',
+      },
+      {
+        title: 'SPFA判断负环',
+        code: `int cnt[N];  // 入队次数
+
+bool hasNegativeCycle(int start, int n) {
+    memset(dist, 0x3f, sizeof(dist));
+    memset(cnt, 0, sizeof(cnt));
+    memset(inQueue, false, sizeof(inQueue));
+    
+    queue<int> q;
+    q.push(start);
+    dist[start] = 0;
+    cnt[start] = 1;
+    inQueue[start] = true;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        inQueue[u] = false;
+        
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                if (!inQueue[v]) {
+                    cnt[v]++;
+                    if (cnt[v] > n) return true;  // 存在负环
+                    q.push(v);
+                    inQueue[v] = true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}`,
+        explanation: '入队超过n次说明存在负环',
       },
     ],
-    keyPoints: ['可以处理负权', '判断负环'],
-    commonMistakes: ['忘记inQueue数组', '负环判断条件'],
-    tips: ['SPFA可能退化', '最好用Dijkstra'],
+    keyPoints: ['只有被更新的点才入队', '用inQueue避免重复入队', '可以处理负权边和判断负环'],
+    commonMistakes: ['忘记inQueue标记', '负环判断条件错误', '在非必要场景使用导致超时'],
+    tips: ['能用Dijkstra就别用SPFA', 'SPFA在某些图上会退化', '判断负环是SPFA的主要用途'],
+    relatedKnowledge: ['dijkstra-heap', 'negative'],
     relatedProblems: [87, 88],
   },
 
   'negative': {
     id: 'negative',
     title: '负权边处理',
-    content: `## 负权边处理
+    content: `## 负权边与负环处理
 
-### Dijkstra vs SPFA vs Floyd
+### 负权边
 
-| 算法 | 负权边 | 复杂度 |
-|------|--------|--------|
-| Dijkstra | 不支持 | O(n²)或O(m log n) |
-| SPFA | 支持 | O(km)，可能退化 |
-| Floyd | 支持 | O(n³) |
+当图中存在负权边时，Dijkstra不再适用，需要使用SPFA或Floyd。
+
+### 最短路算法对比
+
+| 算法 | 负权边 | 负环 | 复杂度 | 适用场景 |
+|------|--------|------|--------|----------|
+| Dijkstra | ❌ | ❌ | O(m log n) | 非负权图 |
+| SPFA | ✅ | 可检测 | O(km) | 负权边、判负环 |
+| Bellman-Ford | ✅ | 可检测 | O(nm) | 负权边、判负环 |
+| Floyd | ✅ | 可检测 | O(n³) | 多源最短路 |
 
 ### 负环
 
-存在负权环时，可以无限绕圈使距离趋向负无穷。
+负环是指权和为负的环。存在负环时：
+- 可以无限绕圈使距离趋向负无穷
+- 最短路无意义（或不存在）
 
-### 判断方法
+### 判断负环的方法
 
-- SPFA：入队次数超过n
-- Bellman-Ford：第n次还能松弛`,
-    codeExamples: [
-      {
-        title: '判断负环',
-        code: `int cnt[10005];  // 入队次数
+#### 方法1：SPFA
+统计每个点的入队次数，超过n次则存在负环。
 
-bool hasNegativeCycle(int start) {
-    memset(dist, 0x3f, sizeof(dist));
-    memset(cnt, 0, sizeof(cnt));
-    
-    queue<int> q;
-    q.push(start);
-    dist[start] = 0;
-    cnt[start] = 1;
-    
-    while (!q.empty()) {
-        int u = q.front();
-        q.pop();
-        
-        for (auto [v, w] : adj[u]) {
-            if (dist[u] + w < dist[v]) {
-                dist[v] = dist[u] + w;
-                cnt[v] = cnt[u] + 1;
-                if (cnt[v] > n) return true;  // 负环
-                q.push(v);
-            }
+#### 方法2：Bellman-Ford
+进行n轮松弛，如果第n轮还能松弛，存在负环。
+
+\`\`\`cpp
+// Bellman-Ford判断负环
+for (int i = 1; i <= n; i++) {
+    bool updated = false;
+    for (每条边 u -> v, w) {
+        if (dist[u] + w < dist[v]) {
+            dist[v] = dist[u] + w;
+            updated = true;
         }
     }
-    return false;
+    if (!updated) break;
+    if (i == n && updated) return true;  // 第n轮还能更新
+}
+return false;
+\`\`\`
+
+### 负权边的处理技巧
+
+有时可以通过转换消去负权：
+- 给所有边加上常数（不正确！会改变最短路）
+- 正确方法：用SPFA或重新建图`,
+    codeExamples: [
+      {
+        title: 'Bellman-Ford判断负环',
+        code: `struct Edge {
+    int u, v, w;
+} edges[M];
+
+bool hasNegativeCycle(int n, int m) {
+    int dist[N];
+    memset(dist, 0, sizeof(dist));  // 初始化为0
+    
+    // 进行n轮松弛
+    for (int i = 1; i <= n; i++) {
+        bool updated = false;
+        for (int j = 0; j < m; j++) {
+            if (dist[edges[j].u] + edges[j].w < dist[edges[j].v]) {
+                dist[edges[j].v] = dist[edges[j].u] + edges[j].w;
+                updated = true;
+            }
+        }
+        if (!updated) return false;  // 没有更新，无负环
+    }
+    return true;  // 第n轮还能更新，存在负环
 }`,
-        explanation: '判断图中是否有负环。',
+        explanation: 'Bellman-Ford进行n轮，还能更新则有负环',
+      },
+      {
+        title: '处理差分约束问题',
+        code: `// 差分约束：x[i] - x[j] <= c
+// 转化为：x[j] + c >= x[i]，即j到i有边权c
+// 求解：建立超级源点，用SPFA求最短路
+
+// 例：x[1] - x[0] <= 1, x[2] - x[1] <= 2
+// 建边：0->1(1), 1->2(2)
+// 求从超级源点到各点的最短路
+
+void buildConstraints(int n) {
+    // 超级源点0，到每个点距离为0
+    for (int i = 1; i <= n; i++) {
+        adj[0].push_back({i, 0});
+    }
+    // 添加约束边...
+    
+    spfa(0);  // dist[i]就是满足约束的解
+}`,
+        explanation: '差分约束转化为最短路问题',
       },
     ],
-    keyPoints: ['理解各算法适用场景', '会判断负环'],
-    commonMistakes: ['Dijkstra用于负权图', '负环判断错误'],
-    tips: ['大多数题目用Dijkstra', 'SPFA用于负权或负环'],
+    keyPoints: ['Dijkstra不能处理负权边', 'SPFA可以处理负权和检测负环', '负环使最短路无意义'],
+    commonMistakes: ['用Dijkstra处理负权图', '负环判断条件错误', '给所有边加常数试图消去负权'],
+    tips: ['能用Dijkstra就别用SPFA', '差分约束是负权图的重要应用', '注意SPFA可能退化'],
+    relatedKnowledge: ['dijkstra-impl', 'spfa'],
     relatedProblems: [87, 88],
   },
 
