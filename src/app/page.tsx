@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap, Calendar } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap } from 'lucide-react';
 import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -18,7 +18,7 @@ import { EvaluationPanel } from '@/components/EvaluationPanel';
 import { AIAssistantPanel } from '@/components/AIAssistantPanel';
 import { KnowledgeMapPage } from '@/components/KnowledgeMapPage';
 import { LearningPathView } from '@/components/LearningPathView';
-import { LearningSchedulePage } from '@/components/LearningSchedulePage';
+
 import { UserCenterPage } from '@/components/UserCenterPage';
 import { AlgorithmDemoPage } from '@/components/AlgorithmDemoPage';
 import { AILogoWithText } from '@/components/AILogo';
@@ -2327,7 +2327,7 @@ export default function Home() {
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
-  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm' | 'schedule'>('learning');
+  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm'>('learning');
   const [initialKnowledgeSlug, setInitialKnowledgeSlug] = useState<string | undefined>(undefined);
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
@@ -2350,20 +2350,11 @@ export default function Home() {
   const [dailyHintsRemaining, setDailyHintsRemaining] = useState(5);
   const [usedHintLevels, setUsedHintLevels] = useState<HintLevel[]>([]);
   
-  // 学习进度状态
-  const [completedDays, setCompletedDays] = useState<number[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('noip_completed_days');
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
-
   // 根据 URL 参数设置当前视图
   useEffect(() => {
     const viewParam = searchParams.get('view');
-    if (viewParam && ['practice', 'learning', 'bank', 'user', 'map', 'algorithm', 'schedule'].includes(viewParam)) {
-      setCurrentView(viewParam as 'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm' | 'schedule');
+    if (viewParam && ['practice', 'learning', 'bank', 'user', 'map', 'algorithm'].includes(viewParam)) {
+      setCurrentView(viewParam as 'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm');
     }
     
     // 处理 problem 参数，自动选择指定题目
@@ -2561,17 +2552,6 @@ export default function Home() {
             学习路径
           </button>
           <button
-            onClick={() => setCurrentView('schedule')}
-            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              currentView === 'schedule'
-                ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-            }`}
-          >
-            <Calendar className="h-4 w-4" />
-            学习计划
-          </button>
-          <button
             onClick={() => setCurrentView('map')}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'map'
@@ -2701,12 +2681,6 @@ export default function Home() {
               onStartProblem={(problemId) => handleStartProblemById(problemId)}
               onNavigate={(view) => setCurrentView(view)}
               onNavigateToKnowledge={(slug) => setInitialKnowledgeSlug(slug)}
-            />
-          ) : currentView === 'schedule' ? (
-            <LearningSchedulePage 
-              completedDays={completedDays}
-              onDaySelect={(day) => console.log('Selected day:', day)}
-              onProblemSelect={(problemId) => handleStartProblemById(problemId)}
             />
           ) : currentView === 'map' ? (
             <KnowledgeMapPage 
