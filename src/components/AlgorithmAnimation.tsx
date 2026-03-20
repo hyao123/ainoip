@@ -762,7 +762,7 @@ interface AlgorithmVisualizerProps {
 export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
   const [array, setArray] = useState<number[]>([]);
   const [steps, setSteps] = useState<AnimationStep[]>([]);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1); // 从1开始，表示当前显示第几步
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
   const [target, setTarget] = useState<number>(5);
@@ -777,7 +777,7 @@ export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
   const generateNewArray = () => {
     const newArray = Array.from({ length: 10 }, () => Math.floor(Math.random() * 20) + 1);
     setArray(newArray);
-    setCurrentStep(0);
+    setCurrentStep(1); // 重置为第一步
     setIsPlaying(false);
     
     // 生成对应的动画步骤
@@ -866,12 +866,12 @@ export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
   const handleStep = (direction: 'next' | 'prev') => {
     if (direction === 'next' && currentStep < steps.length) {
       setCurrentStep(prev => prev + 1);
-    } else if (direction === 'prev' && currentStep > 0) {
+    } else if (direction === 'prev' && currentStep > 1) {
       setCurrentStep(prev => prev - 1);
     }
   };
   const handleReset = () => {
-    setCurrentStep(0);
+    setCurrentStep(1); // 重置为第一步
     setIsPlaying(false);
   };
 
