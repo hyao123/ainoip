@@ -2365,6 +2365,16 @@ export default function Home() {
     if (viewParam && ['practice', 'learning', 'bank', 'user', 'map', 'algorithm', 'schedule'].includes(viewParam)) {
       setCurrentView(viewParam as 'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm' | 'schedule');
     }
+    
+    // 处理 problem 参数，自动选择指定题目
+    const problemParam = searchParams.get('problem');
+    if (problemParam) {
+      const problemId = parseInt(problemParam);
+      const problem = getProblemById(problemId);
+      if (problem) {
+        handleBankProblemSelect(problem);
+      }
+    }
   }, [searchParams]);
 
   // 初始化用户积分和提示次数

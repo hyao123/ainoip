@@ -14,6 +14,7 @@ import {
   getKnowledgePointById,
   type KnowledgePoint,
 } from '@/lib/knowledge-map';
+import { getProblemById } from '@/lib/problems';
 import {
   getVisualizationResource,
   getBilibiliEmbedUrl,
@@ -679,7 +680,7 @@ export default function KnowledgeDetailPage() {
               </Button>
               
               {point.recommendedProblems.length > 0 && (
-                <Button onClick={() => router.push('/?view=practice')}>
+                <Button onClick={() => router.push(`/?view=practice&problem=${point.recommendedProblems[0]}`)}>
                   开始练习
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
@@ -760,17 +761,20 @@ export default function KnowledgeDetailPage() {
                     推荐练习
                   </h4>
                   <div className="space-y-2">
-                    {point.recommendedProblems.slice(0, 3).map(problemId => (
-                      <button
-                        key={problemId}
-                        onClick={() => router.push(`/?view=practice&problem=${problemId}`)}
-                        className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-muted text-left text-sm"
-                      >
-                        <Play className="h-3 w-3 text-blue-500" />
-                        <span>题目 #{problemId}</span>
-                        <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
-                      </button>
-                    ))}
+                    {point.recommendedProblems.slice(0, 3).map(problemId => {
+                      const problem = getProblemById(problemId);
+                      return (
+                        <button
+                          key={problemId}
+                          onClick={() => router.push(`/?view=practice&problem=${problemId}`)}
+                          className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-muted text-left text-sm"
+                        >
+                          <Play className="h-3 w-3 text-blue-500" />
+                          <span className="truncate">{problem ? problem.title : `题目 #${problemId}`}</span>
+                          <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}

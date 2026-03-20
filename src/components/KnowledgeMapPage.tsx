@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   Bookmark,
   BookmarkCheck,
+  Play,
 } from 'lucide-react';
 
 interface KnowledgeMapPageProps {
@@ -258,7 +259,23 @@ export function KnowledgeMapPage({ onStartProblem }: KnowledgeMapPageProps) {
                                     {point.readTime}分钟
                                   </span>
                                 </div>
-                                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                <div className="flex items-center gap-2">
+                                  {point.recommendedProblems && point.recommendedProblems.length > 0 && onStartProblem && (
+                                    <Button
+                                      variant="default"
+                                      size="sm"
+                                      className="h-7 text-xs gap-1"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onStartProblem(point.recommendedProblems[0]);
+                                      }}
+                                    >
+                                      <Play className="h-3 w-3" />
+                                      开始练习
+                                    </Button>
+                                  )}
+                                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                </div>
                               </div>
                             </CardContent>
                           </Card>
