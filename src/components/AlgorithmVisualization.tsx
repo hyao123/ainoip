@@ -33,6 +33,9 @@ export interface AlgorithmStep {
 // 动画状态类型
 export type AnimationState = 'idle' | 'playing' | 'paused' | 'finished';
 
+// 默认数组常量，避免每次渲染创建新引用
+const DEFAULT_INITIAL_ARRAY = [64, 34, 25, 12, 22, 11, 90, 45, 33, 88];
+
 interface AlgorithmVisualizationProps {
   title: string;
   description: string;
@@ -892,21 +895,26 @@ export function AlgorithmVisualization({
   title, 
   description, 
   algorithm,
-  initialArray = [64, 34, 25, 12, 22, 11, 90, 45, 33, 88]
+  initialArray
 }: AlgorithmVisualizationProps) {
+  // 使用稳定的数组引用
+  const arrayToUse = initialArray ?? DEFAULT_INITIAL_ARRAY;
+  // 使用 JSON.stringify 来稳定依赖项，避免每次渲染创建新数组引用
+  const arrayKey = JSON.stringify(arrayToUse);
+  
   const [steps, setSteps] = useState<AlgorithmStep[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [speed, setSpeed] = useState(500);
   const [state, setState] = useState<AnimationState>('idle');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // 初始化步骤
+  // 初始化步骤 - 使用 arrayKey 作为依赖项，避免数组引用变化导致的无限循环
   useEffect(() => {
-    const newSteps = getAlgorithmSteps(algorithm, initialArray);
+    const newSteps = getAlgorithmSteps(algorithm, arrayToUse);
     setSteps(newSteps);
     setCurrentStep(0);
     setState('idle');
-  }, [algorithm, initialArray]);
+  }, [algorithm, arrayKey]);
   
   // 播放动画
   useEffect(() => {
@@ -964,7 +972,7 @@ export function AlgorithmVisualization({
   };
   
   const currentData = steps[currentStep];
-  const maxValue = Math.max(...initialArray);
+  const maxValue = Math.max(...arrayToUse);
   
   return (
     <div className="space-y-6">
