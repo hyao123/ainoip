@@ -153,6 +153,18 @@ const algorithms: Algorithm[] = [
     difficulty: 'medium',
     features: ['动态规划', '组合优化', '空间可优化'],
   },
+  {
+    id: 'dp-climb',
+    name: '爬楼梯',
+    nameEn: 'Climbing Stairs',
+    category: 'dp',
+    description: '每次可爬1或2阶，求到达顶部的方案数，经典入门DP问题。',
+    timeComplexity: 'O(n)',
+    spaceComplexity: 'O(n)',
+    stable: true,
+    difficulty: 'easy',
+    features: ['动态规划', '斐波那契变种', '空间可优化到O(1)'],
+  },
   // 数据结构
   {
     id: 'stack',
@@ -345,7 +357,7 @@ export function AlgorithmDemoPage() {
                 key={selectedAlgorithm}
                 title={currentAlgorithm.name}
                 description={currentAlgorithm.description}
-                algorithm={selectedAlgorithm as 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs'}
+                algorithm={selectedAlgorithm as 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs' | 'selection' | 'insertion' | 'heap' | 'dp-lis' | 'dp-knapsack' | 'dp-climb'}
               />
             </CardContent>
           </Card>

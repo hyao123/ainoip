@@ -39,7 +39,7 @@ const DEFAULT_INITIAL_ARRAY = [64, 34, 25, 12, 22, 11, 90, 45, 33, 88];
 interface AlgorithmVisualizationProps {
   title: string;
   description: string;
-  algorithm: 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs' | 'selection' | 'insertion' | 'heap';
+  algorithm: 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs' | 'selection' | 'insertion' | 'heap' | 'dp-lis' | 'dp-knapsack' | 'dp-climb';
   initialArray?: number[];
 }
 
@@ -696,6 +696,176 @@ function* bfsSteps(nodes: number, edges: [number, number][]): Generator<Algorith
   };
 }
 
+// LIS（最长递增子序列）步骤生成器
+function* lisSteps(arr: number[]): Generator<AlgorithmStep> {
+  const array = [...arr];
+  const n = array.length;
+  const dp: number[] = Array(n).fill(1);
+  
+  yield {
+    array: [...array],
+    description: `求数组 [${array.join(', ')}] 的最长递增子序列`,
+    codeHighlight: 1,
+  };
+  
+  let maxLen = 1;
+  let maxIdx = 0;
+  
+  for (let i = 1; i < n; i++) {
+    yield {
+      array: [...array],
+      highlight: [i],
+      sorted: dp.map((v, idx) => v === Math.max(...dp.slice(0, i)) ? idx : -1).filter(x => x >= 0),
+      description: `处理位置 ${i}，值 ${array[i]}`,
+      codeHighlight: 4,
+    };
+    
+    for (let j = 0; j < i; j++) {
+      if (array[j] < array[i]) {
+        yield {
+          array: [...array],
+          comparing: [j, i],
+          sorted: dp.map((v, idx) => idx < i ? idx : -1).filter(x => x >= 0),
+          description: `${array[j]} < ${array[i]}，检查 dp[${j}]=${dp[j]}`,
+          codeHighlight: 6,
+        };
+        
+        if (dp[j] + 1 > dp[i]) {
+          dp[i] = dp[j] + 1;
+          yield {
+            array: [...array],
+            highlight: [i],
+            sorted: dp.map((v, idx) => idx <= i ? idx : -1).filter(x => x >= 0),
+            description: `更新 dp[${i}] = ${dp[i]}`,
+            codeHighlight: 8,
+          };
+        }
+      }
+    }
+    
+    if (dp[i] > maxLen) {
+      maxLen = dp[i];
+      maxIdx = i;
+    }
+  }
+  
+  yield {
+    array: [...array],
+    highlight: [maxIdx],
+    sorted: Array.from({ length: n }, (_, i) => i),
+    description: `最长递增子序列长度: ${maxLen}`,
+    codeHighlight: 12,
+  };
+}
+
+// 背包问题步骤生成器
+function* knapsackSteps(weights: number[], values: number[], capacity: number): Generator<AlgorithmStep> {
+  const n = weights.length;
+  // 使用一维数组显示，将二维dp表映射到一维展示
+  const dp: number[] = Array(capacity + 1).fill(0);
+  const array = [...weights, ...values]; // 用于展示的数据
+  
+  yield {
+    array: array,
+    description: `背包容量: ${capacity}，物品数量: ${n}`,
+    codeHighlight: 1,
+  };
+  
+  yield {
+    array: array,
+    description: `重量: [${weights.join(', ')}]，价值: [${values.join(', ')}]`,
+    codeHighlight: 2,
+  };
+  
+  for (let i = 0; i < n; i++) {
+    yield {
+      array: array,
+      highlight: [i],
+      description: `考虑物品 ${i + 1}：重量 ${weights[i]}，价值 ${values[i]}`,
+      codeHighlight: 5,
+    };
+    
+    // 从后向前遍历容量
+    for (let j = capacity; j >= weights[i]; j--) {
+      const notTake = dp[j];
+      const take = dp[j - weights[i]] + values[i];
+      
+      yield {
+        array: dp.slice(),
+        comparing: [j, j - weights[i]],
+        description: `容量 ${j}：不选=${notTake}，选=${take}`,
+        codeHighlight: 7,
+      };
+      
+      if (take > notTake) {
+        dp[j] = take;
+        yield {
+          array: dp.slice(),
+          highlight: [j],
+          description: `更新 dp[${j}] = ${dp[j]}`,
+          codeHighlight: 9,
+        };
+      }
+    }
+  }
+  
+  yield {
+    array: dp.slice(),
+    sorted: Array.from({ length: capacity + 1 }, (_, i) => i),
+    description: `最大价值: ${dp[capacity]}`,
+    codeHighlight: 13,
+  };
+}
+
+// 爬楼梯步骤生成器
+function* climbStairsSteps(n: number): Generator<AlgorithmStep> {
+  const dp: number[] = Array(n + 1).fill(0);
+  dp[0] = 1;
+  dp[1] = 1;
+  
+  // 用数组来展示台阶
+  const array = Array.from({ length: n + 1 }, (_, i) => i);
+  
+  yield {
+    array: array,
+    description: `爬楼梯问题：共 ${n} 阶，每次可爬1或2阶`,
+    codeHighlight: 1,
+  };
+  
+  yield {
+    array: array,
+    highlight: [0, 1],
+    description: `dp[0] = 1 (地面)，dp[1] = 1 (只有一种方式)`,
+    codeHighlight: 3,
+  };
+  
+  for (let i = 2; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2];
+    
+    yield {
+      array: array,
+      comparing: [i - 1, i - 2],
+      highlight: [i],
+      description: `第 ${i} 阶：从 ${i - 1} 阶爬1步 + 从 ${i - 2} 阶爬2步`,
+      codeHighlight: 5,
+    };
+    
+    yield {
+      array: array,
+      highlight: [i],
+      description: `dp[${i}] = dp[${i - 1}] + dp[${i - 2}] = ${dp[i - 1]} + ${dp[i - 2]} = ${dp[i]}`,
+      codeHighlight: 6,
+    };
+  }
+  
+  yield {
+    array: array,
+    sorted: Array.from({ length: n + 1 }, (_, i) => i),
+    description: `到达顶部的方法数: ${dp[n]}`,
+    codeHighlight: 10,
+  };
+}
+
 // 获取算法步骤
 function getAlgorithmSteps(algorithm: string, array: number[]): AlgorithmStep[] {
   const steps: AlgorithmStep[] = [];
@@ -732,6 +902,18 @@ function getAlgorithmSteps(algorithm: string, array: number[]): AlgorithmStep[] 
       break;
     case 'bfs':
       generator = bfsSteps(nodes, edges);
+      break;
+    case 'dp-lis':
+      generator = lisSteps(array);
+      break;
+    case 'dp-knapsack':
+      // 使用数组前5个作为重量，后5个作为价值
+      const weights = array.slice(0, 5);
+      const values = array.slice(5, 10);
+      generator = knapsackSteps(weights, values, 15);
+      break;
+    case 'dp-climb':
+      generator = climbStairsSteps(10);
       break;
     default:
       generator = bubbleSortSteps(array);
@@ -885,6 +1067,49 @@ void heapSort(int arr[], int n) {
             }
         }
     }
+}`,
+    'dp-lis': `int lengthOfLIS(vector<int>& nums) {
+    int n = nums.size();
+    vector<int> dp(n, 1);
+    int maxLen = 1;
+    
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (nums[j] < nums[i]) {
+                dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+        maxLen = max(maxLen, dp[i]);
+    }
+    
+    return maxLen;
+}`,
+    'dp-knapsack': `int knapsack(int W, vector<int>& wt, vector<int>& val) {
+    int n = wt.size();
+    vector<int> dp(W + 1, 0);
+    
+    for (int i = 0; i < n; i++) {
+        // 从后向前遍历，避免重复选取
+        for (int j = W; j >= wt[i]; j--) {
+            dp[j] = max(dp[j], dp[j - wt[i]] + val[i]);
+        }
+    }
+    
+    return dp[W];
+}`,
+    'dp-climb': `int climbStairs(int n) {
+    if (n <= 1) return 1;
+    
+    vector<int> dp(n + 1);
+    dp[0] = 1;  // 地面
+    dp[1] = 1;  // 第1阶只有1种方式
+    
+    for (int i = 2; i <= n; i++) {
+        // 从i-1阶爬1步 + 从i-2阶爬2步
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+    
+    return dp[n];
 }`,
   };
   

@@ -651,23 +651,23 @@ function generateLISSteps(arr: number[]): AnimationStep[] {
   const n = arr.length;
   const dp: number[] = Array(n).fill(1);
   
-  steps.push({ type: 'highlight', indices: [], description: `求数组 [${arr.join(', ')}] 的最长递增子序列` });
+  steps.push({ type: 'highlight', indices: [], values: [...dp], description: `求数组 [${arr.join(', ')}] 的最长递增子序列` });
   
   for (let i = 1; i < n; i++) {
-    steps.push({ type: 'check', indices: [i], description: `处理位置 ${i}，值 ${arr[i]}` });
+    steps.push({ type: 'check', indices: [i], values: [...dp], description: `处理位置 ${i}，值 ${arr[i]}` });
     
     for (let j = 0; j < i; j++) {
       if (arr[j] < arr[i]) {
-        steps.push({ type: 'compare', indices: [j, i], description: `${arr[j]} < ${arr[i]}，dp[${i}] = max(${dp[i]}, ${dp[j] + 1})` });
+        steps.push({ type: 'compare', indices: [j, i], values: [...dp], description: `${arr[j]} < ${arr[i]}，dp[${i}] = max(${dp[i]}, ${dp[j] + 1})` });
         dp[i] = Math.max(dp[i], dp[j] + 1);
+        steps.push({ type: 'update', indices: [i], values: [...dp], description: `dp[${i}] = ${dp[i]}` });
       }
     }
-    
-    steps.push({ type: 'update', indices: [i], values: [dp[i]], description: `dp[${i}] = ${dp[i]}` });
   }
   
   const maxLen = Math.max(...dp);
-  steps.push({ type: 'found', indices: [], description: `最长递增子序列长度: ${maxLen}` });
+  const maxIdx = dp.indexOf(maxLen);
+  steps.push({ type: 'found', indices: [maxIdx], values: [...dp], description: `最长递增子序列长度: ${maxLen}` });
   
   return steps;
 }
@@ -679,16 +679,16 @@ function generateClimbStairsSteps(n: number): AnimationStep[] {
   dp[0] = 1;
   dp[1] = 1;
   
-  steps.push({ type: 'highlight', indices: [0, 1], description: `爬楼梯问题：n = ${n}，每次可爬1或2阶` });
-  steps.push({ type: 'update', indices: [0, 1], values: [1, 1], description: `dp[0] = 1, dp[1] = 1` });
+  steps.push({ type: 'highlight', indices: [0, 1], values: [...dp], description: `爬楼梯问题：n = ${n}，每次可爬1或2阶` });
+  steps.push({ type: 'update', indices: [0, 1], values: [...dp], description: `dp[0] = 1, dp[1] = 1` });
   
   for (let i = 2; i <= n; i++) {
     dp[i] = dp[i - 1] + dp[i - 2];
-    steps.push({ type: 'check', indices: [i], description: `到达第 ${i} 阶：从 ${i - 1} 阶爬1步 + 从 ${i - 2} 阶爬2步` });
-    steps.push({ type: 'update', indices: [i], values: [dp[i]], description: `dp[${i}] = dp[${i - 1}] + dp[${i - 2}] = ${dp[i - 1]} + ${dp[i - 2]} = ${dp[i]}` });
+    steps.push({ type: 'check', indices: [i], values: [...dp], description: `到达第 ${i} 阶：从 ${i - 1} 阶爬1步 + 从 ${i - 2} 阶爬2步` });
+    steps.push({ type: 'update', indices: [i], values: [...dp], description: `dp[${i}] = dp[${i - 1}] + dp[${i - 2}] = ${dp[i - 1]} + ${dp[i - 2]} = ${dp[i]}` });
   }
   
-  steps.push({ type: 'found', indices: [n], description: `到达顶部的方法数: ${dp[n]}` });
+  steps.push({ type: 'found', indices: [n], values: [...dp], description: `到达顶部的方法数: ${dp[n]}` });
   
   return steps;
 }
@@ -877,7 +877,7 @@ export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
 
   // 判断算法可视化类型
   const getVisualizationType = (): 'array' | 'graph' | 'stack' | 'queue' | 'heap' | 'unionfind' | 'dp-table' => {
-    if (['bubble-sort', 'quick-sort', 'selection-sort', 'insertion-sort', 'merge-sort', 'heap-sort', 'binary-search', 'linear-search', 'dp-lis', 'two-pointer', 'sliding-window'].includes(type)) {
+    if (['bubble-sort', 'quick-sort', 'selection-sort', 'insertion-sort', 'merge-sort', 'heap-sort', 'binary-search', 'linear-search', 'two-pointer', 'sliding-window'].includes(type)) {
       return 'array';
     }
     if (['dfs', 'bfs', 'dijkstra'].includes(type)) {
@@ -887,7 +887,7 @@ export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
     if (type === 'queue') return 'queue';
     if (type === 'heap') return 'heap';
     if (type === 'union-find') return 'unionfind';
-    if (['dp-knapsack', 'dp-climb'].includes(type)) return 'dp-table';
+    if (['dp-knapsack', 'dp-climb', 'dp-lis'].includes(type)) return 'dp-table';
     return 'array';
   };
 
@@ -1235,6 +1235,63 @@ export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
             ))}
           </div>
           <div className="text-sm text-muted-foreground mt-4">dp[i] = 到达第i阶的方法数</div>
+        </div>
+      );
+    }
+    
+    if (type === 'dp-lis') {
+      // LIS 可视化：显示原数组和 DP 数组
+      const dpValues = step?.values || array.map(() => 1);
+      return (
+        <div className="flex-1 min-h-[200px] flex flex-col items-center justify-center p-4 bg-muted/30 rounded-lg gap-4">
+          {/* 原始数组 */}
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-xs text-muted-foreground">原数组 arr[]</div>
+            <div className="flex items-end gap-1">
+              {array.map((val, idx) => (
+                <div key={idx} className="flex flex-col items-center gap-1">
+                  <div
+                    className={`w-10 h-10 flex items-center justify-center rounded text-sm font-medium transition-all duration-200 ${
+                      step?.type === 'compare' && step.indices.includes(idx)
+                        ? 'bg-yellow-500 text-white'
+                        : step?.type === 'check' && step.indices.includes(idx)
+                        ? 'bg-blue-500 text-white'
+                        : step?.type === 'update' && step.indices.includes(idx)
+                        ? 'bg-green-500 text-white'
+                        : step?.type === 'found' && step.indices.includes(idx)
+                        ? 'bg-emerald-600 text-white ring-2 ring-emerald-300'
+                        : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {val}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{idx}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* DP 数组 */}
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-xs text-muted-foreground">dp[] - 以位置i结尾的最长递增子序列长度</div>
+            <div className="flex items-end gap-1">
+              {dpValues.map((val, idx) => (
+                <div key={idx} className="flex flex-col items-center gap-1">
+                  <div
+                    className={`w-10 h-10 flex items-center justify-center rounded text-sm font-medium transition-all duration-200 ${
+                      step?.type === 'update' && step.indices.includes(idx)
+                        ? 'bg-green-500 text-white'
+                        : step?.type === 'compare' && step.indices.includes(idx)
+                        ? 'bg-yellow-500 text-white'
+                        : 'bg-primary text-primary-foreground'
+                    }`}
+                  >
+                    {val}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       );
     }
