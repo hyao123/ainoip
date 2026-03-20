@@ -6663,6 +6663,83 @@ int main() {
     ],
     similarProblems: [91, 86],
   },
+  // ========== 模拟考试题 ==========
+  {
+    id: 126,
+    title: 'NOIP模拟题1 - 数组操作',
+    titleEn: 'Mock Test 1 - Array Operations',
+    difficulty: 'intermediate',
+    description: '给定一个长度为n的数组，进行q次操作：1. 区间加；2. 区间求和；3. 区间最值查询。请高效处理这些操作。',
+    inputFormat: '第一行n和q，第二行n个整数表示数组初始值，接下来q行每行一个操作。',
+    outputFormat: '对于每个查询操作，输出结果。',
+    sampleInput: '5 3\n1 2 3 4 5\n2 1 3\n1 2 4 2\n2 1 5',
+    sampleOutput: '6\n17',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("mock1.in", "r", stdin);
+    freopen("mock1.out", "w", stdout);
+    
+    int n, q;
+    cin >> n >> q;
+    
+    // TODO: 实现高效的数据结构
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '前缀和', '模拟'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 2 3 4 5\n2 1 3\n1 2 4 2\n2 1 5', expectedOutput: '6\n17' },
+    ],
+    similarProblems: [73, 74],
+  },
+  {
+    id: 127,
+    title: 'NOIP模拟题2 - 综合练习',
+    titleEn: 'Mock Test 2 - Comprehensive Practice',
+    difficulty: 'advanced',
+    description: '小明的学校要进行一次编程比赛，有n个学生参加，每个学生有一个能力值。现在要把学生分成若干组，每组至少一人，且同一组内任意两个学生的能力值差的绝对值不超过k。求最少可以分成多少组。',
+    inputFormat: '第一行两个整数n和k，第二行n个整数表示每个学生的能力值。',
+    outputFormat: '输出最少分组数。',
+    sampleInput: '5 2\n1 3 5 7 9',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen("mock2.in", "r", stdin);
+    freopen("mock2.out", "w", stdout);
+    
+    int n, k;
+    cin >> n >> k;
+    
+    // TODO: 实现贪心算法
+    
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}`,
+    category: '贪心',
+    tags: ['贪心', '排序', '模拟'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 2\n1 3 5 7 9', expectedOutput: '3' },
+      { id: 2, input: '4 1\n1 2 3 4', expectedOutput: '2' },
+    ],
+    similarProblems: [17, 18],
+  },
 ];
 
 // 获取所有分类
