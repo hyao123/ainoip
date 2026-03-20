@@ -14,6 +14,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   problems,
   getCategories,
   getYears,
@@ -23,6 +28,7 @@ import {
   difficultyConfig,
   sourceConfig,
   categoryConfig,
+  tagGroups,
   type Problem,
   type DifficultyLevel,
   type ProblemSource,
@@ -38,6 +44,9 @@ import {
   Database,
   RefreshCw,
   Layers,
+  Tag,
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 
 interface ProblemBankPageProps {
@@ -69,9 +78,13 @@ export function ProblemBankPage({ onSelectProblem }: ProblemBankPageProps) {
     category?: string;
     source?: ProblemSource;
     year?: string;
-    tag?: string;
     search: string;
   }>({ search: '' });
+
+  // 多标签筛选状态
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagMode, setTagMode] = useState<'AND' | 'OR'>('OR');
+  const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
 
   // 收藏状态
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
@@ -106,18 +119,28 @@ export function ProblemBankPage({ onSelectProblem }: ProblemBankPageProps) {
     saveFavorites(newFavorites);
   };
 
+  // 切换标签选择
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
   // 清除所有筛选
   const clearFilters = () => {
     setFilters({ search: '' });
+    setSelectedTags([]);
   };
 
   // 是否有激活的筛选
-  const hasActiveFilters = filters.difficulty || filters.category || filters.source || filters.year || filters.tag || filters.search;
+  const hasActiveFilters = filters.difficulty || filters.category || filters.source || filters.year || filters.search || selectedTags.length > 0;
 
   // 获取下拉选项
   const categories = getCategories();
   const years = getYears();
-  const tags = getAllTags();
+  const allTags = getAllTags();
 
   // 筛选后的题目
   const filteredProblems = useMemo(() => {
@@ -126,10 +149,11 @@ export function ProblemBankPage({ onSelectProblem }: ProblemBankPageProps) {
       category: filters.category,
       source: filters.source,
       year: filters.year,
-      tag: filters.tag,
       search: filters.search,
+      tags: selectedTags.length > 0 ? selectedTags : undefined,
+      tagMode: tagMode,
     });
-  }, [filters]);
+  }, [filters, selectedTags, tagMode]);
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
@@ -230,20 +254,121 @@ export function ProblemBankPage({ onSelectProblem }: ProblemBankPageProps) {
             </SelectContent>
           </Select>
 
-          <Select
-            value={filters.tag || 'all'}
-            onValueChange={(v) => setFilters(prev => ({ ...prev, tag: v === 'all' ? undefined : v }))}
-          >
-            <SelectTrigger className="w-18 h-7 text-[10px]">
-              <SelectValue placeholder="标签" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部标签</SelectItem>
-              {tags.slice(0, 15).map(tag => (
-                <SelectItem key={tag} value={tag}>{tag}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {/* 多标签选择器 */}
+          <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={`h-7 text-[10px] px-2 gap-1 ${selectedTags.length > 0 ? 'border-primary bg-primary/5' : ''}`}
+              >
+                <Tag className="h-3 w-3" />
+                标签
+                {selectedTags.length > 0 && (
+                  <Badge className="ml-0.5 h-4 px-1 text-[9px]">{selectedTags.length}</Badge>
+                )}
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-72 p-3" align="start">
+              <div className="space-y-3">
+                {/* 标签模式切换 */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground">筛选模式</span>
+                  <div className="flex gap-1">
+                    <Button
+                      variant={tagMode === 'OR' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-6 text-[10px] px-2"
+                      onClick={() => setTagMode('OR')}
+                    >
+                      任一标签
+                    </Button>
+                    <Button
+                      variant={tagMode === 'AND' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-6 text-[10px] px-2"
+                      onClick={() => setTagMode('AND')}
+                    >
+                      全部标签
+                    </Button>
+                  </div>
+                </div>
+
+                {/* 已选标签 */}
+                {selectedTags.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {selectedTags.map(tag => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="text-[10px] h-5 cursor-pointer hover:bg-destructive/20"
+                        onClick={() => toggleTag(tag)}
+                      >
+                        {tag}
+                        <X className="h-2.5 w-2.5 ml-1" />
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {/* 标签分组 */}
+                <ScrollArea className="h-64">
+                  <div className="space-y-3">
+                    {Object.entries(tagGroups).map(([groupId, group]) => (
+                      <div key={groupId}>
+                        <div className="text-[10px] font-semibold text-muted-foreground mb-1.5">
+                          {group.name}
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {group.tags.map(tag => {
+                            const isSelected = selectedTags.includes(tag);
+                            const problemCount = problems.filter(p => p.tags.includes(tag)).length;
+                            return (
+                              <Badge
+                                key={tag}
+                                variant={isSelected ? 'default' : 'outline'}
+                                className={`text-[10px] h-5 cursor-pointer transition-all ${
+                                  isSelected 
+                                    ? 'bg-primary text-primary-foreground' 
+                                    : 'hover:bg-primary/10'
+                                }`}
+                                onClick={() => toggleTag(tag)}
+                              >
+                                {isSelected && <Check className="h-2.5 w-2.5 mr-0.5" />}
+                                {tag}
+                                <span className="ml-1 opacity-60">({problemCount})</span>
+                              </Badge>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+
+                {/* 操作按钮 */}
+                <div className="flex justify-between pt-2 border-t">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 text-[10px]"
+                    onClick={() => setSelectedTags([])}
+                    disabled={selectedTags.length === 0}
+                  >
+                    清除标签
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-6 text-[10px]"
+                    onClick={() => setTagPopoverOpen(false)}
+                  >
+                    确定
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* 激活的筛选标签 */}
@@ -273,12 +398,18 @@ export function ProblemBankPage({ onSelectProblem }: ProblemBankPageProps) {
                 <X className="h-2.5 w-2.5 ml-1" />
               </Badge>
             )}
-            {filters.tag && (
-              <Badge variant="secondary" className="text-[10px] h-5 cursor-pointer" onClick={() => setFilters(prev => ({ ...prev, tag: undefined }))}>
-                {filters.tag}
+            {selectedTags.map(tag => (
+              <Badge 
+                key={tag} 
+                variant="secondary" 
+                className="text-[10px] h-5 cursor-pointer bg-primary/10 text-primary" 
+                onClick={() => toggleTag(tag)}
+              >
+                <Tag className="h-2.5 w-2.5 mr-0.5" />
+                {tag}
                 <X className="h-2.5 w-2.5 ml-1" />
               </Badge>
-            )}
+            ))}
           </div>
         )}
       </div>
@@ -321,7 +452,13 @@ export function ProblemBankPage({ onSelectProblem }: ProblemBankPageProps) {
                         {problem.category}
                       </Badge>
                       {problem.tags.slice(0, 2).map(tag => (
-                        <Badge key={tag} variant="outline" className="text-[10px] h-4 px-1">{tag}</Badge>
+                        <Badge 
+                          key={tag} 
+                          variant="outline" 
+                          className={`text-[10px] h-4 px-1 ${selectedTags.includes(tag) ? 'bg-primary/10 border-primary text-primary' : ''}`}
+                        >
+                          {tag}
+                        </Badge>
                       ))}
                       {problem.tags.length > 2 && (
                         <span className="text-[10px] text-muted-foreground">+{problem.tags.length - 2}</span>

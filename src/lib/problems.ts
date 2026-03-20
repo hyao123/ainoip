@@ -6760,6 +6760,38 @@ export function getAllTags(): string[] {
   return [...tags].sort();
 }
 
+// 标签分组配置
+export const tagGroups: Record<string, { name: string; tags: string[] }> = {
+  '基础': {
+    name: '基础',
+    tags: ['输入输出', '变量', '运算符', '条件语句', '循环', '数组', '字符串', '函数'],
+  },
+  '算法': {
+    name: '算法',
+    tags: ['递归', '排序', '二分查找', '枚举', '模拟', '贪心', '分治', '前缀和', '位运算'],
+  },
+  '搜索': {
+    name: '搜索',
+    tags: ['搜索-DFS', '搜索-BFS'],
+  },
+  '动态规划': {
+    name: '动态规划',
+    tags: ['动态规划', '背包问题', '区间DP', '树形DP'],
+  },
+  '数据结构': {
+    name: '数据结构',
+    tags: ['栈', '队列', '堆', '哈希表', '并查集', '线段树', '树状数组'],
+  },
+  '图论': {
+    name: '图论',
+    tags: ['图论-最短路', '图论-生成树'],
+  },
+  '数学': {
+    name: '数学',
+    tags: ['数论-GCD', '数论-质数', '数论-快速幂'],
+  },
+};
+
 // 根据条件筛选题目
 export function filterProblems(filters: {
   difficulty?: DifficultyLevel;
@@ -6767,6 +6799,8 @@ export function filterProblems(filters: {
   source?: ProblemSource;
   year?: string;
   tag?: string;
+  tags?: string[]; // 多标签筛选
+  tagMode?: 'AND' | 'OR'; // 标签筛选模式：AND=同时包含所有标签，OR=包含任一标签
   search?: string;
 }): Problem[] {
   return problems.filter(p => {
@@ -6774,7 +6808,22 @@ export function filterProblems(filters: {
     if (filters.category && p.category !== filters.category) return false;
     if (filters.source && p.source !== filters.source) return false;
     if (filters.year && p.year !== filters.year) return false;
+    
+    // 单标签筛选（向后兼容）
     if (filters.tag && !p.tags.includes(filters.tag)) return false;
+    
+    // 多标签筛选
+    if (filters.tags && filters.tags.length > 0) {
+      const mode = filters.tagMode || 'OR';
+      if (mode === 'AND') {
+        // AND模式：必须包含所有选中的标签
+        if (!filters.tags.every(tag => p.tags.includes(tag))) return false;
+      } else {
+        // OR模式：包含任一选中的标签即可
+        if (!filters.tags.some(tag => p.tags.includes(tag))) return false;
+      }
+    }
+    
     if (filters.search) {
       const search = filters.search.toLowerCase();
       const matchTitle = p.title.toLowerCase().includes(search);

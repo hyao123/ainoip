@@ -1,7 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Terminal, Clock, XCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { AIErrorExplanation } from '@/components/AIErrorExplanation';
+import { AlertCircle, CheckCircle2, Terminal, Clock, XCircle, Sparkles, Brain } from 'lucide-react';
 
 interface OutputPanelProps {
   value: string;
@@ -9,10 +20,35 @@ interface OutputPanelProps {
   title?: string;
   executionTime?: number;
   expectedOutput?: string;
+  code?: string;
+  testInput?: string;
 }
 
-export function OutputPanel({ value, error, title = '运行结果', executionTime, expectedOutput }: OutputPanelProps) {
+export function OutputPanel({ 
+  value, 
+  error, 
+  title = '运行结果', 
+  executionTime, 
+  expectedOutput,
+  code = '',
+  testInput = '',
+}: OutputPanelProps) {
+  const [showAIExplanation, setShowAIExplanation] = useState(false);
   const checkResult = expectedOutput && value ? expectedOutput.trim() === value.trim() : null;
+
+  // 确定错误类型
+  const getErrorType = (): 'WA' | 'TLE' | 'RE' | 'CE' | 'PE' | 'MLE' => {
+    if (error) {
+      if (error.includes('time') || error.includes('timeout') || error.includes('超时')) return 'TLE';
+      if (error.includes('memory') || error.includes('内存')) return 'MLE';
+      if (error.includes('compile') || error.includes('编译')) return 'CE';
+      return 'RE';
+    }
+    if (checkResult === false) return 'WA';
+    return 'WA';
+  };
+
+  const hasError = error || checkResult === false;
 
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900/50">
@@ -62,6 +98,35 @@ export function OutputPanel({ value, error, title = '运行结果', executionTim
                 {checkResult ? '测试通过' : '输出不符'}
               </span>
             </div>
+          )}
+          
+          {/* AI 错误解析按钮 */}
+          {hasError && (
+            <Sheet open={showAIExplanation} onOpenChange={setShowAIExplanation}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-6 gap-1 text-[10px] bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800 hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30"
+                >
+                  <Brain className="h-3 w-3 text-purple-500" />
+                  <span className="text-purple-600 dark:text-purple-400">AI解析</span>
+                  <Sparkles className="h-2.5 w-2.5 text-pink-400" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[400px] p-0">
+                <SheetHeader className="sr-only">
+                  <SheetTitle>AI 错误解析</SheetTitle>
+                </SheetHeader>
+                <AIErrorExplanation
+                  errorType={getErrorType()}
+                  code={code}
+                  actualOutput={value}
+                  expectedOutput={expectedOutput}
+                  testInput={testInput}
+                />
+              </SheetContent>
+            </Sheet>
           )}
         </div>
       </div>
