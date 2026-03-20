@@ -4,22 +4,22 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlgorithmVisualization } from '@/components/AlgorithmVisualization';
 import { 
   ArrowUpDown, 
   Search, 
-  GitBranch, 
-  Layers,
   Zap,
-  BookOpen
+  BookOpen,
+  Database,
+  Network,
+  Grid3X3
 } from 'lucide-react';
 
 interface Algorithm {
   id: string;
   name: string;
   nameEn: string;
-  category: 'sort' | 'search';
+  category: 'sort' | 'search' | 'graph' | 'dp' | 'data-structure';
   description: string;
   timeComplexity: string;
   spaceComplexity: string;
@@ -29,6 +29,7 @@ interface Algorithm {
 }
 
 const algorithms: Algorithm[] = [
+  // 排序算法
   {
     id: 'bubble',
     name: '冒泡排序',
@@ -40,6 +41,30 @@ const algorithms: Algorithm[] = [
     stable: true,
     difficulty: 'easy',
     features: ['原地排序', '稳定排序', '适合小数据集'],
+  },
+  {
+    id: 'selection',
+    name: '选择排序',
+    nameEn: 'Selection Sort',
+    category: 'sort',
+    description: '每次从未排序部分选择最小元素，放到已排序部分的末尾。',
+    timeComplexity: 'O(n²)',
+    spaceComplexity: 'O(1)',
+    stable: false,
+    difficulty: 'easy',
+    features: ['原地排序', '不稳定排序', '交换次数少'],
+  },
+  {
+    id: 'insertion',
+    name: '插入排序',
+    nameEn: 'Insertion Sort',
+    category: 'sort',
+    description: '将元素插入到已排序序列的正确位置，类似整理扑克牌。',
+    timeComplexity: 'O(n²)',
+    spaceComplexity: 'O(1)',
+    stable: true,
+    difficulty: 'easy',
+    features: ['原地排序', '稳定排序', '对近乎有序的数组高效'],
   },
   {
     id: 'quick',
@@ -65,6 +90,7 @@ const algorithms: Algorithm[] = [
     difficulty: 'medium',
     features: ['分治思想', '稳定排序', '适合大数据集'],
   },
+  // 搜索算法
   {
     id: 'binary',
     name: '二分查找',
@@ -77,12 +103,111 @@ const algorithms: Algorithm[] = [
     difficulty: 'easy',
     features: ['有序数组', '对数时间', '经典算法'],
   },
+  // 图论算法
+  {
+    id: 'dfs',
+    name: 'DFS遍历',
+    nameEn: 'Depth-First Search',
+    category: 'graph',
+    description: '深度优先搜索，沿着一条路径走到底再回溯，用于遍历或搜索图。',
+    timeComplexity: 'O(V+E)',
+    spaceComplexity: 'O(V)',
+    stable: true,
+    difficulty: 'medium',
+    features: ['递归实现', '路径搜索', '连通性判断'],
+  },
+  {
+    id: 'bfs',
+    name: 'BFS遍历',
+    nameEn: 'Breadth-First Search',
+    category: 'graph',
+    description: '广度优先搜索，按层次遍历图，常用于最短路径问题。',
+    timeComplexity: 'O(V+E)',
+    spaceComplexity: 'O(V)',
+    stable: true,
+    difficulty: 'medium',
+    features: ['队列实现', '最短路径', '层次遍历'],
+  },
+  // 动态规划
+  {
+    id: 'dp-lis',
+    name: '最长递增子序列',
+    nameEn: 'Longest Increasing Subsequence',
+    category: 'dp',
+    description: '求序列中最长的严格递增子序列的长度，经典动态规划问题。',
+    timeComplexity: 'O(n²)',
+    spaceComplexity: 'O(n)',
+    stable: true,
+    difficulty: 'medium',
+    features: ['动态规划', '子序列问题', '可优化到O(n log n)'],
+  },
+  {
+    id: 'dp-knapsack',
+    name: '背包问题',
+    nameEn: 'Knapsack Problem',
+    category: 'dp',
+    description: '在有限容量下选择物品使总价值最大，经典的01背包问题。',
+    timeComplexity: 'O(nW)',
+    spaceComplexity: 'O(nW)',
+    stable: true,
+    difficulty: 'medium',
+    features: ['动态规划', '组合优化', '空间可优化'],
+  },
+  // 数据结构
+  {
+    id: 'stack',
+    name: '栈',
+    nameEn: 'Stack',
+    category: 'data-structure',
+    description: '后进先出(LIFO)的数据结构，支持入栈和出栈操作。',
+    timeComplexity: 'O(1)',
+    spaceComplexity: 'O(n)',
+    stable: true,
+    difficulty: 'easy',
+    features: ['LIFO', '单调栈', '表达式求值'],
+  },
+  {
+    id: 'queue',
+    name: '队列',
+    nameEn: 'Queue',
+    category: 'data-structure',
+    description: '先进先出(FIFO)的数据结构，支持入队和出队操作。',
+    timeComplexity: 'O(1)',
+    spaceComplexity: 'O(n)',
+    stable: true,
+    difficulty: 'easy',
+    features: ['FIFO', 'BFS基础', '任务调度'],
+  },
+  {
+    id: 'heap',
+    name: '堆',
+    nameEn: 'Heap',
+    category: 'data-structure',
+    description: '完全二叉树结构，支持快速获取最值，常用于优先队列。',
+    timeComplexity: 'O(log n)',
+    spaceComplexity: 'O(n)',
+    stable: false,
+    difficulty: 'medium',
+    features: ['优先队列', '堆排序', 'TopK问题'],
+  },
 ];
 
+const categoryConfig = {
+  sort: { name: '排序算法', icon: ArrowUpDown, color: 'text-blue-500' },
+  search: { name: '搜索算法', icon: Search, color: 'text-green-500' },
+  graph: { name: '图论算法', icon: Network, color: 'text-purple-500' },
+  dp: { name: '动态规划', icon: Grid3X3, color: 'text-orange-500' },
+  'data-structure': { name: '数据结构', icon: Database, color: 'text-cyan-500' },
+};
+
 export function AlgorithmDemoPage() {
+  const [selectedCategory, setSelectedCategory] = useState<string>('sort');
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>('bubble');
   
+  const filteredAlgorithms = algorithms.filter(a => a.category === selectedCategory);
   const currentAlgorithm = algorithms.find(a => a.id === selectedAlgorithm) || algorithms[0];
+  const currentCategory = categoryConfig[currentAlgorithm.category];
+  const CategoryIcon = currentCategory.icon;
   
   return (
     <div className="h-full flex flex-col overflow-hidden">
@@ -100,10 +225,35 @@ export function AlgorithmDemoPage() {
       </div>
       
       {/* 内容区 */}
-      <div className="flex-1 overflow-auto p-4 space-y-6">
-        {/* 算法选择 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {algorithms.map((algo) => (
+      <div className="flex-1 overflow-auto p-4 space-y-4">
+        {/* 分类选择 */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {Object.entries(categoryConfig).map(([key, config]) => {
+            const Icon = config.icon;
+            const count = algorithms.filter(a => a.category === key).length;
+            return (
+              <Button
+                key={key}
+                variant={selectedCategory === key ? 'default' : 'outline'}
+                size="sm"
+                className="gap-2 shrink-0"
+                onClick={() => {
+                  setSelectedCategory(key);
+                  const firstAlgo = algorithms.find(a => a.category === key);
+                  if (firstAlgo) setSelectedAlgorithm(firstAlgo.id);
+                }}
+              >
+                <Icon className="h-4 w-4" />
+                {config.name}
+                <Badge variant="secondary" className="ml-1 text-xs">{count}</Badge>
+              </Button>
+            );
+          })}
+        </div>
+
+        {/* 算法选择卡片 */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {filteredAlgorithms.map((algo) => (
             <Card
               key={algo.id}
               className={`cursor-pointer transition-all hover:shadow-md ${
@@ -113,18 +263,14 @@ export function AlgorithmDemoPage() {
               }`}
               onClick={() => setSelectedAlgorithm(algo.id)}
             >
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-2 pt-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">{algo.name}</CardTitle>
-                  {algo.category === 'sort' ? (
-                    <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Search className="h-4 w-4 text-muted-foreground" />
-                  )}
+                  <CardTitle className="text-sm">{algo.name}</CardTitle>
+                  <CategoryIcon className={`h-4 w-4 ${currentCategory.color}`} />
                 </div>
                 <CardDescription className="text-xs">{algo.nameEn}</CardDescription>
               </CardHeader>
-              <CardContent className="pb-4">
+              <CardContent className="pb-3">
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="outline" className="text-xs">
                     {algo.timeComplexity}
@@ -141,7 +287,7 @@ export function AlgorithmDemoPage() {
           ))}
         </div>
         
-        {/* 算法详情 */}
+        {/* 算法详情和可视化 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <Card className="lg:col-span-1">
             <CardHeader>
@@ -199,7 +345,7 @@ export function AlgorithmDemoPage() {
                 key={selectedAlgorithm}
                 title={currentAlgorithm.name}
                 description={currentAlgorithm.description}
-                algorithm={selectedAlgorithm as 'bubble' | 'quick' | 'merge' | 'binary'}
+                algorithm={selectedAlgorithm as 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs'}
               />
             </CardContent>
           </Card>

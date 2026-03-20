@@ -875,6 +875,24 @@ export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
     setIsPlaying(false);
   };
 
+  // 判断算法可视化类型
+  const getVisualizationType = (): 'array' | 'graph' | 'stack' | 'queue' | 'heap' | 'unionfind' | 'dp-table' => {
+    if (['bubble-sort', 'quick-sort', 'selection-sort', 'insertion-sort', 'merge-sort', 'heap-sort', 'binary-search', 'linear-search', 'dp-lis', 'two-pointer', 'sliding-window'].includes(type)) {
+      return 'array';
+    }
+    if (['dfs', 'bfs', 'dijkstra'].includes(type)) {
+      return 'graph';
+    }
+    if (type === 'stack') return 'stack';
+    if (type === 'queue') return 'queue';
+    if (type === 'heap') return 'heap';
+    if (type === 'union-find') return 'unionfind';
+    if (['dp-knapsack', 'dp-climb'].includes(type)) return 'dp-table';
+    return 'array';
+  };
+
+  const visualizationType = getVisualizationType();
+
   // 获取元素样式
   const getElementStyle = (index: number): string => {
     const step = steps[currentStep - 1];
@@ -893,6 +911,367 @@ export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
   const config = algorithmConfig[type];
   const currentStepData = steps[currentStep - 1];
 
+  // 渲染数组可视化
+  const renderArrayVisualization = () => (
+    <div className="flex-1 min-h-[200px] flex items-end justify-center gap-1 p-4 bg-muted/30 rounded-lg">
+      {array.map((value, index) => (
+        <div
+          key={index}
+          className={`flex flex-col items-center transition-all duration-200 ${getElementStyle(index)}`}
+        >
+          <div
+            className="w-8 rounded-t text-white text-xs font-bold flex items-center justify-center transition-all duration-200"
+            style={{ height: `${value * 8}px` }}
+          >
+            {value}
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">{index}</div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // 渲染图可视化
+  const renderGraphVisualization = () => {
+    // 预定义图的节点位置（树形布局）
+    const nodePositions: Record<number, { x: number; y: number }> = {
+      0: { x: 50, y: 15 },
+      1: { x: 25, y: 40 },
+      2: { x: 75, y: 40 },
+      3: { x: 15, y: 70 },
+      4: { x: 35, y: 70 },
+      5: { x: 65, y: 70 },
+      6: { x: 85, y: 70 },
+    };
+
+    const edges = [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]];
+    const step = steps[currentStep - 1];
+
+    const getNodeStyle = (nodeId: number): string => {
+      if (!step) return 'bg-primary text-primary-foreground';
+      if (step.type === 'found' && step.indices.includes(nodeId)) return 'bg-green-500 text-white ring-2 ring-green-300';
+      if (step.type === 'sorted' && step.indices.includes(nodeId)) return 'bg-green-500 text-white';
+      if (step.type === 'highlight' && step.indices.includes(nodeId)) return 'bg-purple-500 text-white';
+      if (step.type === 'check' && step.indices.includes(nodeId)) return 'bg-blue-500 text-white';
+      if (step.type === 'compare' && step.indices.includes(nodeId)) return 'bg-yellow-500 text-white';
+      return 'bg-muted text-muted-foreground';
+    };
+
+    return (
+      <div className="flex-1 min-h-[280px] relative bg-muted/30 rounded-lg p-4">
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+          {/* 绘制边 */}
+          {edges.map(([u, v], idx) => {
+            const posU = nodePositions[u];
+            const posV = nodePositions[v];
+            return (
+              <line
+                key={idx}
+                x1={posU.x}
+                y1={posU.y}
+                x2={posV.x}
+                y2={posV.y}
+                stroke="currentColor"
+                strokeWidth="0.5"
+                className="text-muted-foreground/50"
+              />
+            );
+          })}
+          {/* 绘制节点 */}
+          {Object.entries(nodePositions).map(([id, pos]) => (
+            <g key={id}>
+              <circle
+                cx={pos.x}
+                cy={pos.y}
+                r="6"
+                className={getNodeStyle(parseInt(id))}
+                fill="currentColor"
+              />
+              <text
+                x={pos.x}
+                y={pos.y + 1}
+                textAnchor="middle"
+                className="text-[4px] fill-white font-bold"
+              >
+                {id}
+              </text>
+            </g>
+          ))}
+        </svg>
+      </div>
+    );
+  };
+
+  // 渲染栈可视化
+  const renderStackVisualization = () => {
+    const step = steps[currentStep - 1];
+    const stackValues = step?.values || [];
+
+    return (
+      <div className="flex-1 min-h-[200px] flex flex-col items-center justify-center p-4 bg-muted/30 rounded-lg">
+        <div className="text-sm text-muted-foreground mb-2">栈顶 ↑</div>
+        <div className="flex flex-col-reverse gap-1 min-w-[60px]">
+          {stackValues.length === 0 ? (
+            <div className="text-muted-foreground text-sm">空栈</div>
+          ) : (
+            stackValues.map((val, idx) => (
+              <div
+                key={idx}
+                className={`h-8 flex items-center justify-center rounded text-sm font-medium transition-all duration-200 ${
+                  step?.type === 'highlight' && step.indices.includes(idx)
+                    ? 'bg-purple-500 text-white'
+                    : step?.type === 'compare' && step.indices.includes(idx)
+                    ? 'bg-yellow-500 text-white'
+                    : 'bg-primary text-primary-foreground'
+                }`}
+              >
+                {val}
+              </div>
+            ))
+          )}
+        </div>
+        <div className="text-sm text-muted-foreground mt-2">栈底 ↓</div>
+      </div>
+    );
+  };
+
+  // 渲染队列可视化
+  const renderQueueVisualization = () => {
+    const step = steps[currentStep - 1];
+    const queueValues = step?.values || [];
+
+    return (
+      <div className="flex-1 min-h-[200px] flex flex-col items-center justify-center p-4 bg-muted/30 rounded-lg">
+        <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
+          <span>← 出队</span>
+          <span>入队 →</span>
+        </div>
+        <div className="flex items-center gap-1">
+          {queueValues.length === 0 ? (
+            <div className="text-muted-foreground text-sm">空队列</div>
+          ) : (
+            queueValues.map((val, idx) => (
+              <div
+                key={idx}
+                className={`w-10 h-10 flex items-center justify-center rounded text-sm font-medium transition-all duration-200 ${
+                  idx === 0
+                    ? 'bg-yellow-500 text-white'
+                    : idx === queueValues.length - 1
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-primary text-primary-foreground'
+                }`}
+              >
+                {val}
+              </div>
+            ))
+          )}
+        </div>
+        <div className="flex items-center gap-8 mt-2 text-xs text-muted-foreground">
+          <span>队首</span>
+          <span>队尾</span>
+        </div>
+      </div>
+    );
+  };
+
+  // 渲染堆可视化
+  const renderHeapVisualization = () => {
+    const step = steps[currentStep - 1];
+    const heapValues = step?.values || [];
+
+    // 计算堆的层级
+    const getLevel = (index: number): number => Math.floor(Math.log2(index + 1));
+    const getPosition = (index: number, level: number): number => {
+      const levelStart = Math.pow(2, level) - 1;
+      const posInLevel = index - levelStart;
+      const levelWidth = Math.pow(2, level);
+      return (posInLevel + 0.5) / levelWidth;
+    };
+
+    return (
+      <div className="flex-1 min-h-[200px] relative bg-muted/30 rounded-lg p-4">
+        {heapValues.length === 0 ? (
+          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">空堆</div>
+        ) : (
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+            {/* 绘制边 */}
+            {heapValues.map((_, idx) => {
+              const leftChild = 2 * idx + 1;
+              const rightChild = 2 * idx + 2;
+              const level = getLevel(idx);
+              const x = getPosition(idx, level) * 100;
+              const y = level * 25 + 15;
+
+              const edges = [];
+              if (leftChild < heapValues.length) {
+                const leftLevel = getLevel(leftChild);
+                const leftX = getPosition(leftChild, leftLevel) * 100;
+                const leftY = leftLevel * 25 + 15;
+                edges.push(
+                  <line
+                    key={`l-${idx}`}
+                    x1={x}
+                    y1={y}
+                    x2={leftX}
+                    y2={leftY}
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    className="text-muted-foreground/50"
+                  />
+                );
+              }
+              if (rightChild < heapValues.length) {
+                const rightLevel = getLevel(rightChild);
+                const rightX = getPosition(rightChild, rightLevel) * 100;
+                const rightY = rightLevel * 25 + 15;
+                edges.push(
+                  <line
+                    key={`r-${idx}`}
+                    x1={x}
+                    y1={y}
+                    x2={rightX}
+                    y2={rightY}
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    className="text-muted-foreground/50"
+                  />
+                );
+              }
+              return edges;
+            })}
+            {/* 绘制节点 */}
+            {heapValues.map((val, idx) => {
+              const level = getLevel(idx);
+              const x = getPosition(idx, level) * 100;
+              const y = level * 25 + 15;
+              return (
+                <g key={idx}>
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r="6"
+                    className={
+                      step?.type === 'compare' && step.indices.includes(idx)
+                        ? 'fill-yellow-500'
+                        : step?.type === 'swap' && step.indices.includes(idx)
+                        ? 'fill-red-500'
+                        : step?.type === 'highlight' && step.indices.includes(idx)
+                        ? 'fill-purple-500'
+                        : 'fill-primary'
+                    }
+                  />
+                  <text x={x} y={y + 1} textAnchor="middle" className="text-[4px] fill-white font-bold">
+                    {val}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        )}
+      </div>
+    );
+  };
+
+  // 渲染并查集可视化
+  const renderUnionFindVisualization = () => {
+    const step = steps[currentStep - 1];
+    const parent = step?.values || [0, 1, 2, 3, 4];
+    const n = 5;
+
+    return (
+      <div className="flex-1 min-h-[200px] flex flex-col items-center justify-center p-4 bg-muted/30 rounded-lg">
+        <div className="flex items-center gap-4 mb-6">
+          {Array.from({ length: n }, (_, i) => (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 ${
+                  step?.type === 'compare' && step.indices.includes(i)
+                    ? 'bg-yellow-500 text-white'
+                    : step?.type === 'highlight' && step.indices.includes(i)
+                    ? 'bg-purple-500 text-white'
+                    : step?.type === 'found' && step.indices.includes(i)
+                    ? 'bg-green-500 text-white'
+                    : 'bg-primary text-primary-foreground'
+                }`}
+              >
+                {i}
+              </div>
+              <div className="text-xs text-muted-foreground">→ {parent[i]}</div>
+            </div>
+          ))}
+        </div>
+        <div className="text-sm text-muted-foreground">
+          parent = [{parent.join(', ')}]
+        </div>
+      </div>
+    );
+  };
+
+  // 渲染DP表格可视化
+  const renderDPTableVisualization = () => {
+    const step = steps[currentStep - 1];
+    
+    if (type === 'dp-climb') {
+      const dpValues = step?.values || [];
+      return (
+        <div className="flex-1 min-h-[200px] flex flex-col items-center justify-center p-4 bg-muted/30 rounded-lg">
+          <div className="text-sm text-muted-foreground mb-4">楼梯阶数 →</div>
+          <div className="flex items-end gap-1">
+            {dpValues.map((val, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-1">
+                <div
+                  className={`w-10 h-10 flex items-center justify-center rounded text-sm font-medium transition-all duration-200 ${
+                    step?.type === 'check' && step.indices.includes(idx)
+                      ? 'bg-blue-500 text-white'
+                      : step?.type === 'update' && step.indices.includes(idx)
+                      ? 'bg-green-500 text-white'
+                      : 'bg-primary text-primary-foreground'
+                  }`}
+                >
+                  {val}
+                </div>
+                <div className="text-xs text-muted-foreground">{idx}</div>
+              </div>
+            ))}
+          </div>
+          <div className="text-sm text-muted-foreground mt-4">dp[i] = 到达第i阶的方法数</div>
+        </div>
+      );
+    }
+
+    // 默认背包问题可视化
+    return (
+      <div className="flex-1 min-h-[200px] flex items-center justify-center p-4 bg-muted/30 rounded-lg">
+        <div className="text-center">
+          <div className="text-lg font-medium mb-2">{step?.description || '点击播放开始演示'}</div>
+          <div className="text-sm text-muted-foreground">
+            {step?.values ? `当前值: ${step.values.join(', ')}` : ''}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 根据类型选择可视化方式
+  const renderVisualization = () => {
+    switch (visualizationType) {
+      case 'graph':
+        return renderGraphVisualization();
+      case 'stack':
+        return renderStackVisualization();
+      case 'queue':
+        return renderQueueVisualization();
+      case 'heap':
+        return renderHeapVisualization();
+      case 'unionfind':
+        return renderUnionFindVisualization();
+      case 'dp-table':
+        return renderDPTableVisualization();
+      default:
+        return renderArrayVisualization();
+    }
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3">
@@ -909,23 +1288,8 @@ export function AlgorithmVisualizer({ type }: AlgorithmVisualizerProps) {
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col space-y-4">
-        {/* 数组可视化 */}
-        <div className="flex-1 min-h-[200px] flex items-end justify-center gap-1 p-4 bg-muted/30 rounded-lg">
-          {array.map((value, index) => (
-            <div
-              key={index}
-              className={`flex flex-col items-center transition-all duration-200 ${getElementStyle(index)}`}
-            >
-              <div
-                className="w-8 rounded-t text-white text-xs font-bold flex items-center justify-center transition-all duration-200"
-                style={{ height: `${value * 8}px` }}
-              >
-                {value}
-              </div>
-              <div className="text-xs text-muted-foreground mt-1">{index}</div>
-            </div>
-          ))}
-        </div>
+        {/* 可视化区域 */}
+        {renderVisualization()}
 
         {/* 当前步骤说明 */}
         <div className="p-3 bg-muted/50 rounded-lg">

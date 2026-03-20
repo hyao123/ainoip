@@ -36,7 +36,7 @@ export type AnimationState = 'idle' | 'playing' | 'paused' | 'finished';
 interface AlgorithmVisualizationProps {
   title: string;
   description: string;
-  algorithm: 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs';
+  algorithm: 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs' | 'selection' | 'insertion' | 'heap';
   initialArray?: number[];
 }
 
@@ -364,10 +364,343 @@ function* binarySearchSteps(arr: number[], target: number): Generator<AlgorithmS
   };
 }
 
+// 选择排序步骤生成器
+function* selectionSortSteps(arr: number[]): Generator<AlgorithmStep> {
+  const array = [...arr];
+  const n = array.length;
+  const sorted: number[] = [];
+  
+  yield {
+    array: [...array],
+    description: '开始选择排序',
+    codeHighlight: 1,
+  };
+  
+  for (let i = 0; i < n - 1; i++) {
+    let minIdx = i;
+    yield {
+      array: [...array],
+      highlight: [i],
+      sorted: [...sorted],
+      description: `寻找位置 ${i} 的最小元素`,
+      codeHighlight: 3,
+    };
+    
+    for (let j = i + 1; j < n; j++) {
+      yield {
+        array: [...array],
+        comparing: [minIdx, j],
+        sorted: [...sorted],
+        description: `比较 ${array[minIdx]} 和 ${array[j]}`,
+        codeHighlight: 5,
+      };
+      
+      if (array[j] < array[minIdx]) {
+        minIdx = j;
+        yield {
+          array: [...array],
+          highlight: [minIdx],
+          sorted: [...sorted],
+          description: `发现更小元素 ${array[minIdx]}`,
+          codeHighlight: 6,
+        };
+      }
+    }
+    
+    if (minIdx !== i) {
+      yield {
+        array: [...array],
+        swapping: [i, minIdx],
+        sorted: [...sorted],
+        description: `交换 ${array[i]} 和 ${array[minIdx]}`,
+        codeHighlight: 8,
+      };
+      [array[i], array[minIdx]] = [array[minIdx], array[i]];
+    }
+    
+    sorted.push(i);
+    yield {
+      array: [...array],
+      sorted: [...sorted],
+      description: `位置 ${i} 已排序`,
+      codeHighlight: 10,
+    };
+  }
+  sorted.push(n - 1);
+  
+  yield {
+    array: [...array],
+    sorted: sorted,
+    description: '排序完成！',
+    codeHighlight: 12,
+  };
+}
+
+// 插入排序步骤生成器
+function* insertionSortSteps(arr: number[]): Generator<AlgorithmStep> {
+  const array = [...arr];
+  const n = array.length;
+  const sorted: number[] = [0];
+  
+  yield {
+    array: [...array],
+    sorted: [0],
+    description: '开始插入排序，首个元素已排序',
+    codeHighlight: 1,
+  };
+  
+  for (let i = 1; i < n; i++) {
+    const key = array[i];
+    let j = i - 1;
+    
+    yield {
+      array: [...array],
+      highlight: [i],
+      sorted: Array.from({ length: i }, (_, k) => k),
+      description: `插入元素 ${key}`,
+      codeHighlight: 3,
+    };
+    
+    while (j >= 0 && array[j] > key) {
+      yield {
+        array: [...array],
+        comparing: [j, j + 1],
+        sorted: Array.from({ length: i }, (_, k) => k).filter(k => k < j),
+        description: `${array[j]} > ${key}，后移`,
+        codeHighlight: 5,
+      };
+      array[j + 1] = array[j];
+      j--;
+    }
+    
+    array[j + 1] = key;
+    sorted.push(i);
+    
+    yield {
+      array: [...array],
+      sorted: Array.from({ length: i + 1 }, (_, k) => k),
+      description: `插入 ${key} 到位置 ${j + 1}`,
+      codeHighlight: 8,
+    };
+  }
+  
+  yield {
+    array: [...array],
+    sorted: Array.from({ length: n }, (_, k) => k),
+    description: '排序完成！',
+    codeHighlight: 10,
+  };
+}
+
+// 堆排序步骤生成器
+function* heapSortSteps(arr: number[]): Generator<AlgorithmStep> {
+  const array = [...arr];
+  const n = array.length;
+  const sorted: number[] = [];
+  
+  function* heapify(size: number, i: number): Generator<AlgorithmStep> {
+    let largest = i;
+    const left = 2 * i + 1;
+    const right = 2 * i + 2;
+    
+    if (left < size && array[left] > array[largest]) largest = left;
+    if (right < size && array[right] > array[largest]) largest = right;
+    
+    if (largest !== i) {
+      yield {
+        array: [...array],
+        swapping: [i, largest],
+        sorted: [...sorted],
+        description: `交换 ${array[i]} 和 ${array[largest]}`,
+        codeHighlight: 5,
+      };
+      [array[i], array[largest]] = [array[largest], array[i]];
+      yield* heapify(size, largest);
+    }
+  }
+  
+  yield {
+    array: [...array],
+    description: '开始堆排序，先建立最大堆',
+    codeHighlight: 1,
+  };
+  
+  // 建堆
+  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+    yield* heapify(n, i);
+  }
+  
+  yield {
+    array: [...array],
+    description: '最大堆建立完成',
+    codeHighlight: 8,
+  };
+  
+  // 排序
+  for (let i = n - 1; i > 0; i--) {
+    yield {
+      array: [...array],
+      swapping: [0, i],
+      sorted: [...sorted],
+      description: `将堆顶 ${array[0]} 移到位置 ${i}`,
+      codeHighlight: 10,
+    };
+    [array[0], array[i]] = [array[i], array[0]];
+    sorted.unshift(i);
+    
+    yield {
+      array: [...array],
+      sorted: [...sorted],
+      description: `位置 ${i} 已排序`,
+      codeHighlight: 12,
+    };
+    
+    yield* heapify(i, 0);
+  }
+  
+  sorted.unshift(0);
+  yield {
+    array: [...array],
+    sorted: sorted,
+    description: '排序完成！',
+    codeHighlight: 15,
+  };
+}
+
+// DFS遍历步骤生成器
+function* dfsSteps(nodes: number, edges: [number, number][]): Generator<AlgorithmStep> {
+  // 构建邻接表
+  const adj: number[][] = Array.from({ length: nodes }, () => []);
+  for (const [u, v] of edges) {
+    adj[u].push(v);
+    adj[v].push(u);
+  }
+  
+  const array = Array.from({ length: nodes }, (_, i) => i);
+  const visited: boolean[] = Array(nodes).fill(false);
+  const visitedNodes: number[] = [];
+  
+  function* dfs(node: number): Generator<AlgorithmStep> {
+    visited[node] = true;
+    visitedNodes.push(node);
+    
+    yield {
+      array: [...array],
+      highlight: [node],
+      sorted: [...visitedNodes],
+      description: `访问节点 ${node}`,
+      codeHighlight: 3,
+    };
+    
+    for (const neighbor of adj[node].sort((a, b) => a - b)) {
+      if (!visited[neighbor]) {
+        yield {
+          array: [...array],
+          comparing: [node, neighbor],
+          sorted: [...visitedNodes],
+          description: `从 ${node} 探索邻居 ${neighbor}`,
+          codeHighlight: 5,
+        };
+        yield* dfs(neighbor);
+      }
+    }
+    
+    yield {
+      array: [...array],
+      sorted: [...visitedNodes],
+      description: `节点 ${node} 处理完成，回溯`,
+      codeHighlight: 8,
+    };
+  }
+  
+  yield {
+    array: [...array],
+    description: `开始DFS遍历，共 ${nodes} 个节点`,
+    codeHighlight: 1,
+  };
+  
+  yield* dfs(0);
+  
+  yield {
+    array: [...array],
+    sorted: visitedNodes,
+    description: `DFS遍历完成: ${visitedNodes.join(' → ')}`,
+    codeHighlight: 12,
+  };
+}
+
+// BFS遍历步骤生成器
+function* bfsSteps(nodes: number, edges: [number, number][]): Generator<AlgorithmStep> {
+  // 构建邻接表
+  const adj: number[][] = Array.from({ length: nodes }, () => []);
+  for (const [u, v] of edges) {
+    adj[u].push(v);
+    adj[v].push(u);
+  }
+  
+  const array = Array.from({ length: nodes }, (_, i) => i);
+  const visited: boolean[] = Array(nodes).fill(false);
+  const visitedNodes: number[] = [];
+  const queue: number[] = [0];
+  visited[0] = true;
+  
+  yield {
+    array: [...array],
+    highlight: [0],
+    description: `开始BFS遍历，起始节点 0 入队`,
+    codeHighlight: 1,
+  };
+  
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    visitedNodes.push(node);
+    
+    yield {
+      array: [...array],
+      highlight: [node],
+      sorted: [...visitedNodes],
+      description: `访问节点 ${node}`,
+      codeHighlight: 4,
+    };
+    
+    for (const neighbor of adj[node].sort((a, b) => a - b)) {
+      if (!visited[neighbor]) {
+        visited[neighbor] = true;
+        queue.push(neighbor);
+        yield {
+          array: [...array],
+          comparing: [node, neighbor],
+          sorted: [...visitedNodes],
+          description: `节点 ${neighbor} 入队`,
+          codeHighlight: 6,
+        };
+      }
+    }
+    
+    yield {
+      array: [...array],
+      sorted: [...visitedNodes],
+      description: `节点 ${node} 处理完成`,
+      codeHighlight: 9,
+    };
+  }
+  
+  yield {
+    array: [...array],
+    sorted: visitedNodes,
+    description: `BFS遍历完成: ${visitedNodes.join(' → ')}`,
+    codeHighlight: 12,
+  };
+}
+
 // 获取算法步骤
 function getAlgorithmSteps(algorithm: string, array: number[]): AlgorithmStep[] {
   const steps: AlgorithmStep[] = [];
   let generator: Generator<AlgorithmStep>;
+  
+  // 定义图的边（用于DFS和BFS）
+  const edges: [number, number][] = [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]];
+  const nodes = 7;
   
   switch (algorithm) {
     case 'bubble':
@@ -381,6 +714,21 @@ function getAlgorithmSteps(algorithm: string, array: number[]): AlgorithmStep[] 
       break;
     case 'binary':
       generator = binarySearchSteps(array, 5);
+      break;
+    case 'selection':
+      generator = selectionSortSteps(array);
+      break;
+    case 'insertion':
+      generator = insertionSortSteps(array);
+      break;
+    case 'heap':
+      generator = heapSortSteps(array);
+      break;
+    case 'dfs':
+      generator = dfsSteps(nodes, edges);
+      break;
+    case 'bfs':
+      generator = bfsSteps(nodes, edges);
       break;
     default:
       generator = bubbleSortSteps(array);
@@ -460,6 +808,80 @@ void merge(int arr[], int l, int m, int r) {
     }
     
     return -1;
+}`,
+    selection: `void selectionSort(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        int minIdx = i;
+        for (int j = i+1; j < n; j++) {
+            if (arr[j] < arr[minIdx])
+                minIdx = j;
+        }
+        if (minIdx != i)
+            swap(arr[i], arr[minIdx]);
+    }
+}`,
+    insertion: `void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        
+        while (j >= 0 && arr[j] > key) {
+            arr[j+1] = arr[j];
+            j--;
+        }
+        arr[j+1] = key;
+    }
+}`,
+    heap: `void heapify(int arr[], int n, int i) {
+    int largest = i;
+    int left = 2*i + 1;
+    int right = 2*i + 2;
+    
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n) {
+    for (int i = n/2-1; i >= 0; i--)
+        heapify(arr, n, i);
+    for (int i = n-1; i > 0; i--) {
+        swap(arr[0], arr[i]);
+        heapify(arr, i, 0);
+    }
+}`,
+    dfs: `void DFS(int u, vector<int> adj[], bool visited[]) {
+    visited[u] = true;
+    cout << u << " ";
+    
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            DFS(v, adj, visited);
+        }
+    }
+}`,
+    bfs: `void BFS(int start, vector<int> adj[], bool visited[]) {
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        cout << u << " ";
+        
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                visited[v] = true;
+                q.push(v);
+            }
+        }
+    }
 }`,
   };
   
