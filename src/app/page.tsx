@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap, Settings } from 'lucide-react';
 import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -23,6 +23,9 @@ import { UserCenterPage } from '@/components/UserCenterPage';
 import { AlgorithmDemoPage } from '@/components/AlgorithmDemoPage';
 import { AILogoWithText } from '@/components/AILogo';
 import { ProgressiveHint } from '@/components/ProgressiveHint';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { SuccessCelebration } from '@/components/SuccessCelebration';
+import { ProblemNavigation } from '@/components/ProblemNavigation';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
 
 import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
@@ -2337,6 +2340,7 @@ export default function Home() {
   const [executionTime, setExecutionTime] = useState<number>(0);
   const [showTestPanel, setShowTestPanel] = useState(false);
   const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState<'input' | 'test' | 'output'>('input');
   const [editorSettings, setEditorSettings] = useState<EditorSettings>({
     theme: 'vs-dark',
@@ -2538,7 +2542,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* 顶部导航栏 - 纯导航 */}
-      <header className="h-12 border-b bg-background flex items-center justify-center px-4 shrink-0">
+      <header className="h-12 border-b bg-background flex items-center justify-between px-4 shrink-0">
         <nav className="flex items-center gap-1">
           <button
             onClick={() => setCurrentView('learning')}
@@ -2596,6 +2600,20 @@ export default function Home() {
             个人中心
           </button>
         </nav>
+        
+        {/* 右侧工具栏 */}
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowShortcutsHelp(true)}
+            className="h-8 w-8 p-0"
+            title="快捷键帮助"
+          >
+            <Keyboard className="h-4 w-4" />
+          </Button>
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* 下方内容区 */}
@@ -2704,6 +2722,15 @@ export default function Home() {
                   >
                     {getDifficultyText(selectedProblem.difficulty)}
                   </span>
+                  
+                  {/* 题目导航 */}
+                  {currentView === 'practice' && (
+                    <ProblemNavigation
+                      currentProblemId={selectedProblem.id}
+                      problems={categories.flatMap(c => c.problems)}
+                      onNavigate={(problem) => handleProblemSelect(problem)}
+                    />
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   {!showEvaluation && (
@@ -2882,6 +2909,11 @@ export default function Home() {
                           results.some(r => r.status === 'RE') ? 'RE' :
                           results.some(r => r.status === 'CE') ? 'CE' : 'WA';
                         
+                        // 全部通过时显示庆祝动画
+                        if (passedCount === results.length) {
+                          setShowSuccess(true);
+                        }
+                        
                         addSubmission(
                           selectedProblem.id,
                           selectedProblem.title,
@@ -2934,6 +2966,17 @@ export default function Home() {
           )}
         </main>
       </div>
+      
+      {/* 快捷键帮助 */}
+      {showShortcutsHelp && (
+        <ShortcutsHelp onClose={() => setShowShortcutsHelp(false)} />
+      )}
+      
+      {/* 成功庆祝动画 */}
+      <SuccessCelebration 
+        show={showSuccess} 
+        onComplete={() => setShowSuccess(false)}
+      />
     </div>
   );
 }
