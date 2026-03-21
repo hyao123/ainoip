@@ -189,6 +189,216 @@ const PROBLEM_HINTS_MAP: Record<number, ProblemHints> = {
     relatedProblems: [2],
     keyConcepts: ['循环', '大数处理', 'long long'],
   },
+
+  // 最大公约数
+  4: {
+    problemId: 4,
+    hints: [
+      {
+        level: 1,
+        title: '💡 思路方向',
+        content: '最大公约数(GCD)的常用算法：\n• 辗转相除法（欧几里得算法）\n• 更相减损术\n\nGCD性质：gcd(a, b) = gcd(b, a mod b)',
+        cost: 5,
+        scorePenalty: 5,
+      },
+      {
+        level: 2,
+        title: '🔧 关键算法',
+        content: '辗转相除法：\n• 当b=0时，gcd(a,0)=a\n• 否则 gcd(a,b) = gcd(b, a%b)\n• 递归或迭代实现都可以\n\n也可以直接用 __gcd(a, b)',
+        cost: 10,
+        scorePenalty: 15,
+      },
+      {
+        level: 3,
+        title: '📝 代码片段',
+        content: 'int gcd(int a, int b) {\n    return b == 0 ? a : gcd(b, a % b);\n}\n\n// 或直接使用\nint g = __gcd(a, b);',
+        cost: 20,
+        scorePenalty: 30,
+      },
+    ],
+    relatedProblems: [5, 6],
+    keyConcepts: ['GCD', '欧几里得算法', '数论基础'],
+  },
+
+  // 判断素数
+  47: {
+    problemId: 47,
+    hints: [
+      {
+        level: 1,
+        title: '💡 思路方向',
+        content: '素数定义：大于1且只能被1和自身整除的正整数\n\n判断方法：\n• 试除法：检查2到√n之间是否有因子\n• 特殊情况：0和1不是素数',
+        cost: 5,
+        scorePenalty: 5,
+      },
+      {
+        level: 2,
+        title: '🔧 关键算法',
+        content: '试除法优化：\n• 只需检查到 √n\n• 可以先排除偶数\n• 时间复杂度 O(√n)\n\n对于多个数的素数判断，用筛法更高效',
+        cost: 10,
+        scorePenalty: 15,
+      },
+      {
+        level: 3,
+        title: '📝 代码片段',
+        content: 'bool isPrime(int n) {\n    if (n < 2) return false;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return false;\n    }\n    return true;\n}',
+        cost: 20,
+        scorePenalty: 30,
+      },
+    ],
+    relatedProblems: [71, 72],
+    keyConcepts: ['素数', '试除法', '数论'],
+  },
+
+  // 二分查找
+  23: {
+    problemId: 23,
+    hints: [
+      {
+        level: 1,
+        title: '💡 思路方向',
+        content: '二分查找前提：数组必须有序\n\n核心思想：\n• 每次将搜索范围缩小一半\n• 时间复杂度 O(log n)\n• 注意边界条件',
+        cost: 5,
+        scorePenalty: 5,
+      },
+      {
+        level: 2,
+        title: '🔧 关键算法',
+        content: '二分查找框架：\n• left = 0, right = n - 1\n• mid = (left + right) / 2\n• 比较a[mid]与target\n• 更新left或right\n\n注意死循环问题',
+        cost: 10,
+        scorePenalty: 15,
+      },
+      {
+        level: 3,
+        title: '📝 代码片段',
+        content: 'int left = 0, right = n - 1;\nwhile (left <= right) {\n    int mid = left + (right - left) / 2;\n    if (a[mid] == target) return mid;\n    else if (a[mid] < target) left = mid + 1;\n    else right = mid - 1;\n}\nreturn -1;',
+        cost: 20,
+        scorePenalty: 30,
+      },
+    ],
+    relatedProblems: [77, 78],
+    keyConcepts: ['二分查找', '有序数组', '搜索'],
+  },
+
+  // N皇后问题
+  32: {
+    problemId: 32,
+    hints: [
+      {
+        level: 1,
+        title: '💡 思路方向',
+        content: 'N皇后问题：在n×n棋盘放置n个皇后，互不攻击\n\n约束条件：\n• 同一行不能有两个皇后\n• 同一列不能有两个皇后\n• 同一对角线不能有两个皇后',
+        cost: 5,
+        scorePenalty: 5,
+      },
+      {
+        level: 2,
+        title: '🔧 关键算法',
+        content: '使用DFS回溯：\n• 逐行放置皇后\n• 用数组记录列占用、对角线占用\n• 对角线可以用 i+j 和 i-j 标识\n• 放置后标记，回溯时清除',
+        cost: 10,
+        scorePenalty: 15,
+      },
+      {
+        level: 3,
+        title: '📝 代码片段',
+        content: 'int col[N], diag1[2*N], diag2[2*N];\nvoid dfs(int row) {\n    if (row > n) { ans++; return; }\n    for (int c = 1; c <= n; c++) {\n        if (!col[c] && !diag1[row+c] && !diag2[row-c+n]) {\n            col[c] = diag1[row+c] = diag2[row-c+n] = 1;\n            dfs(row + 1);\n            col[c] = diag1[row+c] = diag2[row-c+n] = 0;\n        }\n    }\n}',
+        cost: 20,
+        scorePenalty: 30,
+      },
+    ],
+    relatedProblems: [33, 86],
+    keyConcepts: ['DFS', '回溯', '状态压缩'],
+  },
+
+  // 全排列
+  33: {
+    problemId: 33,
+    hints: [
+      {
+        level: 1,
+        title: '💡 思路方向',
+        content: '全排列：输出1到n的所有排列方式\n\n排列数量：n! 种\n\n方法：\n• DFS回溯\n• 使用STL的next_permutation',
+        cost: 5,
+        scorePenalty: 5,
+      },
+      {
+        level: 2,
+        title: '🔧 关键算法',
+        content: '方法1 - DFS：\n• 用used数组标记已使用的数\n• 递归生成排列\n\n方法2 - STL：\n• 初始化数组为1,2,...,n\n• 循环调用next_permutation',
+        cost: 10,
+        scorePenalty: 15,
+      },
+      {
+        level: 3,
+        title: '📝 代码片段',
+        content: '// STL方法\nint a[10] = {1,2,3,4,5,6,7,8,9};\ndo {\n    for (int i = 0; i < n; i++)\n        cout << a[i] << " ";\n    cout << endl;\n} while (next_permutation(a, a + n));',
+        cost: 20,
+        scorePenalty: 30,
+      },
+    ],
+    relatedProblems: [32],
+    keyConcepts: ['全排列', 'DFS', 'STL'],
+  },
+
+  // 栈的应用 - 括号匹配
+  35: {
+    problemId: 35,
+    hints: [
+      {
+        level: 1,
+        title: '💡 思路方向',
+        content: '括号匹配：检查括号是否正确配对\n\n核心数据结构：栈\n\n规则：\n• 遇到左括号入栈\n• 遇到右括号检查栈顶',
+        cost: 5,
+        scorePenalty: 5,
+      },
+      {
+        level: 2,
+        title: '🔧 关键算法',
+        content: '栈的应用：\n• 左括号直接入栈\n• 右括号检查是否与栈顶匹配\n• 匹配则出栈，不匹配则失败\n• 最后栈必须为空',
+        cost: 10,
+        scorePenalty: 15,
+      },
+      {
+        level: 3,
+        title: '📝 代码片段',
+        content: 'stack<char> st;\nfor (char c : s) {\n    if (c == \'(\' || c == \'[\' || c == \'{\')\n        st.push(c);\n    else {\n        if (st.empty()) return false;\n        char top = st.top();\n        if (!match(top, c)) return false;\n        st.pop();\n    }\n}\nreturn st.empty();',
+        cost: 20,
+        scorePenalty: 30,
+      },
+    ],
+    relatedProblems: [36],
+    keyConcepts: ['栈', '括号匹配', '数据结构'],
+  },
+
+  // 队列 - 约瑟夫问题
+  36: {
+    problemId: 36,
+    hints: [
+      {
+        level: 1,
+        title: '💡 思路方向',
+        content: '约瑟夫问题：n人围圈，数到k出列\n\n模拟思路：\n• 使用队列模拟循环\n• 数到k的人出列\n• 其余人重新入队',
+        cost: 5,
+        scorePenalty: 5,
+      },
+      {
+        level: 2,
+        title: '🔧 关键算法',
+        content: '队列模拟：\n• 前k-1个人出队后重新入队\n• 第k个人只出队不入队\n• 循环直到队列为空',
+        cost: 10,
+        scorePenalty: 15,
+      },
+      {
+        level: 3,
+        title: '📝 代码片段',
+        content: 'queue<int> q;\nfor (int i = 1; i <= n; i++) q.push(i);\nwhile (!q.empty()) {\n    for (int i = 1; i < k; i++) {\n        q.push(q.front());\n        q.pop();\n    }\n    cout << q.front() << " ";\n    q.pop();\n}',
+        cost: 20,
+        scorePenalty: 30,
+      },
+    ],
+    relatedProblems: [35],
+    keyConcepts: ['队列', '模拟', '数据结构'],
+  },
 };
 
 // 获取题目的提示
