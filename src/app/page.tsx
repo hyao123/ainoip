@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap, Settings } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap, Settings, BookMarked, AlertTriangle } from 'lucide-react';
 import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -21,6 +21,8 @@ import { LearningPathView } from '@/components/LearningPathView';
 
 import { UserCenterPage } from '@/components/UserCenterPage';
 import { AlgorithmDemoPage } from '@/components/AlgorithmDemoPage';
+import { CheatSheetPage } from '@/components/CheatSheetPage';
+import { CommonMistakesPage } from '@/components/CommonMistakesPage';
 import { AILogoWithText } from '@/components/AILogo';
 import { ProgressiveHint } from '@/components/ProgressiveHint';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -2330,7 +2332,7 @@ export default function Home() {
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
-  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm'>('learning');
+  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm' | 'cheatsheet' | 'mistakes'>('learning');
   const [initialKnowledgeSlug, setInitialKnowledgeSlug] = useState<string | undefined>(undefined);
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
@@ -2589,6 +2591,28 @@ export default function Home() {
             算法演示
           </button>
           <button
+            onClick={() => setCurrentView('cheatsheet')}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              currentView === 'cheatsheet'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <BookMarked className="h-4 w-4" />
+            速查表
+          </button>
+          <button
+            onClick={() => setCurrentView('mistakes')}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              currentView === 'mistakes'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <AlertTriangle className="h-4 w-4" />
+            常见错误
+          </button>
+          <button
             onClick={() => setCurrentView('user')}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'user'
@@ -2708,6 +2732,10 @@ export default function Home() {
             <UserCenterPage onSelectProblem={handleStartProblemById} />
           ) : currentView === 'algorithm' ? (
             <AlgorithmDemoPage />
+          ) : currentView === 'cheatsheet' ? (
+            <CheatSheetPage />
+          ) : currentView === 'mistakes' ? (
+            <CommonMistakesPage />
           ) : (
             <>
               {/* 顶部导航栏 - 紧凑 */}
