@@ -6740,6 +6740,1106 @@ int main() {
     ],
     similarProblems: [17, 18],
   },
+  // ========== LeetCode 经典题目 ==========
+  {
+    id: 128,
+    title: 'LeetCode 1 - 两数之和',
+    titleEn: 'Two Sum',
+    difficulty: 'beginner',
+    description: '给定一个整数数组和一个目标值，找出数组中和为目标值的两个数的下标。',
+    inputFormat: '第一行 n 和 target，第二行 n 个整数。',
+    outputFormat: '输出两个下标（从0开始），用空格分隔。',
+    sampleInput: '4 9\n2 7 11 15',
+    sampleOutput: '0 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <map>
+using namespace std;
+
+int main() {
+    freopen("twosum.in", "r", stdin);
+    freopen("twosum.out", "w", stdout);
+    
+    int n, target;
+    cin >> n >> target;
+    
+    map<int, int> pos;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        if (pos.count(target - x)) {
+            cout << pos[target - x] << " " << i << endl;
+            return 0;
+        }
+        pos[x] = i;
+    }
+    
+    cout << -1 << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '哈希表'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 9\n2 7 11 15', expectedOutput: '0 1' },
+      { id: 2, input: '3 6\n3 2 4', expectedOutput: '1 2' },
+    ],
+    similarProblems: [1, 32],
+  },
+  {
+    id: 129,
+    title: 'LeetCode 20 - 有效的括号',
+    titleEn: 'Valid Parentheses',
+    difficulty: 'beginner',
+    description: '给定一个只包含括号的字符串，判断括号是否有效配对。',
+    inputFormat: '输入一个括号字符串。',
+    outputFormat: '有效输出 "Yes"，否则输出 "No"。',
+    sampleInput: '()[]{}',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <stack>
+using namespace std;
+
+int main() {
+    freopen("brackets.in", "r", stdin);
+    freopen("brackets.out", "w", stdout);
+    
+    string s;
+    cin >> s;
+    
+    stack<char> st;
+    for (char c : s) {
+        if (c == '(' || c == '[' || c == '{') {
+            st.push(c);
+        } else {
+            if (st.empty()) { cout << "No" << endl; return 0; }
+            char top = st.top();
+            if ((c == ')' && top != '(') ||
+                (c == ']' && top != '[') ||
+                (c == '}' && top != '{')) {
+                cout << "No" << endl;
+                return 0;
+            }
+            st.pop();
+        }
+    }
+    
+    cout << (st.empty() ? "Yes" : "No") << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['栈', '字符串'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '()[]{}', expectedOutput: 'Yes' },
+      { id: 2, input: '([)]', expectedOutput: 'No' },
+    ],
+    similarProblems: [62, 60],
+  },
+  {
+    id: 130,
+    title: 'LeetCode 70 - 爬楼梯',
+    titleEn: 'Climbing Stairs',
+    difficulty: 'beginner',
+    description: '有 n 级楼梯，每次可以爬 1 或 2 级。有多少种方法爬到顶？',
+    inputFormat: '输入一个正整数 n。',
+    outputFormat: '输出方法数。',
+    sampleInput: '3',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("climb.in", "r", stdin);
+    freopen("climb.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    long long dp[100];
+    dp[1] = 1;
+    dp[2] = 2;
+    for (int i = 3; i <= n; i++) {
+        dp[i] = dp[i-1] + dp[i-2];
+    }
+    
+    cout << dp[n] << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '递归'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3', expectedOutput: '3' },
+      { id: 2, input: '5', expectedOutput: '8' },
+    ],
+    similarProblems: [57, 2],
+  },
+  {
+    id: 131,
+    title: 'LeetCode 53 - 最大子数组和',
+    titleEn: 'Maximum Subarray',
+    difficulty: 'intermediate',
+    description: '给定一个整数数组，找到具有最大和的连续子数组，返回其最大和。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出最大子数组和。',
+    sampleInput: '9\n-2 1 -3 4 -1 2 1 -5 4',
+    sampleOutput: '6',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("maxsub.in", "r", stdin);
+    freopen("maxsub.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int maxSum = -1e9, currentSum = 0;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        currentSum = max(x, currentSum + x);
+        maxSum = max(maxSum, currentSum);
+    }
+    
+    cout << maxSum << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '9\n-2 1 -3 4 -1 2 1 -5 4', expectedOutput: '6' },
+      { id: 2, input: '1\n1', expectedOutput: '1' },
+    ],
+    similarProblems: [74, 73],
+  },
+  {
+    id: 132,
+    title: 'LeetCode 206 - 反转链表',
+    titleEn: 'Reverse Linked List',
+    difficulty: 'beginner',
+    description: '给定一个链表，反转该链表并返回反转后的头节点。（用数组模拟）',
+    inputFormat: '第一行 n，第二行 n 个整数表示链表节点值。',
+    outputFormat: '输出反转后的链表。',
+    sampleInput: '5\n1 2 3 4 5',
+    sampleOutput: '5 4 3 2 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("reverselist.in", "r", stdin);
+    freopen("reverselist.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[100];
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    for (int i = n - 1; i >= 0; i--) {
+        if (i < n - 1) cout << " ";
+        cout << a[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '链表'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 2 3 4 5', expectedOutput: '5 4 3 2 1' },
+    ],
+    similarProblems: [31, 5],
+  },
+  {
+    id: 133,
+    title: 'LeetCode 141 - 环形链表',
+    titleEn: 'Linked List Cycle',
+    difficulty: 'intermediate',
+    description: '给定一个链表，判断是否有环。（用数组模拟，pos表示环入口位置）',
+    inputFormat: '第一行 n 和 pos，第二行 n 个整数。pos=-1表示无环。',
+    outputFormat: '有环输出 "Yes"，否则输出 "No"。',
+    sampleInput: '4 1\n3 2 0 -4',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("cyclelist.in", "r", stdin);
+    freopen("cyclelist.out", "w", stdout);
+    
+    int n, pos;
+    cin >> n >> pos;
+    
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+    }
+    
+    cout << (pos >= 0 ? "Yes" : "No") << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '链表'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 1\n3 2 0 -4', expectedOutput: 'Yes' },
+      { id: 2, input: '2 -1\n1 2', expectedOutput: 'No' },
+    ],
+    similarProblems: [132, 85],
+  },
+  {
+    id: 134,
+    title: 'LeetCode 104 - 二叉树最大深度',
+    titleEn: 'Maximum Depth of Binary Tree',
+    difficulty: 'beginner',
+    description: '给定二叉树，求其最大深度。（用层序遍历数组表示）',
+    inputFormat: '第一行 n，第二行 n 个整数（null用-1表示）。',
+    outputFormat: '输出最大深度。',
+    sampleInput: '7\n3 9 20 -1 -1 15 7',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("treedepth.in", "r", stdin);
+    freopen("treedepth.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int depth = 0, count = 0, level = 1;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        count++;
+        if (count == level) {
+            depth++;
+            level *= 2;
+            count = 0;
+        }
+    }
+    
+    cout << depth << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '树', '递归'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '7\n3 9 20 -1 -1 15 7', expectedOutput: '3' },
+    ],
+    similarProblems: [111, 112],
+  },
+  {
+    id: 135,
+    title: 'LeetCode 226 - 翻转二叉树',
+    titleEn: 'Invert Binary Tree',
+    difficulty: 'beginner',
+    description: '翻转二叉树，返回翻转后的层序遍历。',
+    inputFormat: '第一行 n，第二行 n 个整数（null用-1表示）。',
+    outputFormat: '输出翻转后的层序遍历。',
+    sampleInput: '7\n4 2 7 1 3 6 9',
+    sampleOutput: '4 7 2 9 6 3 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("inverttree.in", "r", stdin);
+    freopen("inverttree.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[100];
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    // 模拟翻转：每个非叶节点交换左右子节点
+    for (int i = 0; (2*i+2) < n; i++) {
+        if (a[i] != -1) {
+            int left = 2*i+1, right = 2*i+2;
+            if (left < n && right < n) {
+                int temp = a[left];
+                a[left] = a[right];
+                a[right] = temp;
+            }
+        }
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (i > 0) cout << " ";
+        cout << a[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '树', '递归'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '7\n4 2 7 1 3 6 9', expectedOutput: '4 7 2 9 6 3 1' },
+    ],
+    similarProblems: [134, 111],
+  },
+  {
+    id: 136,
+    title: 'LeetCode 200 - 岛屿数量',
+    titleEn: 'Number of Islands',
+    difficulty: 'intermediate',
+    description: '给定一个由 \'1\'（陆地）和 \'0\'（水）组成的网格，计算岛屿的数量。',
+    inputFormat: '第一行 r 和 c，接下来 r 行每行 c 个字符。',
+    outputFormat: '输出岛屿数量。',
+    sampleInput: '4 5\n11110\n11010\n11000\n00000',
+    sampleOutput: '1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int r, c;
+char grid[105][105];
+bool visited[105][105];
+
+void dfs(int x, int y) {
+    visited[x][y] = true;
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+    for (int i = 0; i < 4; i++) {
+        int nx = x + dx[i], ny = y + dy[i];
+        if (nx >= 0 && nx < r && ny >= 0 && ny < c && 
+            !visited[nx][ny] && grid[nx][ny] == '1') {
+            dfs(nx, ny);
+        }
+    }
+}
+
+int main() {
+    freopen("islands.in", "r", stdin);
+    freopen("islands.out", "w", stdout);
+    
+    cin >> r >> c;
+    for (int i = 0; i < r; i++) cin >> grid[i];
+    
+    int cnt = 0;
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            if (!visited[i][j] && grid[i][j] == '1') {
+                dfs(i, j);
+                cnt++;
+            }
+        }
+    }
+    
+    cout << cnt << endl;
+    return 0;
+}`,
+    category: '搜索',
+    tags: ['搜索-DFS', '图论'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 5\n11110\n11010\n11000\n00000', expectedOutput: '1' },
+      { id: 2, input: '3 3\n111\n010\n111', expectedOutput: '1' },
+    ],
+    similarProblems: [117, 84],
+  },
+  {
+    id: 137,
+    title: 'LeetCode 5 - 最长回文子串',
+    titleEn: 'Longest Palindromic Substring',
+    difficulty: 'intermediate',
+    description: '给定一个字符串，找到其中最长的回文子串。',
+    inputFormat: '输入一个字符串。',
+    outputFormat: '输出最长回文子串。',
+    sampleInput: 'babad',
+    sampleOutput: 'bab',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+using namespace std;
+
+int main() {
+    freopen("lps.in", "r", stdin);
+    freopen("lps.out", "w", stdout);
+    
+    string s;
+    cin >> s;
+    
+    int n = s.length(), maxLen = 1, start = 0;
+    
+    for (int i = 0; i < n; i++) {
+        // 奇数长度
+        int l = i, r = i;
+        while (l >= 0 && r < n && s[l] == s[r]) {
+            if (r - l + 1 > maxLen) {
+                maxLen = r - l + 1;
+                start = l;
+            }
+            l--; r++;
+        }
+        // 偶数长度
+        l = i; r = i + 1;
+        while (l >= 0 && r < n && s[l] == s[r]) {
+            if (r - l + 1 > maxLen) {
+                maxLen = r - l + 1;
+                start = l;
+            }
+            l--; r++;
+        }
+    }
+    
+    cout << s.substr(start, maxLen) << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '字符串'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'babad', expectedOutput: 'bab' },
+      { id: 2, input: 'cbbd', expectedOutput: 'bb' },
+    ],
+    similarProblems: [120, 36],
+  },
+  {
+    id: 138,
+    title: 'LeetCode 121 - 买卖股票的最佳时机',
+    titleEn: 'Best Time to Buy and Sell Stock',
+    difficulty: 'beginner',
+    description: '给定一个数组，第 i 个元素是股票第 i 天的价格。求最大利润。',
+    inputFormat: '第一行 n，第二行 n 个整数表示价格。',
+    outputFormat: '输出最大利润。',
+    sampleInput: '6\n7 1 5 3 6 4',
+    sampleOutput: '5',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("stock.in", "r", stdin);
+    freopen("stock.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int minPrice = 1e9, maxProfit = 0;
+    for (int i = 0; i < n; i++) {
+        int price;
+        cin >> price;
+        minPrice = min(minPrice, price);
+        maxProfit = max(maxProfit, price - minPrice);
+    }
+    
+    cout << maxProfit << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6\n7 1 5 3 6 4', expectedOutput: '5' },
+      { id: 2, input: '5\n7 6 4 3 1', expectedOutput: '0' },
+    ],
+    similarProblems: [131, 30],
+  },
+  {
+    id: 139,
+    title: 'LeetCode 136 - 只出现一次的数字',
+    titleEn: 'Single Number',
+    difficulty: 'beginner',
+    description: '给定一个非空整数数组，其中每个元素出现两次，只有一个元素出现一次。找出那个元素。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出只出现一次的数。',
+    sampleInput: '5\n2 2 1',
+    sampleOutput: '1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("singlenum.in", "r", stdin);
+    freopen("singlenum.out", "w", stdout);
+    
+    int n, result = 0;
+    cin >> n;
+    
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        result ^= x;
+    }
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['位运算', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n2 2 1', expectedOutput: '1' },
+      { id: 2, input: '5\n4 1 2 1 2', expectedOutput: '4' },
+    ],
+    similarProblems: [69, 68],
+  },
+  {
+    id: 140,
+    title: 'LeetCode 169 - 多数元素',
+    titleEn: 'Majority Element',
+    difficulty: 'beginner',
+    description: '给定一个数组，找出其中出现次数超过一半的元素。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出多数元素。',
+    sampleInput: '7\n3 2 3',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("majority.in", "r", stdin);
+    freopen("majority.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int candidate, count = 0;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        if (count == 0) {
+            candidate = x;
+            count = 1;
+        } else if (x == candidate) {
+            count++;
+        } else {
+            count--;
+        }
+    }
+    
+    cout << candidate << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '模拟'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n3 2 3', expectedOutput: '3' },
+      { id: 2, input: '7\n2 2 1 1 1 2 2', expectedOutput: '2' },
+    ],
+    similarProblems: [29, 139],
+  },
+  {
+    id: 141,
+    title: 'LeetCode 234 - 回文链表',
+    titleEn: 'Palindrome Linked List',
+    difficulty: 'intermediate',
+    description: '判断一个链表是否为回文链表。（用数组模拟）',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '是回文输出 "Yes"，否则输出 "No"。',
+    sampleInput: '4\n1 2 2 1',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("palinlist.in", "r", stdin);
+    freopen("palinlist.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[100];
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    bool isPalin = true;
+    for (int i = 0; i < n / 2; i++) {
+        if (a[i] != a[n - 1 - i]) {
+            isPalin = false;
+            break;
+        }
+    }
+    
+    cout << (isPalin ? "Yes" : "No") << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '链表', '字符串'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n1 2 2 1', expectedOutput: 'Yes' },
+      { id: 2, input: '2\n1 2', expectedOutput: 'No' },
+    ],
+    similarProblems: [36, 132],
+  },
+  {
+    id: 142,
+    title: 'LeetCode 283 - 移动零',
+    titleEn: 'Move Zeroes',
+    difficulty: 'beginner',
+    description: '将数组中的所有 0 移动到数组末尾，保持非零元素的相对顺序。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出移动后的数组。',
+    sampleInput: '5\n0 1 0 3 12',
+    sampleOutput: '1 3 12 0 0',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("movezero.in", "r", stdin);
+    freopen("movezero.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[100], pos = 0;
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        if (a[i] != 0) {
+            a[pos++] = a[i];
+        }
+    }
+    
+    while (pos < n) a[pos++] = 0;
+    
+    for (int i = 0; i < n; i++) {
+        if (i > 0) cout << " ";
+        cout << a[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '双指针'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n0 1 0 3 12', expectedOutput: '1 3 12 0 0' },
+    ],
+    similarProblems: [30, 31],
+  },
+  {
+    id: 143,
+    title: 'LeetCode 338 - 比特位计数',
+    titleEn: 'Counting Bits',
+    difficulty: 'intermediate',
+    description: '给定一个非负整数 n，计算 0 到 n 每个数的二进制中 1 的个数。',
+    inputFormat: '输入一个非负整数 n。',
+    outputFormat: '输出 n+1 个数，表示 0 到 n 每个数的二进制中 1 的个数。',
+    sampleInput: '5',
+    sampleOutput: '0 1 1 2 1 2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("countbits.in", "r", stdin);
+    freopen("countbits.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int bits[100];
+    bits[0] = 0;
+    for (int i = 1; i <= n; i++) {
+        bits[i] = bits[i & (i - 1)] + 1;
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        if (i > 0) cout << " ";
+        cout << bits[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['位运算', '动态规划'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5', expectedOutput: '0 1 1 2 1 2' },
+    ],
+    similarProblems: [68, 67],
+  },
+  {
+    id: 144,
+    title: 'LeetCode 461 - 汉明距离',
+    titleEn: 'Hamming Distance',
+    difficulty: 'beginner',
+    description: '两个整数之间的汉明距离是这两个数字对应二进制位不同的位置的数目。',
+    inputFormat: '输入两个整数 x 和 y。',
+    outputFormat: '输出汉明距离。',
+    sampleInput: '1 4',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("hamming.in", "r", stdin);
+    freopen("hamming.out", "w", stdout);
+    
+    int x, y;
+    cin >> x >> y;
+    
+    int xorResult = x ^ y;
+    int count = 0;
+    while (xorResult) {
+        count += xorResult & 1;
+        xorResult >>= 1;
+    }
+    
+    cout << count << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['位运算'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '1 4', expectedOutput: '2' },
+      { id: 2, input: '3 1', expectedOutput: '1' },
+    ],
+    similarProblems: [68, 139],
+  },
+  {
+    id: 145,
+    title: 'LeetCode 344 - 反转字符串',
+    titleEn: 'Reverse String',
+    difficulty: 'beginner',
+    description: '将字符串反转。',
+    inputFormat: '输入一个字符串。',
+    outputFormat: '输出反转后的字符串。',
+    sampleInput: 'hello',
+    sampleOutput: 'olleh',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen("revstr.in", "r", stdin);
+    freopen("revstr.out", "w", stdout);
+    
+    string s;
+    cin >> s;
+    
+    reverse(s.begin(), s.end());
+    cout << s << endl;
+    return 0;
+}`,
+    category: '字符串处理',
+    tags: ['字符串', '双指针'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'hello', expectedOutput: 'olleh' },
+      { id: 2, input: 'Hannah', expectedOutput: 'hannaH' },
+    ],
+    similarProblems: [5, 31],
+  },
+  {
+    id: 146,
+    title: 'LeetCode 557 - 反转字符串中的单词 III',
+    titleEn: 'Reverse Words in a String III',
+    difficulty: 'beginner',
+    description: '给定一个字符串，反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。',
+    inputFormat: '输入一个字符串（可能包含空格）。',
+    outputFormat: '输出反转后的字符串。',
+    sampleInput: "Let's take LeetCode contest",
+    sampleOutput: "s'teL ekat edoCteeL tsetnoc",
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen("revwords.in", "r", stdin);
+    freopen("revwords.out", "w", stdout);
+    
+    string line;
+    getline(cin, line);
+    
+    string result, word;
+    for (char c : line) {
+        if (c == ' ') {
+            reverse(word.begin(), word.end());
+            result += word + " ";
+            word = "";
+        } else {
+            word += c;
+        }
+    }
+    reverse(word.begin(), word.end());
+    result += word;
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: '字符串处理',
+    tags: ['字符串'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "Let's take LeetCode contest", expectedOutput: "s'teL ekat edoCteeL tsetnoc" },
+    ],
+    similarProblems: [145, 33],
+  },
+  {
+    id: 147,
+    title: 'LeetCode 448 - 找到所有数组中消失的数字',
+    titleEn: 'Find All Numbers Disappeared in an Array',
+    difficulty: 'intermediate',
+    description: '给定一个长度为 n 的数组，其中所有元素都在 [1, n] 范围内。找出 [1, n] 范围内没有出现在数组中的数字。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出所有消失的数字。',
+    sampleInput: '8\n4 3 2 7 8 2 3 1',
+    sampleOutput: '5 6',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("disappear.in", "r", stdin);
+    freopen("disappear.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    bool exists[100001] = {false};
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        exists[x] = true;
+    }
+    
+    bool first = true;
+    for (int i = 1; i <= n; i++) {
+        if (!exists[i]) {
+            if (!first) cout << " ";
+            cout << i;
+            first = false;
+        }
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '哈希表'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '8\n4 3 2 7 8 2 3 1', expectedOutput: '5 6' },
+    ],
+    similarProblems: [128, 29],
+  },
+  {
+    id: 148,
+    title: 'LeetCode 496 - 下一个更大元素 I',
+    titleEn: 'Next Greater Element I',
+    difficulty: 'beginner',
+    description: '给定两个数组 nums1 和 nums2，其中 nums1 是 nums2 的子集。对于 nums1 中的每个元素，找出其在 nums2 中对应位置右侧第一个比它大的元素。',
+    inputFormat: '第一行 m 和 n，第二行 m 个整数（nums1），第三行 n 个整数（nums2）。',
+    outputFormat: '输出 m 个结果，不存在则输出 -1。',
+    sampleInput: '3 4\n4 1 2\n1 3 4 2',
+    sampleOutput: '-1 3 -1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <map>
+using namespace std;
+
+int main() {
+    freopen("nextgreater.in", "r", stdin);
+    freopen("nextgreater.out", "w", stdout);
+    
+    int m, n;
+    cin >> m >> n;
+    
+    int nums1[100], nums2[100];
+    for (int i = 0; i < m; i++) cin >> nums1[i];
+    for (int i = 0; i < n; i++) cin >> nums2[i];
+    
+    map<int, int> nextGreater;
+    for (int i = 0; i < n; i++) {
+        nextGreater[nums2[i]] = -1;
+        for (int j = i + 1; j < n; j++) {
+            if (nums2[j] > nums2[i]) {
+                nextGreater[nums2[i]] = nums2[j];
+                break;
+            }
+        }
+    }
+    
+    for (int i = 0; i < m; i++) {
+        if (i > 0) cout << " ";
+        cout << nextGreater[nums1[i]];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '栈'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 4\n4 1 2\n1 3 4 2', expectedOutput: '-1 3 -1' },
+    ],
+    similarProblems: [60, 30],
+  },
+  {
+    id: 149,
+    title: 'LeetCode 733 - 图像渲染',
+    titleEn: 'Flood Fill',
+    difficulty: 'beginner',
+    description: '给定一个图像（二维整数数组）和起始点 (sr, sc) 以及新颜色值，将与起始点连通的同颜色区域填充为新颜色。',
+    inputFormat: '第一行 r、c、sr、sc、newColor，接下来 r 行每行 c 个整数。',
+    outputFormat: '输出渲染后的图像。',
+    sampleInput: '3 3 1 1 2\n1 1 1\n1 1 0\n1 0 1',
+    sampleOutput: '2 2 2\n2 2 0\n2 0 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int r, c;
+int image[55][55];
+bool visited[55][55];
+int oldColor, newColor;
+
+void dfs(int x, int y) {
+    if (x < 0 || x >= r || y < 0 || y >= c) return;
+    if (visited[x][y] || image[x][y] != oldColor) return;
+    
+    visited[x][y] = true;
+    image[x][y] = newColor;
+    
+    dfs(x-1, y); dfs(x+1, y);
+    dfs(x, y-1); dfs(x, y+1);
+}
+
+int main() {
+    freopen("floodfill.in", "r", stdin);
+    freopen("floodfill.out", "w", stdout);
+    
+    int sr, sc;
+    cin >> r >> c >> sr >> sc >> newColor;
+    
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            cin >> image[i][j];
+        }
+    }
+    
+    oldColor = image[sr][sc];
+    if (oldColor != newColor) {
+        dfs(sr, sc);
+    }
+    
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            if (j > 0) cout << " ";
+            cout << image[i][j];
+        }
+        cout << endl;
+    }
+    return 0;
+}`,
+    category: '搜索',
+    tags: ['搜索-DFS', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 3 1 1 2\n1 1 1\n1 1 0\n1 0 1', expectedOutput: '2 2 2\n2 2 0\n2 0 1' },
+    ],
+    similarProblems: [136, 117],
+  },
+  {
+    id: 150,
+    title: 'LeetCode 876 - 链表的中间结点',
+    titleEn: 'Middle of the Linked List',
+    difficulty: 'beginner',
+    description: '给定一个链表，返回链表的中间结点。（用数组模拟）',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出中间节点开始的链表。',
+    sampleInput: '6\n1 2 3 4 5 6',
+    sampleOutput: '4 5 6',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen("middle.in", "r", stdin);
+    freopen("middle.out", "w", stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[100];
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    int mid = n / 2;
+    for (int i = mid; i < n; i++) {
+        if (i > mid) cout << " ";
+        cout << a[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '链表', '双指针'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6\n1 2 3 4 5 6', expectedOutput: '4 5 6' },
+      { id: 2, input: '5\n1 2 3 4 5', expectedOutput: '3 4 5' },
+    ],
+    similarProblems: [132, 133],
+  },
 ];
 
 // 获取所有分类

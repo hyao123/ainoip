@@ -2192,7 +2192,7 @@ int main() {
       explanation: '75>=60但<80，所以输出"及格"。'
     },
     prerequisites: [4, 5, 7],
-    recommendedProblems: [24, 25, 26],
+    recommendedProblems: [24, 25, 26, 128], // 添加两数之和（哈希表）
     relatedKnowledge: [14, 15, 16], // 比较运算符、逻辑运算符、switch-case
     readTime: 25,
   },
@@ -3623,7 +3623,7 @@ int main() {
       explanation: '数组有5个元素，下标从0到4，最大下标是4。'
     },
     prerequisites: [4, 5, 19],
-    recommendedProblems: [30, 31, 32],
+    recommendedProblems: [30, 31, 32, 142], // 添加移动零题目
     relatedKnowledge: [27, 28, 29, 60, 63], // 数组声明、数组遍历、二维数组、前缀和、vector
     readTime: 30,
   },
@@ -5529,7 +5529,7 @@ int main() {
       explanation: '2^7=128>100，所以最多7次。'
     },
     prerequisites: [27, 22],
-    recommendedProblems: [49, 50, 51],
+    recommendedProblems: [49, 50, 51, 128], // 添加两数之和题目
     relatedKnowledge: [67, 47], // 二分答案、递归
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1fA41167nY',
@@ -5604,7 +5604,7 @@ int main() {
       explanation: '5个字母加1个\\0，共6个。'
     },
     prerequisites: [4, 27],
-    recommendedProblems: [35, 36, 37],
+    recommendedProblems: [35, 36, 37, 137, 145], // 添加最长回文子串和反转字符串题目
     relatedKnowledge: [44, 45, 46], // 字符串概念、字符串操作、字符数组
     readTime: 25,
   },
@@ -5837,7 +5837,7 @@ int main() {
       explanation: '没有终止条件，函数会一直调用自己，直到内存耗尽。'
     },
     prerequisites: [35, 36],
-    recommendedProblems: [47, 52, 53],
+    recommendedProblems: [47, 52, 53, 130], // 添加爬楼梯题目
     relatedKnowledge: [48, 49, 54], // 递归案例、动态规划、DFS
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1Nx411D712?t=3',
@@ -6002,7 +6002,7 @@ int main() {
       explanation: 'DP通过存储结果避免重复计算。'
     },
     prerequisites: [47, 48],
-    recommendedProblems: [52, 53, 54],
+    recommendedProblems: [52, 53, 54, 131], // 添加最大子数组和题目
     relatedKnowledge: [47, 48, 50, 51], // 递归概念、递归案例、爬楼梯、背包问题
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1AB4y1w7eT',
@@ -6077,7 +6077,7 @@ int main() {
       explanation: 'dp序列：1,2,3,5,8...，第5项是8。'
     },
     prerequisites: [49],
-    recommendedProblems: [52, 53, 54],
+    recommendedProblems: [52, 53, 54, 130, 138], // 添加LeetCode爬楼梯和买卖股票题目
     readTime: 25,
   },
   {
@@ -6319,7 +6319,7 @@ int main() {
       explanation: 'BFS用队列保证先访问的先处理。'
     },
     prerequisites: [52],
-    recommendedProblems: [57, 58, 59],
+    recommendedProblems: [57, 58, 59, 136], // 添加岛屿数量题目
     relatedKnowledge: [54, 65, 66], // DFS、栈、队列
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1Ks411g7aL',
@@ -6478,7 +6478,7 @@ int main() {
       explanation: 'DFS用递归实现最直观，也可以用栈模拟。'
     },
     prerequisites: [52, 47],
-    recommendedProblems: [57, 58, 59],
+    recommendedProblems: [57, 58, 59, 136, 149], // 添加岛屿数量和图像渲染题目
     relatedKnowledge: [53, 47, 65], // BFS、递归、栈
     readTime: 30,
     videoUrl: 'https://www.bilibili.com/video/BV1Ks411g7aL',
@@ -7547,7 +7547,7 @@ int main() {
       explanation: '栈是LIFO（Last In First Out），最后放入的最先取出'
     },
     prerequisites: [63, 19],
-    recommendedProblems: [60, 61, 62], // 添加栈的基本操作题目
+    recommendedProblems: [60, 61, 62, 129], // 添加有效括号题目
     relatedKnowledge: [66, 53, 54], // 队列、BFS、DFS
     readTime: 20,
     videoUrl: 'https://www.bilibili.com/video/BV1jW411d7xY',
