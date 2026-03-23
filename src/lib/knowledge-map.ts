@@ -5211,7 +5211,7 @@ int main() {
       explanation: '前n-1趟放好n-1个元素，最后一个自动归位。'
     },
     prerequisites: [38, 27],
-    recommendedProblems: [44, 45],
+    recommendedProblems: [44, 45, 46], // 添加快速排序题目
     relatedKnowledge: [38, 39, 68], // 排序概念、冒泡排序、插入排序
     readTime: 20,
   },
@@ -6396,7 +6396,7 @@ int main() {
       explanation: '2024 ÷ 7 = 289...1，所以余数是1。'
     },
     prerequisites: [4],
-    recommendedProblems: [38, 41],
+    recommendedProblems: [38, 41, 42], // 添加LCM题目
     relatedKnowledge: [55, 56], // GCD/LCM、素数
     readTime: 20,
   },
@@ -6989,7 +6989,7 @@ int main() {
       explanation: '区间和 = 右端点前缀和 - 左端点前一位的前缀和'
     },
     prerequisites: [26, 19],
-    recommendedProblems: [55, 56],
+    recommendedProblems: [55, 56, 73], // 添加前缀和求区间和题目
     relatedKnowledge: [61, 27, 67], // 差分、一维数组、二分答案
     readTime: 20,
   },
@@ -7103,7 +7103,7 @@ int main() {
       explanation: '区间修改只需改两个端点：左端点加，右端点后一位减'
     },
     prerequisites: [60, 26],
-    recommendedProblems: [56, 57],
+    recommendedProblems: [56, 57, 76], // 添加差分数组基础题目
     relatedKnowledge: [60, 27], // 前缀和、一维数组
     readTime: 20,
   },
@@ -7208,7 +7208,7 @@ int main() {
       explanation: '每次n减半，所以是O(log n)'
     },
     prerequisites: [3, 4],
-    recommendedProblems: [43, 58],
+    recommendedProblems: [43, 58, 82], // 添加选数题目
     relatedKnowledge: [55, 56, 57], // GCD/LCM、素数、素数判定
     readTime: 25,
   },
@@ -7317,7 +7317,7 @@ int main() {
       explanation: 'vector可以自动扩容，大小可变；数组大小固定'
     },
     prerequisites: [26, 32],
-    recommendedProblems: [30, 60],
+    recommendedProblems: [30, 60, 63], // 添加图的邻接表存储题目
     relatedKnowledge: [27, 64, 69], // 一维数组、pair、自定义比较
     readTime: 20,
   },
@@ -7419,7 +7419,7 @@ int main() {
       explanation: 'pair用.first和.second访问两个元素'
     },
     prerequisites: [63],
-    recommendedProblems: [45, 59],
+    recommendedProblems: [45, 59, 66], // 添加Dijkstra题目
     relatedKnowledge: [63, 38, 69], // vector、排序概念、自定义比较
     readTime: 15,
   },
@@ -7547,7 +7547,7 @@ int main() {
       explanation: '栈是LIFO（Last In First Out），最后放入的最先取出'
     },
     prerequisites: [63, 19],
-    recommendedProblems: [61, 62],
+    recommendedProblems: [60, 61, 62], // 添加栈的基本操作题目
     relatedKnowledge: [66, 53, 54], // 队列、BFS、DFS
     readTime: 20,
     videoUrl: 'https://www.bilibili.com/video/BV1jW411d7xY',
@@ -7656,7 +7656,7 @@ int main() {
       explanation: '队列是FIFO（First In First Out），先进入队列的先出来'
     },
     prerequisites: [65, 19],
-    recommendedProblems: [62, 63],
+    recommendedProblems: [56, 62, 63], // 添加迷宫问题题目
     relatedKnowledge: [65, 53], // 栈、BFS
     readTime: 20,
     videoUrl: 'https://www.bilibili.com/video/BV1jW411d7xY',
@@ -7782,7 +7782,7 @@ int main() {
       explanation: '答案必须单调（有序），才能二分'
     },
     prerequisites: [44, 38],
-    recommendedProblems: [50, 51],
+    recommendedProblems: [48, 50, 51], // 添加二分答案题目
     relatedKnowledge: [43, 59], // 二分查找、贪心
     readTime: 25,
   },
@@ -7893,7 +7893,7 @@ int main() {
       explanation: '最坏情况下每个元素都要和前面所有元素比较，是O(n²)'
     },
     prerequisites: [38, 19],
-    recommendedProblems: [44, 45],
+    recommendedProblems: [44, 45, 51], // 添加归并排序题目
     relatedKnowledge: [38, 39, 40, 69], // 排序概念、冒泡排序、选择排序、自定义比较
     readTime: 20,
   },
@@ -8015,7 +8015,7 @@ int main() {
       explanation: '返回true表示第一个参数应该排在第二个参数前面'
     },
     prerequisites: [38, 35],
-    recommendedProblems: [44, 45],
+    recommendedProblems: [44, 45, 52], // 添加排队接水题目
     relatedKnowledge: [38, 63, 64], // 排序概念、vector、pair
     readTime: 20,
   },
