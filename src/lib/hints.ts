@@ -21,6 +21,10 @@ export interface ProblemHints {
   hints: [Hint, Hint, Hint]; // 固定三级提示
   relatedProblems?: number[]; // 推荐的跳板题目
   keyConcepts?: string[];     // 关键概念标签
+  videoLink?: {
+    bilibili?: string;        // B站视频BV号
+    title?: string;           // 视频标题
+  };
 }
 
 // 用户提示使用记录
@@ -218,6 +222,10 @@ const PROBLEM_HINTS_MAP: Record<number, ProblemHints> = {
     ],
     relatedProblems: [5, 6],
     keyConcepts: ['GCD', '欧几里得算法', '数论基础'],
+    videoLink: {
+      bilibili: 'BV1tV411W7Mz',
+      title: 'GCD最大公约数详解',
+    },
   },
 
   // 判断素数
@@ -248,6 +256,10 @@ const PROBLEM_HINTS_MAP: Record<number, ProblemHints> = {
     ],
     relatedProblems: [71, 72],
     keyConcepts: ['素数', '试除法', '数论'],
+    videoLink: {
+      bilibili: 'BV1VJ411t7bz',
+      title: '素数判断与筛法',
+    },
   },
 
   // 二分查找
@@ -278,6 +290,10 @@ const PROBLEM_HINTS_MAP: Record<number, ProblemHints> = {
     ],
     relatedProblems: [77, 78],
     keyConcepts: ['二分查找', '有序数组', '搜索'],
+    videoLink: {
+      bilibili: 'BV1d54y1q7k7',
+      title: '二分查找详解',
+    },
   },
 
   // N皇后问题
@@ -308,6 +324,10 @@ const PROBLEM_HINTS_MAP: Record<number, ProblemHints> = {
     ],
     relatedProblems: [33, 86],
     keyConcepts: ['DFS', '回溯', '状态压缩'],
+    videoLink: {
+      bilibili: 'BV1bK411s7Vn',
+      title: 'N皇后问题详解',
+    },
   },
 
   // 全排列
@@ -338,6 +358,10 @@ const PROBLEM_HINTS_MAP: Record<number, ProblemHints> = {
     ],
     relatedProblems: [32],
     keyConcepts: ['全排列', 'DFS', 'STL'],
+    videoLink: {
+      bilibili: 'BV1dx411U7TJ',
+      title: '全排列算法详解',
+    },
   },
 
   // 栈的应用 - 括号匹配
@@ -368,6 +392,10 @@ const PROBLEM_HINTS_MAP: Record<number, ProblemHints> = {
     ],
     relatedProblems: [36],
     keyConcepts: ['栈', '括号匹配', '数据结构'],
+    videoLink: {
+      bilibili: 'BV1eZ4y1p7Ae',
+      title: '栈的应用-括号匹配',
+    },
   },
 
   // 队列 - 约瑟夫问题
@@ -398,6 +426,10 @@ const PROBLEM_HINTS_MAP: Record<number, ProblemHints> = {
     ],
     relatedProblems: [35],
     keyConcepts: ['队列', '模拟', '数据结构'],
+    videoLink: {
+      bilibili: 'BV1FJ411p7CJ',
+      title: '约瑟夫问题详解',
+    },
   },
 };
 

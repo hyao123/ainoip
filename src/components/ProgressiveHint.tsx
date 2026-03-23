@@ -20,6 +20,8 @@ import {
   Lock,
   Unlock,
   RefreshCw,
+  Video,
+  ExternalLink,
 } from 'lucide-react';
 import {
   type ProblemHints,
@@ -347,6 +349,27 @@ export function ProgressiveHint({
                   </Badge>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* 视频教程链接 */}
+          {problemHints.videoLink?.bilibili && (
+            <div className="mt-4 pt-4 border-t">
+              <a
+                href={`https://www.bilibili.com/video/${problemHints.videoLink.bilibili}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-orange-400 text-white rounded-lg hover:from-pink-600 hover:to-orange-500 transition-all text-sm font-medium"
+              >
+                <Video className="h-4 w-4" />
+                观看视频教程
+                <ExternalLink className="h-3 w-3" />
+              </a>
+              {problemHints.videoLink.title && (
+                <span className="ml-3 text-sm text-muted-foreground">
+                  {problemHints.videoLink.title}
+                </span>
+              )}
             </div>
           )}
         </div>

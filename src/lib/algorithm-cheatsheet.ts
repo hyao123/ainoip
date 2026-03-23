@@ -15,6 +15,10 @@ export interface CheatSheetItem {
     problem: string;
     solution: string;
   };
+  videoLinks?: {
+    bilibili?: string; // B站视频BV号
+    title?: string;    // 视频标题
+  };
 }
 
 export interface CheatSheetCategory {
@@ -69,6 +73,10 @@ export const cheatSheetItems: CheatSheetItem[] = [
       problem: '对n个整数排序',
       solution: `sort(arr, arr + n); // C++ STL直接用`,
     },
+    videoLinks: {
+      bilibili: 'BV1at411T75N',
+      title: '快速排序算法详解',
+    },
   },
   {
     id: 'merge-sort',
@@ -107,6 +115,10 @@ long long cnt = 0;
 void merge(int l, int mid, int r) {
   // 合并时 a[i] > a[j] 则 cnt += mid - i + 1;
 }`,
+    },
+    videoLinks: {
+      bilibili: 'BV1Zh411S7Xb',
+      title: '归并排序与逆序对',
     },
   },
 
@@ -147,6 +159,10 @@ int lowerBound(int l, int r, int x) {
       problem: '在有序数组中找目标值',
       solution: `int pos = lower_bound(a, a + n, x) - a;`,
     },
+    videoLinks: {
+      bilibili: 'BV1d54y1q7k7',
+      title: '二分查找详解',
+    },
   },
   {
     id: 'binary-answer',
@@ -186,6 +202,10 @@ bool check(long long limit) {
   // 检查是否可以用limit分割
 }`,
     },
+    videoLinks: {
+      bilibili: 'BV1UK411o7HR',
+      title: '二分答案专题',
+    },
   },
 
   // ========== 动态规划 ==========
@@ -218,6 +238,10 @@ for (int i = 1; i <= n; i++) {
     example: {
       problem: '有n件物品，容量W的背包，求最大价值',
       solution: `dp[j] = max(dp[j], dp[j-w[i]] + v[i])`,
+    },
+    videoLinks: {
+      bilibili: 'BV1g7411o7A6',
+      title: '背包九讲-01背包',
     },
   },
   {
@@ -253,6 +277,10 @@ for (int i = 1; i <= n; i++)
   for (int j = w[i]; j <= W; j++)
     dp[j] += dp[j - w[i]];`,
     },
+    videoLinks: {
+      bilibili: 'BV1Fu4y1o7rU',
+      title: '背包九讲-完全背包',
+    },
   },
   {
     id: 'lis',
@@ -285,6 +313,10 @@ return dp.size();`,
       problem: '求序列的最长递增子序列长度',
       solution: `// dp[i] 存长度为i+1的LIS的最小结尾`,
     },
+    videoLinks: {
+      bilibili: 'BV1wg411u7Hd',
+      title: 'LIS最长递增子序列',
+    },
   },
   {
     id: 'lcs',
@@ -315,6 +347,10 @@ return dp.size();`,
     example: {
       problem: '求两个字符串的LCS长度',
       solution: `dp[i][j] = s[i]==t[j] ? dp[i-1][j-1]+1 : max(dp[i-1][j], dp[i][j-1])`,
+    },
+    videoLinks: {
+      bilibili: 'BV1fA411b7XB',
+      title: 'LCS最长公共子序列',
     },
   },
 
@@ -357,6 +393,10 @@ while (!pq.empty()) {
     example: {
       problem: '求起点到所有点的最短距离',
       solution: `// 用邻接表存图，优先队列优化`,
+    },
+    videoLinks: {
+      bilibili: 'BV1zz4y1m7et',
+      title: 'Dijkstra算法详解',
     },
   },
   {
@@ -404,6 +444,10 @@ while (!q.empty()) {
       problem: '判断图中是否有负环',
       solution: `// cnt[v] >= n 时存在负环`,
     },
+    videoLinks: {
+      bilibili: 'BV1hW411u7XU',
+      title: 'SPFA算法详解',
+    },
   },
   {
     id: 'mst-kruskal',
@@ -437,6 +481,10 @@ for (auto& e : edges) {
     example: {
       problem: '求连通图的最小生成树权值',
       solution: `// 按边权排序后贪心选取`,
+    },
+    videoLinks: {
+      bilibili: 'BV1Ks411575U',
+      title: '最小生成树Kruskal算法',
     },
   },
 
@@ -473,6 +521,10 @@ long long lcm(long long a, long long b) {
     example: {
       problem: '求a和b的最大公约数',
       solution: `return __gcd(a, b); // C++内置`,
+    },
+    videoLinks: {
+      bilibili: 'BV1tV411W7Mz',
+      title: 'GCD最大公约数',
     },
   },
   {
@@ -511,6 +563,10 @@ for (int i = 2; i <= n; i++) {
       problem: '求1到n的所有素数',
       solution: `// 欧拉筛O(n)时间复杂度`,
     },
+    videoLinks: {
+      bilibili: 'BV1VJ411t7bz',
+      title: '欧拉筛法求素数',
+    },
   },
   {
     id: 'fast-power',
@@ -548,6 +604,10 @@ for (int i = 2; i <= n; i++) {
       problem: '计算a^b mod m',
       solution: `// 快速幂模板`,
     },
+    videoLinks: {
+      bilibili: 'BV1ay4y1U7nZ',
+      title: '快速幂算法详解',
+    },
   },
 
   // ========== 数据结构 ==========
@@ -581,6 +641,10 @@ void pushDown(int node, int l, int r);`,
     example: {
       problem: '区间加、区间求和',
       solution: `// 线段树模板+lazy标记`,
+    },
+    videoLinks: {
+      bilibili: 'BV1cb411t7AM',
+      title: '线段树详解',
     },
   },
   {
@@ -617,6 +681,10 @@ int query(int x) {
       problem: '单点修改，区间求和',
       solution: `// 树状数组模板`,
     },
+    videoLinks: {
+      bilibili: 'BV1pE41197wG',
+      title: '树状数组详解',
+    },
   },
   {
     id: 'union-find',
@@ -651,6 +719,10 @@ bool same(int x, int y) {
     example: {
       problem: '判断两点是否连通',
       solution: `// 并查集模板`,
+    },
+    videoLinks: {
+      bilibili: 'BV1jv411a7LK',
+      title: '并查集详解',
     },
   },
 ];
