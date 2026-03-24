@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap, Settings, BookMarked, AlertTriangle } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap, Settings, BookMarked, AlertTriangle, Search } from 'lucide-react';
 import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -28,6 +28,9 @@ import { ProgressiveHint } from '@/components/ProgressiveHint';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { SuccessCelebration } from '@/components/SuccessCelebration';
 import { ProblemNavigation } from '@/components/ProblemNavigation';
+import { GlobalSearch } from '@/components/GlobalSearch';
+import { StatisticsDashboard } from '@/components/StatisticsDashboard';
+import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
 import type { TestCaseResult, EvaluateSummary } from '@/components/EvaluationResults';
 
 import { ProblemBankPage, mapDifficulty } from '@/components/ProblemBankPage';
@@ -35,6 +38,7 @@ import type { Problem as BankProblem, DifficultyLevel } from '@/lib/problems';
 import { getProblemById, problems as allProblems } from '@/lib/problems';
 import { getProblemHints, generateGenericHints, type ProblemHints, type HintLevel } from '@/lib/hints';
 import { addSubmission, getUserPointsAndHints, useHint, getProblemHintUsage } from '@/lib/user-learning-data';
+import { getKnowledgeById } from '@/lib/knowledge-map';
 
 // 测试用例类型
 interface TestCase {
@@ -2356,6 +2360,27 @@ export default function Home() {
   const [dailyHintsRemaining, setDailyHintsRemaining] = useState(5);
   const [usedHintLevels, setUsedHintLevels] = useState<HintLevel[]>([]);
   
+  // 全局搜索状态
+  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
+  
+  // 键盘快捷键
+  useKeyboardShortcut([
+    {
+      key: 'k',
+      metaKey: true,
+      callback: () => setShowGlobalSearch(true),
+      description: '全局搜索',
+    },
+    {
+      key: 'Escape',
+      callback: () => {
+        setShowGlobalSearch(false);
+        setShowShortcutsHelp(false);
+      },
+      description: '关闭弹窗',
+    },
+  ]);
+  
   // 根据 URL 参数设置当前视图
   useEffect(() => {
     const viewParam = searchParams.get('view');
@@ -2627,6 +2652,20 @@ export default function Home() {
         
         {/* 右侧工具栏 */}
         <div className="flex items-center gap-1">
+          {/* 全局搜索按钮 */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowGlobalSearch(true)}
+            className="h-8 px-3 gap-2 text-muted-foreground hover:text-foreground"
+            title="全局搜索 (⌘K)"
+          >
+            <Search className="h-4 w-4" />
+            <span className="hidden md:inline text-xs">搜索</span>
+            <kbd className="hidden md:inline-flex h-4 items-center gap-0.5 rounded border bg-muted px-1 font-mono text-[10px]">
+              ⌘K
+            </kbd>
+          </Button>
           <Button
             variant="ghost"
             size="sm"
@@ -2999,6 +3038,25 @@ export default function Home() {
       {showShortcutsHelp && (
         <ShortcutsHelp onClose={() => setShowShortcutsHelp(false)} />
       )}
+      
+      {/* 全局搜索 */}
+      <GlobalSearch
+        open={showGlobalSearch}
+        onOpenChange={setShowGlobalSearch}
+        onSelectProblem={(problem) => {
+          handleBankProblemSelect(problem);
+          setCurrentView('practice');
+        }}
+        onSelectKnowledge={(id) => {
+          const knowledge = getKnowledgeById(id);
+          if (knowledge) {
+            setInitialKnowledgeSlug(knowledge.slug);
+            setCurrentView('map');
+          }
+        }}
+        currentTab={currentView}
+        onNavigateTab={(tab) => setCurrentView(tab as typeof currentView)}
+      />
       
       {/* 成功庆祝动画 */}
       <SuccessCelebration 
