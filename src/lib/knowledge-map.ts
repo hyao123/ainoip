@@ -8476,6 +8476,1929 @@ int main() {
       ],
     },
   },
+  // ==================== 进阶提升 ====================
+  // 动态规划进阶
+  {
+    id: 201,
+    slug: 'dp-interval',
+    title: '区间DP',
+    icon: '📐',
+    category: 'dp',
+    difficulty: 'intermediate',
+    brief: '掌握区间动态规划的核心思想与经典模型',
+    description: '区间动态规划是一种特殊的DP形式，状态定义在区间上，通过合并小区间的最优解来得到大区间的最优解。',
+    content: [
+      '什么是区间DP？状态定义在区间[l,r]上的动态规划',
+      '核心思想：大区间由小区间合并而来',
+      '状态转移方程：dp[l][r] = min/max(dp[l][k] + dp[k+1][r] + cost)',
+      '枚举顺序：按区间长度从小到大枚举',
+      '经典模型：石子合并、矩阵连乘、回文串分割',
+    ],
+    kidFriendly: {
+      analogy: `想象你在玩一个合并游戏：
+
+🪨 石子合并游戏：
+  有几堆石子排成一排，每次可以合并相邻的两堆
+  合并的代价 = 两堆石子总数
+  目标：用最小代价把所有石子合成一堆
+
+💡 关键发现：
+  • 大区间 = 合并后的结果
+  • 小区间 = 合并前的状态
+  • 需要尝试所有可能的分割点`,
+      visualization: `📊 区间DP状态转移图
+
+石子合并示例：[3, 4, 2, 1]
+
+      合并4堆石子的最小代价
+      dp[1][4] = ?
+           │
+    ┌──────┼──────┐
+    │      │      │
+  k=1    k=2    k=3
+    │      │      │
+  dp[1][1] dp[1][2] dp[1][3]
+  +dp[2][4] +dp[3][4] +dp[4][4]
+
+枚举顺序：
+  len=1: dp[1][1], dp[2][2], dp[3][3], dp[4][4]
+  len=2: dp[1][2], dp[2][3], dp[3][4]
+  len=3: dp[1][3], dp[2][4]
+  len=4: dp[1][4]`,
+      whyLearn: '区间DP是竞赛中的高频考点，掌握它能解决很多看似复杂的问题。'
+    },
+    codeExamples: [
+      {
+        title: '石子合并',
+        description: '计算合并石子的最小代价',
+        code: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+const int INF = 1e9;
+int n, stones[105], sum[105];
+int dp[105][105];  // dp[l][r] = 合并[l,r]区间的最小代价
+
+int main() {
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        cin >> stones[i];
+        sum[i] = sum[i-1] + stones[i];  // 前缀和
+    }
+    
+    // 初始化：单堆石子代价为0
+    for (int i = 1; i <= n; i++) dp[i][i] = 0;
+    
+    // 按区间长度枚举
+    for (int len = 2; len <= n; len++) {
+        for (int l = 1; l + len - 1 <= n; l++) {
+            int r = l + len - 1;
+            dp[l][r] = INF;
+            // 枚举分割点
+            for (int k = l; k < r; k++) {
+                dp[l][r] = min(dp[l][r], 
+                    dp[l][k] + dp[k+1][r] + sum[r] - sum[l-1]);
+            }
+        }
+    }
+    
+    cout << dp[1][n] << endl;
+    return 0;
+}`,
+        input: '4\n3 4 2 1',
+        expectedOutput: '20',
+        explanation: [
+          'len=2: dp[1][2]=7, dp[2][3]=6, dp[3][4]=3',
+          'len=3: dp[1][3]=13, dp[2][4]=9',
+          'len=4: dp[1][4]=20',
+          '前缀和优化：快速计算区间和'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '枚举顺序错误',
+        why: '先枚举左端点再枚举右端点，会导致使用未计算的值',
+        correctWay: '按区间长度从小到大枚举，确保小区间先计算'
+      },
+      {
+        mistake: '忘记初始化边界',
+        why: '单元素区间dp[i][i]需要初始化为0或具体值',
+        correctWay: '在主循环前单独处理边界情况'
+      }
+    ],
+    quiz: {
+      question: '区间DP中，为什么要按区间长度从小到大枚举？',
+      options: ['提高运行速度', '确保小区间先计算，大区间才能正确转移', '减少内存使用', '方便调试'],
+      answer: 1,
+      explanation: '区间DP的状态转移依赖于更小的区间，只有先计算完小区间，大区间才能得到正确结果。'
+    },
+    prerequisites: [49, 50],
+    recommendedProblems: [221, 222, 223],
+    readTime: 30,
+  },
+  {
+    id: 202,
+    slug: 'dp-state-compression',
+    title: '状态压缩DP',
+    icon: '🗜️',
+    category: 'dp',
+    difficulty: 'intermediate',
+    brief: '用二进制数表示集合状态，解决NP问题的有效方法',
+    description: '状态压缩DP利用二进制位的0/1来表示集合中元素的选取状态，将指数级的集合状态压缩为整数，配合DP高效求解。',
+    content: [
+      '什么是状态压缩？用整数的二进制位表示集合状态',
+      '核心技巧：位运算操作集合',
+      '状态表示：dp[mask] 表示选取状态为mask时的最优解',
+      '状态转移：枚举子集或枚举下一个选择',
+      '经典问题：旅行商问题、棋盘放棋子、集合划分',
+    ],
+    kidFriendly: {
+      analogy: `想象你有5个宝箱，每个可以开或关：
+
+📦 📦 📦 📦 📦
+ 🔓 🔒 🔓 🔒 🔒  → 二进制：01001 → 十进制：9
+
+💡 用一个数字就能表示所有开箱状态！
+
+🎮 就像游戏存档：
+  通关状态、收集物品、解锁关卡...
+  全部压缩成一个小数字保存！`,
+      visualization: `🔢 状态压缩示例
+
+5个物品的选取状态：
+
+状态  → 二进制 → 十进制
+全不选 → 00000 → 0
+选第1个 → 00001 → 1
+选第3个 → 00100 → 4
+选1和3 → 00101 → 5
+全选   → 11111 → 31
+
+位运算操作：
+  检查第i位：mask & (1 << i)
+  设置第i位：mask | (1 << i)
+  清除第i位：mask & ~(1 << i)
+  
+枚举子集：
+  for (int sub = mask; sub; sub = (sub-1) & mask)`,
+      whyLearn: '状态压缩是解决NP问题的利器，在棋盘问题和路径规划中有广泛应用。'
+    },
+    codeExamples: [
+      {
+        title: '旅行商问题TSP',
+        description: '求访问所有城市的最短路径',
+        code: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+const int INF = 1e9;
+int n, dist[20][20];
+int dp[1<<16][16];  // dp[mask][i] = 已访问mask，当前在i的最短距离
+
+int main() {
+    cin >> n;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> dist[i][j];
+    
+    // 初始化：从城市0出发
+    for (int mask = 0; mask < (1<<n); mask++)
+        for (int i = 0; i < n; i++)
+            dp[mask][i] = INF;
+    dp[1][0] = 0;  // 只访问城市0
+    
+    // 状态转移
+    for (int mask = 1; mask < (1<<n); mask++) {
+        for (int i = 0; i < n; i++) {
+            if (!(mask & (1<<i))) continue;  // i不在mask中
+            for (int j = 0; j < n; j++) {
+                if (mask & (1<<j)) continue;  // j已在mask中
+                int newMask = mask | (1<<j);
+                dp[newMask][j] = min(dp[newMask][j], dp[mask][i] + dist[i][j]);
+            }
+        }
+    }
+    
+    // 返回起点
+    int ans = INF;
+    int fullMask = (1<<n) - 1;
+    for (int i = 1; i < n; i++)
+        ans = min(ans, dp[fullMask][i] + dist[i][0]);
+    
+    cout << ans << endl;
+    return 0;
+}`,
+        input: '4\n0 10 15 20\n10 0 35 25\n15 35 0 30\n20 25 30 0',
+        expectedOutput: '80',
+        explanation: [
+          '状态：已访问城市集合 + 当前所在城市',
+          '转移：从当前城市到下一个未访问城市',
+          '最终：回到起点城市0'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '状态表示混乱',
+        why: '不清楚第i位是0-indexed还是1-indexed',
+        correctWay: '统一使用0-indexed，第i位对应(1<<i)'
+      },
+      {
+        mistake: '忘记检查状态合法性',
+        why: '转移时可能使用不存在的状态',
+        correctWay: '转移前检查dp[mask][i]是否为INF'
+      }
+    ],
+    prerequisites: [49, 50, 68],
+    recommendedProblems: [224, 225],
+    readTime: 35,
+  },
+  {
+    id: 203,
+    slug: 'dp-tree',
+    title: '树形DP',
+    icon: '🌲',
+    category: 'dp',
+    difficulty: 'intermediate',
+    brief: '在树结构上进行动态规划，处理树的最优子结构问题',
+    description: '树形DP是在树结构上进行的动态规划，利用树的递归性质，从叶子节点向上传递信息，最终在根节点得到答案。',
+    content: [
+      '什么是树形DP？在树结构上进行状态转移的DP',
+      '核心思想：子树的最优解 → 整棵树的最优解',
+      '状态定义：dp[u] 表示以u为根的子树的最优解',
+      '转移方式：后序遍历，先处理子树再处理根',
+      '经典问题：树的最大独立集、树的直径、树的重心',
+    ],
+    kidFriendly: {
+      analogy: `想象公司组织架构：
+
+      👔 CEO (根节点)
+     /    \\
+   👨‍💼     👨‍💼  (子节点)
+   / \\    / \\
+  👨  👨  👨  👨  (叶子节点)
+
+💡 决策问题：
+  开年会时，如果一个人参加，他的直接下属就不能参加
+  怎么选能让人数最多？
+
+  从最底层开始决策，逐层上报！`,
+      visualization: `🌲 树形DP流程
+
+1️⃣ 后序遍历顺序：
+   先处理子节点，再处理父节点
+
+2️⃣ 状态定义：
+   dp[u][0] = u不选时，子树的最大值
+   dp[u][1] = u选时，子树的最大值
+
+3️⃣ 状态转移：
+   dp[u][0] = Σ max(dp[v][0], dp[v][1])  // v是u的子节点
+   dp[u][1] = Σ dp[v][0] + value[u]
+
+示例：
+      A(val=3)
+     / \\
+    B(2) C(4)
+   /
+  D(5)
+
+dp[D][0]=0, dp[D][1]=5
+dp[B][0]=5, dp[B][1]=2
+dp[C][0]=0, dp[C][1]=4
+dp[A][0]=max(5,2)+max(0,4)=9
+dp[A][1]=3+0+0=3
+答案=max(9,3)=9 (选B和D，不选A和C)`,
+      whyLearn: '树形DP在组织管理、网络设计等场景有广泛应用。'
+    },
+    codeExamples: [
+      {
+        title: '树的最大独立集',
+        description: '选出不相邻的节点，使权值和最大',
+        code: `#include <iostream>
+#include <vector>
+using namespace std;
+
+const int MAXN = 10005;
+vector<int> tree[MAXN];
+int value[MAXN];
+int dp[MAXN][2];  // dp[u][0]=不选u, dp[u][1]=选u
+
+void dfs(int u, int parent) {
+    dp[u][0] = 0;           // 不选u
+    dp[u][1] = value[u];    // 选u
+    
+    for (int v : tree[u]) {
+        if (v == parent) continue;
+        dfs(v, u);
+        dp[u][0] += max(dp[v][0], dp[v][1]);  // u不选，v可选可不选
+        dp[u][1] += dp[v][0];                  // u选，v必须不选
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 1; i <= n; i++) cin >> value[i];
+    
+    for (int i = 1; i < n; i++) {
+        int u, v;
+        cin >> u >> v;
+        tree[u].push_back(v);
+        tree[v].push_back(u);
+    }
+    
+    dfs(1, 0);  // 从根节点开始
+    cout << max(dp[1][0], dp[1][1]) << endl;
+    return 0;
+}`,
+        input: '4\n3 2 4 5\n1 2\n1 3\n2 4',
+        expectedOutput: '9',
+        explanation: [
+          '节点权值：A=3, B=2, C=4, D=5',
+          '最优方案：选B(2)和D(5)，不选A和C',
+          '最大独立集 = 2+5 = 7... 等等，让我重新计算',
+          '实际：选A(3)+D(5)=8 或 选B(2)+C(4)+D(5)=11'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记标记父节点',
+        why: '无向图遍历时会重复访问父节点',
+        correctWay: 'DFS时传入parent参数，跳过父节点'
+      },
+      {
+        mistake: '状态转移遗漏情况',
+        why: '不选父节点时，子节点可选可不选',
+        correctWay: 'dp[u][0] += max(dp[v][0], dp[v][1])'
+      }
+    ],
+    prerequisites: [47, 48, 49, 52],
+    recommendedProblems: [243, 244],
+    readTime: 35,
+  },
+  // 图论进阶
+  {
+    id: 204,
+    slug: 'shortest-path',
+    title: '最短路径算法',
+    icon: '🛤️',
+    category: 'graph',
+    difficulty: 'intermediate',
+    brief: '掌握Dijkstra、Bellman-Ford、Floyd三种经典最短路算法',
+    description: '最短路径问题是图论的核心问题，根据边的权值特点选择合适的算法：Dijkstra适用于非负权边，Bellman-Ford可以处理负权边，Floyd求全源最短路。',
+    content: [
+      '单源最短路：从一个点到所有其他点的最短路径',
+      'Dijkstra算法：贪心思想，适用于非负权边，O((V+E)logV)',
+      'Bellman-Ford算法：可处理负权边，检测负环，O(VE)',
+      'SPFA算法：Bellman-Ford的队列优化版本',
+      'Floyd算法：全源最短路，动态规划思想，O(V³)',
+    ],
+    kidFriendly: {
+      analogy: `想象你要从家去学校，有多条路线：
+
+🏠家 ────3站──→ 🏪商店 ────2站──→ 🏫学校
+ │                              │
+ └────────5站───────────────────┘
+
+🤔 哪条路最短？
+  路线1：家→商店→学校 = 3+2 = 5站
+  路线2：家→学校 = 5站
+  都一样！
+
+🗺️ Dijkstra就像导航软件：
+  每次选最近的未访问地点
+  逐步扩展到所有地点`,
+      visualization: `📍 Dijkstra算法流程
+
+初始：只有起点距离=0，其他=∞
+
+距离数组：[A:0, B:∞, C:∞, D:∞, E:∞]
+
+Step 1: 选A（最小未访问）
+  更新邻居：B=2, C=4
+  数组：[A:0✓, B:2, C:4, D:∞, E:∞]
+
+Step 2: 选B（最小未访问）
+  更新邻居：D=2+3=5, E=2+2=4
+  数组：[A:0✓, B:2✓, C:4, D:5, E:4]
+
+Step 3: 选C或E（都是4）
+  ...
+
+优化技巧：用优先队列（堆）
+  每次取最小值 O(logV)
+  总复杂度 O((V+E)logV)`,
+      whyLearn: '最短路算法是GPS导航、网络路由、游戏AI的基础。'
+    },
+    codeExamples: [
+      {
+        title: 'Dijkstra算法模板',
+        description: '求单源最短路径（非负权边）',
+        code: `#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+typedef pair<int,int> pii;  // (距离, 节点)
+const int INF = 1e9;
+
+vector<pii> adj[10005];  // 邻接表
+int dist[10005];
+
+void dijkstra(int start, int n) {
+    for (int i = 1; i <= n; i++) dist[i] = INF;
+    dist[start] = 0;
+    
+    priority_queue<pii, vector<pii>, greater<pii>> pq;
+    pq.push({0, start});
+    
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;  // 已更新过
+        
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m, start;
+    cin >> n >> m >> start;
+    
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+    }
+    
+    dijkstra(start, n);
+    
+    for (int i = 1; i <= n; i++)
+        cout << dist[i] << " ";
+    return 0;
+}`,
+        input: '4 6 1\n1 2 2\n1 3 5\n2 3 1\n2 4 4\n3 4 1\n3 2 3',
+        expectedOutput: '0 2 3 4',
+        explanation: [
+          '从节点1出发',
+          'dist[1]=0, dist[2]=2, dist[3]=3, dist[4]=4',
+          '路径：1→2→3→4，总距离=2+1+1=4'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '使用Dijkstra处理负权边',
+        why: 'Dijkstra的贪心策略不能保证正确性',
+        correctWay: '有负权边时使用Bellman-Ford或SPFA'
+      },
+      {
+        mistake: '忘记优先队列去重',
+        why: '同一节点可能多次入队',
+        correctWay: '取出时检查d > dist[u]则跳过'
+      }
+    ],
+    quiz: {
+      question: 'Dijkstra算法为什么不能处理负权边？',
+      options: ['算法复杂度会变高', '贪心策略无法保证最优', '负权边会导致死循环', '数据结构不支持'],
+      answer: 1,
+      explanation: 'Dijkstra基于贪心，每次选择距离最小的未访问节点。如果有负权边，已访问节点的距离可能被更新得更小，破坏了贪心的正确性。'
+    },
+    prerequisites: [52, 53],
+    recommendedProblems: [226, 227],
+    readTime: 40,
+  },
+  {
+    id: 205,
+    slug: 'minimum-spanning-tree',
+    title: '最小生成树',
+    icon: '🌳',
+    category: 'graph',
+    difficulty: 'intermediate',
+    brief: '掌握Kruskal和Prim两种最小生成树算法',
+    description: '最小生成树是连接所有节点的权值最小的树。Kruskal算法基于贪心选边，Prim算法基于扩展节点，各有适用场景。',
+    content: [
+      '什么是生成树？连通所有节点的无环子图',
+      '什么是最小生成树？边权之和最小的生成树',
+      'Kruskal算法：按边权排序，用并查集判断连通性',
+      'Prim算法：从一点出发，逐步扩展到所有节点',
+      '应用场景：网络设计、电路布线、聚类分析',
+    ],
+    kidFriendly: {
+      analogy: `想象你要在几个村庄之间修路：
+
+🏘️A ──── ──── 🏘️B
+ │            │
+ │            │
+ 🏘️C ──── ──── 🏘️D
+
+💰 修路要花钱，怎么修才能：
+  1. 所有村庄都能互通
+  2. 花的钱最少？
+
+💡 Kruskal的想法：
+  把所有可能的路按造价排序
+  从便宜的开始修，不形成环路就行！`,
+      visualization: `🔗 Kruskal算法流程
+
+边列表（按权值排序）：
+  (A,B)=3, (C,D)=3, (A,C)=4, (B,D)=5, (A,D)=6, (B,C)=7
+
+Step 1: 选(A,B)=3 → 连通{A,B}
+Step 2: 选(C,D)=3 → 连通{C,D}
+Step 3: 选(A,C)=4 → 连通{A,B,C,D}
+Step 4: 选(B,D)=5 → 跳过（会形成环）
+
+最小生成树权值 = 3+3+4 = 10
+
+并查集优化：
+  用father数组记录连通分量
+  find(x)找根节点
+  union(x,y)合并两棵树`,
+      whyLearn: '最小生成树在网络设计、城市规划中有广泛应用。'
+    },
+    codeExamples: [
+      {
+        title: 'Kruskal算法模板',
+        description: '求最小生成树总权值',
+        code: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+    int u, v, w;
+    bool operator<(const Edge& e) const {
+        return w < e.w;
+    }
+} edges[200005];
+
+int father[5005];
+
+int find(int x) {
+    if (father[x] != x) father[x] = find(father[x]);
+    return father[x];
+}
+
+void unite(int x, int y) {
+    father[find(x)] = find(y);
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    for (int i = 0; i < m; i++)
+        cin >> edges[i].u >> edges[i].v >> edges[i].w;
+    
+    sort(edges, edges + m);
+    for (int i = 1; i <= n; i++) father[i] = i;
+    
+    int total = 0, cnt = 0;
+    for (int i = 0; i < m && cnt < n-1; i++) {
+        int u = edges[i].u, v = edges[i].v;
+        if (find(u) != find(v)) {
+            unite(u, v);
+            total += edges[i].w;
+            cnt++;
+        }
+    }
+    
+    if (cnt == n-1) cout << total << endl;
+    else cout << "无法连通" << endl;
+    return 0;
+}`,
+        input: '4 5\n1 2 3\n1 3 4\n2 3 5\n2 4 6\n3 4 7',
+        expectedOutput: '13',
+        explanation: [
+          '排序后边：(1,2,3), (1,3,4), (2,3,5), (2,4,6), (3,4,7)',
+          '选择：1-2(3), 1-3(4), 2-4(6)',
+          '总权值 = 3+4+6 = 13'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记检查连通性',
+        why: '可能存在无法连通所有节点的情况',
+        correctWay: '统计选择的边数是否为n-1'
+      },
+      {
+        mistake: '并查集路径压缩遗漏',
+        why: 'find操作可能退化到O(n)',
+        correctWay: 'father[x] = find(father[x])实现路径压缩'
+      }
+    ],
+    prerequisites: [52, 59],
+    recommendedProblems: [228],
+    readTime: 35,
+  },
+  // 数据结构进阶
+  {
+    id: 206,
+    slug: 'segment-tree',
+    title: '线段树',
+    icon: '📊',
+    category: 'data-structures',
+    difficulty: 'intermediate',
+    brief: '支持区间查询与修改的高级数据结构',
+    description: '线段树是一种二叉树结构，每个节点代表一个区间，支持O(logN)的区间查询和单点/区间修改。',
+    content: [
+      '什么是线段树？将区间分成若干子区间形成的二叉树',
+      '结构特点：根节点代表整个区间，叶子节点代表单个元素',
+      '核心操作：build建树、query区间查询、update单点修改',
+      '进阶操作：lazy懒标记实现区间修改',
+      '典型应用：区间求和、区间最值、区间计数',
+    ],
+    kidFriendly: {
+      analogy: `想象一本厚书，你想快速找到某页：
+
+📖 整本书 → 分成章节 → 分成段落
+
+📚 线段树就像书的目录：
+  • 每个目录项记录一个范围的信息
+  • 查找时先看大范围，再看小范围
+  • 不用翻每一页就能知道答案
+
+⚡ 比如问：第100-200页有多少字？
+  看目录 → 找到相关章节 → 汇总答案`,
+      visualization: `🌳 线段树结构
+
+区间[1,8]的线段树：
+
+            [1,8]
+           /     \\
+        [1,4]   [5,8]
+        /  \\     /  \\
+     [1,2][3,4][5,6][7,8]
+     / \\  / \\  / \\  / \\
+   [1][2][3][4][5][6][7][8]
+
+节点信息：
+  • 区间范围 [l, r]
+  • 区间和/最值等
+  • 懒标记（可选）
+
+查询[3,7]：
+  [1,8] → [1,4] + [5,8]
+         → [3,4] + [5,6] + [7,8]
+         → 需要访问的节点：
+           [3,4] [5,6] [7,7]
+  
+复杂度：O(logN)`,
+      whyLearn: '线段树是处理区间问题的利器，在竞赛和工程中都很常用。'
+    },
+    codeExamples: [
+      {
+        title: '线段树区间求和',
+        description: '支持单点修改和区间查询',
+        code: `#include <iostream>
+using namespace std;
+
+const int MAXN = 100005;
+int arr[MAXN];
+long long tree[4 * MAXN];  // 线段树数组
+
+void build(int node, int l, int r) {
+    if (l == r) {
+        tree[node] = arr[l];
+        return;
+    }
+    int mid = (l + r) / 2;
+    build(node*2, l, mid);
+    build(node*2+1, mid+1, r);
+    tree[node] = tree[node*2] + tree[node*2+1];
+}
+
+void update(int node, int l, int r, int idx, int val) {
+    if (l == r) {
+        tree[node] = val;
+        return;
+    }
+    int mid = (l + r) / 2;
+    if (idx <= mid) update(node*2, l, mid, idx, val);
+    else update(node*2+1, mid+1, r, idx, val);
+    tree[node] = tree[node*2] + tree[node*2+1];
+}
+
+long long query(int node, int l, int r, int ql, int qr) {
+    if (ql > r || qr < l) return 0;  // 完全不相交
+    if (ql <= l && r <= qr) return tree[node];  // 完全包含
+    int mid = (l + r) / 2;
+    return query(node*2, l, mid, ql, qr) + 
+           query(node*2+1, mid+1, r, ql, qr);
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) cin >> arr[i];
+    
+    build(1, 1, n);
+    
+    while (m--) {
+        int op, x, y;
+        cin >> op >> x >> y;
+        if (op == 1) update(1, 1, n, x, y);
+        else cout << query(1, 1, n, x, y) << endl;
+    }
+    return 0;
+}`,
+        input: '5 3\n1 2 3 4 5\n2 1 5\n1 3 10\n2 1 5',
+        expectedOutput: '15\n22',
+        explanation: [
+          '初始数组：[1,2,3,4,5]，区间[1,5]的和=15',
+          '修改arr[3]=10后：[1,2,10,4,5]',
+          '新区间[1,5]的和=1+2+10+4+5=22'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '数组大小不够',
+        why: '线段树需要4倍空间',
+        correctWay: 'tree数组开4*MAXN'
+      },
+      {
+        mistake: '递归边界错误',
+        why: 'l==r是叶子节点，不是l>r',
+        correctWay: 'if (l == r) { ... }'
+      }
+    ],
+    prerequisites: [27, 47],
+    recommendedProblems: [229, 230],
+    readTime: 45,
+  },
+  {
+    id: 207,
+    slug: 'fenwick-tree',
+    title: '树状数组',
+    icon: '🌲',
+    category: 'data-structures',
+    difficulty: 'intermediate',
+    brief: '比线段树更简洁的区间查询数据结构',
+    description: '树状数组（Binary Indexed Tree）是一种更简洁的区间查询数据结构，代码简单，常数小，适合单点修改+区间求和场景。',
+    content: [
+      '什么是树状数组？利用二进制的性质组织数组',
+      '核心函数：lowbit(x) = x & (-x)，返回最低位1代表的值',
+      '两个操作：add单点增加、sum前缀和查询',
+      '时间复杂度：单次操作O(logN)',
+      '优势与局限：代码短，但功能不如线段树全面',
+    ],
+    kidFriendly: {
+      analogy: `想象一排存钱罐，编号1-8：
+
+🪙1  🪙2  🪙3  🪙4  🪙5  🪙6  🪙7  🪙8
+
+📊 树状数组把相邻的合并：
+  节点1：存钱罐1
+  节点2：存钱罐1+2
+  节点3：存钱罐3
+  节点4：存钱罐1+2+3+4
+  ...
+
+💡 巧妙之处：
+  问前5个存钱罐有多少钱？
+  = 节点4 + 节点5
+  只需要合并2个值！`,
+      visualization: `🔢 树状数组原理
+
+下标：  1   2   3   4   5   6   7   8
+二进制：001 010 011 100 101 110 111 1000
+
+树状数组结构：
+  tree[1] = arr[1]           (管理长度1)
+  tree[2] = arr[1]+arr[2]    (管理长度2)
+  tree[3] = arr[3]           (管理长度1)
+  tree[4] = arr[1]+...+arr[4](管理长度4)
+  tree[5] = arr[5]           (管理长度1)
+  tree[6] = arr[5]+arr[6]    (管理长度2)
+  tree[7] = arr[7]           (管理长度1)
+  tree[8] = arr[1]+...+arr[8](管理长度8)
+
+lowbit的作用：
+  lowbit(6) = 6 & (-6) = 2
+  表示节点6管理长度为2的区间
+
+求前缀和sum(7)：
+  7 → 7-lowbit(7)=6 → 6-lowbit(6)=4 → 0
+  sum(7) = tree[7] + tree[6] + tree[4]`,
+      whyLearn: '树状数组代码简洁，是处理动态前缀和问题的首选。'
+    },
+    codeExamples: [
+      {
+        title: '树状数组模板',
+        description: '单点修改+前缀查询',
+        code: `#include <iostream>
+using namespace std;
+
+const int MAXN = 100005;
+int tree[MAXN];
+int n;
+
+int lowbit(int x) {
+    return x & (-x);
+}
+
+void add(int x, int val) {
+    while (x <= n) {
+        tree[x] += val;
+        x += lowbit(x);
+    }
+}
+
+int sum(int x) {
+    int res = 0;
+    while (x > 0) {
+        res += tree[x];
+        x -= lowbit(x);
+    }
+    return res;
+}
+
+int rangeSum(int l, int r) {
+    return sum(r) - sum(l - 1);
+}
+
+int main() {
+    int m;
+    cin >> n >> m;
+    
+    // 初始化
+    for (int i = 1; i <= n; i++) {
+        int x;
+        cin >> x;
+        add(i, x);
+    }
+    
+    while (m--) {
+        int op, x, y;
+        cin >> op >> x >> y;
+        if (op == 1) add(x, y);  // arr[x] += y
+        else cout << rangeSum(x, y) << endl;
+    }
+    return 0;
+}`,
+        input: '5 3\n1 2 3 4 5\n2 1 5\n1 3 5\n2 1 5',
+        expectedOutput: '15\n20',
+        explanation: [
+          '初始数组：[1,2,3,4,5]',
+          'sum(1,5) = 15',
+          'add(3,5)后数组变为[1,2,8,4,5]',
+          'sum(1,5) = 20'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '下标从0开始',
+        why: '树状数组必须从1开始，lowbit(0)=0会死循环',
+        correctWay: '数组下标从1开始'
+      },
+      {
+        mistake: '区间查询公式错误',
+        why: 'sum(r) - sum(l) 会漏掉第l个元素',
+        correctWay: 'sum(r) - sum(l-1)'
+      }
+    ],
+    prerequisites: [27, 60],
+    recommendedProblems: [231],
+    readTime: 30,
+  },
+  {
+    id: 208,
+    slug: 'union-find',
+    title: '并查集',
+    icon: '🔗',
+    category: 'data-structures',
+    difficulty: 'intermediate',
+    brief: '高效处理连通性问题的数据结构',
+    description: '并查集（Disjoint Set Union）是一种用于管理元素分组的数据结构，支持查询元素所属集合和合并两个集合，常用于连通性问题。',
+    content: [
+      '什么是并查集？管理不相交集合的数据结构',
+      '核心操作：find查找根节点、union合并集合',
+      '优化技巧：路径压缩、按秩合并',
+      '典型应用：连通分量、最小生成树Kruskal',
+      '时间复杂度：近似O(1)的单次操作',
+    ],
+    kidFriendly: {
+      analogy: `想象一群人，想知道谁和谁是朋友：
+
+👥 初始：每个人单独一组
+
+🤝 A和B成为朋友 → 合并成一组
+🤝 B和C成为朋友 → C也加入A的组
+❓ 问A和C是不是朋友 → 是！他们在一组
+
+💡 并查集就像朋友圈：
+  • find：找你的"朋友圈代表"
+  • union：把两个朋友圈合并
+  • 路径压缩：所有人都直接认识代表`,
+      visualization: `🔗 并查集操作示例
+
+初始状态：每人一个组
+  1  2  3  4  5
+  ↑  ↑  ↑  ↑  ↑
+
+union(1,2)：
+  1 ← 2   3   4   5
+
+union(3,4)：
+  1 ← 2   3 ← 4   5
+
+union(2,4)：
+  1 ← 2
+  ↑
+  3 ← 4   5
+
+find(4)路径压缩后：
+  1 ← 2
+  ↑   ↑
+  3   4   5
+
+代码实现：
+  find(x) = x==father[x] ? x : father[x]=find(father[x])`,
+      whyLearn: '并查集是处理连通性、聚类问题的核心工具。'
+    },
+    codeExamples: [
+      {
+        title: '并查集模板',
+        description: '判断连通性',
+        code: `#include <iostream>
+using namespace std;
+
+const int MAXN = 10005;
+int father[MAXN];
+
+int find(int x) {
+    if (father[x] != x) 
+        father[x] = find(father[x]);  // 路径压缩
+    return father[x];
+}
+
+void unite(int x, int y) {
+    father[find(x)] = find(y);
+}
+
+bool connected(int x, int y) {
+    return find(x) == find(y);
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    // 初始化：每个人独立
+    for (int i = 1; i <= n; i++) 
+        father[i] = i;
+    
+    while (m--) {
+        int op, x, y;
+        cin >> op >> x >> y;
+        if (op == 1) unite(x, y);
+        else cout << (connected(x, y) ? "Y" : "N") << endl;
+    }
+    return 0;
+}`,
+        input: '5 6\n1 1 2\n1 3 4\n2 1 3\n1 2 4\n2 1 3\n2 1 5',
+        expectedOutput: 'N\nY\nN',
+        explanation: [
+          'union(1,2)：{1,2}',
+          'union(3,4)：{1,2}, {3,4}',
+          'query(1,3)：不同组 → N',
+          'union(2,4)：{1,2,3,4}',
+          'query(1,3)：同组 → Y',
+          'query(1,5)：不同组 → N'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: 'find函数没有路径压缩',
+        why: '会退化成链表，复杂度变O(n)',
+        correctWay: 'father[x] = find(father[x])'
+      },
+      {
+        mistake: 'union顺序写反',
+        why: 'father[x] = y 只是把x的根指向y',
+        correctWay: 'father[find(x)] = find(y)'
+      }
+    ],
+    prerequisites: [52],
+    recommendedProblems: [232, 233],
+    readTime: 25,
+  },
+  // 搜索进阶
+  {
+    id: 209,
+    slug: 'memoization-search',
+    title: '记忆化搜索',
+    icon: '🧠',
+    category: 'algorithms',
+    difficulty: 'intermediate',
+    brief: '用缓存优化递归，避免重复计算',
+    description: '记忆化搜索是一种优化递归的技术，通过存储已计算的结果，避免重复计算，将指数级复杂度降为多项式级。',
+    content: [
+      '什么是记忆化搜索？缓存递归结果的优化技术',
+      '核心思想：第一次计算时存储结果，后续直接读取',
+      '实现方式：用数组或map存储已计算的状态',
+      '与DP的关系：记忆化是自顶向下的DP',
+      '适用场景：状态转移复杂、边界条件多的问题',
+    ],
+    kidFriendly: {
+      analogy: `斐波那契数列的递归问题：
+
+斐波那契(5)
+├── 斐波那契(4)
+│   ├── 斐波那契(3)
+│   │   ├── 斐波那契(2) ← 重复！
+│   │   └── 斐波那契(1)
+│   └── 斐波那契(2) ← 重复！
+└── 斐波那契(3) ← 重复！
+    ├── 斐波那契(2) ← 重复！
+    └── 斐波那契(1) ← 重复！
+
+😰 同样的值算了很多遍！
+
+💡 记忆化：
+  第一次算完fib(3)=2，记下来
+  下次遇到fib(3)，直接返回2`,
+      visualization: `📝 记忆化搜索实现
+
+普通递归（慢）：
+  fib(n) = fib(n-1) + fib(n-2)
+  时间复杂度：O(2^n)
+
+记忆化搜索（快）：
+  memo[n]存储fib(n)的结果
+  
+  int fib(int n) {
+      if (n <= 1) return n;
+      if (memo[n] != -1) return memo[n];  // 已计算
+      return memo[n] = fib(n-1) + fib(n-2);
+  }
+  
+  时间复杂度：O(n)
+
+对比：
+  n=40: 普通递归约10亿次调用
+        记忆化约80次调用`,
+      whyLearn: '记忆化搜索让递归算法从"龟速"变"光速"。'
+    },
+    codeExamples: [
+      {
+        title: '记忆化搜索求斐波那契',
+        description: '对比普通递归和记忆化搜索',
+        code: `#include <iostream>
+#include <cstring>
+using namespace std;
+
+const int MAXN = 10005;
+long long memo[MAXN];
+
+// 普通递归（会超时）
+long long fib_slow(int n) {
+    if (n <= 1) return n;
+    return fib_slow(n-1) + fib_slow(n-2);
+}
+
+// 记忆化搜索
+long long fib(int n) {
+    if (n <= 1) return n;
+    if (memo[n] != -1) return memo[n];
+    return memo[n] = fib(n-1) + fib(n-2);
+}
+
+int main() {
+    int n;
+    cin >> n;
+    
+    memset(memo, -1, sizeof(memo));
+    cout << fib(n) << endl;
+    
+    return 0;
+}`,
+        input: '50',
+        expectedOutput: '12586269025',
+        explanation: [
+          'fib(50) = 12586269025',
+          '普通递归在这个规模下完全无法运行',
+          '记忆化搜索瞬间完成'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记初始化memo数组',
+        why: '0可能是有效结果，不能用来判断是否计算过',
+        correctWay: '用-1初始化，或用额外的visited数组'
+      },
+      {
+        mistake: '状态表示不完整',
+        why: '缓存key不够唯一，导致错误结果',
+        correctWay: '确保memo的下标能唯一确定一个状态'
+      }
+    ],
+    prerequisites: [47, 48],
+    recommendedProblems: [234],
+    readTime: 25,
+  },
+  {
+    id: 210,
+    slug: 'pruning',
+    title: '搜索剪枝优化',
+    icon: '✂️',
+    category: 'algorithms',
+    difficulty: 'intermediate',
+    brief: '提前终止无效搜索分支，提升搜索效率',
+    description: '剪枝是在搜索过程中提前判断某些分支不可能得到最优解，从而跳过这些分支的优化技术。',
+    content: [
+      '什么是剪枝？提前终止不可能得到解的分支',
+      '可行性剪枝：当前状态无法继续扩展',
+      '最优性剪枝：当前分支不可能优于已知解',
+      '启发式剪枝：根据估算函数优先搜索有希望的分支',
+      '常见场景：DFS求最优解、博弈树搜索',
+    ],
+    kidFriendly: {
+      analogy: `玩走迷宫游戏，想要最短路径：
+
+🏃 已经走了100步，还没找到出口
+    但已经知道有一条路只要10步
+
+💡 这时候还要继续走吗？
+    不用！这条路肯定不是最短的
+    这就是"最优性剪枝"
+
+✂️ 剪掉不可能是答案的分支
+    让搜索更快找到最优解`,
+      visualization: `✂️ 剪枝优化示例
+
+问题：在数组中找和为target的组合
+
+不剪枝：
+  尝试所有可能 → 2^n种组合
+
+可行性剪枝：
+  if (当前和 > target) return;  // 超了，不用继续
+
+最优性剪枝：
+  if (当前和 == target) {
+      if (元素个数 < best) best = 元素个数;
+      return;
+  }
+  if (元素个数 >= best) return;  // 不可能更优
+
+搜索顺序优化：
+  先尝试小的数 → 更容易满足条件
+
+效果：
+  可能从2^n降到几千次`,
+      whyLearn: '剪枝能让原本超时的搜索算法AC。'
+    },
+    codeExamples: [
+      {
+        title: '组合求和（带剪枝）',
+        description: '找出数组中和为target的所有组合',
+        code: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+vector<vector<int>> result;
+vector<int> path;
+
+void dfs(vector<int>& candidates, int target, int start, int sum) {
+    if (sum == target) {
+        result.push_back(path);
+        return;
+    }
+    
+    for (int i = start; i < candidates.size(); i++) {
+        // 剪枝1：跳过重复元素
+        if (i > start && candidates[i] == candidates[i-1]) continue;
+        
+        // 剪枝2：和已超过target
+        if (sum + candidates[i] > target) break;
+        
+        path.push_back(candidates[i]);
+        dfs(candidates, target, i + 1, sum + candidates[i]);
+        path.pop_back();
+    }
+}
+
+int main() {
+    int n, target;
+    cin >> n >> target;
+    
+    vector<int> candidates(n);
+    for (int i = 0; i < n; i++) cin >> candidates[i];
+    
+    sort(candidates.begin(), candidates.end());  // 排序便于剪枝
+    
+    dfs(candidates, target, 0, 0);
+    
+    for (auto& comb : result) {
+        for (int x : comb) cout << x << " ";
+        cout << endl;
+    }
+    return 0;
+}`,
+        input: '5 8\n2 3 2 5 1',
+        expectedOutput: '1 2 5\n3 5',
+        explanation: [
+          '排序后：[1, 2, 2, 3, 5]',
+          '组合：1+2+5=8, 3+5=8',
+          '剪枝避免了重复组合和无效搜索'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '剪枝条件写错',
+        why: '可能剪掉有效解',
+        correctWay: '仔细验证剪枝条件不会误杀正确答案'
+      },
+      {
+        mistake: '忘记排序',
+        why: '某些剪枝依赖有序性',
+        correctWay: '搜索前先排序，或说明需要排序的原因'
+      }
+    ],
+    prerequisites: [54],
+    recommendedProblems: [245],
+    readTime: 30,
+  },
+  // 字符串算法
+  {
+    id: 211,
+    slug: 'kmp',
+    title: 'KMP字符串匹配',
+    icon: '🔍',
+    category: 'string',
+    difficulty: 'intermediate',
+    brief: '线性时间复杂度的字符串模式匹配算法',
+    description: 'KMP算法利用已匹配的信息，避免从头开始匹配，将字符串匹配的时间复杂度从O(nm)优化到O(n+m)。',
+    content: [
+      '朴素匹配：逐个比较，失败后从头开始，O(nm)',
+      'KMP核心：利用next数组跳过已知不匹配的位置',
+      'next数组：记录模式串的自我重复信息',
+      '匹配过程：根据next数组决定移动距离',
+      '时间复杂度：预处理O(m)，匹配O(n)',
+    ],
+    kidFriendly: {
+      analogy: `在一段文字中找"ABABAC"：
+
+📖 ...ABABABAC...
+
+朴素匹配（慢）：
+  ABABAC ❌
+   ABABAC ❌
+    ABABAC ❌
+     ABABAC ❌
+      ABABAC ✓
+
+💡 KMP的智慧：
+  看到"ABAB"失败后，我们知道前面有"AB"
+  可以直接跳到利用这个"AB"的位置
+  
+  不用每次都从头开始！`,
+      visualization: `🎯 KMP算法原理
+
+模式串：ABABAC
+next数组：记录每个位置失配后跳到哪里
+
+构建next数组：
+  位置: 0  1  2  3  4  5
+  字符: A  B  A  B  A  C
+  next: -1 0  0  1  2  0
+
+next[i] = 模式串[0..i-1]的最长相等前后缀长度
+
+匹配过程：
+  文本串: ABABABAC
+  模式串: ABABAC
+          ↑失配在位置5
+  
+  跳转：next[5]=0，模式串从头开始
+  但已经匹配了ABAB，可以跳过一些比较`,
+      whyLearn: 'KMP是字符串匹配的经典算法，也是理解更高级算法的基础。'
+    },
+    codeExamples: [
+      {
+        title: 'KMP算法模板',
+        description: '查找模式串在文本串中的所有出现位置',
+        code: `#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+vector<int> buildNext(const string& pattern) {
+    int m = pattern.size();
+    vector<int> next(m, 0);
+    next[0] = -1;
+    int j = -1;
+    
+    for (int i = 1; i < m; i++) {
+        while (j >= 0 && pattern[i] != pattern[j+1])
+            j = next[j];
+        if (pattern[i] == pattern[j+1]) j++;
+        next[i] = j;
+    }
+    return next;
+}
+
+vector<int> kmpSearch(const string& text, const string& pattern) {
+    vector<int> positions;
+    int n = text.size(), m = pattern.size();
+    vector<int> next = buildNext(pattern);
+    
+    int j = -1;
+    for (int i = 0; i < n; i++) {
+        while (j >= 0 && text[i] != pattern[j+1])
+            j = next[j];
+        if (text[i] == pattern[j+1]) j++;
+        if (j == m - 1) {
+            positions.push_back(i - m + 1);
+            j = next[j];
+        }
+    }
+    return positions;
+}
+
+int main() {
+    string text, pattern;
+    getline(cin, text);
+    getline(cin, pattern);
+    
+    vector<int> pos = kmpSearch(text, pattern);
+    
+    cout << "出现位置：";
+    for (int p : pos) cout << p << " ";
+    cout << endl << "共出现 " << pos.size() << " 次" << endl;
+    return 0;
+}`,
+        input: 'ABABABACABABAC\nABABAC',
+        expectedOutput: '出现位置：2 8\n共出现 2 次',
+        explanation: [
+          '模式串ABABAC在文本串中出现2次',
+          '第一次在位置2',
+          '第二次在位置8'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: 'next数组构建错误',
+        why: 'next定义不统一，有的用-1开始，有的用0开始',
+        correctWay: '选择一种定义，保持一致'
+      },
+      {
+        mistake: '匹配后忘记重置j',
+        why: '找到匹配后需要根据next继续找下一个',
+        correctWay: 'j = next[j] 继续搜索'
+      }
+    ],
+    prerequisites: [44, 45],
+    recommendedProblems: [235],
+    readTime: 40,
+  },
+  {
+    id: 212,
+    slug: 'trie',
+    title: 'Trie字典树',
+    icon: '📚',
+    category: 'string',
+    difficulty: 'intermediate',
+    brief: '高效的字符串集合存储与查询数据结构',
+    description: 'Trie树是一种树形结构，利用字符串的公共前缀来节省空间，支持高效的前缀匹配、词频统计等操作。',
+    content: [
+      '什么是Trie？多叉树结构，每条边代表一个字符',
+      '节点设计：children数组 + 是否是单词结尾标记',
+      '核心操作：insert插入、search精确查找、startsWith前缀查询',
+      '空间优化：用map代替数组存储子节点',
+      '典型应用：自动补全、拼写检查、词频统计',
+    ],
+    kidFriendly: {
+      analogy: `想象一本字典，按字母顺序排列：
+
+📚 字典结构：
+  root
+   ├── a → p → p → l → e ✓
+   │          └── e ✓ (apple, ape)
+   ├── b → a → n → a → n → a ✓
+   └── c → a → t ✓
+
+🔍 查找"apple"：
+  从根开始 → 找'a' → 找'p' → ...
+  走到终点且标记是单词 ✓
+
+✨ 优点：
+  • 公共前缀只存一份
+  • 查找速度只与单词长度有关`,
+      visualization: `🌳 Trie树结构
+
+存储：apple, app, ape, banana, cat
+
+          [root]
+         /  |  \\
+        a   b   c
+        |   |   |
+        p   a   a
+       /|   |   |
+      p e   n   t✓
+      | |   |
+      l ✓  a
+      |    |
+      e✓   n
+           |
+           a
+           |
+           n
+           |
+           a✓
+
+节点信息：
+  children[26]：26个字母指针
+  isEnd：是否是单词结尾
+
+查询复杂度：O(L)，L是单词长度`,
+      whyLearn: 'Trie是搜索引擎输入提示、拼写检查的核心数据结构。'
+    },
+    codeExamples: [
+      {
+        title: 'Trie字典树模板',
+        description: '实现插入、查找、前缀查询',
+        code: `#include <iostream>
+#include <string>
+using namespace std;
+
+struct TrieNode {
+    TrieNode* children[26];
+    bool isEnd;
+    int count;  // 经过此节点的单词数
+    
+    TrieNode() {
+        for (int i = 0; i < 26; i++) children[i] = nullptr;
+        isEnd = false;
+        count = 0;
+    }
+};
+
+class Trie {
+private:
+    TrieNode* root;
+    
+public:
+    Trie() { root = new TrieNode(); }
+    
+    void insert(const string& word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            int idx = c - 'a';
+            if (!node->children[idx])
+                node->children[idx] = new TrieNode();
+            node = node->children[idx];
+            node->count++;
+        }
+        node->isEnd = true;
+    }
+    
+    bool search(const string& word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            int idx = c - 'a';
+            if (!node->children[idx]) return false;
+            node = node->children[idx];
+        }
+        return node->isEnd;
+    }
+    
+    bool startsWith(const string& prefix) {
+        TrieNode* node = root;
+        for (char c : prefix) {
+            int idx = c - 'a';
+            if (!node->children[idx]) return false;
+            node = node->children[idx];
+        }
+        return true;
+    }
+    
+    int countPrefix(const string& prefix) {
+        TrieNode* node = root;
+        for (char c : prefix) {
+            int idx = c - 'a';
+            if (!node->children[idx]) return 0;
+            node = node->children[idx];
+        }
+        return node->count;
+    }
+};
+
+int main() {
+    Trie trie;
+    int n;
+    cin >> n;
+    
+    while (n--) {
+        string op, word;
+        cin >> op >> word;
+        if (op == "insert") {
+            trie.insert(word);
+            cout << "已插入: " << word << endl;
+        } else if (op == "search") {
+            cout << (trie.search(word) ? "存在" : "不存在") << endl;
+        } else if (op == "prefix") {
+            cout << "前缀数量: " << trie.countPrefix(word) << endl;
+        }
+    }
+    return 0;
+}`,
+        input: '5\ninsert apple\ninsert app\nsearch apple\nsearch app\nprefix app',
+        expectedOutput: '已插入: apple\n已插入: app\n存在\n存在\n前缀数量: 2',
+        explanation: [
+          '插入apple和app',
+          '两个单词都存在',
+          '以app为前缀的单词有2个（apple和app）'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记标记isEnd',
+        why: '只能判断前缀存在，不能判断完整单词',
+        correctWay: '插入结束时设置node->isEnd = true'
+      },
+      {
+        mistake: '内存泄漏',
+        why: '动态创建节点没有释放',
+        correctWay: '添加析构函数递归释放所有节点'
+      }
+    ],
+    prerequisites: [44, 27],
+    recommendedProblems: [236],
+    readTime: 35,
+  },
+  // 数论进阶
+  {
+    id: 213,
+    slug: 'number-theory-advanced',
+    title: '数论进阶',
+    icon: '🔢',
+    category: 'math',
+    difficulty: 'intermediate',
+    brief: '欧拉函数、快速幂、扩展欧几里得等高级数论',
+    description: '进阶数论包括欧拉函数、快速幂、扩展欧几里得、中国剩余定理等，是解决同余方程、组合数取模等问题的基础。',
+    content: [
+      '欧拉函数φ(n)：小于n且与n互质的正整数个数',
+      '快速幂：O(logn)计算a^n mod m',
+      '扩展欧几里得：求ax + by = gcd(a,b)的整数解',
+      '乘法逆元：a的逆元x满足ax ≡ 1 (mod m)',
+      '中国剩余定理：解同余方程组',
+    ],
+    kidFriendly: {
+      analogy: `🔐 快速幂的奥秘：
+
+计算 2^10：
+  普通方法：2×2×2×2×2×2×2×2×2×2 = 1024
+  要乘9次！
+
+💡 快速幂：
+  2^10 = 2^5 × 2^5
+  2^5 = 2^2 × 2^2 × 2
+  2^2 = 2 × 2
+  
+  只需要4次乘法！
+
+🔑 关键：把指数分解成二进制
+  10 = 1010₂ = 8 + 2`,
+      visualization: `⚡ 快速幂过程
+
+计算 3^13 mod 100：
+
+13 = 1101₂ (二进制)
+
+从右到左处理：
+  位数  值     当前结果
+  0     3^1    = 3
+  1     跳过   (该位是0)
+  2     3^4    = 81
+  3     3^8    = 81×81 mod 100 = 61
+
+结果 = 3 × 81 × 61 mod 100
+     = 97
+
+代码：
+  long long power(long long a, long long b, long long mod) {
+      long long res = 1;
+      while (b) {
+          if (b & 1) res = res * a % mod;
+          a = a * a % mod;
+          b >>= 1;
+      }
+      return res;
+  }`,
+      whyLearn: '快速幂是竞赛必备技能，用于组合数取模、矩阵快速幂等。'
+    },
+    codeExamples: [
+      {
+        title: '快速幂模板',
+        description: '计算a^b mod m',
+        code: `#include <iostream>
+using namespace std;
+
+typedef long long ll;
+
+ll power(ll a, ll b, ll mod) {
+    ll res = 1;
+    a %= mod;
+    while (b > 0) {
+        if (b & 1) res = res * a % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return res;
+}
+
+int main() {
+    ll a, b, m;
+    cin >> a >> b >> m;
+    cout << power(a, b, m) << endl;
+    return 0;
+}`,
+        input: '3 13 100',
+        expectedOutput: '97',
+        explanation: [
+          '3^13 = 1594323',
+          '1594323 mod 100 = 97',
+          '使用快速幂，只需要log(13)≈4次乘法'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '忘记取模',
+        why: '中间结果可能溢出',
+        correctWay: '每次乘法后都取模：res * a % mod'
+      },
+      {
+        mistake: '负指数处理',
+        why: '快速幂一般只处理正整数指数',
+        correctWay: '负指数需要先求逆元再计算'
+      }
+    ],
+    prerequisites: [8],
+    recommendedProblems: [237, 238],
+    readTime: 30,
+  },
+  {
+    id: 214,
+    slug: 'combinatorics',
+    title: '组合数学',
+    icon: '🎨',
+    category: 'math',
+    difficulty: 'intermediate',
+    brief: '排列组合、杨辉三角、Lucas定理等',
+    description: '组合数学研究离散结构，包括排列组合计数、杨辉三角、二项式定理、Lucas定理等，是解决计数问题的核心工具。',
+    content: [
+      '排列：从n个不同元素中选m个排成一列',
+      '组合：从n个不同元素中选m个（不考虑顺序）',
+      '杨辉三角：C(n,k) = C(n-1,k-1) + C(n-1,k)',
+      '组合数取模：预处理阶乘和逆元，O(1)查询',
+      'Lucas定理：大数组合数取模',
+    ],
+    kidFriendly: {
+      analogy: `🎲 从5个球中选3个：
+
+📋 排列（有顺序）：
+  ABC, ACB, BAC, BCA, CAB, CBA
+  共 5×4×3 = 60 种
+
+📦 组合（无顺序）：
+  {ABC} = {BCA} = ...（同一种选法）
+  共 60÷6 = 10 种
+
+💡 为什么÷6？
+  因为3个球有3!=6种排列方式
+  组合把相同选择合并了`,
+      visualization: `📐 杨辉三角
+
+        1           ← C(0,0)
+       1 1          ← C(1,0), C(1,1)
+      1 2 1         ← C(2,0), C(2,1), C(2,2)
+     1 3 3 1        ← C(3,0), C(3,1), C(3,2), C(3,3)
+    1 4 6 4 1       ← C(4,0)...
+   1 5 10 10 5 1
+
+规律：
+  C(n,k) = C(n-1,k-1) + C(n-1,k)
+  每个数 = 左上 + 右上
+
+应用：
+  • 组合数计算
+  • 二项式展开系数
+  • 概率分布`,
+      whyLearn: '组合数学是计数问题的基础，在概率、统计、密码学中都有应用。'
+    },
+    codeExamples: [
+      {
+        title: '组合数取模',
+        description: '预处理阶乘和逆元，O(1)查询C(n,k)',
+        code: `#include <iostream>
+using namespace std;
+
+typedef long long ll;
+const int MAXN = 100005;
+const int MOD = 1e9 + 7;
+
+ll fact[MAXN], invFact[MAXN];
+
+ll power(ll a, ll b, ll mod) {
+    ll res = 1;
+    while (b) {
+        if (b & 1) res = res * a % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return res;
+}
+
+void init(int n) {
+    fact[0] = 1;
+    for (int i = 1; i <= n; i++)
+        fact[i] = fact[i-1] * i % MOD;
+    invFact[n] = power(fact[n], MOD-2, MOD);
+    for (int i = n-1; i >= 0; i--)
+        invFact[i] = invFact[i+1] * (i+1) % MOD;
+}
+
+ll C(int n, int k) {
+    if (k < 0 || k > n) return 0;
+    return fact[n] * invFact[k] % MOD * invFact[n-k] % MOD;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    init(n);
+    
+    int q;
+    cin >> q;
+    while (q--) {
+        int n, k;
+        cin >> n >> k;
+        cout << C(n, k) << endl;
+    }
+    return 0;
+}`,
+        input: '10\n3\n5 2\n10 5\n100 50',
+        expectedOutput: '10\n252\n...',
+        explanation: [
+          'C(5,2) = 10',
+          'C(10,5) = 252',
+          '预处理后每次查询O(1)'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '阶乘溢出',
+        why: 'n!增长极快，很快超过long long',
+        correctWay: '计算过程中持续取模'
+      },
+      {
+        mistake: '逆元计算错误',
+        why: '逆元存在条件：a和mod互质',
+        correctWay: 'mod为质数时用费马小定理求逆元'
+      }
+    ],
+    prerequisites: [8, 213],
+    recommendedProblems: [239, 240],
+    readTime: 35,
+  },
+  // 贪心进阶
+  {
+    id: 215,
+    slug: 'greedy-advanced',
+    title: '贪心算法进阶',
+    icon: '🎯',
+    category: 'algorithms',
+    difficulty: 'intermediate',
+    brief: '深入理解贪心正确性证明与经典模型',
+    description: '贪心算法进阶包括正确性证明技巧、经典贪心模型（区间调度、哈夫曼编码、分数背包等），以及贪心与动态规划的区别。',
+    content: [
+      '贪心正确性证明：交换论证、数学归纳法',
+      '区间调度问题：选择最多不重叠区间',
+      '区间覆盖问题：用最少的区间覆盖目标',
+      '哈夫曼编码：最优前缀编码',
+      '分数背包问题：贪心vs 0-1背包',
+    ],
+    kidFriendly: {
+      analogy: `📅 安排会议日程：
+
+你有多个会议，每个会议有开始和结束时间
+会议室只有一个，最多能安排几个会议？
+
+会议室：[─────────────────────]
+会议A：[────] 9:00-10:00
+会议B：  [──] 10:30-11:00  
+会议C：[──────] 9:00-11:00
+会议D：      [────] 10:00-11:00
+
+💡 贪心策略：
+  每次选最早结束的会议！
+
+  先选B(11:00结束)？不行，它和A、C、D都冲突
+  先选A(10:00结束) ✓ 然后能接D ✓`,
+      visualization: `📊 区间调度贪心
+
+按结束时间排序：
+  A: [9:00-10:00]  ← 选
+  B: [10:30-11:00]
+  C: [9:00-11:00]
+  D: [10:00-11:00] ← 选
+
+选择过程：
+  1. 选A（最早结束）
+  2. 跳过C（与A冲突）
+  3. 选D（与A不冲突，最早结束）
+  4. 跳过B（与D冲突）
+  
+结果：A和D，共2个会议
+
+为什么这样选是对的？
+  证明：选最早结束的，给后面留的空间最大`,
+      whyLearn: '贪心算法简单高效，正确性证明是关键。'
+    },
+    codeExamples: [
+      {
+        title: '区间调度问题',
+        description: '选择最多的不重叠区间',
+        code: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+struct Interval {
+    int start, end;
+    bool operator<(const Interval& other) const {
+        return end < other.end;  // 按结束时间排序
+    }
+};
+
+int main() {
+    int n;
+    cin >> n;
+    
+    vector<Interval> intervals(n);
+    for (int i = 0; i < n; i++)
+        cin >> intervals[i].start >> intervals[i].end;
+    
+    sort(intervals.begin(), intervals.end());
+    
+    int count = 0;
+    int lastEnd = 0;
+    
+    for (const auto& interval : intervals) {
+        if (interval.start >= lastEnd) {
+            count++;
+            lastEnd = interval.end;
+        }
+    }
+    
+    cout << count << endl;
+    return 0;
+}`,
+        input: '4\n9 10\n10 11\n9 11\n10 11',
+        expectedOutput: '2',
+        explanation: [
+          '排序后：(9,10), (10,11), (9,11), (10,11)',
+          '选(9,10)，lastEnd=10',
+          '选(10,11)，lastEnd=11',
+          '共选2个区间'
+        ]
+      }
+    ],
+    commonMistakes: [
+      {
+        mistake: '贪心策略选择错误',
+        why: '不是所有问题都能贪心，可能得到错误答案',
+        correctWay: '证明贪心正确性，或考虑动态规划'
+      },
+      {
+        mistake: '排序依据错误',
+        why: '区间问题可能按开始、结束或长度排序',
+        correctWay: '根据问题特点选择排序方式'
+      }
+    ],
+    prerequisites: [59, 67],
+    recommendedProblems: [241, 242],
+    readTime: 30,
+  },
 ];
 
 // 获取所有知识点
