@@ -9473,6 +9473,1278 @@ int main() {
     ],
     similarProblems: [43, 49],
   },
+  // ========== 新增题目 - 入门基础篇（ID 181-220）==========
+  // 语法基础类
+  {
+    id: 181,
+    title: 'Hello World',
+    titleEn: 'Hello World',
+    difficulty: 'beginner',
+    description: '输出 "Hello World" 到屏幕。',
+    inputFormat: '无输入。',
+    outputFormat: '输出 Hello World。',
+    sampleInput: '',
+    sampleOutput: 'Hello World',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 请在此处编写代码
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['输入输出', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '', expectedOutput: 'Hello World' },
+    ],
+  },
+  {
+    id: 182,
+    title: '输出字符画',
+    titleEn: 'Print ASCII Art',
+    difficulty: 'beginner',
+    description: '输出一个简单的字符画小房子。',
+    inputFormat: '无输入。',
+    outputFormat: '输出如下字符画：\n  /\\\n /  \\\n/____\\\n|    |\n|____|',
+    sampleInput: '',
+    sampleOutput: '  /\\\n /  \\\n/____\\\n|    |\n|____|',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 使用 cout 输出字符画
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['输入输出', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '', expectedOutput: '  /\\\n /  \\\n/____\\\n|    |\n|____|' },
+    ],
+  },
+  {
+    id: 183,
+    title: '计算加法',
+    titleEn: 'Addition',
+    difficulty: 'beginner',
+    description: '输入两个整数 a 和 b，输出它们的和。',
+    inputFormat: '一行两个整数 a 和 b，用空格分隔。',
+    outputFormat: '输出 a + b 的值。',
+    sampleInput: '3 5',
+    sampleOutput: '8',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int a, b;
+    cin >> a >> b;
+    
+    // 请在此处计算并输出结果
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['输入输出', '变量', '运算符', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 5', expectedOutput: '8' },
+      { id: 2, input: '100 200', expectedOutput: '300' },
+      { id: 3, input: '0 0', expectedOutput: '0' },
+    ],
+  },
+  {
+    id: 184,
+    title: '计算表达式',
+    titleEn: 'Calculate Expression',
+    difficulty: 'beginner',
+    description: '输入三个整数 a, b, c，计算并输出 (a + b) * c 的值。',
+    inputFormat: '一行三个整数 a, b, c，用空格分隔。',
+    outputFormat: '输出表达式 (a + b) * c 的值。',
+    sampleInput: '2 3 4',
+    sampleOutput: '20',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int a, b, c;
+    cin >> a >> b >> c;
+    
+    // 计算 (a + b) * c
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['输入输出', '变量', '运算符', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '2 3 4', expectedOutput: '20' },
+      { id: 2, input: '1 1 1', expectedOutput: '2' },
+      { id: 3, input: '5 10 2', expectedOutput: '30' },
+    ],
+  },
+  {
+    id: 185,
+    title: '整除与余数',
+    titleEn: 'Division and Modulo',
+    difficulty: 'beginner',
+    description: '输入两个正整数 a 和 b，输出 a 除以 b 的商和余数。',
+    inputFormat: '一行两个正整数 a 和 b，用空格分隔。',
+    outputFormat: '输出商和余数，用空格分隔。',
+    sampleInput: '17 5',
+    sampleOutput: '3 2',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int a, b;
+    cin >> a >> b;
+    
+    // 输出商和余数
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['输入输出', '运算符', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '17 5', expectedOutput: '3 2' },
+      { id: 2, input: '100 7', expectedOutput: '14 2' },
+      { id: 3, input: '5 5', expectedOutput: '1 0' },
+    ],
+  },
+  {
+    id: 186,
+    title: '判断奇偶',
+    titleEn: 'Odd or Even',
+    difficulty: 'beginner',
+    description: '输入一个整数 n，判断它是奇数还是偶数。如果是偶数输出 "even"，否则输出 "odd"。',
+    inputFormat: '一个整数 n。',
+    outputFormat: '输出 "even" 或 "odd"。',
+    sampleInput: '7',
+    sampleOutput: 'odd',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 判断奇偶并输出
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['条件语句', '运算符', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '7', expectedOutput: 'odd' },
+      { id: 2, input: '8', expectedOutput: 'even' },
+      { id: 3, input: '0', expectedOutput: 'even' },
+    ],
+  },
+  {
+    id: 187,
+    title: '比较大小',
+    titleEn: 'Compare Numbers',
+    difficulty: 'beginner',
+    description: '输入两个整数 a 和 b，输出较大的那个数。',
+    inputFormat: '一行两个整数 a 和 b。',
+    outputFormat: '输出较大的数。',
+    sampleInput: '3 7',
+    sampleOutput: '7',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int a, b;
+    cin >> a >> b;
+    
+    // 输出较大的数
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['条件语句', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 7', expectedOutput: '7' },
+      { id: 2, input: '10 5', expectedOutput: '10' },
+      { id: 3, input: '5 5', expectedOutput: '5' },
+    ],
+  },
+  {
+    id: 188,
+    title: '成绩等级',
+    titleEn: 'Grade Level',
+    difficulty: 'beginner',
+    description: '输入一个成绩 score（0-100），根据分数输出等级：90分以上为A，80-89分为B，70-79分为C，60-69分为D，60分以下为E。',
+    inputFormat: '一个整数 score（0 ≤ score ≤ 100）。',
+    outputFormat: '输出等级字母。',
+    sampleInput: '85',
+    sampleOutput: 'B',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int score;
+    cin >> score;
+    
+    // 根据分数输出等级
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['条件语句', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '85', expectedOutput: 'B' },
+      { id: 2, input: '95', expectedOutput: 'A' },
+      { id: 3, input: '55', expectedOutput: 'E' },
+      { id: 4, input: '60', expectedOutput: 'D' },
+    ],
+  },
+  {
+    id: 189,
+    title: '判断闰年',
+    titleEn: 'Leap Year',
+    difficulty: 'beginner',
+    description: '输入一个年份 year，判断是否是闰年。是闰年输出 "Yes"，否则输出 "No"。闰年规则：能被4整除但不能被100整除，或者能被400整除。',
+    inputFormat: '一个整数 year。',
+    outputFormat: '输出 "Yes" 或 "No"。',
+    sampleInput: '2020',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int year;
+    cin >> year;
+    
+    // 判断闰年
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['条件语句', '运算符', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '2020', expectedOutput: 'Yes' },
+      { id: 2, input: '1900', expectedOutput: 'No' },
+      { id: 3, input: '2000', expectedOutput: 'Yes' },
+      { id: 4, input: '2023', expectedOutput: 'No' },
+    ],
+  },
+  {
+    id: 190,
+    title: '三个数排序',
+    titleEn: 'Sort Three Numbers',
+    difficulty: 'beginner',
+    description: '输入三个整数，将它们从小到大排序后输出。',
+    inputFormat: '一行三个整数，用空格分隔。',
+    outputFormat: '输出排序后的三个数，用空格分隔。',
+    sampleInput: '3 1 2',
+    sampleOutput: '1 2 3',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int a, b, c;
+    cin >> a >> b >> c;
+    
+    // 将三个数排序输出
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['条件语句', '排序', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 1 2', expectedOutput: '1 2 3' },
+      { id: 2, input: '5 5 5', expectedOutput: '5 5 5' },
+      { id: 3, input: '9 3 6', expectedOutput: '3 6 9' },
+    ],
+  },
+  // 循环基础类
+  {
+    id: 191,
+    title: '输出1到N',
+    titleEn: 'Print 1 to N',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，输出从 1 到 N 的所有整数，每个数占一行。',
+    inputFormat: '一个正整数 N（1 ≤ N ≤ 100）。',
+    outputFormat: '输出 1 到 N，每行一个数。',
+    sampleInput: '5',
+    sampleOutput: '1\n2\n3\n4\n5',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 输出1到n
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5', expectedOutput: '1\n2\n3\n4\n5' },
+      { id: 2, input: '1', expectedOutput: '1' },
+    ],
+  },
+  {
+    id: 192,
+    title: '求和1到N',
+    titleEn: 'Sum 1 to N',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，计算 1 + 2 + 3 + ... + N 的和。',
+    inputFormat: '一个正整数 N（1 ≤ N ≤ 10000）。',
+    outputFormat: '输出求和结果。',
+    sampleInput: '100',
+    sampleOutput: '5050',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 计算1到n的和
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '100', expectedOutput: '5050' },
+      { id: 2, input: '10', expectedOutput: '55' },
+      { id: 3, input: '1', expectedOutput: '1' },
+    ],
+  },
+  {
+    id: 193,
+    title: '求N个数的和',
+    titleEn: 'Sum of N Numbers',
+    difficulty: 'beginner',
+    description: '第一行输入一个正整数 N，第二行输入 N 个整数，求这 N 个整数的和。',
+    inputFormat: '第一行一个正整数 N，第二行 N 个整数，用空格分隔。',
+    outputFormat: '输出这 N 个数的和。',
+    sampleInput: '5\n1 2 3 4 5',
+    sampleOutput: '15',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 输入n个数并求和
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '数组', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 2 3 4 5', expectedOutput: '15' },
+      { id: 2, input: '3\n10 20 30', expectedOutput: '60' },
+    ],
+  },
+  {
+    id: 194,
+    title: '求阶乘',
+    titleEn: 'Factorial',
+    difficulty: 'beginner',
+    description: '输入一个非负整数 N，求 N 的阶乘。N! = 1 × 2 × 3 × ... × N，特别地，0! = 1。',
+    inputFormat: '一个非负整数 N（0 ≤ N ≤ 20）。',
+    outputFormat: '输出 N! 的值。',
+    sampleInput: '5',
+    sampleOutput: '120',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 计算n的阶乘
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5', expectedOutput: '120' },
+      { id: 2, input: '0', expectedOutput: '1' },
+      { id: 3, input: '10', expectedOutput: '3628800' },
+    ],
+  },
+  {
+    id: 195,
+    title: '求N个数的最大值',
+    titleEn: 'Maximum of N Numbers',
+    difficulty: 'beginner',
+    description: '第一行输入一个正整数 N，第二行输入 N 个整数，找出其中的最大值。',
+    inputFormat: '第一行一个正整数 N（1 ≤ N ≤ 100），第二行 N 个整数。',
+    outputFormat: '输出最大值。',
+    sampleInput: '5\n3 7 2 9 1',
+    sampleOutput: '9',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 找出n个数中的最大值
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '数组', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n3 7 2 9 1', expectedOutput: '9' },
+      { id: 2, input: '3\n-5 -2 -8', expectedOutput: '-2' },
+    ],
+  },
+  {
+    id: 196,
+    title: '统计奇数个数',
+    titleEn: 'Count Odd Numbers',
+    difficulty: 'beginner',
+    description: '第一行输入一个正整数 N，第二行输入 N 个整数，统计其中奇数的个数。',
+    inputFormat: '第一行一个正整数 N，第二行 N 个整数。',
+    outputFormat: '输出奇数的个数。',
+    sampleInput: '5\n1 2 3 4 5',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 统计奇数个数
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '条件语句', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 2 3 4 5', expectedOutput: '3' },
+      { id: 2, input: '4\n2 4 6 8', expectedOutput: '0' },
+    ],
+  },
+  {
+    id: 197,
+    title: '求平均数',
+    titleEn: 'Average',
+    difficulty: 'beginner',
+    description: '第一行输入一个正整数 N，第二行输入 N 个整数，求这 N 个数的平均值，保留两位小数。',
+    inputFormat: '第一行一个正整数 N，第二行 N 个整数。',
+    outputFormat: '输出平均值，保留两位小数。',
+    sampleInput: '5\n1 2 3 4 5',
+    sampleOutput: '3.00',
+    defaultCode: `#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 计算平均值
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '数组', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 2 3 4 5', expectedOutput: '3.00' },
+      { id: 2, input: '3\n10 20 30', expectedOutput: '20.00' },
+    ],
+  },
+  {
+    id: 198,
+    title: '输出乘法表',
+    titleEn: 'Multiplication Table',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，输出 N × N 的乘法表。',
+    inputFormat: '一个正整数 N（1 ≤ N ≤ 9）。',
+    outputFormat: '输出 N 行，每行 N 个乘法算式，格式为 "i*j=k"，用空格分隔。',
+    sampleInput: '3',
+    sampleOutput: '1*1=1 1*2=2 1*3=3\n2*1=2 2*2=4 2*3=6\n3*1=3 3*2=6 3*3=9',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 输出乘法表
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '嵌套循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3', expectedOutput: '1*1=1 1*2=2 1*3=3\n2*1=2 2*2=4 2*3=6\n3*1=3 3*2=6 3*3=9' },
+      { id: 2, input: '1', expectedOutput: '1*1=1' },
+    ],
+  },
+  {
+    id: 199,
+    title: '输出图形',
+    titleEn: 'Print Pattern',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，输出一个 N 行的由星号组成的直角三角形。',
+    inputFormat: '一个正整数 N（1 ≤ N ≤ 20）。',
+    outputFormat: '输出 N 行，第 i 行有 i 个星号。',
+    sampleInput: '4',
+    sampleOutput: '*\n**\n***\n****',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 输出直角三角形
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '嵌套循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4', expectedOutput: '*\n**\n***\n****' },
+      { id: 2, input: '1', expectedOutput: '*' },
+    ],
+  },
+  {
+    id: 200,
+    title: '输出倒三角形',
+    titleEn: 'Print Inverted Triangle',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，输出一个 N 行的倒直角三角形。',
+    inputFormat: '一个正整数 N（1 ≤ N ≤ 20）。',
+    outputFormat: '输出 N 行，第 i 行有 (N-i+1) 个星号。',
+    sampleInput: '4',
+    sampleOutput: '****\n***\n**\n*',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 输出倒直角三角形
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['循环', '嵌套循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4', expectedOutput: '****\n***\n**\n*' },
+      { id: 2, input: '1', expectedOutput: '*' },
+    ],
+  },
+  // 数组基础类
+  {
+    id: 201,
+    title: '数组元素查找',
+    titleEn: 'Array Element Search',
+    difficulty: 'beginner',
+    description: '第一行输入一个正整数 N，第二行输入 N 个整数，第三行输入一个整数 x，判断 x 是否在数组中出现。如果出现，输出 "YES" 和第一次出现的位置（从1开始），否则输出 "NO"。',
+    inputFormat: '第一行 N，第二行 N 个整数，第三行一个整数 x。',
+    outputFormat: '如果找到输出 "YES 位置"，否则输出 "NO"。',
+    sampleInput: '5\n3 7 2 9 7\n7',
+    sampleOutput: 'YES 2',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    int arr[100];
+    // 输入数组并查找x
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['数组', '循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n3 7 2 9 7\n7', expectedOutput: 'YES 2' },
+      { id: 2, input: '3\n1 2 3\n5', expectedOutput: 'NO' },
+    ],
+  },
+  {
+    id: 202,
+    title: '数组反转',
+    titleEn: 'Reverse Array',
+    difficulty: 'beginner',
+    description: '第一行输入一个正整数 N，第二行输入 N 个整数，将数组反转后输出。',
+    inputFormat: '第一行 N，第二行 N 个整数。',
+    outputFormat: '输出反转后的数组，用空格分隔。',
+    sampleInput: '5\n1 2 3 4 5',
+    sampleOutput: '5 4 3 2 1',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    int arr[100];
+    // 输入数组，反转后输出
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['数组', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 2 3 4 5', expectedOutput: '5 4 3 2 1' },
+      { id: 2, input: '3\n10 20 30', expectedOutput: '30 20 10' },
+    ],
+  },
+  {
+    id: 203,
+    title: '数组计数',
+    titleEn: 'Array Count',
+    difficulty: 'beginner',
+    description: '第一行输入一个正整数 N，第二行输入 N 个整数（范围1-100），统计每个数出现的次数。',
+    inputFormat: '第一行 N，第二行 N 个整数（1-100）。',
+    outputFormat: '按数值从小到大输出每个数及其出现次数，只输出出现过的数。',
+    sampleInput: '10\n1 2 2 3 3 3 4 4 4 4',
+    sampleOutput: '1 1\n2 2\n3 3\n4 4',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    int count[101] = {0};
+    // 统计每个数出现的次数
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['数组', '哈希思想', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '10\n1 2 2 3 3 3 4 4 4 4', expectedOutput: '1 1\n2 2\n3 3\n4 4' },
+    ],
+  },
+  {
+    id: 204,
+    title: '数组去重',
+    titleEn: 'Array Deduplication',
+    difficulty: 'beginner',
+    description: '第一行输入一个正整数 N，第二行输入 N 个整数（已从小到大排序），输出去重后的数组。',
+    inputFormat: '第一行 N，第二行 N 个已排序的整数。',
+    outputFormat: '输出去重后的数组，用空格分隔。',
+    sampleInput: '10\n1 1 2 2 2 3 3 4 4 5',
+    sampleOutput: '1 2 3 4 5',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    int arr[100];
+    // 输入数组，去重后输出
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['数组', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '10\n1 1 2 2 2 3 3 4 4 5', expectedOutput: '1 2 3 4 5' },
+      { id: 2, input: '5\n1 2 3 4 5', expectedOutput: '1 2 3 4 5' },
+    ],
+  },
+  // 字符串基础类
+  {
+    id: 205,
+    title: '字符串长度',
+    titleEn: 'String Length',
+    difficulty: 'beginner',
+    description: '输入一个字符串，输出它的长度。',
+    inputFormat: '一个字符串（不含空格，长度不超过100）。',
+    outputFormat: '输出字符串长度。',
+    sampleInput: 'Hello',
+    sampleOutput: '5',
+    defaultCode: `#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char str[101];
+    cin >> str;
+    
+    // 输出字符串长度
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['字符串', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'Hello', expectedOutput: '5' },
+      { id: 2, input: 'a', expectedOutput: '1' },
+    ],
+  },
+  {
+    id: 206,
+    title: '字符串反转',
+    titleEn: 'Reverse String',
+    difficulty: 'beginner',
+    description: '输入一个字符串，将它反转后输出。',
+    inputFormat: '一个字符串（长度不超过100）。',
+    outputFormat: '输出反转后的字符串。',
+    sampleInput: 'Hello',
+    sampleOutput: 'olleH',
+    defaultCode: `#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char str[101];
+    cin >> str;
+    
+    // 反转字符串并输出
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['字符串', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'Hello', expectedOutput: 'olleH' },
+      { id: 2, input: 'abc', expectedOutput: 'cba' },
+    ],
+  },
+  {
+    id: 207,
+    title: '统计字符',
+    titleEn: 'Count Characters',
+    difficulty: 'beginner',
+    description: '输入一个字符串，统计其中的大写字母、小写字母、数字和其他字符的个数。',
+    inputFormat: '一个字符串（可能包含空格，长度不超过100）。',
+    outputFormat: '输出四个数字，分别表示大写字母、小写字母、数字和其他字符的个数。',
+    sampleInput: 'Hello World 123!',
+    sampleOutput: '2 8 3 3',
+    defaultCode: `#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char str[101];
+    cin.getline(str, 101);
+    
+    // 统计各类字符
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['字符串', '条件语句', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'Hello World 123!', expectedOutput: '2 8 3 3' },
+    ],
+  },
+  {
+    id: 208,
+    title: '大小写转换',
+    titleEn: 'Case Conversion',
+    difficulty: 'beginner',
+    description: '输入一个字符串，将其中的大写字母转为小写，小写字母转为大写，其他字符不变。',
+    inputFormat: '一个字符串（长度不超过100）。',
+    outputFormat: '输出转换后的字符串。',
+    sampleInput: 'Hello World!',
+    sampleOutput: 'hELLO wORLD!',
+    defaultCode: `#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char str[101];
+    cin >> str;
+    
+    // 大小写转换
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['字符串', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'Hello World!', expectedOutput: 'hELLO wORLD!' },
+      { id: 2, input: 'ABC', expectedOutput: 'abc' },
+    ],
+  },
+  {
+    id: 209,
+    title: '判断回文字符串',
+    titleEn: 'Palindrome String',
+    difficulty: 'beginner',
+    description: '输入一个字符串，判断它是否是回文字符串（正读和反读相同）。是则输出 "YES"，否则输出 "NO"。',
+    inputFormat: '一个字符串（长度不超过100）。',
+    outputFormat: '输出 "YES" 或 "NO"。',
+    sampleInput: 'abcba',
+    sampleOutput: 'YES',
+    defaultCode: `#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char str[101];
+    cin >> str;
+    
+    // 判断是否是回文
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['字符串', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'abcba', expectedOutput: 'YES' },
+      { id: 2, input: 'hello', expectedOutput: 'NO' },
+      { id: 3, input: 'a', expectedOutput: 'YES' },
+    ],
+  },
+  {
+    id: 210,
+    title: '字符串查找',
+    titleEn: 'String Search',
+    difficulty: 'beginner',
+    description: '输入两个字符串 s 和 t，判断 t 是否是 s 的子串。如果是，输出 "YES" 和第一次出现的位置（从1开始），否则输出 "NO"。',
+    inputFormat: '两行，第一行是字符串 s，第二行是字符串 t。',
+    outputFormat: '如果找到输出 "YES 位置"，否则输出 "NO"。',
+    sampleInput: 'Hello World\nWorld',
+    sampleOutput: 'YES 7',
+    defaultCode: `#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char s[101], t[101];
+    cin.getline(s, 101);
+    cin.getline(t, 101);
+    
+    // 查找子串
+    
+    return 0;
+}`,
+    category: '语法基础',
+    tags: ['字符串', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'Hello World\nWorld', expectedOutput: 'YES 7' },
+      { id: 2, input: 'Hello\nabc', expectedOutput: 'NO' },
+    ],
+  },
+  // 简单算法类
+  {
+    id: 211,
+    title: '判断质数',
+    titleEn: 'Prime Number',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，判断它是否是质数。是质数输出 "YES"，否则输出 "NO"。',
+    inputFormat: '一个正整数 N（2 ≤ N ≤ 10000）。',
+    outputFormat: '输出 "YES" 或 "NO"。',
+    sampleInput: '17',
+    sampleOutput: 'YES',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 判断质数
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数学', '质数', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '17', expectedOutput: 'YES' },
+      { id: 2, input: '4', expectedOutput: 'NO' },
+      { id: 3, input: '2', expectedOutput: 'YES' },
+    ],
+  },
+  {
+    id: 212,
+    title: '分解质因数',
+    titleEn: 'Prime Factorization',
+    difficulty: 'intermediate',
+    description: '输入一个正整数 N，将它分解质因数，按从小到大的顺序输出。',
+    inputFormat: '一个正整数 N（2 ≤ N ≤ 10000）。',
+    outputFormat: '输出质因数，用空格分隔。',
+    sampleInput: '12',
+    sampleOutput: '2 2 3',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 分解质因数
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数学', '质数', '基础'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '12', expectedOutput: '2 2 3' },
+      { id: 2, input: '7', expectedOutput: '7' },
+      { id: 3, input: '100', expectedOutput: '2 2 5 5' },
+    ],
+  },
+  {
+    id: 213,
+    title: '最大公约数',
+    titleEn: 'GCD',
+    difficulty: 'beginner',
+    description: '输入两个正整数 a 和 b，求它们的最大公约数。',
+    inputFormat: '一行两个正整数 a 和 b。',
+    outputFormat: '输出最大公约数。',
+    sampleInput: '12 18',
+    sampleOutput: '6',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int a, b;
+    cin >> a >> b;
+    
+    // 求最大公约数
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数学', 'GCD', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '12 18', expectedOutput: '6' },
+      { id: 2, input: '7 5', expectedOutput: '1' },
+      { id: 3, input: '100 25', expectedOutput: '25' },
+    ],
+  },
+  {
+    id: 214,
+    title: '最小公倍数',
+    titleEn: 'LCM',
+    difficulty: 'beginner',
+    description: '输入两个正整数 a 和 b，求它们的最小公倍数。',
+    inputFormat: '一行两个正整数 a 和 b。',
+    outputFormat: '输出最小公倍数。',
+    sampleInput: '12 18',
+    sampleOutput: '36',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int a, b;
+    cin >> a >> b;
+    
+    // 求最小公倍数
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数学', 'LCM', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '12 18', expectedOutput: '36' },
+      { id: 2, input: '7 5', expectedOutput: '35' },
+      { id: 3, input: '4 6', expectedOutput: '12' },
+    ],
+  },
+  {
+    id: 215,
+    title: '斐波那契数列',
+    titleEn: 'Fibonacci Sequence',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，输出斐波那契数列的第 N 项。斐波那契数列定义：F(1)=1, F(2)=1, F(n)=F(n-1)+F(n-2)。',
+    inputFormat: '一个正整数 N（1 ≤ N ≤ 40）。',
+    outputFormat: '输出第 N 项斐波那契数。',
+    sampleInput: '10',
+    sampleOutput: '55',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 输出第n项斐波那契数
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['递推', '动态规划', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '10', expectedOutput: '55' },
+      { id: 2, input: '1', expectedOutput: '1' },
+      { id: 3, input: '20', expectedOutput: '6765' },
+    ],
+  },
+  {
+    id: 216,
+    title: '水仙花数',
+    titleEn: 'Narcissistic Number',
+    difficulty: 'beginner',
+    description: '水仙花数是指一个三位数，其各位数字的立方和等于该数本身。输入一个三位数，判断是否是水仙花数。',
+    inputFormat: '一个三位数。',
+    outputFormat: '是水仙花数输出 "YES"，否则输出 "NO"。',
+    sampleInput: '153',
+    sampleOutput: 'YES',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 判断是否是水仙花数
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举', '数学', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '153', expectedOutput: 'YES' },
+      { id: 2, input: '370', expectedOutput: 'YES' },
+      { id: 3, input: '100', expectedOutput: 'NO' },
+    ],
+  },
+  {
+    id: 217,
+    title: '数字翻转',
+    titleEn: 'Number Reversal',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，将其各位数字翻转后输出。',
+    inputFormat: '一个正整数 N。',
+    outputFormat: '输出翻转后的数字。',
+    sampleInput: '12345',
+    sampleOutput: '54321',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    // 翻转数字
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数学', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '12345', expectedOutput: '54321' },
+      { id: 2, input: '1000', expectedOutput: '1' },
+      { id: 3, input: '5', expectedOutput: '5' },
+    ],
+  },
+  {
+    id: 218,
+    title: '统计数字位数',
+    titleEn: 'Count Digits',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，统计它的位数。',
+    inputFormat: '一个正整数 N（1 ≤ N ≤ 10^9）。',
+    outputFormat: '输出位数。',
+    sampleInput: '12345',
+    sampleOutput: '5',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    long long n;
+    cin >> n;
+    
+    // 统计位数
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数学', '循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '12345', expectedOutput: '5' },
+      { id: 2, input: '7', expectedOutput: '1' },
+      { id: 3, input: '1000000000', expectedOutput: '10' },
+    ],
+  },
+  {
+    id: 219,
+    title: '各位数字之和',
+    titleEn: 'Sum of Digits',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，计算其各位数字之和。',
+    inputFormat: '一个正整数 N。',
+    outputFormat: '输出各位数字之和。',
+    sampleInput: '12345',
+    sampleOutput: '15',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    long long n;
+    cin >> n;
+    
+    // 计算各位数字之和
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数学', '循环', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '12345', expectedOutput: '15' },
+      { id: 2, input: '999', expectedOutput: '27' },
+      { id: 3, input: '7', expectedOutput: '7' },
+    ],
+  },
+  {
+    id: 220,
+    title: '完全平方数',
+    titleEn: 'Perfect Square',
+    difficulty: 'beginner',
+    description: '输入一个正整数 N，判断它是否是完全平方数。是则输出 "YES"，否则输出 "NO"。',
+    inputFormat: '一个正整数 N（1 ≤ N ≤ 10^9）。',
+    outputFormat: '输出 "YES" 或 "NO"。',
+    sampleInput: '16',
+    sampleOutput: 'YES',
+    defaultCode: `#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main() {
+    long long n;
+    cin >> n;
+    
+    // 判断是否是完全平方数
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数学', '入门'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '16', expectedOutput: 'YES' },
+      { id: 2, input: '15', expectedOutput: 'NO' },
+      { id: 3, input: '1', expectedOutput: 'YES' },
+    ],
+  },
 ];
 
 // 获取所有分类
@@ -9493,35 +10765,47 @@ export function getAllTags(): string[] {
   return [...tags].sort();
 }
 
-// 标签分组配置
+// 标签分组配置 - 细化版
 export const tagGroups: Record<string, { name: string; tags: string[] }> = {
-  '基础': {
-    name: '基础',
-    tags: ['输入输出', '变量', '运算符', '条件语句', '循环', '数组', '字符串', '函数'],
+  '入门': {
+    name: '入门',
+    tags: ['入门'],
   },
-  '算法': {
-    name: '算法',
-    tags: ['递归', '排序', '二分查找', '枚举', '模拟', '贪心', '分治', '前缀和', '位运算'],
-  },
-  '搜索': {
-    name: '搜索',
-    tags: ['搜索-DFS', '搜索-BFS'],
-  },
-  '动态规划': {
-    name: '动态规划',
-    tags: ['动态规划', '背包问题', '区间DP', '树形DP'],
+  '基础语法': {
+    name: '基础语法',
+    tags: ['输入输出', '变量', '运算符', '条件语句', '循环', '嵌套循环', '函数'],
   },
   '数据结构': {
     name: '数据结构',
-    tags: ['栈', '队列', '堆', '哈希表', '并查集', '线段树', '树状数组'],
+    tags: ['数组', '字符串', '链表', '栈', '队列', '哈希表', '哈希思想', '树', '图', '堆', '并查集', '线段树', '树状数组'],
+  },
+  '基础算法': {
+    name: '基础算法',
+    tags: ['枚举', '模拟', '排序', '查找', '贪心', '前缀和', '差分', '位运算'],
+  },
+  '搜索': {
+    name: '搜索',
+    tags: ['搜索-DFS', '搜索-BFS', '回溯'],
+  },
+  '动态规划': {
+    name: '动态规划',
+    tags: ['动态规划', '递推', '背包问题', '区间DP', '树形DP'],
   },
   '图论': {
     name: '图论',
-    tags: ['图论-最短路', '图论-生成树'],
+    tags: ['图论', '图论-最短路', '图论-生成树', '拓扑排序'],
+  },
+  '字符串算法': {
+    name: '字符串算法',
+    tags: ['字符串匹配', '字符串哈希', 'KMP', 'Trie树'],
   },
   '数学': {
     name: '数学',
-    tags: ['数论-GCD', '数论-质数', '数论-快速幂'],
+    tags: ['数学', 'GCD', 'LCM', '质数', '数论-GCD', '数论-质数', '数论-快速幂', '组合数学'],
+  },
+  '高级技巧': {
+    name: '高级技巧',
+    tags: ['二分查找', '双指针', '滑动窗口', '分治', '递归'],
   },
 };
 
