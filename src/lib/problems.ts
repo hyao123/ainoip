@@ -7840,6 +7840,1639 @@ int main() {
     ],
     similarProblems: [132, 133],
   },
+  // ========== LeetCode 经典题目（第二轮）==========
+  {
+    id: 151,
+    title: 'LeetCode 3 - 无重复字符的最长子串',
+    titleEn: 'Longest Substring Without Repeating Characters',
+    difficulty: 'intermediate',
+    description: '给定一个字符串，找出其中不含有重复字符的最长子串的长度。',
+    inputFormat: '输入一个字符串。',
+    outputFormat: '输出最长无重复字符子串的长度。',
+    sampleInput: 'abcabcbb',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <map>
+using namespace std;
+
+int main() {
+    freopen("longestsubstr.in", "r", stdin);
+    freopen("longestsubstr.out", "w", stdout);
+    
+    string s;
+    cin >> s;
+    
+    map<char, int> lastPos;
+    int maxLen = 0, start = 0;
+    
+    for (int i = 0; i < s.length(); i++) {
+        if (lastPos.count(s[i]) && lastPos[s[i]] >= start) {
+            start = lastPos[s[i]] + 1;
+        }
+        lastPos[s[i]] = i;
+        maxLen = max(maxLen, i - start + 1);
+    }
+    
+    cout << maxLen << endl;
+    return 0;
+}`,
+    category: '字符串处理',
+    tags: ['字符串', '滑动窗口', '哈希表'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'abcabcbb', expectedOutput: '3' },
+      { id: 2, input: 'bbbbb', expectedOutput: '1' },
+      { id: 3, input: 'pwwkew', expectedOutput: '3' },
+    ],
+    similarProblems: [137, 145],
+  },
+  {
+    id: 152,
+    title: 'LeetCode 15 - 三数之和',
+    titleEn: '3Sum',
+    difficulty: 'intermediate',
+    description: '给定一个包含 n 个整数的数组，判断是否存在三个元素 a, b, c 使得 a + b + c = 0？找出所有满足条件的三元组。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出所有三元组，每组三个数用空格分隔，组间用换行分隔。',
+    sampleInput: '6\n-1 0 1 2 -1 -4',
+    sampleOutput: '-1 -1 2\n-1 0 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen('threesum.in', 'r', stdin);
+    freopen('threesum.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[100];
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    sort(a, a + n);
+    bool first = true;
+    
+    for (int i = 0; i < n - 2; i++) {
+        if (i > 0 && a[i] == a[i-1]) continue;
+        
+        int left = i + 1, right = n - 1;
+        while (left < right) {
+            int sum = a[i] + a[left] + a[right];
+            if (sum == 0) {
+                if (!first) cout << endl;
+                cout << a[i] << ' ' << a[left] << ' ' << a[right];
+                first = false;
+                
+                while (left < right && a[left] == a[left+1]) left++;
+                while (left < right && a[right] == a[right-1]) right--;
+                left++;
+                right--;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '双指针', '排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6\n-1 0 1 2 -1 -4', expectedOutput: '-1 -1 2\n-1 0 1' },
+    ],
+    similarProblems: [128, 1],
+  },
+  {
+    id: 153,
+    title: 'LeetCode 21 - 合并两个有序链表',
+    titleEn: 'Merge Two Sorted Lists',
+    difficulty: 'beginner',
+    description: '将两个升序链表合并为一个新的升序链表并返回。（用数组模拟）',
+    inputFormat: '第一行 n 和 m，第二行 n 个有序整数，第三行 m 个有序整数。',
+    outputFormat: '输出合并后的有序序列。',
+    sampleInput: '3 3\n1 2 4\n1 3 4',
+    sampleOutput: '1 1 2 3 4 4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('mergelist.in', 'r', stdin);
+    freopen('mergelist.out', 'w', stdout);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    int a[100], b[100], c[200];
+    for (int i = 0; i < n; i++) cin >> a[i];
+    for (int i = 0; i < m; i++) cin >> b[i];
+    
+    int i = 0, j = 0, k = 0;
+    while (i < n && j < m) {
+        if (a[i] <= b[j]) c[k++] = a[i++];
+        else c[k++] = b[j++];
+    }
+    while (i < n) c[k++] = a[i++];
+    while (j < m) c[k++] = b[j++];
+    
+    for (int x = 0; x < k; x++) {
+        if (x > 0) cout << ' ';
+        cout << c[x];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '链表', '双指针'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 3\n1 2 4\n1 3 4', expectedOutput: '1 1 2 3 4 4' },
+      { id: 2, input: '0 0', expectedOutput: '' },
+    ],
+    similarProblems: [132, 133],
+  },
+  {
+    id: 154,
+    title: 'LeetCode 46 - 全排列',
+    titleEn: 'Permutations',
+    difficulty: 'intermediate',
+    description: '给定一个不含重复数字的数组，返回其所有可能的全排列。',
+    inputFormat: '第一行 n，第二行 n 个不同的整数。',
+    outputFormat: '输出所有排列，每个排列一行。',
+    sampleInput: '3\n1 2 3',
+    sampleOutput: '1 2 3\n1 3 2\n2 1 3\n2 3 1\n3 1 2\n3 2 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int n;
+int a[10];
+bool used[10];
+int perm[10];
+
+void dfs(int depth) {
+    if (depth == n) {
+        for (int i = 0; i < n; i++) {
+            if (i > 0) cout << ' ';
+            cout << perm[i];
+        }
+        cout << endl;
+        return;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (!used[i]) {
+            used[i] = true;
+            perm[depth] = a[i];
+            dfs(depth + 1);
+            used[i] = false;
+        }
+    }
+}
+
+int main() {
+    freopen('permutations.in', 'r', stdin);
+    freopen('permutations.out', 'w', stdout);
+    
+    cin >> n;
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    dfs(0);
+    return 0;
+}`,
+    category: '搜索',
+    tags: ['搜索-DFS', '回溯', '排列组合'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n1 2 3', expectedOutput: '1 2 3\n1 3 2\n2 1 3\n2 3 1\n3 1 2\n3 2 1' },
+    ],
+    similarProblems: [67, 68],
+  },
+  {
+    id: 155,
+    title: 'LeetCode 78 - 子集',
+    titleEn: 'Subsets',
+    difficulty: 'intermediate',
+    description: '给定一组不含重复元素的整数数组，返回该数组所有可能的子集（幂集）。',
+    inputFormat: '第一行 n，第二行 n 个不同的整数。',
+    outputFormat: '输出所有子集，每个子集一行，元素用空格分隔。空集输出空行。',
+    sampleInput: '3\n1 2 3',
+    sampleOutput: '\n1\n2\n3\n1 2\n1 3\n2 3\n1 2 3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int n;
+int a[20];
+int subset[20];
+
+void dfs(int start, int depth) {
+    // 输出当前子集
+    for (int i = 0; i < depth; i++) {
+        if (i > 0) cout << ' ';
+        cout << subset[i];
+    }
+    cout << endl;
+    
+    // 继续添加元素
+    for (int i = start; i < n; i++) {
+        subset[depth] = a[i];
+        dfs(i + 1, depth + 1);
+    }
+}
+
+int main() {
+    freopen('subsets.in', 'r', stdin);
+    freopen('subsets.out', 'w', stdout);
+    
+    cin >> n;
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    dfs(0, 0);
+    return 0;
+}`,
+    category: '搜索',
+    tags: ['搜索-DFS', '回溯', '位运算'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n1 2 3', expectedOutput: '\n1\n2\n3\n1 2\n1 3\n2 3\n1 2 3' },
+    ],
+    similarProblems: [154, 156],
+  },
+  {
+    id: 156,
+    title: 'LeetCode 39 - 组合总和',
+    titleEn: 'Combination Sum',
+    difficulty: 'intermediate',
+    description: '给定一个无重复元素的数组 candidates 和一个目标数 target，找出 candidates 中所有可以使数字和为 target 的组合。candidates 中的数字可以无限制重复被选取。',
+    inputFormat: '第一行 n 和 target，第二行 n 个整数。',
+    outputFormat: '输出所有组合，每个组合一行。',
+    sampleInput: '3 7\n2 3 6 7',
+    sampleOutput: '2 2 3\n7',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int n, target;
+int a[100];
+int comb[100];
+
+void dfs(int start, int sum, int depth) {
+    if (sum == target) {
+        for (int i = 0; i < depth; i++) {
+            if (i > 0) cout << ' ';
+            cout << comb[i];
+        }
+        cout << endl;
+        return;
+    }
+    if (sum > target) return;
+    
+    for (int i = start; i < n; i++) {
+        comb[depth] = a[i];
+        dfs(i, sum + a[i], depth + 1);
+    }
+}
+
+int main() {
+    freopen('combsum.in', 'r', stdin);
+    freopen('combsum.out', 'w', stdout);
+    
+    cin >> n >> target;
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    sort(a, a + n);
+    dfs(0, 0, 0);
+    return 0;
+}`,
+    category: '搜索',
+    tags: ['搜索-DFS', '回溯', '剪枝'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 7\n2 3 7', expectedOutput: '2 2 3\n7' },
+    ],
+    similarProblems: [154, 155],
+  },
+  {
+    id: 157,
+    title: 'LeetCode 62 - 不同路径',
+    titleEn: 'Unique Paths',
+    difficulty: 'intermediate',
+    description: '一个机器人位于一个 m x n 网格的左上角，机器人每次只能向下或向右移动一步。问有多少条不同的路径到达右下角？',
+    inputFormat: '输入两个整数 m 和 n。',
+    outputFormat: '输出不同路径的数量。',
+    sampleInput: '3 7',
+    sampleOutput: '28',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('uniquepaths.in', 'r', stdin);
+    freopen('uniquepaths.out', 'w', stdout);
+    
+    int m, n;
+    cin >> m >> n;
+    
+    long long dp[105][105] = {0};
+    
+    // 初始化第一行和第一列
+    for (int i = 0; i < m; i++) dp[i][0] = 1;
+    for (int j = 0; j < n; j++) dp[0][j] = 1;
+    
+    // 动态规划
+    for (int i = 1; i < m; i++) {
+        for (int j = 1; j < n; j++) {
+            dp[i][j] = dp[i-1][j] + dp[i][j-1];
+        }
+    }
+    
+    cout << dp[m-1][n-1] << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数学', '组合'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 7', expectedOutput: '28' },
+      { id: 2, input: '3 2', expectedOutput: '3' },
+    ],
+    similarProblems: [130, 158],
+  },
+  {
+    id: 158,
+    title: 'LeetCode 64 - 最小路径和',
+    titleEn: 'Minimum Path Sum',
+    difficulty: 'intermediate',
+    description: '给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和最小。',
+    inputFormat: '第一行 m 和 n，接下来 m 行每行 n 个整数。',
+    outputFormat: '输出最小路径和。',
+    sampleInput: '3 3\n1 3 1\n1 5 1\n4 2 1',
+    sampleOutput: '7',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('minpathsum.in', 'r', stdin);
+    freopen('minpathsum.out', 'w', stdout);
+    
+    int m, n;
+    cin >> m >> n;
+    
+    int grid[105][105];
+    int dp[105][105];
+    
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> grid[i][j];
+        }
+    }
+    
+    dp[0][0] = grid[0][0];
+    for (int i = 1; i < m; i++) dp[i][0] = dp[i-1][0] + grid[i][0];
+    for (int j = 1; j < n; j++) dp[0][j] = dp[0][j-1] + grid[0][j];
+    
+    for (int i = 1; i < m; i++) {
+        for (int j = 1; j < n; j++) {
+            dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j];
+        }
+    }
+    
+    cout << dp[m-1][n-1] << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数组', '矩阵'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 3\n1 3 1\n1 5 1\n4 2 1', expectedOutput: '7' },
+    ],
+    similarProblems: [157, 131],
+  },
+  {
+    id: 159,
+    title: 'LeetCode 198 - 打家劫舍',
+    titleEn: 'House Robber',
+    difficulty: 'intermediate',
+    description: '给定一个代表每个房屋存放金额的非负整数数组，在不触动警报装置的情况下，能够偷窃到的最高金额。',
+    inputFormat: '第一行 n，第二行 n 个非负整数。',
+    outputFormat: '输出最高金额。',
+    sampleInput: '5\n1 2 3 1',
+    sampleOutput: '4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('robber.in', 'r', stdin);
+    freopen('robber.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[105];
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    if (n == 0) { cout << 0 << endl; return 0; }
+    if (n == 1) { cout << a[0] << endl; return 0; }
+    
+    int dp[105];
+    dp[0] = a[0];
+    dp[1] = max(a[0], a[1]);
+    
+    for (int i = 2; i < n; i++) {
+        dp[i] = max(dp[i-1], dp[i-2] + a[i]);
+    }
+    
+    cout << dp[n-1] << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n1 2 3 1', expectedOutput: '4' },
+      { id: 2, input: '5\n2 7 9 3 1', expectedOutput: '12' },
+    ],
+    similarProblems: [130, 138],
+  },
+  {
+    id: 160,
+    title: 'LeetCode 300 - 最长递增子序列',
+    titleEn: 'Longest Increasing Subsequence',
+    difficulty: 'intermediate',
+    description: '给定一个无序的整数数组，找到其中最长上升子序列的长度。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出最长递增子序列的长度。',
+    sampleInput: '8\n10 9 2 5 3 7 101 18',
+    sampleOutput: '4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('lis.in', 'r', stdin);
+    freopen('lis.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[2500];
+    int dp[2500];
+    
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    int maxLen = 0;
+    for (int i = 0; i < n; i++) {
+        dp[i] = 1;
+        for (int j = 0; j < i; j++) {
+            if (a[j] < a[i]) {
+                dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+        maxLen = max(maxLen, dp[i]);
+    }
+    
+    cout << maxLen << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '二分查找', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '8\n10 9 2 5 3 7 101 18', expectedOutput: '4' },
+      { id: 2, input: '6\n0 1 0 3 2 3', expectedOutput: '4' },
+    ],
+    similarProblems: [131, 157],
+  },
+  {
+    id: 161,
+    title: 'LeetCode 322 - 零钱兑换',
+    titleEn: 'Coin Change',
+    difficulty: 'intermediate',
+    description: '给定不同面额的硬币 coins 和一个总金额 amount，计算凑成总金额所需的最少的硬币个数。',
+    inputFormat: '第一行 n 和 amount，第二行 n 个整数表示硬币面额。',
+    outputFormat: '输出最少的硬币个数，无法凑出则输出 -1。',
+    sampleInput: '3 11\n1 2 5',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen('coinchange.in', 'r', stdin);
+    freopen('coinchange.out', 'w', stdout);
+    
+    int n, amount;
+    cin >> n >> amount;
+    
+    int coins[15];
+    for (int i = 0; i < n; i++) cin >> coins[i];
+    
+    int dp[10005];
+    for (int i = 0; i <= amount; i++) dp[i] = 10001;
+    dp[0] = 0;
+    
+    for (int i = 1; i <= amount; i++) {
+        for (int j = 0; j < n; j++) {
+            if (coins[j] <= i) {
+                dp[i] = min(dp[i], dp[i - coins[j]] + 1);
+            }
+        }
+    }
+    
+    cout << (dp[amount] > 10000 ? -1 : dp[amount]) << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '完全背包', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 11\n1 2 5', expectedOutput: '3' },
+      { id: 2, input: '1 2\n1', expectedOutput: '2' },
+    ],
+    similarProblems: [159, 130],
+  },
+  {
+    id: 162,
+    title: 'LeetCode 94 - 二叉树的中序遍历',
+    titleEn: 'Binary Tree Inorder Traversal',
+    difficulty: 'beginner',
+    description: '给定一个二叉树，返回它的中序遍历。（用层序遍历数组表示，null用-1表示）',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出中序遍历结果。',
+    sampleInput: '3\n1 -1 2',
+    sampleOutput: '1 3 2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int n;
+int tree[105];
+int result[105];
+int idx = 0;
+
+void inorder(int root) {
+    if (root >= n || tree[root] == -1) return;
+    
+    inorder(2 * root + 1);  // 左子树
+    result[idx++] = tree[root];  // 根
+    inorder(2 * root + 2);  // 右子树
+}
+
+int main() {
+    freopen('inorder.in', 'r', stdin);
+    freopen('inorder.out', 'w', stdout);
+    
+    cin >> n;
+    for (int i = 0; i < n; i++) cin >> tree[i];
+    
+    inorder(0);
+    
+    for (int i = 0; i < idx; i++) {
+        if (i > 0) cout << ' ';
+        cout << result[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '树', '递归'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n1 -1 2', expectedOutput: '1 2' },
+    ],
+    similarProblems: [134, 135],
+  },
+  {
+    id: 163,
+    title: 'LeetCode 102 - 二叉树的层序遍历',
+    titleEn: 'Binary Tree Level Order Traversal',
+    difficulty: 'beginner',
+    description: '给定一个二叉树，返回其按层序遍历得到的节点值。（逐层地，从左到右）',
+    inputFormat: '第一行 n，第二行 n 个整数（null用-1表示）。',
+    outputFormat: '输出层序遍历结果。',
+    sampleInput: '7\n3 9 20 -1 -1 15 7',
+    sampleOutput: '3 9 20 15 7',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <queue>
+using namespace std;
+
+int main() {
+    freopen('levelorder.in', 'r', stdin);
+    freopen('levelorder.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    int tree[105];
+    for (int i = 0; i < n; i++) cin >> tree[i];
+    
+    queue<int> q;
+    if (n > 0 && tree[0] != -1) q.push(0);
+    
+    bool first = true;
+    while (!q.empty()) {
+        int idx = q.front();
+        q.pop();
+        
+        if (!first) cout << ' ';
+        cout << tree[idx];
+        first = false;
+        
+        int left = 2 * idx + 1, right = 2 * idx + 2;
+        if (left < n && tree[left] != -1) q.push(left);
+        if (right < n && tree[right] != -1) q.push(right);
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '树', 'BFS'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '7\n3 9 20 -1 -1 15 7', expectedOutput: '3 9 20 15 7' },
+    ],
+    similarProblems: [162, 134],
+  },
+  {
+    id: 164,
+    title: 'LeetCode 101 - 对称二叉树',
+    titleEn: 'Symmetric Tree',
+    difficulty: 'beginner',
+    description: '给定一个二叉树，检查它是否是镜像对称的。',
+    inputFormat: '第一行 n，第二行 n 个整数（null用-1表示）。',
+    outputFormat: '是对称输出 "Yes"，否则输出 "No"。',
+    sampleInput: '7\n1 2 2 3 4 4 3',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int n;
+int tree[105];
+
+bool isSymmetric(int left, int right) {
+    if (left >= n && right >= n) return true;
+    if (left >= n || right >= n) return false;
+    if (tree[left] == -1 && tree[right] == -1) return true;
+    if (tree[left] == -1 || tree[right] == -1) return false;
+    if (tree[left] != tree[right]) return false;
+    
+    return isSymmetric(2*left+1, 2*right+2) && 
+           isSymmetric(2*left+2, 2*right+1);
+}
+
+int main() {
+    freopen('symmetric.in', 'r', stdin);
+    freopen('symmetric.out', 'w', stdout);
+    
+    cin >> n;
+    for (int i = 0; i < n; i++) cin >> tree[i];
+    
+    if (n == 0 || tree[0] == -1) {
+        cout << 'Yes' << endl;
+    } else {
+        cout << (isSymmetric(1, 2) ? 'Yes' : 'No') << endl;
+    }
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '树', '递归'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '7\n1 2 2 3 4 4 3', expectedOutput: 'Yes' },
+      { id: 2, input: '5\n1 2 2 -1 3', expectedOutput: 'No' },
+    ],
+    similarProblems: [134, 135],
+  },
+  {
+    id: 165,
+    title: 'LeetCode 118 - 杨辉三角',
+    titleEn: 'Pascal Triangle',
+    difficulty: 'beginner',
+    description: '给定一个非负整数 numRows，生成杨辉三角的前 numRows 行。',
+    inputFormat: '输入一个整数 numRows。',
+    outputFormat: '输出杨辉三角，每行一行。',
+    sampleInput: '5',
+    sampleOutput: '1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('pascal.in', 'r', stdin);
+    freopen('pascal.out', 'w', stdout);
+    
+    int numRows;
+    cin >> numRows;
+    
+    int triangle[35][35] = {0};
+    
+    for (int i = 0; i < numRows; i++) {
+        triangle[i][0] = 1;
+        for (int j = 1; j <= i; j++) {
+            triangle[i][j] = triangle[i-1][j-1] + triangle[i-1][j];
+        }
+    }
+    
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j <= i; j++) {
+            if (j > 0) cout << ' ';
+            cout << triangle[i][j];
+        }
+        cout << endl;
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '动态规划'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5', expectedOutput: '1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1' },
+    ],
+    similarProblems: [130, 157],
+  },
+  {
+    id: 166,
+    title: 'LeetCode 75 - 颜色分类',
+    titleEn: 'Sort Colors',
+    difficulty: 'intermediate',
+    description: '给定一个包含红色、白色和蓝色的数组，原地对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。这里用整数 0、1、2 分别表示红色、白色、蓝色。',
+    inputFormat: '第一行 n，第二行 n 个整数（0、1或2）。',
+    outputFormat: '输出排序后的数组。',
+    sampleInput: '6\n2 0 2 1 1 0',
+    sampleOutput: '0 0 1 1 2 2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('sortcolors.in', 'r', stdin);
+    freopen('sortcolors.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    int a[305];
+    int count[3] = {0};
+    
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        count[a[i]]++;
+    }
+    
+    int idx = 0;
+    for (int c = 0; c < 3; c++) {
+        for (int i = 0; i < count[c]; i++) {
+            if (idx > 0) cout << ' ';
+            cout << c;
+            idx++;
+        }
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '排序', '双指针'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6\n2 0 2 1 1 0', expectedOutput: '0 0 1 1 2 2' },
+    ],
+    similarProblems: [142, 140],
+  },
+  {
+    id: 167,
+    title: 'LeetCode 79 - 单词搜索',
+    titleEn: 'Word Search',
+    difficulty: 'intermediate',
+    description: '给定一个二维网格和一个单词，找出该单词是否存在于网格中。单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中"相邻"单元格是水平或垂直相邻的。',
+    inputFormat: '第一行 r 和 c，接下来 r 行每行 c 个字母，最后一行是要查找的单词。',
+    outputFormat: '存在输出 "Yes"，否则输出 "No"。',
+    sampleInput: '3 4\nABCE\nSFCS\nADEE\nABCCED',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+using namespace std;
+
+int r, c;
+char grid[10][10];
+bool visited[10][10];
+string word;
+
+bool dfs(int x, int y, int idx) {
+    if (idx == word.length()) return true;
+    if (x < 0 || x >= r || y < 0 || y >= c) return false;
+    if (visited[x][y] || grid[x][y] != word[idx]) return false;
+    
+    visited[x][y] = true;
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+    
+    for (int i = 0; i < 4; i++) {
+        if (dfs(x + dx[i], y + dy[i], idx + 1)) {
+            visited[x][y] = false;
+            return true;
+        }
+    }
+    visited[x][y] = false;
+    return false;
+}
+
+int main() {
+    freopen('wordsearch.in', 'r', stdin);
+    freopen('wordsearch.out', 'w', stdout);
+    
+    cin >> r >> c;
+    for (int i = 0; i < r; i++) cin >> grid[i];
+    cin >> word;
+    
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            if (dfs(i, j, 0)) {
+                cout << 'Yes' << endl;
+                return 0;
+            }
+        }
+    }
+    cout << 'No' << endl;
+    return 0;
+}`,
+    category: '搜索',
+    tags: ['搜索-DFS', '数组', '回溯'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3 4\nABCE\nSFCS\nADEE\nABCCED', expectedOutput: 'Yes' },
+    ],
+    similarProblems: [136, 149],
+  },
+  {
+    id: 168,
+    title: 'LeetCode 56 - 合并区间',
+    titleEn: 'Merge Intervals',
+    difficulty: 'intermediate',
+    description: '给出一个区间的集合，请合并所有重叠的区间。',
+    inputFormat: '第一行 n，接下来 n 行每行两个整数表示区间的起点和终点。',
+    outputFormat: '输出合并后的区间，每个区间一行。',
+    sampleInput: '4\n1 3\n2 6\n8 10\n15 18',
+    sampleOutput: '1 6\n8 10\n15 18',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int n;
+pair<int, int> intervals[10005];
+
+int main() {
+    freopen('mergeintervals.in', 'r', stdin);
+    freopen('mergeintervals.out', 'w', stdout);
+    
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> intervals[i].first >> intervals[i].second;
+    }
+    
+    sort(intervals, intervals + n);
+    
+    int start = intervals[0].first;
+    int end = intervals[0].second;
+    
+    for (int i = 1; i < n; i++) {
+        if (intervals[i].first <= end) {
+            end = max(end, intervals[i].second);
+        } else {
+            cout << start << ' ' << end << endl;
+            start = intervals[i].first;
+            end = intervals[i].second;
+        }
+    }
+    cout << start << ' ' << end << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '排序', '贪心'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n1 3\n2 6\n8 10\n15 18', expectedOutput: '1 6\n8 10\n15 18' },
+    ],
+    similarProblems: [152, 148],
+  },
+  {
+    id: 169,
+    title: 'LeetCode 48 - 旋转图像',
+    titleEn: 'Rotate Image',
+    difficulty: 'intermediate',
+    description: '给定一个 n × n 的二维矩阵表示一个图像，将图像顺时针旋转 90 度。',
+    inputFormat: '第一行 n，接下来 n 行每行 n 个整数。',
+    outputFormat: '输出旋转后的矩阵。',
+    sampleInput: '3\n1 2 3\n4 5 6\n7 8 9',
+    sampleOutput: '7 4 1\n8 5 2\n9 6 3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('rotateimage.in', 'r', stdin);
+    freopen('rotateimage.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    int matrix[25][25];
+    int rotated[25][25];
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> matrix[i][j];
+        }
+    }
+    
+    // 顺时针旋转90度：rotated[j][n-1-i] = matrix[i][j]
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            rotated[j][n-1-i] = matrix[i][j];
+        }
+    }
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (j > 0) cout << ' ';
+            cout << rotated[i][j];
+        }
+        cout << endl;
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '矩阵'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n1 2 3\n4 5 6\n7 8 9', expectedOutput: '7 4 1\n8 5 2\n9 6 3' },
+    ],
+    similarProblems: [166, 168],
+  },
+  {
+    id: 170,
+    title: 'LeetCode 215 - 数组中的第K个最大元素',
+    titleEn: 'Kth Largest Element in an Array',
+    difficulty: 'intermediate',
+    description: '在未排序的数组中找到第 k 个最大的元素。',
+    inputFormat: '第一行 n 和 k，第二行 n 个整数。',
+    outputFormat: '输出第 k 大的元素。',
+    sampleInput: '6 2\n3 2 1 5 6 4',
+    sampleOutput: '5',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen('kthlargest.in', 'r', stdin);
+    freopen('kthlargest.out', 'w', stdout);
+    
+    int n, k;
+    cin >> n >> k;
+    
+    int a[10005];
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    // 降序排序
+    sort(a, a + n, greater<int>());
+    
+    cout << a[k-1] << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '排序', '堆'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6 2\n3 2 1 5 6 4', expectedOutput: '5' },
+      { id: 2, input: '6 1\n3 2 1 5 6 4', expectedOutput: '6' },
+    ],
+    similarProblems: [140, 166],
+  },
+  {
+    id: 171,
+    title: 'LeetCode 394 - 字符串解码',
+    titleEn: 'Decode String',
+    difficulty: 'intermediate',
+    description: '给定一个经过编码的字符串，返回它解码后的字符串。编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。',
+    inputFormat: '输入一个编码字符串。',
+    outputFormat: '输出解码后的字符串。',
+    sampleInput: '3[a]2[bc]',
+    sampleOutput: 'aaabcbc',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <stack>
+using namespace std;
+
+int main() {
+    freopen('decodestr.in', 'r', stdin);
+    freopen('decodestr.out', 'w', stdout);
+    
+    string s;
+    cin >> s;
+    
+    stack<int> countStack;
+    stack<string> strStack;
+    string current;
+    int num = 0;
+    
+    for (char c : s) {
+        if (isdigit(c)) {
+            num = num * 10 + (c - '0');
+        } else if (c == '[') {
+            countStack.push(num);
+            strStack.push(current);
+            num = 0;
+            current = '';
+        } else if (c == ']') {
+            int repeat = countStack.top();
+            countStack.pop();
+            string prev = strStack.top();
+            strStack.pop();
+            for (int i = 0; i < repeat; i++) {
+                prev += current;
+            }
+            current = prev;
+        } else {
+            current += c;
+        }
+    }
+    
+    cout << current << endl;
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '栈', '字符串'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3[a]2[bc]', expectedOutput: 'aaabcbc' },
+      { id: 2, input: '3[a2[c]]', expectedOutput: 'accaccacc' },
+    ],
+    similarProblems: [129, 145],
+  },
+  {
+    id: 172,
+    title: 'LeetCode 232 - 用栈实现队列',
+    titleEn: 'Implement Queue using Stacks',
+    difficulty: 'beginner',
+    description: '使用两个栈实现一个队列。支持 push、pop、peek、empty 操作。',
+    inputFormat: '第一行 n 表示操作数，接下来 n 行每行一个操作：push x / pop / peek / empty。',
+    outputFormat: '对于 pop 和 peek 操作，输出对应值；对于 empty，输出 true/false。',
+    sampleInput: '5\npush 1\npush 2\npeek\npop\nempty',
+    sampleOutput: '1\n1\nfalse',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <stack>
+#include <string>
+using namespace std;
+
+int main() {
+    freopen('queuebystack.in', 'r', stdin);
+    freopen('queuebystack.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    stack<int> inStack, outStack;
+    
+    while (n--) {
+        string op;
+        cin >> op;
+        
+        if (op == 'push') {
+            int x;
+            cin >> x;
+            inStack.push(x);
+        } else {
+            if (outStack.empty()) {
+                while (!inStack.empty()) {
+                    outStack.push(inStack.top());
+                    inStack.pop();
+                }
+            }
+            
+            if (op == 'pop') {
+                cout << outStack.top() << endl;
+                outStack.pop();
+            } else if (op == 'peek') {
+                cout << outStack.top() << endl;
+            } else { // empty
+                cout << (outStack.empty() && inStack.empty() ? 'true' : 'false') << endl;
+            }
+        }
+    }
+    return 0;
+}`,
+    category: '数据结构',
+    tags: ['数据结构', '栈', '队列'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\npush 1\npush 2\npeek\npop\nempty', expectedOutput: '1\n1\nfalse' },
+    ],
+    similarProblems: [129, 60],
+  },
+  {
+    id: 173,
+    title: 'LeetCode 279 - 完全平方数',
+    titleEn: 'Perfect Squares',
+    difficulty: 'intermediate',
+    description: '给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, ...）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少。',
+    inputFormat: '输入一个正整数 n。',
+    outputFormat: '输出最少的完全平方数个数。',
+    sampleInput: '12',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <cmath>
+using namespace std;
+
+int main() {
+    freopen('squares.in', 'r', stdin);
+    freopen('squares.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    int dp[10005];
+    dp[0] = 0;
+    
+    for (int i = 1; i <= n; i++) {
+        dp[i] = i;  // 最坏情况：全是1
+        for (int j = 1; j * j <= i; j++) {
+            dp[i] = min(dp[i], dp[i - j*j] + 1);
+        }
+    }
+    
+    cout << dp[n] << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数学', '完全背包'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '12', expectedOutput: '3' },
+      { id: 2, input: '13', expectedOutput: '2' },
+    ],
+    similarProblems: [161, 130],
+  },
+  {
+    id: 174,
+    title: 'LeetCode 139 - 单词拆分',
+    titleEn: 'Word Break',
+    difficulty: 'intermediate',
+    description: '给定一个非空字符串 s 和一个包含非空单词列表的字典，判断 s 是否可以被空格拆分为一个或多个字典中的单词。',
+    inputFormat: '第一行字符串 s，第二行 n，第三行 n 个单词。',
+    outputFormat: '能拆分输出 "Yes"，否则输出 "No"。',
+    sampleInput: 'leetcode\n2\nleet code',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <set>
+#include <vector>
+using namespace std;
+
+int main() {
+    freopen('wordbreak.in', 'r', stdin);
+    freopen('wordbreak.out', 'w', stdout);
+    
+    string s;
+    cin >> s;
+    
+    int n;
+    cin >> n;
+    
+    set<string> dict;
+    for (int i = 0; i < n; i++) {
+        string word;
+        cin >> word;
+        dict.insert(word);
+    }
+    
+    int len = s.length();
+    vector<bool> dp(len + 1, false);
+    dp[0] = true;
+    
+    for (int i = 1; i <= len; i++) {
+        for (int j = 0; j < i; j++) {
+            if (dp[j] && dict.count(s.substr(j, i - j))) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+    
+    cout << (dp[len] ? 'Yes' : 'No') << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '字符串', '字典树'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'leetcode\n2\nleet code', expectedOutput: 'Yes' },
+    ],
+    similarProblems: [167, 151],
+  },
+  {
+    id: 175,
+    title: 'LeetCode 1143 - 最长公共子序列',
+    titleEn: 'Longest Common Subsequence',
+    difficulty: 'intermediate',
+    description: '给定两个字符串 text1 和 text2，返回这两个字符串的最长公共子序列的长度。',
+    inputFormat: '第一行 text1，第二行 text2。',
+    outputFormat: '输出最长公共子序列的长度。',
+    sampleInput: 'abcde\nace',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen('lcs.in', 'r', stdin);
+    freopen('lcs.out', 'w', stdout);
+    
+    string s1, s2;
+    cin >> s1 >> s2;
+    
+    int m = s1.length(), n = s2.length();
+    int dp[1005][1005] = {0};
+    
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (s1[i-1] == s2[j-1]) {
+                dp[i][j] = dp[i-1][j-1] + 1;
+            } else {
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            }
+        }
+    }
+    
+    cout << dp[m][n] << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '字符串', 'LCS'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'abcde\nace', expectedOutput: '3' },
+      { id: 2, input: 'abc\nabc', expectedOutput: '3' },
+    ],
+    similarProblems: [160, 151],
+  },
+  {
+    id: 176,
+    title: 'LeetCode 49 - 字母异位词分组',
+    titleEn: 'Group Anagrams',
+    difficulty: 'intermediate',
+    description: '给定一个字符串数组，将字母异位词（由相同字母重排列形成的单词）分组在一起。',
+    inputFormat: '第一行 n，第二行 n 个字符串。',
+    outputFormat: '输出分组后的结果，每组一行。',
+    sampleInput: '6\neat tea tan ate nat bat',
+    sampleOutput: 'eat tea ate\ntan nat\nbat',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <string>
+#include <map>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen('anagrams.in', 'r', stdin);
+    freopen('anagrams.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    map<string, vector<string>> groups;
+    
+    for (int i = 0; i < n; i++) {
+        string word;
+        cin >> word;
+        
+        string key = word;
+        sort(key.begin(), key.end());
+        groups[key].push_back(word);
+    }
+    
+    bool firstGroup = true;
+    for (auto& [key, words] : groups) {
+        if (!firstGroup) cout << endl;
+        for (int i = 0; i < words.size(); i++) {
+            if (i > 0) cout << ' ';
+            cout << words[i];
+        }
+        firstGroup = false;
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '哈希表', '字符串'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6\neat tea tan ate nat bat', expectedOutput: 'bat\neat tea ate\ntan nat' },
+    ],
+    similarProblems: [128, 140],
+  },
+  {
+    id: 177,
+    title: 'LeetCode 128 - 最长连续序列',
+    titleEn: 'Longest Consecutive Sequence',
+    difficulty: 'intermediate',
+    description: '给定一个未排序的整数数组，找出最长连续序列的长度。要求算法的时间复杂度为 O(n)。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出最长连续序列的长度。',
+    sampleInput: '6\n100 4 200 1 3 2',
+    sampleOutput: '4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <set>
+using namespace std;
+
+int main() {
+    freopen('consecutive.in', 'r', stdin);
+    freopen('consecutive.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    set<int> nums;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        nums.insert(x);
+    }
+    
+    int maxLen = 0;
+    for (int x : nums) {
+        // 只有当 x 是序列起点时才开始计算
+        if (nums.find(x - 1) == nums.end()) {
+            int len = 1;
+            while (nums.find(x + len) != nums.end()) {
+                len++;
+            }
+            maxLen = max(maxLen, len);
+        }
+    }
+    
+    cout << maxLen << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '哈希表'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6\n100 4 200 1 3 2', expectedOutput: '4' },
+      { id: 2, input: '7\n0 3 7 2 5 8 4 6', expectedOutput: '9' },
+    ],
+    similarProblems: [160, 170],
+  },
+  {
+    id: 178,
+    title: 'LeetCode 287 - 寻找重复数',
+    titleEn: 'Find the Duplicate Number',
+    difficulty: 'intermediate',
+    description: '给定一个包含 n + 1 个整数的数组 nums，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数。',
+    inputFormat: '第一行 n，第二行 n+1 个整数。',
+    outputFormat: '输出重复的数。',
+    sampleInput: '4\n1 3 4 2 2',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('findduplicate.in', 'r', stdin);
+    freopen('findduplicate.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    // 使用快慢指针（Floyd判圈算法）
+    int nums[10005];
+    for (int i = 0; i <= n; i++) {
+        cin >> nums[i];
+    }
+    
+    // 快慢指针找相遇点
+    int slow = nums[0], fast = nums[0];
+    do {
+        slow = nums[slow];
+        fast = nums[nums[fast]];
+    } while (slow != fast);
+    
+    // 找入口
+    slow = nums[0];
+    while (slow != fast) {
+        slow = nums[slow];
+        fast = nums[fast];
+    }
+    
+    cout << slow << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '双指针', '二分查找'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n1 3 4 2 2', expectedOutput: '2' },
+      { id: 2, input: '2\n1 1 2', expectedOutput: '1' },
+    ],
+    similarProblems: [139, 147],
+  },
+  {
+    id: 179,
+    title: 'LeetCode 152 - 乘积最大子数组',
+    titleEn: 'Maximum Product Subarray',
+    difficulty: 'intermediate',
+    description: '给定一个整数数组，找出数组中乘积最大的连续子数组，并返回该乘积。',
+    inputFormat: '第一行 n，第二行 n 个整数。',
+    outputFormat: '输出最大乘积。',
+    sampleInput: '4\n2 3 -2 4',
+    sampleOutput: '6',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    freopen('maxproduct.in', 'r', stdin);
+    freopen('maxproduct.out', 'w', stdout);
+    
+    int n;
+    cin >> n;
+    
+    long long maxProd = -1e18, minProd = 1e18;
+    long long result = -1e18;
+    
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        
+        if (i == 0) {
+            maxProd = minProd = x;
+        } else {
+            long long temp = maxProd;
+            maxProd = max((long long)x, max(maxProd * x, minProd * x));
+            minProd = min((long long)x, min(temp * x, minProd * x));
+        }
+        result = max(result, maxProd);
+    }
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: '动态规划',
+    tags: ['动态规划', '数组'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4\n2 3 -2 4', expectedOutput: '6' },
+      { id: 2, input: '3\n-2 0 -1', expectedOutput: '0' },
+    ],
+    similarProblems: [131, 160],
+  },
+  {
+    id: 180,
+    title: 'LeetCode 33 - 搜索旋转排序数组',
+    titleEn: 'Search in Rotated Sorted Array',
+    difficulty: 'advanced',
+    description: '假设按照升序排序的数组在预先未知的某个点上进行了旋转。搜索一个给定的目标值，如果数组中存在这个目标值，则返回它的索引，否则返回 -1。',
+    inputFormat: '第一行 n 和 target，第二行 n 个整数。',
+    outputFormat: '输出目标值的索引，不存在则输出 -1。',
+    sampleInput: '7 0\n4 5 6 7 0 1 2',
+    sampleOutput: '4',
+    defaultCode: `#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    freopen('searchrotated.in', 'r', stdin);
+    freopen('searchrotated.out', 'w', stdout);
+    
+    int n, target;
+    cin >> n >> target;
+    
+    int nums[10005];
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    
+    int left = 0, right = n - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (nums[mid] == target) {
+            cout << mid << endl;
+            return 0;
+        }
+        
+        // 左半边有序
+        if (nums[left] <= nums[mid]) {
+            if (nums[left] <= target && target < nums[mid]) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        } else {
+            // 右半边有序
+            if (nums[mid] < target && target <= nums[right]) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+    }
+    
+    cout << -1 << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['数组', '二分查找'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '7 0\n4 5 6 7 0 1 2', expectedOutput: '4' },
+      { id: 2, input: '4 3\n4 5 1 2', expectedOutput: '-1' },
+    ],
+    similarProblems: [43, 49],
+  },
 ];
 
 // 获取所有分类
