@@ -9502,8 +9502,13 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输出 "Hello World" 到屏幕
+ * 【解题思路】这是一道最基础的输出练习题
+ * 【参考答案】使用 cout 输出字符串即可
+ */
 int main() {
-    // 请在此处编写代码
+    // 请在此处编写代码：使用 cout 输出 "Hello World"
     
     return 0;
 }`,
@@ -9529,8 +9534,14 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输出一个简单的字符画小房子
+ * 【解题思路】逐行输出字符画，注意转义字符的使用
+ * 【参考答案】使用多个 cout 语句逐行输出
+ */
 int main() {
     // 使用 cout 输出字符画
+    // 提示：/ 需要正常输出，换行使用 endl
     
     return 0;
 }`,
@@ -9556,11 +9567,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入两个整数 a 和 b，输出它们的和
+ * 【解题思路】读取两个整数，计算和并输出
+ * 【参考答案】cin >> a >> b; cout << a + b;
+ */
 int main() {
     int a, b;
     cin >> a >> b;
     
     // 请在此处计算并输出结果
+    // 提示：使用 cout 输出 a + b
     
     return 0;
 }`,
@@ -9588,11 +9605,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入三个整数 a, b, c，计算并输出 (a + b) * c 的值
+ * 【解题思路】先读取三个整数，然后计算表达式值
+ * 【参考答案】cout << (a + b) * c << endl;
+ */
 int main() {
     int a, b, c;
     cin >> a >> b >> c;
     
     // 计算 (a + b) * c
+    // 提示：注意运算优先级，表达式为 (a+b)*c
     
     return 0;
 }`,
@@ -9620,11 +9643,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入两个正整数 a 和 b，输出 a 除以 b 的商和余数
+ * 【解题思路】使用整数除法 / 求商，使用取余运算 % 求余数
+ * 【参考答案】cout << a / b << " " << a % b << endl;
+ */
 int main() {
     int a, b;
     cin >> a >> b;
     
     // 输出商和余数
+    // 提示：商 = a / b，余数 = a % b
     
     return 0;
 }`,
@@ -9652,11 +9681,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个整数 n，判断它是奇数还是偶数
+ * 【解题思路】用 n % 2 判断：余数为0是偶数，否则是奇数
+ * 【参考答案】if (n % 2 == 0) cout << "even"; else cout << "odd";
+ */
 int main() {
     int n;
     cin >> n;
     
     // 判断奇偶并输出
+    // 提示：n % 2 == 0 为偶数，否则为奇数
     
     return 0;
 }`,
@@ -9684,11 +9719,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入两个整数 a 和 b，输出较大的那个数
+ * 【解题思路】使用 if-else 语句比较两个数的大小
+ * 【参考答案】if (a > b) cout << a; else cout << b;
+ */
 int main() {
     int a, b;
     cin >> a >> b;
     
     // 输出较大的数
+    // 提示：使用 if-else 判断 a 和 b 的大小关系
     
     return 0;
 }`,
@@ -9716,11 +9757,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个成绩 score（0-100），根据分数输出等级
+ * 【解题思路】使用 if-else if-else 语句进行多条件判断
+ * 【等级划分】>=90:A, 80-89:B, 70-79:C, 60-69:D, <60:E
+ */
 int main() {
     int score;
     cin >> score;
     
     // 根据分数输出等级
+    // 提示：使用 if-else if 语句判断分数区间
     
     return 0;
 }`,
@@ -9749,11 +9796,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个年份 year，判断是否是闰年
+ * 【闰年规则】能被4整除但不能被100整除，或者能被400整除
+ * 【解题思路】(year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
+ */
 int main() {
     int year;
     cin >> year;
     
     // 判断闰年
+    // 提示：使用逻辑运算符 && 和 ||
     
     return 0;
 }`,
@@ -9782,11 +9835,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入三个整数，将它们从小到大排序后输出
+ * 【解题思路】使用条件判断比较三个数的大小，然后按顺序输出
+ * 【方法】比较交换法：先保证a最小，再保证b<=c
+ */
 int main() {
     int a, b, c;
     cin >> a >> b >> c;
     
     // 将三个数排序输出
+    // 提示：使用 if 语句进行条件交换，使 a <= b <= c
     
     return 0;
 }`,
@@ -9815,11 +9874,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，输出从 1 到 N 的所有整数
+ * 【解题思路】使用 for 循环，从 1 循环到 N，逐个输出
+ * 【参考答案】for (int i = 1; i <= n; i++) cout << i << endl;
+ */
 int main() {
     int n;
     cin >> n;
     
     // 输出1到n
+    // 提示：使用 for 循环，从 i=1 到 i<=n
     
     return 0;
 }`,
@@ -9846,11 +9911,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，计算 1 + 2 + 3 + ... + N 的和
+ * 【解题思路】使用循环累加，或使用公式 n*(n+1)/2
+ * 【参考答案】int sum = n * (n + 1) / 2; 或循环累加
+ */
 int main() {
     int n;
     cin >> n;
     
     // 计算1到n的和
+    // 提示：使用循环或等差数列求和公式
     
     return 0;
 }`,
@@ -9878,11 +9949,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】第一行输入N，第二行输入N个整数，求这N个整数的和
+ * 【解题思路】使用循环读取N个数并累加
+ * 【参考答案】for循环读取每个数并累加到sum变量
+ */
 int main() {
     int n;
     cin >> n;
     
     // 输入n个数并求和
+    // 提示：使用循环读取每个数，累加到sum变量
     
     return 0;
 }`,
@@ -9909,11 +9986,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个非负整数 N，求 N 的阶乘
+ * 【阶乘定义】N! = 1 × 2 × 3 × ... × N，特别地，0! = 1
+ * 【解题思路】使用循环累乘，注意结果可能很大，需要用 long long
+ */
 int main() {
     int n;
     cin >> n;
     
     // 计算n的阶乘
+    // 提示：使用 long long 类型，循环累乘
     
     return 0;
 }`,
@@ -9941,11 +10024,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】第一行输入N，第二行输入N个整数，找出其中的最大值
+ * 【解题思路】初始化maxVal为第一个数，然后遍历剩余数更新最大值
+ * 【参考答案】使用循环比较，更新最大值
+ */
 int main() {
     int n;
     cin >> n;
     
     // 找出n个数中的最大值
+    // 提示：先读取第一个数作为初始最大值，再比较后续的数
     
     return 0;
 }`,
@@ -9972,11 +10061,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】第一行输入N，第二行输入N个整数，统计其中奇数的个数
+ * 【解题思路】遍历每个数，用 % 2 判断是否为奇数，计数
+ * 【参考答案】if (x % 2 != 0) count++;
+ */
 int main() {
     int n;
     cin >> n;
     
     // 统计奇数个数
+    // 提示：使用 x % 2 != 0 判断奇数，累加计数器
     
     return 0;
 }`,
@@ -10004,11 +10099,17 @@ int main() {
 #include <iomanip>
 using namespace std;
 
+/*
+ * 【题目描述】第一行输入N，第二行输入N个整数，求平均值，保留两位小数
+ * 【解题思路】先求和，再除以N，使用fixed和setprecision控制小数位数
+ * 【参考答案】cout << fixed << setprecision(2) << (double)sum / n << endl;
+ */
 int main() {
     int n;
     cin >> n;
     
     // 计算平均值
+    // 提示：先求和，再除以n，注意类型转换和保留小数
     
     return 0;
 }`,
@@ -10035,11 +10136,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，输出 N × N 的乘法表
+ * 【解题思路】使用双重循环，外层控制行，内层控制列
+ * 【参考答案】for (i=1;i<=n;i++) { for (j=1;j<=n;j++) cout<<i<<"*"<<j<<"="<<i*j<<" "; cout<<endl; }
+ */
 int main() {
     int n;
     cin >> n;
     
     // 输出乘法表
+    // 提示：使用双重循环，外层i控制行，内层j控制列
     
     return 0;
 }`,
@@ -10066,11 +10173,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，输出一个 N 行的由星号组成的直角三角形
+ * 【解题思路】使用双重循环，外层控制行数，内层控制每行星号个数
+ * 【参考答案】for (i=1;i<=n;i++) { for (j=1;j<=i;j++) cout<<"*"; cout<<endl; }
+ */
 int main() {
     int n;
     cin >> n;
     
     // 输出直角三角形
+    // 提示：第i行输出i个星号
     
     return 0;
 }`,
@@ -10097,11 +10210,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，输出一个 N 行的倒直角三角形
+ * 【解题思路】使用双重循环，第i行输出(n-i+1)个星号
+ * 【参考答案】for (i=1;i<=n;i++) { for (j=1;j<=n-i+1;j++) cout<<"*"; cout<<endl; }
+ */
 int main() {
     int n;
     cin >> n;
     
     // 输出倒直角三角形
+    // 提示：第i行输出(n-i+1)个星号
     
     return 0;
 }`,
@@ -10129,12 +10248,18 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入N个数和一个整数x，判断x是否在数组中出现
+ * 【解题思路】遍历数组，查找x第一次出现的位置
+ * 【参考答案】for循环遍历，找到后记录位置并跳出
+ */
 int main() {
     int n;
     cin >> n;
     
     int arr[100];
     // 输入数组并查找x
+    // 提示：遍历数组，用arr[i]==x判断是否相等
     
     return 0;
 }`,
@@ -10161,12 +10286,18 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入N个数，将数组反转后输出
+ * 【解题思路】方法1：使用双指针交换；方法2：从后往前输出
+ * 【参考答案】for (i=0;i<n/2;i++) swap(arr[i],arr[n-1-i]);
+ */
 int main() {
     int n;
     cin >> n;
     
     int arr[100];
     // 输入数组，反转后输出
+    // 提示：交换arr[i]和arr[n-1-i]，或倒序输出
     
     return 0;
 }`,
@@ -10193,12 +10324,18 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入N个整数（1-100），统计每个数出现的次数
+ * 【解题思路】使用count数组作为计数器，count[x]记录x出现的次数
+ * 【参考答案】count[arr[i]]++ 累加计数
+ */
 int main() {
     int n;
     cin >> n;
     
     int count[101] = {0};
     // 统计每个数出现的次数
+    // 提示：count[x]表示x出现的次数，遍历数组时count[arr[i]]++
     
     return 0;
 }`,
@@ -10224,12 +10361,18 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入N个已排序的整数，输出去重后的数组
+ * 【解题思路】由于已排序，相同的数相邻，只需输出与前一个不同的数
+ * 【参考答案】输出第一个数，之后只输出arr[i]!=arr[i-1]的数
+ */
 int main() {
     int n;
     cin >> n;
     
     int arr[100];
     // 输入数组，去重后输出
+    // 提示：已排序数组，相邻相同则跳过
     
     return 0;
 }`,
@@ -10258,11 +10401,17 @@ int main() {
 #include <cstring>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个字符串，输出它的长度
+ * 【解题思路】使用strlen()函数获取字符串长度
+ * 【参考答案】cout << strlen(str) << endl;
+ */
 int main() {
     char str[101];
     cin >> str;
     
     // 输出字符串长度
+    // 提示：使用strlen(str)获取长度
     
     return 0;
 }`,
@@ -10290,11 +10439,17 @@ int main() {
 #include <cstring>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个字符串，将它反转后输出
+ * 【解题思路】使用双指针交换，或从后往前遍历输出
+ * 【参考答案】for (i=0,j=len-1; i<j; i++,j--) swap(str[i],str[j]);
+ */
 int main() {
     char str[101];
     cin >> str;
     
     // 反转字符串并输出
+    // 提示：交换str[i]和str[len-1-i]
     
     return 0;
 }`,
@@ -10322,11 +10477,17 @@ int main() {
 #include <cstring>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个字符串，统计大写、小写、数字、其他字符的个数
+ * 【解题思路】遍历字符串，用条件判断字符类型并计数
+ * 【判断方法】isupper(), islower(), isdigit() 或直接比较ASCII
+ */
 int main() {
     char str[101];
     cin.getline(str, 101);
     
     // 统计各类字符
+    // 提示：'A'-'Z'是大写，'a'-'z'是小写，'0'-'9'是数字
     
     return 0;
 }`,
@@ -10353,11 +10514,18 @@ int main() {
 #include <cstring>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个字符串，大写变小写，小写变大写
+ * 【解题思路】遍历字符串，大写+32变小写，小写-32变大写
+ * 【参考答案】if (str[i]>='A' && str[i]<='Z') str[i] += 32;
+ *           else if (str[i]>='a' && str[i]<='z') str[i] -= 32;
+ */
 int main() {
     char str[101];
     cin >> str;
     
     // 大小写转换
+    // 提示：大小写ASCII差32，大写+32变小写
     
     return 0;
 }`,
@@ -10385,11 +10553,17 @@ int main() {
 #include <cstring>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个字符串，判断它是否是回文字符串
+ * 【解题思路】回文：正读反读相同。使用双指针比较首尾字符
+ * 【参考答案】for (i=0,j=len-1; i<j; i++,j--) if (str[i]!=str[j]) 不是回文
+ */
 int main() {
     char str[101];
     cin >> str;
     
     // 判断是否是回文
+    // 提示：比较str[i]和str[len-1-i]
     
     return 0;
 }`,
@@ -10418,12 +10592,18 @@ int main() {
 #include <cstring>
 using namespace std;
 
+/*
+ * 【题目描述】输入两个字符串 s 和 t，判断 t 是否是 s 的子串
+ * 【解题思路】使用 strstr() 函数查找子串，或手动实现字符串匹配
+ * 【参考答案】char *p = strstr(s, t); if (p) 输出位置 p-s+1
+ */
 int main() {
     char s[101], t[101];
     cin.getline(s, 101);
     cin.getline(t, 101);
     
     // 查找子串
+    // 提示：使用strstr(s, t)查找，返回首次出现的位置指针
     
     return 0;
 }`,
@@ -10451,11 +10631,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，判断它是否是质数
+ * 【质数定义】大于1且只能被1和自身整除的正整数
+ * 【解题思路】从2到sqrt(n)判断是否有因子，无因子则为质数
+ */
 int main() {
     int n;
     cin >> n;
     
     // 判断质数
+    // 提示：从2到sqrt(n)枚举，若n%i==0则不是质数
     
     return 0;
 }`,
@@ -10483,11 +10669,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，将它分解质因数
+ * 【解题思路】从最小的质数2开始，不断除以能整除的最小质因数
+ * 【参考答案】for (i=2; i*i<=n; i++) while (n%i==0) { 输出i; n/=i; }
+ */
 int main() {
     int n;
     cin >> n;
     
     // 分解质因数
+    // 提示：从2开始枚举，若n%i==0则i是质因数
     
     return 0;
 }`,
@@ -10515,11 +10707,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入两个正整数 a 和 b，求它们的最大公约数
+ * 【解题思路】使用欧几里得算法（辗转相除法）
+ * 【参考答案】while (b) { int t = a % b; a = b; b = t; } return a;
+ */
 int main() {
     int a, b;
     cin >> a >> b;
     
     // 求最大公约数
+    // 提示：gcd(a,b) = gcd(b, a%b)，直到b为0
     
     return 0;
 }`,
@@ -10547,11 +10745,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入两个正整数 a 和 b，求它们的最小公倍数
+ * 【解题思路】lcm(a,b) = a * b / gcd(a,b)
+ * 【参考答案】先求gcd，再计算 a/gcd(a,b)*b 避免溢出
+ */
 int main() {
     int a, b;
     cin >> a >> b;
     
     // 求最小公倍数
+    // 提示：lcm = a * b / gcd(a, b)，注意先除后乘避免溢出
     
     return 0;
 }`,
@@ -10579,11 +10783,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，输出斐波那契数列的第 N 项
+ * 【斐波那契定义】F(1)=1, F(2)=1, F(n)=F(n-1)+F(n-2)
+ * 【解题思路】使用循环递推，或使用递归（效率较低）
+ */
 int main() {
     int n;
     cin >> n;
     
     // 输出第n项斐波那契数
+    // 提示：f1=1, f2=1, fn = f(n-1) + f(n-2)
     
     return 0;
 }`,
@@ -10611,11 +10821,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个三位数，判断是否是水仙花数
+ * 【水仙花数】各位数字的立方和等于该数本身的三位数
+ * 【解题思路】分离各位数字，计算立方和并比较
+ */
 int main() {
     int n;
     cin >> n;
     
     // 判断是否是水仙花数
+    // 提示：a=n/100, b=n/10%10, c=n%10，判断a³+b³+c³==n
     
     return 0;
 }`,
@@ -10643,11 +10859,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，将其各位数字翻转后输出
+ * 【解题思路】不断取最后一位，构建新数字
+ * 【参考答案】while (n>0) { ans = ans*10 + n%10; n /= 10; }
+ */
 int main() {
     int n;
     cin >> n;
     
     // 翻转数字
+    // 提示：取最后一位n%10，然后n/=10，构建新数
     
     return 0;
 }`,
@@ -10675,11 +10897,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，统计它的位数
+ * 【解题思路】不断除以10，计数器+1，直到n为0
+ * 【参考答案】while (n>0) { cnt++; n /= 10; }
+ */
 int main() {
     long long n;
     cin >> n;
     
     // 统计位数
+    // 提示：每次n/=10，计数器+1
     
     return 0;
 }`,
@@ -10707,11 +10935,17 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，计算其各位数字之和
+ * 【解题思路】不断取最后一位n%10累加，然后n/=10
+ * 【参考答案】while (n>0) { sum += n%10; n /= 10; }
+ */
 int main() {
     long long n;
     cin >> n;
     
     // 计算各位数字之和
+    // 提示：sum += n % 10 取最后一位，n /= 10 去掉最后一位
     
     return 0;
 }`,
@@ -10740,11 +10974,17 @@ int main() {
 #include <cmath>
 using namespace std;
 
+/*
+ * 【题目描述】输入一个正整数 N，判断它是否是完全平方数
+ * 【完全平方数】可以表示为某个整数的平方的数
+ * 【解题思路】计算sqrt(n)，判断其平方是否等于n
+ */
 int main() {
     long long n;
     cin >> n;
     
     // 判断是否是完全平方数
+    // 提示：int r = sqrt(n); 判断 r*r == n
     
     return 0;
 }`,
@@ -10775,6 +11015,13 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】有n堆石子排成一排，求合并成一堆的最小代价
+ * 【算法】区间DP
+ * 【状态定义】dp[l][r]表示合并区间[l,r]内石子的最小代价
+ * 【状态转移】dp[l][r] = min(dp[l][k] + dp[k+1][r] + sum[r]-sum[l-1])
+ * 【边界】dp[i][i] = 0（单堆不需要合并）
+ */
 const int INF = 1e9;
 int n, stones[105], sum[105];
 int dp[105][105];
@@ -10826,6 +11073,12 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】给定n个矩阵的维度，求矩阵连乘的最少乘法次数
+ * 【算法】区间DP
+ * 【状态定义】dp[l][r]表示计算矩阵l到r连乘的最少乘法次数
+ * 【状态转移】dp[l][r] = min(dp[l][k] + dp[k+1][r] + p[l-1]*p[k]*p[r])
+ */
 const int INF = 1e9;
 int n, p[105];
 long long dp[105][105];
@@ -10874,6 +11127,13 @@ int main() {
 #include <string>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个字符串，求最少分割次数，使得每个子串都是回文串
+ * 【算法】区间DP + 预处理
+ * 【步骤1】预处理isPalin[i][j]表示s[i..j]是否是回文
+ * 【步骤2】dp[i]表示s[0..i]的最小分割次数
+ * 【状态转移】如果s[j+1..i]是回文，dp[i] = min(dp[i], dp[j]+1)
+ */
 int main() {
     string s;
     cin >> s;
@@ -10931,6 +11191,13 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】TSP问题：从城市1出发，访问所有城市恰好一次，最后回到起点
+ * 【算法】状态压缩DP
+ * 【状态定义】dp[mask][i]表示已访问城市集合为mask，当前在城市i的最短路径
+ * 【状态转移】dp[mask|(1<<j)][j] = min(dp[mask|(1<<j)][j], dp[mask][i] + dist[i][j])
+ * 【时间复杂度】O(n^2 * 2^n)
+ */
 const int INF = 1e9;
 int n, dist[20][20];
 int dp[1<<16][16];
@@ -10986,6 +11253,12 @@ int main() {
 #include <string>
 using namespace std;
 
+/*
+ * 【题目描述】在n×n棋盘上放棋子，每行每列最多一个，不能放在障碍格
+ * 【算法】状态压缩DP
+ * 【状态定义】dp[mask]表示列占用状态为mask时的方案数
+ * 【状态转移】逐行处理，对每行尝试在可用列放置棋子
+ */
 int n;
 string board[15];
 long long dp[1<<12];
@@ -11036,6 +11309,12 @@ int main() {
 #include <queue>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个有向图，求从起点s到所有点的最短路径
+ * 【算法】Dijkstra算法（优先队列优化）
+ * 【数据结构】邻接表存图 + 优先队列（小根堆）
+ * 【时间复杂度】O((n+m)logn)
+ */
 typedef pair<int,int> pii;
 const int INF = 1e9;
 
@@ -11095,6 +11374,12 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个有向图，求任意两点之间的最短路径
+ * 【算法】Floyd算法（多源最短路）
+ * 【核心思想】枚举中间点k，更新dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+ * 【时间复杂度】O(n³)
+ */
 const int INF = 1e9;
 int dist[105][105];
 
@@ -11149,6 +11434,12 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个无向图，求最小生成树的边权之和
+ * 【算法】Kruskal算法（贪心 + 并查集）
+ * 【核心思想】按边权排序，依次选择不构成环的最小边
+ * 【判断环】用并查集判断两点是否已连通
+ */
 struct Edge {
     int u, v, w;
     bool operator<(const Edge& e) const { return w < e.w; }
@@ -11206,6 +11497,12 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】给定数组，支持单点修改和区间求和查询
+ * 【算法】线段树
+ * 【核心操作】build建树, update单点更新, query区间查询
+ * 【时间复杂度】O(n)建树，O(logn)查询/更新
+ */
 const int MAXN = 100005;
 int arr[MAXN];
 long long tree[4 * MAXN];
@@ -11270,6 +11567,11 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】给定数组，支持单点修改和区间最大值查询
+ * 【算法】线段树
+ * 【核心操作】与区间求和类似，只是合并操作改为max
+ */
 const int MAXN = 100005;
 int arr[MAXN];
 int tree[4 * MAXN];
@@ -11335,6 +11637,12 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个长度为n的排列，求逆序对的数量
+ * 【逆序对定义】i<j且a[i]>a[j]的数对
+ * 【算法】树状数组
+ * 【核心思想】从左到右遍历，对于每个数x，统计之前比x大的数的个数
+ */
 const int MAXN = 100005;
 int tree[MAXN];
 int n;
@@ -11386,6 +11694,12 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】给定n个人和m对亲戚关系，判断任意两人是否有亲戚关系
+ * 【算法】并查集
+ * 【核心操作】find查找根节点，unite合并两个集合
+ * 【路径压缩】find时直接指向根节点，优化效率
+ */
 const int MAXN = 10005;
 int father[MAXN];
 
@@ -11440,6 +11754,11 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个n个点m条边的无向图，求连通块的个数
+ * 【算法】并查集
+ * 【核心思想】统计有多少个点的father是其自身（即根节点）
+ */
 const int MAXN = 10005;
 int father[MAXN];
 
@@ -11490,6 +11809,12 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个n×m的高度矩阵，求最长滑行长度
+ * 【算法】记忆化搜索
+ * 【核心思想】dp[x][y]表示从(x,y)出发的最长滑行长度
+ * 【状态转移】向四个方向滑行，取最大值+1
+ */
 int n, m, h[105][105];
 int dp[105][105];
 int dx[] = {0, 0, 1, -1};
@@ -11545,6 +11870,12 @@ int main() {
 #include <vector>
 using namespace std;
 
+/*
+ * 【题目描述】给定文本串和模式串，求模式串在文本串中出现的次数
+ * 【算法】KMP字符串匹配
+ * 【核心思想】预处理next数组，失配时利用next跳转避免回溯
+ * 【时间复杂度】O(n+m)
+ */
 vector<int> buildNext(const string& p) {
     int m = p.size();
     vector<int> next(m, 0);
@@ -11602,6 +11933,12 @@ int main() {
 #include <string>
 using namespace std;
 
+/*
+ * 【题目描述】支持插入单词、查询单词是否存在、查询前缀匹配的单词数量
+ * 【算法】Trie树（字典树/前缀树）
+ * 【核心思想】每个节点有26个子节点，表示26个字母
+ * 【节点属性】isEnd表示是否是单词结尾，count表示经过此节点的单词数
+ */
 struct TrieNode {
     TrieNode* children[26];
     bool isEnd;
@@ -11677,6 +12014,12 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】计算a^b mod m的值
+ * 【算法】快速幂（二进制幂）
+ * 【核心思想】将b分解为二进制，逐位处理
+ * 【时间复杂度】O(log b)
+ */
 typedef long long ll;
 
 ll power(ll a, ll b, ll mod) {
@@ -11719,6 +12062,12 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】计算矩阵A的n次幂，结果对m取模
+ * 【算法】矩阵快速幂
+ * 【核心思想】将快速幂扩展到矩阵乘法，矩阵乘法满足结合律
+ * 【应用】常用于求递推式的第n项（如斐波那契数列）
+ */
 typedef long long ll;
 ll mod;
 
@@ -11788,6 +12137,12 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】计算C(n, k) mod p，其中p是质数
+ * 【算法】费马小定理 + 预处理阶乘和逆元
+ * 【公式】C(n,k) = n! / (k! * (n-k)!) = n! * inv(k!) * inv((n-k)!)
+ * 【预处理】fact[i] = i! mod p, invFact[i] = (i!)^(-1) mod p
+ */
 typedef long long ll;
 const int MAXN = 100005;
 ll fact[MAXN], invFact[MAXN];
@@ -11843,6 +12198,12 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】输出杨辉三角的第n行（从0开始）
+ * 【算法】利用组合数递推公式
+ * 【公式】C(n,k) = C(n,k-1) * (n-k+1) / k
+ * 【避免溢出】先乘后除，使用long long
+ */
 int main() {
     int n;
     cin >> n;
@@ -11881,6 +12242,12 @@ int main() {
 #include <vector>
 using namespace std;
 
+/*
+ * 【题目描述】给定n个区间，选择最多的不重叠区间
+ * 【算法】贪心算法
+ * 【贪心策略】按右端点排序，每次选择结束最早的区间
+ * 【正确性】选择结束最早的区间，留给后面的区间选择空间最大
+ */
 int main() {
     int n;
     cin >> n;
@@ -11925,6 +12292,12 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】判断是否能从数组起点跳跃到最后一个位置
+ * 【算法】贪心算法
+ * 【贪心策略】维护能到达的最远位置maxReach
+ * 【判断】如果当前位置i超过了maxReach，则无法到达终点
+ */
 int main() {
     int n;
     cin >> n;
@@ -11963,6 +12336,13 @@ int main() {
 #include <vector>
 using namespace std;
 
+/*
+ * 【题目描述】给定一棵树，求树的直径（最长路径的长度）
+ * 【算法】两次DFS/BFS
+ * 【步骤1】从任意节点出发，找到最远的节点farNode
+ * 【步骤2】从farNode出发，找到的最远距离即为直径
+ * 【原理】树的最长路径的两个端点必定是距离最远的两个节点
+ */
 vector<pair<int,int>> adj[10005];
 int maxDist, farNode;
 
@@ -12014,6 +12394,13 @@ int main() {
 #include <vector>
 using namespace std;
 
+/*
+ * 【题目描述】给定一棵树，选择一些节点使任意两个被选节点不相邻，求最大权值和
+ * 【算法】树形DP
+ * 【状态定义】dp[u][0]表示不选u的最大值，dp[u][1]表示选u的最大值
+ * 【状态转移】dp[u][0] += max(dp[v][0], dp[v][1])
+ *           dp[u][1] += dp[v][0]
+ */
 vector<int> adj[10005];
 int value[10005];
 int dp[10005][2];
@@ -12068,6 +12455,12 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个正整数数组和目标值target，找出所有和为target的组合
+ * 【算法】DFS + 回溯 + 剪枝
+ * 【剪枝策略】先排序，当sum + candidates[i] > target时直接break
+ * 【避免重复】每次从start位置开始搜索，保证组合非递减
+ */
 vector<vector<int>> result;
 vector<int> path;
 
@@ -12117,6 +12510,12 @@ int main() {
     defaultCode: `#include <iostream>
 using namespace std;
 
+/*
+ * 【题目描述】背包问题求达到最大价值的方案数
+ * 【算法】动态规划
+ * 【状态定义】dp[j]表示容量j时的最大价值，cnt[j]表示方案数
+ * 【状态转移】如果新价值更大，更新dp和cnt；如果相等，累加cnt
+ */
 const int MOD = 1e9 + 7;
 int n, W;
 int w[105], v[105];
@@ -12166,6 +12565,12 @@ int main() {
 #include <vector>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个序列，求最长上升子序列的长度
+ * 【算法】贪心 + 二分查找
+ * 【核心思想】维护一个数组dp，dp[i]表示长度为i的LIS的最小末尾元素
+ * 【时间复杂度】O(n log n)
+ */
 int main() {
     int n;
     cin >> n;
@@ -12206,6 +12611,13 @@ int main() {
 #include <algorithm>
 using namespace std;
 
+/*
+ * 【题目描述】给定两个字符串，求最长公共子序列的长度
+ * 【算法】动态规划
+ * 【状态定义】dp[i][j]表示s1前i个字符和s2前j个字符的LCS长度
+ * 【状态转移】如果s1[i-1]==s2[j-1]，dp[i][j]=dp[i-1][j-1]+1
+ *           否则dp[i][j]=max(dp[i-1][j], dp[i][j-1])
+ */
 int main() {
     string s1, s2;
     cin >> s1 >> s2;
@@ -12249,6 +12661,12 @@ int main() {
 #include <queue>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个有向无环图，输出拓扑排序序列
+ * 【算法】Kahn算法（BFS）
+ * 【核心思想】每次选择入度为0的节点加入序列
+ * 【数据结构】队列存储入度为0的节点
+ */
 vector<int> adj[10005];
 int inDegree[10005];
 
@@ -12300,6 +12718,13 @@ int main() {
 #include <stack>
 using namespace std;
 
+/*
+ * 【题目描述】给定一个无向图，判断是否存在欧拉路径并输出
+ * 【欧拉路径】经过每条边恰好一次的路径
+ * 【存在条件】连通图中度为奇数的节点数为0或2
+ * 【算法】Hierholzer算法（DFS）
+ * 【核心思想】从起点DFS，回溯时记录路径
+ */
 vector<int> adj[10005];
 int degree[10005];
 
