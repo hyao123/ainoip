@@ -12784,6 +12784,1357 @@ int main() {
       { id: 1, input: '4 4\n1 2\n2 3\n3 4\n4 2', expectedOutput: '1 2 4 3 2' },
     ],
   },
+  // ========== 新增题目 - 基础算法扩展篇（ID 251-300）==========
+  // 枚举类
+  {
+    id: 251,
+    title: '百钱买百鸡',
+    titleEn: 'Hundred Chickens Problem',
+    difficulty: 'beginner',
+    description: '用100元钱买100只鸡，公鸡每只5元，母鸡每只3元，小鸡3只1元。问公鸡、母鸡、小鸡各买多少只？',
+    inputFormat: '无输入。',
+    outputFormat: '输出所有可能的解，每行三个整数分别表示公鸡、母鸡、小鸡的数量。',
+    sampleInput: '',
+    sampleOutput: '0 25 75\n4 18 78\n8 11 81\n12 4 84',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】用100元钱买100只鸡，公鸡5元/只，母鸡3元/只，小鸡3只1元
+ * 【算法】枚举法
+ * 【枚举范围】公鸡0-20只，母鸡0-33只，小鸡=100-公鸡-母鸡
+ * 【判断条件】5*x + 3*y + z/3 = 100 且 z是3的倍数
+ */
+int main() {
+    for (int x = 0; x <= 20; x++) {        // 公鸡数量
+        for (int y = 0; y <= 33; y++) {    // 母鸡数量
+            int z = 100 - x - y;           // 小鸡数量
+            if (z >= 0 && z % 3 == 0 && 5*x + 3*y + z/3 == 100) {
+                cout << x << " " << y << " " << z << endl;
+            }
+        }
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举', '循环'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '', expectedOutput: '0 25 75\n4 18 78\n8 11 81\n12 4 84' },
+    ],
+  },
+  {
+    id: 252,
+    title: '勾股数',
+    titleEn: 'Pythagorean Triple',
+    difficulty: 'beginner',
+    description: '给定一个正整数N，输出所有满足a²+b²=c²且a<b<c≤N的勾股数。',
+    inputFormat: '一个正整数N（1≤N≤1000）。',
+    outputFormat: '输出所有勾股数，每行三个整数a b c，按a从小到大输出。',
+    sampleInput: '20',
+    sampleOutput: '3 4 5\n5 12 13\n6 8 10\n8 15 17\n9 12 15',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】输出所有满足a²+b²=c²且a<b<c≤N的勾股数
+ * 【算法】三重循环枚举
+ * 【优化】可以只枚举a和b，c由sqrt(a²+b²)计算
+ */
+int main() {
+    int n;
+    cin >> n;
+    
+    for (int a = 1; a <= n; a++) {
+        for (int b = a + 1; b <= n; b++) {
+            for (int c = b + 1; c <= n; c++) {
+                if (a*a + b*b == c*c) {
+                    cout << a << " " << b << " " << c << endl;
+                }
+            }
+        }
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举', '数学'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '20', expectedOutput: '3 4 5\n5 12 13\n6 8 10\n8 15 17\n9 12 15' },
+    ],
+  },
+  {
+    id: 253,
+    title: '鸡兔同笼',
+    titleEn: 'Chickens and Rabbits',
+    difficulty: 'beginner',
+    description: '笼子里有鸡和兔，共有n个头，m只脚。问鸡和兔各有多少只？',
+    inputFormat: '两个正整数n和m，分别表示头的数量和脚的数量。',
+    outputFormat: '输出两个整数，分别表示鸡和兔的数量。如果无解，输出"No solution"。',
+    sampleInput: '10 28',
+    sampleOutput: '6 4',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】笼子里有鸡和兔，共有n个头，m只脚，求鸡兔数量
+ * 【算法】枚举或方程求解
+ * 【方程】设鸡x只，兔y只：x+y=n, 2x+4y=m
+ * 【解】y=(m-2n)/2, x=n-y
+ */
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    // 方法1：枚举
+    for (int x = 0; x <= n; x++) {
+        int y = n - x;
+        if (2*x + 4*y == m) {
+            cout << x << " " << y << endl;
+            return 0;
+        }
+    }
+    cout << "No solution" << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举', '数学'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '10 28', expectedOutput: '6 4' },
+      { id: 2, input: '10 32', expectedOutput: '4 6' },
+      { id: 3, input: '10 25', expectedOutput: 'No solution' },
+    ],
+  },
+  {
+    id: 254,
+    title: '完美数',
+    titleEn: 'Perfect Number',
+    difficulty: 'beginner',
+    description: '完美数是指等于其所有真因子（不包括自身）之和的数。判断输入的数是否是完美数。',
+    inputFormat: '一个正整数n（1≤n≤10^8）。',
+    outputFormat: '如果是完美数输出"Yes"，否则输出"No"。',
+    sampleInput: '28',
+    sampleOutput: 'Yes',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】判断一个数是否是完美数（等于其所有真因子之和）
+ * 【算法】枚举因子
+ * 【优化】只枚举到sqrt(n)，成对添加因子
+ * 【完美数】6, 28, 496, 8128, 33550336...
+ */
+int main() {
+    int n;
+    cin >> n;
+    
+    if (n == 1) {
+        cout << "No" << endl;
+        return 0;
+    }
+    
+    int sum = 1;  // 1是所有数的真因子
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) {
+            sum += i;
+            if (i != n / i) sum += n / i;
+        }
+    }
+    
+    cout << (sum == n ? "Yes" : "No") << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举', '数学'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '28', expectedOutput: 'Yes' },
+      { id: 2, input: '6', expectedOutput: 'Yes' },
+      { id: 3, input: '12', expectedOutput: 'No' },
+    ],
+  },
+  {
+    id: 255,
+    title: '素数对',
+    titleEn: 'Prime Pairs',
+    difficulty: 'beginner',
+    description: '给定一个偶数n（n>2），将其分解为两个素数之和。输出所有可能的分解方式。',
+    inputFormat: '一个偶数n（4≤n≤10000）。',
+    outputFormat: '输出所有素数对，每行两个素数，小的在前大的在后，按第一个素数从小到大输出。',
+    sampleInput: '10',
+    sampleOutput: '3 7\n5 5',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】将偶数n分解为两个素数之和（哥德巴赫猜想）
+ * 【算法】枚举 + 素数判断
+ * 【优化】只需枚举到n/2，避免重复输出
+ */
+bool isPrime(int n) {
+    if (n < 2) return false;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    
+    for (int i = 2; i <= n / 2; i++) {
+        if (isPrime(i) && isPrime(n - i)) {
+            cout << i << " " << n - i << endl;
+        }
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['枚举', '质数'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '10', expectedOutput: '3 7\n5 5' },
+      { id: 2, input: '8', expectedOutput: '3 5' },
+    ],
+  },
+  // 模拟类
+  {
+    id: 256,
+    title: '日期计算',
+    titleEn: 'Date Calculation',
+    difficulty: 'beginner',
+    description: '给定年月日，计算这一天是这一年的第几天。',
+    inputFormat: '三个整数year, month, day，表示年月日。',
+    outputFormat: '输出一个整数，表示这是这一年的第几天。',
+    sampleInput: '2024 3 1',
+    sampleOutput: '61',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】给定年月日，计算这一天是这一年的第几天
+ * 【算法】模拟
+ * 【注意】闰年2月有29天
+ * 【闰年判断】能被4整除但不能被100整除，或能被400整除
+ */
+int days[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+bool isLeap(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+int main() {
+    int year, month, day;
+    cin >> year >> month >> day;
+    
+    if (isLeap(year)) days[2] = 29;
+    
+    int ans = 0;
+    for (int i = 1; i < month; i++) {
+        ans += days[i];
+    }
+    ans += day;
+    
+    cout << ans << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['模拟', '日期'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '2024 3 1', expectedOutput: '61' },
+      { id: 2, input: '2023 12 31', expectedOutput: '365' },
+      { id: 3, input: '2024 12 31', expectedOutput: '366' },
+    ],
+  },
+  {
+    id: 257,
+    title: '约瑟夫问题',
+    titleEn: 'Josephus Problem',
+    difficulty: 'intermediate',
+    description: 'n个人围成一圈，从第1个人开始报数，数到m的人出圈，然后从下一个人重新开始报数，求最后剩下的人的编号。',
+    inputFormat: '两个正整数n和m。',
+    outputFormat: '输出最后剩下的人的编号。',
+    sampleInput: '7 3',
+    sampleOutput: '4',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】n个人围成一圈，数到m的人出圈，求最后剩下的人
+ * 【算法】模拟（数组标记法）
+ * 【时间复杂度】O(n*m)
+ */
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    bool out[10001] = {false};
+    int count = 0;   // 已出圈人数
+    int num = 0;     // 当前报的数
+    int i = 0;       // 当前位置
+    
+    while (count < n - 1) {
+        if (!out[i]) {
+            num++;
+            if (num == m) {
+                out[i] = true;
+                count++;
+                num = 0;
+            }
+        }
+        i = (i + 1) % n;
+    }
+    
+    for (int j = 0; j < n; j++) {
+        if (!out[j]) {
+            cout << j + 1 << endl;
+            break;
+        }
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['模拟', '循环'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '7 3', expectedOutput: '4' },
+      { id: 2, input: '5 2', expectedOutput: '3' },
+    ],
+  },
+  {
+    id: 258,
+    title: '表达式求值',
+    titleEn: 'Expression Evaluation',
+    difficulty: 'intermediate',
+    description: '给定一个只包含加减乘除和括号的表达式，计算其值。',
+    inputFormat: '一个字符串，表示算术表达式。',
+    outputFormat: '输出表达式的值。',
+    sampleInput: '2+3*(4-1)',
+    sampleOutput: '11',
+    defaultCode: `#include <iostream>
+#include <stack>
+#include <string>
+#include <cctype>
+using namespace std;
+
+/*
+ * 【题目描述】计算只包含加减乘除和括号的表达式
+ * 【算法】栈模拟
+ * 【核心思想】使用两个栈，一个存数字，一个存运算符
+ * 【优先级】乘除 > 加减，括号改变优先级
+ */
+int priority(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    return 0;
+}
+
+int calc(int a, int b, char op) {
+    switch(op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return a / b;
+    }
+    return 0;
+}
+
+int main() {
+    string s;
+    cin >> s;
+    
+    stack<int> nums;
+    stack<char> ops;
+    
+    for (int i = 0; i < s.length(); i++) {
+        if (isdigit(s[i])) {
+            int num = 0;
+            while (i < s.length() && isdigit(s[i])) {
+                num = num * 10 + (s[i] - '0');
+                i++;
+            }
+            nums.push(num);
+            i--;
+        } else if (s[i] == '(') {
+            ops.push(s[i]);
+        } else if (s[i] == ')') {
+            while (ops.top() != '(') {
+                int b = nums.top(); nums.pop();
+                int a = nums.top(); nums.pop();
+                nums.push(calc(a, b, ops.top()));
+                ops.pop();
+            }
+            ops.pop();
+        } else {
+            while (!ops.empty() && priority(ops.top()) >= priority(s[i])) {
+                int b = nums.top(); nums.pop();
+                int a = nums.top(); nums.pop();
+                nums.push(calc(a, b, ops.top()));
+                ops.pop();
+            }
+            ops.push(s[i]);
+        }
+    }
+    
+    while (!ops.empty()) {
+        int b = nums.top(); nums.pop();
+        int a = nums.top(); nums.pop();
+        nums.push(calc(a, b, ops.top()));
+        ops.pop();
+    }
+    
+    cout << nums.top() << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['模拟', '栈'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '2+3*(4-1)', expectedOutput: '11' },
+      { id: 2, input: '(1+2)*3', expectedOutput: '9' },
+    ],
+  },
+  // 排序类
+  {
+    id: 259,
+    title: '冒泡排序',
+    titleEn: 'Bubble Sort',
+    difficulty: 'beginner',
+    description: '实现冒泡排序算法，对n个整数进行从小到大排序。',
+    inputFormat: '第一行一个整数n。第二行n个整数。',
+    outputFormat: '输出排序后的数组。',
+    sampleInput: '5\n5 3 8 4 2',
+    sampleOutput: '2 3 4 5 8',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】实现冒泡排序，对n个整数排序
+ * 【算法】冒泡排序
+ * 【核心思想】相邻元素比较交换，每轮将最大元素"冒泡"到末尾
+ * 【时间复杂度】O(n²)
+ */
+int main() {
+    int n;
+    cin >> n;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+    
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n5 3 8 4 2', expectedOutput: '2 3 4 5 8' },
+    ],
+  },
+  {
+    id: 260,
+    title: '选择排序',
+    titleEn: 'Selection Sort',
+    difficulty: 'beginner',
+    description: '实现选择排序算法，对n个整数进行从小到大排序。',
+    inputFormat: '第一行一个整数n。第二行n个整数。',
+    outputFormat: '输出排序后的数组。',
+    sampleInput: '5\n5 3 8 4 2',
+    sampleOutput: '2 3 4 5 8',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】实现选择排序，对n个整数排序
+ * 【算法】选择排序
+ * 【核心思想】每轮选择最小元素放到已排序序列末尾
+ * 【时间复杂度】O(n²)
+ */
+int main() {
+    int n;
+    cin >> n;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIdx]) minIdx = j;
+        }
+        if (minIdx != i) {
+            int temp = arr[i];
+            arr[i] = arr[minIdx];
+            arr[minIdx] = temp;
+        }
+    }
+    
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n5 3 8 4 2', expectedOutput: '2 3 4 5 8' },
+    ],
+  },
+  {
+    id: 261,
+    title: '插入排序',
+    titleEn: 'Insertion Sort',
+    difficulty: 'beginner',
+    description: '实现插入排序算法，对n个整数进行从小到大排序。',
+    inputFormat: '第一行一个整数n。第二行n个整数。',
+    outputFormat: '输出排序后的数组。',
+    sampleInput: '5\n5 3 8 4 2',
+    sampleOutput: '2 3 4 5 8',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】实现插入排序，对n个整数排序
+ * 【算法】插入排序
+ * 【核心思想】将元素插入到已排序序列的正确位置
+ * 【时间复杂度】O(n²)，对近乎有序的数组效率高
+ */
+int main() {
+    int n;
+    cin >> n;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+    
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n5 3 8 4 2', expectedOutput: '2 3 4 5 8' },
+    ],
+  },
+  {
+    id: 262,
+    title: '快速排序',
+    titleEn: 'Quick Sort',
+    difficulty: 'intermediate',
+    description: '实现快速排序算法，对n个整数进行从小到大排序。',
+    inputFormat: '第一行一个整数n。第二行n个整数。',
+    outputFormat: '输出排序后的数组。',
+    sampleInput: '5\n5 3 8 4 2',
+    sampleOutput: '2 3 4 5 8',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】实现快速排序，对n个整数排序
+ * 【算法】快速排序（分治）
+ * 【核心思想】选择基准元素，将小于基准的放左边，大于基准的放右边
+ * 【时间复杂度】平均O(n log n)，最坏O(n²)
+ */
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    quickSort(arr, 0, n - 1);
+    
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['排序', '分治'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n5 3 8 4 2', expectedOutput: '2 3 4 5 8' },
+    ],
+  },
+  {
+    id: 263,
+    title: '归并排序',
+    titleEn: 'Merge Sort',
+    difficulty: 'intermediate',
+    description: '实现归并排序算法，对n个整数进行从小到大排序。',
+    inputFormat: '第一行一个整数n。第二行n个整数。',
+    outputFormat: '输出排序后的数组。',
+    sampleInput: '5\n5 3 8 4 2',
+    sampleOutput: '2 3 4 5 8',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】实现归并排序，对n个整数排序
+ * 【算法】归并排序（分治）
+ * 【核心思想】将数组分成两半，分别排序后合并
+ * 【时间复杂度】O(n log n)，稳定排序
+ */
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    int L[500], R[500];
+    for (int i = 0; i < n1; i++) L[i] = arr[l + i];
+    for (int i = 0; i < n2; i++) R[i] = arr[m + 1 + i];
+    
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) arr[k++] = L[i++];
+        else arr[k++] = R[j++];
+    }
+    while (i < n1) arr[k++] = L[i++];
+    while (j < n2) arr[k++] = R[j++];
+}
+
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    mergeSort(arr, 0, n - 1);
+    
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['排序', '分治'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n5 3 8 4 2', expectedOutput: '2 3 4 5 8' },
+    ],
+  },
+  // 贪心类
+  {
+    id: 264,
+    title: '活动选择',
+    titleEn: 'Activity Selection',
+    difficulty: 'intermediate',
+    description: '有n个活动，每个活动有开始时间和结束时间。选择最多的不重叠活动。',
+    inputFormat: '第一行n。接下来n行，每行两个整数s和e表示开始和结束时间。',
+    outputFormat: '输出最多能选择的活动数量。',
+    sampleInput: '5\n1 3\n2 4\n3 5\n4 6\n5 7',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+/*
+ * 【题目描述】选择最多的不重叠活动
+ * 【算法】贪心
+ * 【贪心策略】按结束时间排序，每次选择结束最早的活动
+ * 【正确性】选择结束最早的活动，留给后续活动的时间最多
+ */
+struct Activity { int start, end; };
+
+int main() {
+    int n;
+    cin >> n;
+    Activity acts[100];
+    for (int i = 0; i < n; i++) cin >> acts[i].start >> acts[i].end;
+    
+    sort(acts, acts + n, [](Activity a, Activity b) { return a.end < b.end; });
+    
+    int count = 1, lastEnd = acts[0].end;
+    for (int i = 1; i < n; i++) {
+        if (acts[i].start >= lastEnd) {
+            count++;
+            lastEnd = acts[i].end;
+        }
+    }
+    
+    cout << count << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['贪心', '排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5\n1 3\n2 4\n3 5\n4 6\n5 7', expectedOutput: '3' },
+    ],
+  },
+  {
+    id: 265,
+    title: '最优装载',
+    titleEn: 'Optimal Loading',
+    difficulty: 'beginner',
+    description: '有一艘船，载重量为c。有n个集装箱，第i个重量为w[i]。求最多能装多少个集装箱。',
+    inputFormat: '第一行n和c。第二行n个整数表示重量。',
+    outputFormat: '输出最多能装的集装箱数量。',
+    sampleInput: '5 10\n3 5 2 4 1',
+    sampleOutput: '4',
+    defaultCode: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+/*
+ * 【题目描述】在载重量限制下，求最多能装多少个集装箱
+ * 【算法】贪心
+ * 【贪心策略】优先选择重量小的集装箱
+ * 【正确性】选择轻的可以装更多个
+ */
+int main() {
+    int n, c;
+    cin >> n >> c;
+    int w[100];
+    for (int i = 0; i < n; i++) cin >> w[i];
+    
+    sort(w, w + n);
+    
+    int count = 0, total = 0;
+    for (int i = 0; i < n; i++) {
+        if (total + w[i] <= c) {
+            total += w[i];
+            count++;
+        } else break;
+    }
+    
+    cout << count << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['贪心', '排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 10\n3 5 2 4 1', expectedOutput: '4' },
+    ],
+  },
+  {
+    id: 266,
+    title: '最小延迟调度',
+    titleEn: 'Minimize Lateness',
+    difficulty: 'intermediate',
+    description: '有n个任务，每个任务需要处理时间t[i]和截止时间d[i]。按某种顺序执行，求最小最大延迟（完成时间-截止时间的最大值）。',
+    inputFormat: '第一行n。接下来n行，每行两个整数t和d。',
+    outputFormat: '输出最小最大延迟。',
+    sampleInput: '3\n3 6\n2 8\n1 9',
+    sampleOutput: '1',
+    defaultCode: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+/*
+ * 【题目描述】安排任务执行顺序，使最大延迟最小
+ * 【算法】贪心
+ * 【贪心策略】按截止时间排序，依次执行
+ * 【正确性】最早截止时间优先是最优策略
+ */
+struct Task { int time, deadline; };
+
+int main() {
+    int n;
+    cin >> n;
+    Task tasks[100];
+    for (int i = 0; i < n; i++) cin >> tasks[i].time >> tasks[i].deadline;
+    
+    sort(tasks, tasks + n, [](Task a, Task b) { return a.deadline < b.deadline; });
+    
+    int currTime = 0, maxLateness = 0;
+    for (int i = 0; i < n; i++) {
+        currTime += tasks[i].time;
+        int lateness = max(0, currTime - tasks[i].deadline);
+        maxLateness = max(maxLateness, lateness);
+    }
+    
+    cout << maxLateness << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['贪心', '排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '3\n3 6\n2 8\n1 9', expectedOutput: '1' },
+    ],
+  },
+  // 二分查找类
+  {
+    id: 267,
+    title: '二分查找',
+    titleEn: 'Binary Search',
+    difficulty: 'beginner',
+    description: '给定一个有序数组和一个目标值，查找目标值在数组中的位置。如果不存在，返回-1。',
+    inputFormat: '第一行n和target。第二行n个已排序的整数。',
+    outputFormat: '输出目标值的位置（从0开始），不存在输出-1。',
+    sampleInput: '5 3\n1 2 3 4 5',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】在有序数组中查找目标值
+ * 【算法】二分查找
+ * 【核心思想】每次将搜索范围缩小一半
+ * 【时间复杂度】O(log n)
+ */
+int main() {
+    int n, target;
+    cin >> n >> target;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    int left = 0, right = n - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target) {
+            cout << mid << endl;
+            return 0;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    cout << -1 << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['二分查找'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 2 3 4 5', expectedOutput: '2' },
+      { id: 2, input: '5 6\n1 2 3 4 5', expectedOutput: '-1' },
+    ],
+  },
+  {
+    id: 268,
+    title: '查找第一个等于目标的位置',
+    titleEn: 'Find First Position',
+    difficulty: 'intermediate',
+    description: '给定一个非递减数组和一个目标值，查找目标值第一次出现的位置。',
+    inputFormat: '第一行n和target。第二行n个非递减的整数。',
+    outputFormat: '输出目标值第一次出现的位置（从0开始），不存在输出-1。',
+    sampleInput: '6 3\n1 2 3 3 3 4',
+    sampleOutput: '2',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】在非递减数组中查找目标值第一次出现的位置
+ * 【算法】二分查找（找左边界）
+ * 【核心思想】找到目标后继续向左搜索
+ * 【时间复杂度】O(log n)
+ */
+int main() {
+    int n, target;
+    cin >> n >> target;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    int left = 0, right = n - 1, result = -1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] >= target) {
+            if (arr[mid] == target) result = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['二分查找'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6 3\n1 2 3 3 3 4', expectedOutput: '2' },
+      { id: 2, input: '5 6\n1 2 3 4 5', expectedOutput: '-1' },
+    ],
+  },
+  {
+    id: 269,
+    title: '查找最后一个等于目标的位置',
+    titleEn: 'Find Last Position',
+    difficulty: 'intermediate',
+    description: '给定一个非递减数组和一个目标值，查找目标值最后一次出现的位置。',
+    inputFormat: '第一行n和target。第二行n个非递减的整数。',
+    outputFormat: '输出目标值最后一次出现的位置（从0开始），不存在输出-1。',
+    sampleInput: '6 3\n1 2 3 3 3 4',
+    sampleOutput: '4',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】在非递减数组中查找目标值最后一次出现的位置
+ * 【算法】二分查找（找右边界）
+ * 【核心思想】找到目标后继续向右搜索
+ * 【时间复杂度】O(log n)
+ */
+int main() {
+    int n, target;
+    cin >> n >> target;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    int left = 0, right = n - 1, result = -1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] <= target) {
+            if (arr[mid] == target) result = mid;
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['二分查找'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6 3\n1 2 3 3 3 4', expectedOutput: '4' },
+      { id: 2, input: '5 6\n1 2 3 4 5', expectedOutput: '-1' },
+    ],
+  },
+  {
+    id: 270,
+    title: '二分答案-木材切割',
+    titleEn: 'Binary Search Answer - Wood Cutting',
+    difficulty: 'intermediate',
+    description: '有n根木材，长度为L[i]。需要切成k根等长的木棍，求每根最长能有多长。',
+    inputFormat: '第一行n和k。第二行n个整数表示木材长度。',
+    outputFormat: '输出最长能切多长，不能切则输出0。',
+    sampleInput: '4 7\n10 15 22 8',
+    sampleOutput: '7',
+    defaultCode: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+/*
+ * 【题目描述】将n根木材切成k根等长木棍，求每根最长长度
+ * 【算法】二分答案
+ * 【核心思想】二分可能的长度，判断是否能切出k根
+ * 【时间复杂度】O(n log(maxL))
+ */
+int main() {
+    int n, k;
+    cin >> n >> k;
+    int L[100];
+    int maxL = 0;
+    for (int i = 0; i < n; i++) {
+        cin >> L[i];
+        maxL = max(maxL, L[i]);
+    }
+    
+    int left = 1, right = maxL, ans = 0;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            count += L[i] / mid;
+        }
+        if (count >= k) {
+            ans = mid;
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    cout << ans << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['二分查找'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 7\n10 15 22 8', expectedOutput: '7' },
+    ],
+  },
+  {
+    id: 271,
+    title: '二分答案-进击的奶牛',
+    titleEn: 'Binary Search Answer - Aggressive Cows',
+    difficulty: 'intermediate',
+    description: '有n个牛棚位置和m头牛。将m头牛放入牛棚，使任意两头牛之间的最小距离最大。',
+    inputFormat: '第一行n和m。第二行n个整数表示牛棚位置。',
+    outputFormat: '输出最小距离的最大值。',
+    sampleInput: '5 3\n1 2 8 4 9',
+    sampleOutput: '3',
+    defaultCode: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+/*
+ * 【题目描述】将m头牛放入n个牛棚，使最小距离最大
+ * 【算法】二分答案
+ * 【核心思想】二分最小距离，判断能否放入m头牛
+ * 【时间复杂度】O(n log(maxDist))
+ */
+int main() {
+    int n, m;
+    cin >> n >> m;
+    int pos[100];
+    for (int i = 0; i < n; i++) cin >> pos[i];
+    sort(pos, pos + n);
+    
+    int left = 1, right = pos[n-1] - pos[0], ans = 0;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        int count = 1, last = pos[0];
+        for (int i = 1; i < n; i++) {
+            if (pos[i] - last >= mid) {
+                count++;
+                last = pos[i];
+            }
+        }
+        if (count >= m) {
+            ans = mid;
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    cout << ans << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['二分查找', '贪心'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n1 2 8 4 9', expectedOutput: '3' },
+    ],
+  },
+  // 双指针类
+  {
+    id: 272,
+    title: '两数之和II',
+    titleEn: 'Two Sum II',
+    difficulty: 'beginner',
+    description: '给定一个已排序的数组和一个目标值，找出数组中和为目标值的两个数的索引（从1开始）。',
+    inputFormat: '第一行n和target。第二行n个已排序的整数。',
+    outputFormat: '输出两个索引，保证有且只有一个解。',
+    sampleInput: '4 9\n2 7 11 15',
+    sampleOutput: '1 2',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】在已排序数组中找两个数，使和等于target
+ * 【算法】双指针
+ * 【核心思想】左指针从左开始，右指针从右开始，根据和调整指针
+ * 【时间复杂度】O(n)
+ */
+int main() {
+    int n, target;
+    cin >> n >> target;
+    int arr[1000];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    int left = 0, right = n - 1;
+    while (left < right) {
+        int sum = arr[left] + arr[right];
+        if (sum == target) {
+            cout << left + 1 << " " << right + 1 << endl;
+            return 0;
+        } else if (sum < target) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['双指针'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '4 9\n2 7 11 15', expectedOutput: '1 2' },
+    ],
+  },
+  {
+    id: 273,
+    title: '三数之和',
+    titleEn: 'Three Sum',
+    difficulty: 'intermediate',
+    description: '给定一个数组，找出所有和为0的三元组，不能重复。',
+    inputFormat: '第一行n。第二行n个整数。',
+    outputFormat: '输出所有不重复的三元组，每个三元组一行。',
+    sampleInput: '6\n-1 0 1 2 -1 -4',
+    sampleOutput: '-1 -1 2\n-1 0 1',
+    defaultCode: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+/*
+ * 【题目描述】找出数组中所有和为0的三元组
+ * 【算法】排序 + 双指针
+ * 【核心思想】固定一个数，用双指针找另外两个
+ * 【去重】跳过相同的元素
+ */
+int main() {
+    int n;
+    cin >> n;
+    int arr[100];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    sort(arr, arr + n);
+    
+    for (int i = 0; i < n - 2; i++) {
+        if (i > 0 && arr[i] == arr[i-1]) continue;  // 去重
+        
+        int left = i + 1, right = n - 1;
+        while (left < right) {
+            int sum = arr[i] + arr[left] + arr[right];
+            if (sum == 0) {
+                cout << arr[i] << " " << arr[left] << " " << arr[right] << endl;
+                while (left < right && arr[left] == arr[left+1]) left++;   // 去重
+                while (left < right && arr[right] == arr[right-1]) right--; // 去重
+                left++;
+                right--;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['双指针', '排序'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '6\n-1 0 1 2 -1 -4', expectedOutput: '-1 -1 2\n-1 0 1' },
+    ],
+  },
+  {
+    id: 274,
+    title: '移除元素',
+    titleEn: 'Remove Element',
+    difficulty: 'beginner',
+    description: '给定一个数组和一个值val，原地移除所有等于val的元素，返回新数组的长度。',
+    inputFormat: '第一行n和val。第二行n个整数。',
+    outputFormat: '输出新数组的长度和新数组内容。',
+    sampleInput: '5 3\n3 2 2 3 4',
+    sampleOutput: '3\n2 2 4',
+    defaultCode: `#include <iostream>
+using namespace std;
+
+/*
+ * 【题目描述】原地移除所有等于val的元素
+ * 【算法】双指针
+ * 【核心思想】快指针遍历，慢指针记录非val元素位置
+ * 【时间复杂度】O(n)
+ */
+int main() {
+    int n, val;
+    cin >> n >> val;
+    int arr[100];
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    int slow = 0;
+    for (int fast = 0; fast < n; fast++) {
+        if (arr[fast] != val) {
+            arr[slow++] = arr[fast];
+        }
+    }
+    
+    cout << slow << endl;
+    for (int i = 0; i < slow; i++) cout << arr[i] << " ";
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['双指针'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '5 3\n3 2 2 3 4', expectedOutput: '3\n2 2 4' },
+    ],
+  },
+  {
+    id: 275,
+    title: '反转字符串',
+    titleEn: 'Reverse String',
+    difficulty: 'beginner',
+    description: '原地反转字符串。',
+    inputFormat: '一个字符串。',
+    outputFormat: '输出反转后的字符串。',
+    sampleInput: 'hello',
+    sampleOutput: 'olleh',
+    defaultCode: `#include <iostream>
+#include <string>
+using namespace std;
+
+/*
+ * 【题目描述】原地反转字符串
+ * 【算法】双指针
+ * 【核心思想】左右指针交换字符，向中间靠拢
+ * 【时间复杂度】O(n)
+ */
+int main() {
+    string s;
+    cin >> s;
+    
+    int left = 0, right = s.length() - 1;
+    while (left < right) {
+        swap(s[left], s[right]);
+        left++;
+        right--;
+    }
+    
+    cout << s << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['双指针', '字符串'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: 'hello', expectedOutput: 'olleh' },
+    ],
+  },
+  {
+    id: 276,
+    title: '盛最多水的容器',
+    titleEn: 'Container With Most Water',
+    difficulty: 'intermediate',
+    description: '给定n个非负整数表示柱子高度，求两根柱子能盛的最大水量。',
+    inputFormat: '第一行n。第二行n个非负整数。',
+    outputFormat: '输出最大水量。',
+    sampleInput: '9\n1 8 6 2 5 4 8 3 7',
+    sampleOutput: '49',
+    defaultCode: `#include <iostream>
+#include <algorithm>
+using namespace std;
+
+/*
+ * 【题目描述】求两根柱子能盛的最大水量
+ * 【算法】双指针
+ * 【核心思想】从两端开始，移动较矮的指针（贪心）
+ * 【正确性】较矮的柱子决定了水量，移动较高的柱子不可能得到更大的水量
+ */
+int main() {
+    int n;
+    cin >> n;
+    int height[100];
+    for (int i = 0; i < n; i++) cin >> height[i];
+    
+    int left = 0, right = n - 1, maxArea = 0;
+    while (left < right) {
+        int area = (right - left) * min(height[left], height[right]);
+        maxArea = max(maxArea, area);
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    
+    cout << maxArea << endl;
+    return 0;
+}`,
+    category: '基础算法',
+    tags: ['双指针', '贪心'],
+    source: 'Other',
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: '9\n1 8 6 2 5 4 8 3 7', expectedOutput: '49' },
+    ],
+  },
 ];
 
 // 获取所有分类
