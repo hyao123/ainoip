@@ -25,6 +25,7 @@ import {
   type WrongProblemRecord,
   type SubmissionRecord,
 } from '@/lib/user-learning-data';
+import type { DifficultyLevel } from '@/lib/problems';
 import {
   BookX,
   Clock,
@@ -45,10 +46,11 @@ interface WrongProblemBookProps {
   onSelectProblem?: (problemId: number) => void;
 }
 
-const difficultyConfig = {
-  easy: { label: '简单', color: 'bg-green-100 text-green-800 border-green-200' },
-  medium: { label: '中等', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-  hard: { label: '困难', color: 'bg-red-100 text-red-800 border-red-200' },
+const difficultyConfig: Record<DifficultyLevel, { label: string; color: string }> = {
+  beginner: { label: '入门', color: 'bg-green-100 text-green-800 border-green-200' },
+  intermediate: { label: '提高', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+  advanced: { label: '省选', color: 'bg-orange-100 text-orange-800 border-orange-200' },
+  expert: { label: 'NOI', color: 'bg-red-100 text-red-800 border-red-200' },
 };
 
 const resultConfig: Record<string, { label: string; color: string }> = {
@@ -103,7 +105,7 @@ export function WrongProblemBook({ onSelectProblem }: WrongProblemBookProps) {
     } else if (sortBy === 'count') {
       problems.sort((a, b) => b.wrongCount - a.wrongCount);
     } else if (sortBy === 'difficulty') {
-      const order = { hard: 0, medium: 1, easy: 2 };
+      const order: Record<DifficultyLevel, number> = { expert: 0, advanced: 1, intermediate: 2, beginner: 3 };
       problems.sort((a, b) => order[a.difficulty] - order[b.difficulty]);
     }
 

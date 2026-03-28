@@ -3,13 +3,15 @@
  * 使用localStorage持久化存储用户的学习数据
  */
 
+import type { DifficultyLevel } from './problems';
+
 // 题目提交记录
 export interface SubmissionRecord {
   id: string;
   problemId: number;
   problemTitle: string;
   category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: DifficultyLevel;
   code: string;
   language: 'cpp' | 'python';
   timestamp: number;
@@ -27,7 +29,7 @@ export interface WrongProblemRecord {
   problemId: number;
   problemTitle: string;
   category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: DifficultyLevel;
   wrongCount: number;
   lastWrongTime: number;
   lastSubmission?: SubmissionRecord;
@@ -204,7 +206,7 @@ export function addSubmission(
   problemId: number,
   problemTitle: string,
   category: string,
-  difficulty: 'easy' | 'medium' | 'hard',
+  difficulty: DifficultyLevel,
   code: string,
   language: 'cpp' | 'python',
   result: SubmissionRecord['result'],
@@ -280,7 +282,7 @@ function addWrongProblem(
   problemId: number,
   problemTitle: string,
   category: string,
-  difficulty: 'easy' | 'medium' | 'hard',
+  difficulty: DifficultyLevel,
   submission: SubmissionRecord
 ): void {
   const existing = data.wrongProblems.find(w => w.problemId === problemId);
@@ -349,7 +351,7 @@ function updateDailyStats(data: UserLearningData, date: string, accepted: boolea
 function checkAchievements(
   data: UserLearningData,
   submission: SubmissionRecord,
-  difficulty: 'easy' | 'medium' | 'hard'
+  difficulty: DifficultyLevel
 ): Achievement[] {
   const newAchievements: Achievement[] = [];
   
@@ -394,7 +396,7 @@ function checkAchievements(
         progress = submission.result === 'WA' ? 1 : 0;
         break;
       case 'hard_first':
-        progress = submission.result === 'AC' && difficulty === 'hard' ? 1 : 0;
+        progress = submission.result === 'AC' && (difficulty === 'advanced' || difficulty === 'expert') ? 1 : 0;
         break;
       case 'night_owl':
         const hour = new Date().getHours();
