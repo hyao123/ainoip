@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap, Settings, BookMarked, AlertTriangle, Search } from 'lucide-react';
+import { Play, Code2, ListChecks, ChevronDown, ChevronRight, Keyboard, HelpCircle, TestTube2, X, Target, BookOpen, Database, User, Sparkles, Map, Compass, Trophy, Flame, Rocket, Zap, Settings, BookMarked, AlertTriangle, Search, BarChart3 } from 'lucide-react';
 import { SmartCodeEditor, type EditorSettings, type EditorLanguage } from '@/components/SmartCodeEditor';
 import { InputPanel } from '@/components/InputPanel';
 import { OutputPanel } from '@/components/OutputPanel';
@@ -23,6 +23,7 @@ import { UserCenterPage } from '@/components/UserCenterPage';
 import { AlgorithmDemoPage } from '@/components/AlgorithmDemoPage';
 import { CheatSheetPage } from '@/components/CheatSheetPage';
 import { CommonMistakesPage } from '@/components/CommonMistakesPage';
+import { AnalyticsPage } from '@/components/AnalyticsPage';
 import { AILogoWithText } from '@/components/AILogo';
 import { ProgressiveHint } from '@/components/ProgressiveHint';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -154,7 +155,7 @@ export default function Home() {
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [evaluationResults, setEvaluationResults] = useState<TestCaseResult[] | null>(null);
   const [evaluationSummary, setEvaluationSummary] = useState<EvaluateSummary | null>(null);
-  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm' | 'cheatsheet' | 'mistakes'>('learning');
+  const [currentView, setCurrentView] = useState<'practice' | 'learning' | 'bank' | 'user' | 'map' | 'algorithm' | 'cheatsheet' | 'mistakes' | 'analytics'>('learning');
   const [initialKnowledgeSlug, setInitialKnowledgeSlug] = useState<string | undefined>(undefined);
   const [expectedOutput, setExpectedOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
@@ -452,6 +453,17 @@ export default function Home() {
             常见错误
           </button>
           <button
+            onClick={() => setCurrentView('analytics')}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              currentView === 'analytics'
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <BarChart3 className="h-4 w-4" />
+            数据分析
+          </button>
+          <button
             onClick={() => setCurrentView('user')}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
               currentView === 'user'
@@ -587,6 +599,8 @@ export default function Home() {
             <AlgorithmDemoPage />
           ) : currentView === 'cheatsheet' ? (
             <CheatSheetPage />
+          ) : currentView === 'analytics' ? (
+            <AnalyticsPage />
           ) : currentView === 'mistakes' ? (
             <CommonMistakesPage />
           ) : (
