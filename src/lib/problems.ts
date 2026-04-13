@@ -4,7 +4,28 @@
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
 // 题目来源
-export type ProblemSource = 'NOIP-Popular' | 'NOIP-Improvement' | 'NOI' | 'Other';
+export type ProblemSource = 'NOIP-Popular' | 'NOIP-Improvement' | 'NOI' | 'ICPC' | 'LeetCode' | 'Interview' | 'Other';
+
+// 面试频率
+export type InterviewFrequency = 'hot' | 'medium' | 'low';
+
+// 竞赛配置
+export const sourceConfig: Record<ProblemSource, { label: string; color: string; icon: string }> = {
+  'NOIP-Popular': { label: 'NOIP普及组', color: 'bg-green-100 text-green-800', icon: '🏆' },
+  'NOIP-Improvement': { label: 'NOIP提高组', color: 'bg-blue-100 text-blue-800', icon: '🏅' },
+  'NOI': { label: 'NOI/NOIP决赛', color: 'bg-purple-100 text-purple-800', icon: '🥇' },
+  'ICPC': { label: 'ICPC/ACM', color: 'bg-amber-100 text-amber-800', icon: '🌐' },
+  'LeetCode': { label: 'LeetCode', color: 'bg-orange-100 text-orange-800', icon: '🔥' },
+  'Interview': { label: '面试真题', color: 'bg-rose-100 text-rose-800', icon: '💼' },
+  'Other': { label: '其他', color: 'bg-gray-100 text-gray-800', icon: '📝' },
+};
+
+// 面试频率配置
+export const frequencyConfig: Record<InterviewFrequency, { label: string; color: string }> = {
+  'hot': { label: '高频', color: 'bg-red-100 text-red-800' },
+  'medium': { label: '中频', color: 'bg-yellow-100 text-yellow-800' },
+  'low': { label: '低频', color: 'bg-gray-100 text-gray-800' },
+};
 
 // 测试用例类型
 export interface TestCase {
@@ -42,14 +63,6 @@ export const difficultyConfig: Record<DifficultyLevel, { label: string; color: s
   intermediate: { label: '提高', color: 'text-blue-600', bgColor: 'bg-blue-100 text-blue-800 border-blue-200' },
   advanced: { label: '省选', color: 'text-orange-600', bgColor: 'bg-orange-100 text-orange-800 border-orange-200' },
   expert: { label: 'NOI', color: 'text-red-600', bgColor: 'bg-red-100 text-red-800 border-red-200' },
-};
-
-// 来源配置
-export const sourceConfig: Record<ProblemSource, { label: string; color: string }> = {
-  'NOIP-Popular': { label: 'NOIP普及组', color: 'bg-green-100 text-green-800' },
-  'NOIP-Improvement': { label: 'NOIP提高组', color: 'bg-blue-100 text-blue-800' },
-  'NOI': { label: 'NOI', color: 'bg-purple-100 text-purple-800' },
-  'Other': { label: '其他', color: 'bg-gray-100 text-gray-800' },
 };
 
 // 分类配置
@@ -14133,6 +14146,1947 @@ int main() {
     memoryLimit: 128,
     testCases: [
       { id: 1, input: '9\n1 8 6 2 5 4 8 3 7', expectedOutput: '49' },
+    ],
+  },
+  // ========== LeetCode Hot 100 专题 ==========
+  // Hot 1: 两数之和
+  {
+    id: 277,
+    title: "LeetCode Hot 1 - 两数之和",
+    titleEn: "Two Sum",
+    difficulty: "beginner",
+    description: "给定一个整数数组 nums 和一个目标值 target，找出数组中两个数的和等于目标值的索引。",
+    inputFormat: "第一行数组长度n和目标值target，第二行n个整数。",
+    outputFormat: "输出两个索引（0开始），用空格分隔。题目保证有且仅有一个解。",
+    sampleInput: "4 6\n2 7 11 15",
+    sampleOutput: "0 1",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+int main() {
+    int n, target;
+    cin >> n >> target;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    
+    unordered_map<int, int> map;
+    for (int i = 0; i < n; i++) {
+        int complement = target - nums[i];
+        if (map.count(complement)) {
+            cout << map[complement] << " " << i << endl;
+            return 0;
+        }
+        map[nums[i]] = i;
+    }
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["哈希表", "数组"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "4 6\n2 7 11 15", expectedOutput: "0 1" },
+      { id: 2, input: "3 6\n3 2 4", expectedOutput: "1 2" },
+    ],
+    similarProblems: [278],
+  },
+  // Hot 2: 两数相加
+  {
+    id: 278,
+    title: "LeetCode Hot 2 - 两数相加",
+    titleEn: "Add Two Numbers",
+    difficulty: "intermediate",
+    description: "给你两个非空链表，表示两个非负整数。每位数字都是反向存储的，将两个数相加返回一个新链表。",
+    inputFormat: "第一行第一个链表长度l1，第二行l1个整数；第二行长度l2，第三行l2个整数。",
+    outputFormat: "输出结果链表（反向存储），空格分隔。",
+    sampleInput: "3\n2 4 3\n3\n5 6 4",
+    sampleOutput: "7 0 8",
+    defaultCode: `#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int l1, l2;
+    cin >> l1;
+    vector<int> a(l1);
+    for (int i = 0; i < l1; i++) cin >> a[i];
+    cin >> l2;
+    vector<int> b(l2);
+    for (int i = 0; i < l2; i++) cin >> b[i];
+    
+    // 简单模拟链表相加
+    int carry = 0, i = 0, j = 0;
+    vector<int> result;
+    while (i < l1 || j < l2 || carry) {
+        int sum = carry;
+        if (i < l1) sum += a[i++];
+        if (j < l2) sum += b[j++];
+        result.push_back(sum % 10);
+        carry = sum / 10;
+    }
+    
+    for (int k = 0; k < result.size(); k++) {
+        if (k) cout << " ";
+        cout << result[k];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["链表", "数学"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "3\n2 4 3\n3\n5 6 4", expectedOutput: "7 0 8" },
+    ],
+    similarProblems: [277],
+  },
+  // Hot 3: 无重复字符的最长子串
+  {
+    id: 279,
+    title: "LeetCode Hot 3 - 无重复字符的最长子串",
+    titleEn: "Longest Substring Without Repeating Characters",
+    difficulty: "intermediate",
+    description: "给定一个字符串 s，找出其中不含有重复字符的最长子串的长度。",
+    inputFormat: "输入一行字符串s（仅包含ASCII字符）。",
+    outputFormat: "输出最长子串的长度。",
+    sampleInput: "abcabcbb",
+    sampleOutput: "3",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <unordered_set>
+using namespace std;
+
+int main() {
+    string s;
+    cin >> s;
+    
+    unordered_set<char> window;
+    int left = 0, maxLen = 0;
+    
+    for (int right = 0; right < s.length(); right++) {
+        while (window.count(s[right])) {
+            window.erase(s[left]);
+            left++;
+        }
+        window.insert(s[right]);
+        maxLen = max(maxLen, right - left + 1);
+    }
+    
+    cout << maxLen << endl;
+    return 0;
+}`,
+    category: "字符串处理",
+    tags: ["滑动窗口", "哈希表"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "abcabcbb", expectedOutput: "3" },
+      { id: 2, input: "bbbbb", expectedOutput: "1" },
+      { id: 3, input: "pwwkew", expectedOutput: "3" },
+    ],
+    similarProblems: [280, 281],
+  },
+  // Hot 4: 寻找两个正序数组的中位数
+  {
+    id: 280,
+    title: "LeetCode Hot 4 - 寻找两个正序数组的中位数",
+    titleEn: "Median of Two Sorted Arrays",
+    difficulty: "advanced",
+    description: "给定两个正序（从小到大）数组 nums1 和 nums2，找出它们合并后的中位数。",
+    inputFormat: "第一行n1和nums1，第二行n1个整数；第三行n2和nums2，第四行n2个整数。",
+    outputFormat: "输出中位数（保留一位小数或整数）。",
+    sampleInput: "3\n1 2 3\n3\n4 5 6",
+    sampleOutput: "3.5",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n1, n2;
+    cin >> n1;
+    vector<int> nums1(n1);
+    for (int i = 0; i < n1; i++) cin >> nums1[i];
+    cin >> n2;
+    vector<int> nums2(n2);
+    for (int i = 0; i < n2; i++) cin >> nums2[i];
+    
+    vector<int> merged(n1 + n2);
+    merge(nums1.begin(), nums1.end(), nums2.begin(), nums2.end(), merged.begin());
+    
+    int total = n1 + n2;
+    if (total % 2 == 0) {
+        double median = (merged[total/2-1] + merged[total/2]) / 2.0;
+        cout << median << endl;
+    } else {
+        cout << merged[total/2] << endl;
+    }
+    return 0;
+}`,
+    category: "搜索",
+    tags: ["二分查找", "数组"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "3\n1 2 3\n3\n4 5 6", expectedOutput: "3.5" },
+    ],
+    similarProblems: [279],
+  },
+  // Hot 5: 最长回文子串
+  {
+    id: 281,
+    title: "LeetCode Hot 5 - 最长回文子串",
+    titleEn: "Longest Palindromic Substring",
+    difficulty: "intermediate",
+    description: "给定一个字符串 s，找出其中最长的回文子串。",
+    inputFormat: "输入一行字符串s。",
+    outputFormat: "输出最长的回文子串。",
+    sampleInput: "babad",
+    sampleOutput: "bab",
+    defaultCode: `#include <iostream>
+#include <string>
+using namespace std;
+
+int expandAroundCenter(string s, int left, int right) {
+    while (left >= 0 && right < s.length() && s[left] == s[right]) {
+        left--;
+        right++;
+    }
+    return right - left - 1;
+}
+
+int main() {
+    string s;
+    cin >> s;
+    
+    int start = 0, end = 0;
+    for (int i = 0; i < s.length(); i++) {
+        int len1 = expandAroundCenter(s, i, i);
+        int len2 = expandAroundCenter(s, i, i + 1);
+        int len = max(len1, len2);
+        if (len > end - start + 1) {
+            start = i - (len - 1) / 2;
+            end = i + len / 2;
+        }
+    }
+    
+    cout << s.substr(start, end - start + 1) << endl;
+    return 0;
+}`,
+    category: "字符串处理",
+    tags: ["动态规划", "字符串"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "babad", expectedOutput: "bab" },
+      { id: 2, input: "cbbd", expectedOutput: "bb" },
+    ],
+    similarProblems: [279],
+  },
+  // Hot 6: Z字形变换
+  {
+    id: 282,
+    title: "LeetCode Hot 6 - Z字形变换",
+    titleEn: "Zigzag Conversion",
+    difficulty: "intermediate",
+    description: "将字符串 s 以Z字形排列成指定行数，然后按行读取返回新字符串。",
+    inputFormat: "输入字符串s和行数numRows。",
+    outputFormat: "输出Z字形变换后的字符串。",
+    sampleInput: "PAYPALISHIRING 3",
+    sampleOutput: "PAHNAPLSIIGYIR",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+    string s;
+    int numRows;
+    cin >> s >> numRows;
+    
+    if (numRows == 1) {
+        cout << s << endl;
+        return 0;
+    }
+    
+    vector<string> rows(min(numRows, (int)s.length()));
+    int curRow = 0;
+    bool goingDown = false;
+    
+    for (char c : s) {
+        rows[curRow] += c;
+        if (curRow == 0 || curRow == numRows - 1) {
+            goingDown = !goingDown;
+        }
+        curRow += goingDown ? 1 : -1;
+    }
+    
+    string result;
+    for (string row : rows) {
+        result += row;
+    }
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: "字符串处理",
+    tags: ["字符串"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "PAYPALISHIRING 3", expectedOutput: "PAHNAPLSIIGYIR" },
+    ],
+  },
+  // Hot 7: 整数反转
+  {
+    id: 283,
+    title: "LeetCode Hot 7 - 整数反转",
+    titleEn: "Reverse Integer",
+    difficulty: "beginner",
+    description: "给你一个32位有符号整数 x，返回将 x 的数字部分反转后的结果。如果反转后溢出返回0。",
+    inputFormat: "输入一个整数x。",
+    outputFormat: "输出反转后的整数，溢出返回0。",
+    sampleInput: "123",
+    sampleOutput: "321",
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    long long x;
+    cin >> x;
+    
+    long long rev = 0;
+    while (x != 0) {
+        int pop = x % 10;
+        x /= 10;
+        
+        if (rev > INT_MAX/10 || (rev == INT_MAX/10 && pop > 7)) return 0;
+        if (rev < INT_MIN/10 || (rev == INT_MIN/10 && pop < -8)) return 0;
+        
+        rev = rev * 10 + pop;
+    }
+    
+    cout << rev << endl;
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["数学"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "123", expectedOutput: "321" },
+      { id: 2, input: "-123", expectedOutput: "-321" },
+      { id: 3, input: "120", expectedOutput: "21" },
+    ],
+  },
+  // Hot 8: 字符串转换整数
+  {
+    id: 284,
+    title: "LeetCode Hot 8 - 字符串转换整数",
+    titleEn: "String to Integer (atoi)",
+    difficulty: "intermediate",
+    description: "将字符串转换为其整数表示，遵循空格跳过、正负号处理、溢出判断等规则。",
+    inputFormat: "输入一行字符串。",
+    outputFormat: "输出转换后的整数。",
+    sampleInput: "42",
+    sampleOutput: "42",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string s;
+    getline(cin, s);
+    
+    int i = 0, n = s.length();
+    while (i < n && isspace(s[i])) i++;
+    
+    if (i >= n) {
+        cout << 0 << endl;
+        return 0;
+    }
+    
+    int sign = 1;
+    if (s[i] == "-" || s[i] == "+") {
+        sign = (s[i++] == "-") ? -1 : 1;
+    }
+    
+    long long result = 0;
+    while (i < n && isdigit(s[i])) {
+        result = result * 10 + (s[i++] - "0");
+        if (result > INT_MAX) break;
+    }
+    
+    result *= sign;
+    if (result > INT_MAX) result = INT_MAX;
+    if (result < INT_MIN) result = INT_MIN;
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: "字符串处理",
+    tags: ["字符串", "数学"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "42", expectedOutput: "42" },
+      { id: 2, input: "   -42", expectedOutput: "-42" },
+    ],
+  },
+  // Hot 9: 回文数
+  {
+    id: 285,
+    title: "LeetCode Hot 9 - 回文数",
+    titleEn: "Palindrome Number",
+    difficulty: "beginner",
+    description: "给你一个整数 x，如果 x 是一个回文整数，返回 true。",
+    inputFormat: "输入一个整数x。",
+    outputFormat: "输出 true 或 false。",
+    sampleInput: "121",
+    sampleOutput: "true",
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    long long x;
+    cin >> x;
+    
+    if (x < 0) {
+        cout << "false" << endl;
+        return 0;
+    }
+    
+    long long original = x, reversed = 0;
+    while (x > 0) {
+        reversed = reversed * 10 + x % 10;
+        x /= 10;
+    }
+    
+    cout << (reversed == original ? "true" : "false") << endl;
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["数学"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "121", expectedOutput: "true" },
+      { id: 2, input: "-121", expectedOutput: "false" },
+    ],
+  },
+  // Hot 10: 正则表达式匹配
+  {
+    id: 286,
+    title: "LeetCode Hot 10 - 正则表达式匹配",
+    titleEn: "Regular Expression Matching",
+    difficulty: "advanced",
+    description: "实现正则表达式匹配，支持 . 和 * 的匹配。",
+    inputFormat: "输入字符串s和模式p。",
+    outputFormat: "输出 true 或 false。",
+    sampleInput: "aa a*",
+    sampleOutput: "true",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+    string s, p;
+    cin >> s >> p;
+    
+    int m = s.length(), n = p.length();
+    vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+    dp[0][0] = true;
+    
+    for (int j = 1; j <= n; j++) {
+        if (p[j-1] == "*") dp[0][j] = dp[0][j-2];
+    }
+    
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (p[j-1] == "*") {
+                dp[i][j] = dp[i][j-2];
+                if (p[j-2] == "." || p[j-2] == s[i-1]) {
+                    dp[i][j] = dp[i][j] || dp[i-1][j];
+                }
+            } else if (p[j-1] == "." || p[j-1] == s[i-1]) {
+                dp[i][j] = dp[i-1][j-1];
+            }
+        }
+    }
+    
+    cout << (dp[m][n] ? "true" : "false") << endl;
+    return 0;
+}`,
+    category: "字符串处理",
+    tags: ["动态规划", "字符串"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "aa a*", expectedOutput: "true" },
+    ],
+  },
+  // Hot 11: 盛最多水的容器
+  {
+    id: 287,
+    title: "LeetCode Hot 11 - 盛最多水的容器",
+    titleEn: "Container With Most Water",
+    difficulty: "intermediate",
+    description: "给定 n 个非负整数 a1, a2, ..., an，每个数代表一条垂直线，找出两条线使得它们与 x 轴构成的容器能容纳最多的水。",
+    inputFormat: "第一行n，第二行n个整数表示高度。",
+    outputFormat: "输出最大盛水量。",
+    sampleInput: "9\n1 8 6 2 5 4 8 3 7",
+    sampleOutput: "49",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> height(n);
+    for (int i = 0; i < n; i++) cin >> height[i];
+    
+    int left = 0, right = n - 1, maxArea = 0;
+    while (left < right) {
+        int area = (right - left) * min(height[left], height[right]);
+        maxArea = max(maxArea, area);
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    
+    cout << maxArea << endl;
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["双指针", "贪心"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "9\n1 8 6 2 5 4 8 3 7", expectedOutput: "49" },
+    ],
+  },
+  // Hot 12: 整数转罗马数字
+  {
+    id: 288,
+    title: "LeetCode Hot 12 - 整数转罗马数字",
+    titleEn: "Integer to Roman",
+    difficulty: "intermediate",
+    description: "将整数转换为罗马数字。",
+    inputFormat: "输入一个整数num (1 <= num <= 3999)。",
+    outputFormat: "输出对应的罗马数字字符串。",
+    sampleInput: "3",
+    sampleOutput: "III",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+    int num;
+    cin >> num;
+    
+    vector<int> vals = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    vector<string> syms = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    
+    string result;
+    for (int i = 0; i < vals.size(); i++) {
+        while (num >= vals[i]) {
+            result += syms[i];
+            num -= vals[i];
+        }
+    }
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["数学", "字符串"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "3", expectedOutput: "III" },
+      { id: 2, input: "58", expectedOutput: "LVIII" },
+    ],
+  },
+  // Hot 13: 罗马数字转整数
+  {
+    id: 289,
+    title: "LeetCode Hot 13 - 罗马数字转整数",
+    titleEn: "Roman to Integer",
+    difficulty: "beginner",
+    description: "将罗马数字转换为整数。",
+    inputFormat: "输入一个罗马数字字符串。",
+    outputFormat: "输出对应的整数。",
+    sampleInput: "III",
+    sampleOutput: "3",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <unordered_map>
+using namespace std;
+
+int main() {
+    string s;
+    cin >> s;
+    
+    unordered_map<char, int> val = {
+        {"I", 1}, {"V", 5}, {"X", 10}, {"L", 50},
+        {"C", 100}, {"D", 500}, {"M", 1000}
+    };
+    
+    int result = 0;
+    for (int i = 0; i < s.length(); i++) {
+        if (i + 1 < s.length() && val[s[i]] < val[s[i+1]]) {
+            result -= val[s[i]];
+        } else {
+            result += val[s[i]];
+        }
+    }
+    
+    cout << result << endl;
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["数学", "字符串"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "III", expectedOutput: "3" },
+      { id: 2, input: "LVIII", expectedOutput: "58" },
+    ],
+  },
+  // Hot 14: 最长公共前缀
+  {
+    id: 290,
+    title: "LeetCode Hot 14 - 最长公共前缀",
+    titleEn: "Longest Common Prefix",
+    difficulty: "beginner",
+    description: "编写一个函数来找出字符串数组中的最长公共前缀。",
+    inputFormat: "第一行n表示字符串数量，接下来n行每行一个字符串。",
+    outputFormat: "输出最长公共前缀。",
+    sampleInput: "3\nflower\nflow\nflight",
+    sampleOutput: "fl",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<string> strs(n);
+    for (int i = 0; i < n; i++) cin >> strs[i];
+    
+    if (strs.empty()) {
+        cout << endl;
+        return 0;
+    }
+    
+    for (int i = 0; i < strs[0].length(); i++) {
+        char c = strs[0][i];
+        for (int j = 1; j < n; j++) {
+            if (i >= strs[j].length() || strs[j][i] != c) {
+                cout << strs[0].substr(0, i) << endl;
+                return 0;
+            }
+        }
+    }
+    
+    cout << strs[0] << endl;
+    return 0;
+}`,
+    category: "字符串处理",
+    tags: ["字符串"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "3\nflower\nflow\nflight", expectedOutput: "fl" },
+    ],
+  },
+  // Hot 15: 三数之和
+  {
+    id: 291,
+    title: "LeetCode Hot 15 - 三数之和",
+    titleEn: "3Sum",
+    difficulty: "intermediate",
+    description: "给你一个整数数组 nums，判断 nums 中是否存在三个元素 a, b, c，使得 a + b + c = 0。",
+    inputFormat: "第一行n，第二行n个整数。",
+    outputFormat: "输出所有不重复的三元组，每行一个，空格分隔。",
+    sampleInput: "6\n-1 0 1 2 -1 -4",
+    sampleOutput: "-1 -1 2\n-1 0 1",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    sort(nums.begin(), nums.end());
+    
+    vector<vector<int>> result;
+    for (int i = 0; i < n - 2; i++) {
+        if (i > 0 && nums[i] == nums[i-1]) continue;
+        int left = i + 1, right = n - 1;
+        while (left < right) {
+            int sum = nums[i] + nums[left] + nums[right];
+            if (sum == 0) {
+                result.push_back({nums[i], nums[left], nums[right]});
+                while (left < right && nums[left] == nums[left+1]) left++;
+                while (left < right && nums[right] == nums[right-1]) right--;
+                left++; right--;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    for (auto& triple : result) {
+        cout << triple[0] << " " << triple[1] << " " << triple[2] << endl;
+    }
+    return 0;
+}`,
+    category: "搜索",
+    tags: ["双指针", "排序"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "6\n-1 0 1 2 -1 -4", expectedOutput: "-1 -1 2\n-1 0 1" },
+    ],
+  },
+  // Hot 16: 最接近的三数之和
+  {
+    id: 292,
+    title: "LeetCode Hot 16 - 最接近的三数之和",
+    titleEn: "3Sum Closest",
+    difficulty: "intermediate",
+    description: "给定一个整数数组 nums 和一个目标值 target，找出三个数的和最接近 target 的和。",
+    inputFormat: "第一行n和target，第二行n个整数。",
+    outputFormat: "输出最接近target的三数之和。",
+    sampleInput: "4 -1\n-1 2 1 -4",
+    sampleOutput: "2",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+
+int main() {
+    int n, target;
+    cin >> n >> target;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    sort(nums.begin(), nums.end());
+    
+    int best = nums[0] + nums[1] + nums[2];
+    for (int i = 0; i < n - 2; i++) {
+        int left = i + 1, right = n - 1;
+        while (left < right) {
+            int sum = nums[i] + nums[left] + nums[right];
+            if (abs(sum - target) < abs(best - target)) {
+                best = sum;
+            }
+            if (sum < target) left++;
+            else right--;
+        }
+    }
+    
+    cout << best << endl;
+    return 0;
+}`,
+    category: "搜索",
+    tags: ["双指针", "排序"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "4 -1\n-1 2 1 -4", expectedOutput: "2" },
+    ],
+  },
+  // Hot 17: 电话号码的字母组合
+  {
+    id: 293,
+    title: "LeetCode Hot 17 - 电话号码的字母组合",
+    titleEn: "Letter Combinations of a Phone Number",
+    difficulty: "intermediate",
+    description: "给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。",
+    inputFormat: "输入一个仅包含数字2-9的字符串。",
+    outputFormat: "输出所有可能的字母组合，按字典序排列，每行一个。",
+    sampleInput: "23",
+    sampleOutput: "ad\nae\naf\nbd\nbe\nbf\ncd\nce\ncf",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+    string digits;
+    cin >> digits;
+    
+    string mapping[] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    vector<string> result;
+    result.push_back("");
+    
+    for (char d : digits) {
+        vector<string> newResult;
+        for (string s : result) {
+            for (char c : mapping[d - "0"]) {
+                newResult.push_back(s + c);
+            }
+        }
+        result = newResult;
+    }
+    
+    for (string s : result) {
+        if (!s.empty()) cout << s << endl;
+    }
+    return 0;
+}`,
+    category: "搜索",
+    tags: ["回溯", "字符串"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "23", expectedOutput: "ad" },
+    ],
+  },
+  // Hot 18: 四数之和
+  {
+    id: 294,
+    title: "LeetCode Hot 18 - 四数之和",
+    titleEn: "4Sum",
+    difficulty: "intermediate",
+    description: "给定一个整数数组 nums 和一个目标值 target，找出所有满足条件的四元组。",
+    inputFormat: "第一行n和target，第二行n个整数。",
+    outputFormat: "输出所有四元组。",
+    sampleInput: "6 0\n1 0 -1 0 -2 2",
+    sampleOutput: "-2 -1 1 2\n-2 0 0 2\n-1 0 0 1",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n, target;
+    cin >> n >> target;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    sort(nums.begin(), nums.end());
+    
+    vector<vector<int>> result;
+    for (int i = 0; i < n - 3; i++) {
+        if (i > 0 && nums[i] == nums[i-1]) continue;
+        for (int j = i + 1; j < n - 2; j++) {
+            if (j > i + 1 && nums[j] == nums[j-1]) continue;
+            int left = j + 1, right = n - 1;
+            while (left < right) {
+                long long sum = (long long)nums[i] + nums[j] + nums[left] + nums[right];
+                if (sum == target) {
+                    result.push_back({nums[i], nums[j], nums[left], nums[right]});
+                    while (left < right && nums[left] == nums[left+1]) left++;
+                    while (left < right && nums[right] == nums[right-1]) right--;
+                    left++; right--;
+                } else if (sum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+    }
+    
+    for (auto& quad : result) {
+        cout << quad[0] << " " << quad[1] << " " << quad[2] << " " << quad[3] << endl;
+    }
+    return 0;
+}`,
+    category: "搜索",
+    tags: ["双指针", "排序"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "6 0\n1 0 -1 0 -2 2", expectedOutput: "-2 -1 1 2" },
+    ],
+  },
+  // Hot 19: 删除链表的倒数第N个节点
+  {
+    id: 295,
+    title: "LeetCode Hot 19 - 删除链表的倒数第N个节点",
+    titleEn: "Remove Nth Node From End of List",
+    difficulty: "intermediate",
+    description: "给你一个链表，删除链表的倒数第 n 个结点。",
+    inputFormat: "第一行长度n和n，第二行n个整数表示链表。",
+    outputFormat: "输出删除后的链表，空格分隔。",
+    sampleInput: "5\n1 2 3 4 5 2",
+    sampleOutput: "1 3 4 5",
+    defaultCode: `#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    
+    // 删除倒数第k个元素
+    int idx = n - k;
+    for (int i = 0; i < n; i++) {
+        if (i == idx) continue;
+        cout << nums[i];
+        if (i < n - 1 && (i + 1) != idx) cout << " ";
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["链表", "双指针"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "5\n1 2 3 4 5 2", expectedOutput: "1 3 4 5" },
+    ],
+  },
+  // Hot 20: 有效的括号
+  {
+    id: 296,
+    title: "LeetCode Hot 20 - 有效的括号",
+    titleEn: "Valid Parentheses",
+    difficulty: "beginner",
+    description: '给定一个只包括 "(", ")", "{", "}", "[", "]" 的字符串，判断字符串是否有效。',
+    inputFormat: "输入一行字符串。",
+    outputFormat: "输出 true 或 false。",
+    sampleInput: "()",
+    sampleOutput: "true",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <stack>
+using namespace std;
+
+int main() {
+    string s;
+    cin >> s;
+    
+    stack<char> st;
+    for (char c : s) {
+        if (c == "(" || c == "{" || c == "[") {
+            st.push(c);
+        } else {
+            if (st.empty()) {
+                cout << "false" << endl;
+                return 0;
+            }
+            if (c == ")" && st.top() != "(") { cout << "false" << endl; return 0; }
+            if (c == "}" && st.top() != "{") { cout << "false" << endl; return 0; }
+            if (c == "]" && st.top() != "[") { cout << "false" << endl; return 0; }
+            st.pop();
+        }
+    }
+    
+    cout << (st.empty() ? "true" : "false") << endl;
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["栈", "字符串"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "()", expectedOutput: "true" },
+      { id: 2, input: "()[]{}", expectedOutput: "true" },
+      { id: 3, input: "(]", expectedOutput: "false" },
+    ],
+  },
+  // Hot 21: 合并两个有序链表
+  {
+    id: 297,
+    title: "LeetCode Hot 21 - 合并两个有序链表",
+    titleEn: "Merge Two Sorted Lists",
+    difficulty: "beginner",
+    description: "将两个升序链表合并为一个新的升序链表并返回。",
+    inputFormat: "第一行长度l1，第二行l1个整数；第二行长度l2，第三行l2个整数。",
+    outputFormat: "输出合并后的链表。",
+    sampleInput: "3\n1 2 4\n3\n1 3 4",
+    sampleOutput: "1 1 2 3 4 4",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int l1, l2;
+    cin >> l1;
+    vector<int> list1(l1);
+    for (int i = 0; i < l1; i++) cin >> list1[i];
+    cin >> l2;
+    vector<int> list2(l2);
+    for (int i = 0; i < l2; i++) cin >> list2[i];
+    
+    vector<int> merged;
+    int i = 0, j = 0;
+    while (i < l1 && j < l2) {
+        if (list1[i] <= list2[j]) {
+            merged.push_back(list1[i++]);
+        } else {
+            merged.push_back(list2[j++]);
+        }
+    }
+    while (i < l1) merged.push_back(list1[i++]);
+    while (j < l2) merged.push_back(list2[j++]);
+    
+    for (int k = 0; k < merged.size(); k++) {
+        if (k) cout << " ";
+        cout << merged[k];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["链表", "双指针"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "3\n1 2 4\n3\n1 3 4", expectedOutput: "1 1 2 3 4 4" },
+    ],
+  },
+  // Hot 22: 括号生成
+  {
+    id: 298,
+    title: "LeetCode Hot 22 - 括号生成",
+    titleEn: "Generate Parentheses",
+    difficulty: "intermediate",
+    description: "数字 n 代表有 n 对括号，生成所有可能的有效括号组合。",
+    inputFormat: "输入一个整数n。",
+    outputFormat: "输出所有有效括号组合，每行一个。",
+    sampleInput: "3",
+    sampleOutput: "((()))\n(()())\n(())()\n()(())\n()()()",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+void backtrack(vector<string>& result, string current, int open, int close, int n) {
+    if (current.length() == 2 * n) {
+        result.push_back(current);
+        return;
+    }
+    if (open < n) backtrack(result, current + "(", open + 1, close, n);
+    if (close < open) backtrack(result, current + ")", open, close + 1, n);
+}
+
+int main() {
+    int n;
+    cin >> n;
+    
+    vector<string> result;
+    backtrack(result, "", 0, 0, n);
+    
+    for (string s : result) {
+        cout << s << endl;
+    }
+    return 0;
+}`,
+    category: "搜索",
+    tags: ["回溯", "递归"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "3", expectedOutput: "((()))" },
+    ],
+  },
+  // Hot 23: 合并K个升序链表
+  {
+    id: 299,
+    title: "LeetCode Hot 23 - 合并K个升序链表",
+    titleEn: "Merge k Sorted Lists",
+    difficulty: "advanced",
+    description: "给你一个链表数组，每个链表都是按升序排列的。将所有链表合并成一个升序链表。",
+    inputFormat: "第一行K；第二行第一个链表长度，后跟K个整数；重复K次。",
+    outputFormat: "输出合并后的链表。",
+    sampleInput: "3\n3 1 2 3\n3 1 3 4\n2 2 5",
+    sampleOutput: "1 1 2 2 3 3 4 5",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int K;
+    cin >> K;
+    
+    vector<vector<int>> lists(K);
+    for (int i = 0; i < K; i++) {
+        int len;
+        cin >> len;
+        lists[i].resize(len);
+        for (int j = 0; j < len; j++) cin >> lists[i][j];
+    }
+    
+    vector<int> merged;
+    for (auto& list : lists) {
+        merged.insert(merged.end(), list.begin(), list.end());
+    }
+    sort(merged.begin(), merged.end());
+    
+    for (int i = 0; i < merged.size(); i++) {
+        if (i) cout << " ";
+        cout << merged[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["链表", "堆"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "3\n3 1 2 3\n3 1 3 4\n2 2 5", expectedOutput: "1 1 2 2 3 3 4 5" },
+    ],
+  },
+  // Hot 24: 两两交换链表中的节点
+  {
+    id: 300,
+    title: "LeetCode Hot 24 - 两两交换链表中的节点",
+    titleEn: "Swap Nodes in Pairs",
+    difficulty: "intermediate",
+    description: "给你一个链表，两两交换相邻节点，返回新链表的头节点。",
+    inputFormat: "第一行n，第二行n个整数。",
+    outputFormat: "输出交换后的链表。",
+    sampleInput: "4\n1 2 3 4",
+    sampleOutput: "2 1 4 3",
+    defaultCode: `#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    
+    for (int i = 0; i + 1 < n; i += 2) {
+        swap(nums[i], nums[i + 1]);
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (i) cout << " ";
+        cout << nums[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["链表"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "4\n1 2 3 4", expectedOutput: "2 1 4 3" },
+    ],
+  },
+  // Hot 25: K 个一组翻转链表
+  {
+    id: 301,
+    title: "LeetCode Hot 25 - K 个一组翻转链表",
+    titleEn: "Reverse Nodes in k-Group",
+    difficulty: "advanced",
+    description: "给你一个链表，每 k 个节点一组进行翻转，不够k个则保持原样。",
+    inputFormat: "第一行n和k，第二行n个整数。",
+    outputFormat: "输出翻转后的链表。",
+    sampleInput: "5 3\n1 2 3 4 5",
+    sampleOutput: "3 2 1 4 5",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    
+    for (int i = 0; i + k <= n; i += k) {
+        reverse(nums.begin() + i, nums.begin() + i + k);
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (i) cout << " ";
+        cout << nums[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["链表"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "5 3\n1 2 3 4 5", expectedOutput: "3 2 1 4 5" },
+    ],
+  },
+  // Hot 26: 删除排序数组中的重复项
+  {
+    id: 302,
+    title: "LeetCode Hot 26 - 删除排序数组中的重复项",
+    titleEn: "Remove Duplicates from Sorted Array",
+    difficulty: "beginner",
+    description: "给定一个排序数组 nums，你需要在原地删除重复出现的元素。",
+    inputFormat: "第一行n，第二行n个整数。",
+    outputFormat: "输出新长度和去重后的数组。",
+    sampleInput: "6\n1 1 2",
+    sampleOutput: "2\n1 2",
+    defaultCode: `#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    
+    int idx = 0;
+    for (int i = 1; i < n; i++) {
+        if (nums[i] != nums[idx]) {
+            nums[++idx] = nums[i];
+        }
+    }
+    
+    cout << idx + 1 << endl;
+    for (int i = 0; i <= idx; i++) {
+        if (i) cout << " ";
+        cout << nums[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["双指针", "数组"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "6\n1 1 2", expectedOutput: "2\n1 2" },
+    ],
+  },
+  // Hot 27: 移除元素
+  {
+    id: 303,
+    title: "LeetCode Hot 27 - 移除元素",
+    titleEn: "Remove Element",
+    difficulty: "beginner",
+    description: "给你一个数组 nums 和一个值 val，你需要原地移除所有数值等于 val 的元素。",
+    inputFormat: "第一行n和val，第二行n个整数。",
+    outputFormat: "输出新长度和移除后的数组。",
+    sampleInput: "5 3\n3 2 2 3 4",
+    sampleOutput: "2\n2 4",
+    defaultCode: `#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n, val;
+    cin >> n >> val;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    
+    int idx = 0;
+    for (int i = 0; i < n; i++) {
+        if (nums[i] != val) {
+            nums[idx++] = nums[i];
+        }
+    }
+    
+    cout << idx << endl;
+    for (int i = 0; i < idx; i++) {
+        if (i) cout << " ";
+        cout << nums[i];
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["双指针", "数组"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "5 3\n3 2 2 3 4", expectedOutput: "2\n2 4" },
+    ],
+  },
+  // Hot 28: 实现 strStr()
+  {
+    id: 304,
+    title: "LeetCode Hot 28 - 实现 strStr()",
+    titleEn: "Implement strStr()",
+    difficulty: "beginner",
+    description: "实现 strStr() 函数。给你两个字符串 haystack 和 needle，返回 needle 在 haystack 中首次出现的索引。",
+    inputFormat: "输入两行字符串。",
+    outputFormat: "输出首次出现的索引，不存在返回-1。",
+    sampleInput: "hello\nll",
+    sampleOutput: "2",
+    defaultCode: `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string haystack, needle;
+    cin >> haystack >> needle;
+    
+    int n = haystack.length(), m = needle.length();
+    if (m == 0) {
+        cout << 0 << endl;
+        return 0;
+    }
+    
+    for (int i = 0; i <= n - m; i++) {
+        bool match = true;
+        for (int j = 0; j < m; j++) {
+            if (haystack[i + j] != needle[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            cout << i << endl;
+            return 0;
+        }
+    }
+    
+    cout << -1 << endl;
+    return 0;
+}`,
+    category: "字符串处理",
+    tags: ["字符串匹配"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "hello\nll", expectedOutput: "2" },
+    ],
+  },
+  // Hot 29: 两数相除
+  {
+    id: 305,
+    title: "LeetCode Hot 29 - 两数相除",
+    titleEn: "Divide Two Integers",
+    difficulty: "advanced",
+    description: "给定两个整数 dividend 和 divisor，将两数相除。不能使用乘法、除法和取余运算。",
+    inputFormat: "输入两个整数 dividend 和 divisor。",
+    outputFormat: "输出商。",
+    sampleInput: "10 3",
+    sampleOutput: "3",
+    defaultCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    long long dividend, divisor;
+    cin >> dividend >> divisor;
+    
+    long long result = dividend / divisor;
+    cout << result << endl;
+    return 0;
+}`,
+    category: "基础算法",
+    tags: ["数学", "位运算"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "10 3", expectedOutput: "3" },
+    ],
+  },
+  // Hot 30: 串联所有单词的子串
+  {
+    id: 306,
+    title: "LeetCode Hot 30 - 串联所有单词的子串",
+    titleEn: "Substring with Concatenation of All Words",
+    difficulty: "advanced",
+    description: "给定一个字符串 s 和一个字符串数组 words，找出 s 中恰好由 words 中所有字符串串联形成的子串的起始索引。",
+    inputFormat: "输入s，然后是words数量n，再输入n个单词。",
+    outputFormat: "输出所有起始索引。",
+    sampleInput: "barfoothefoobarman\n2\nfoo bar",
+    sampleOutput: "0 9",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+int main() {
+    string s;
+    int n;
+    cin >> s >> n;
+    vector<string> words(n);
+    for (int i = 0; i < n; i++) cin >> words[i];
+    
+    int wordLen = words[0].length();
+    int totalLen = wordLen * n;
+    unordered_map<string, int> need, window;
+    for (auto& w : words) need[w]++;
+    
+    vector<int> result;
+    for (int i = 0; i + totalLen <= s.length(); i++) {
+        window.clear();
+        bool valid = true;
+        for (int j = 0; j < n; j++) {
+            string word = s.substr(i + j * wordLen, wordLen);
+            window[word]++;
+        }
+        for (auto& p : need) {
+            if (window[p.first] != p.second) {
+                valid = false;
+                break;
+            }
+        }
+        if (valid) result.push_back(i);
+    }
+    
+    for (int idx : result) {
+        cout << idx << " ";
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "字符串处理",
+    tags: ["滑动窗口", "哈希表"],
+    source: "LeetCode",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "barfoothefoobarman\n2\nfoo bar", expectedOutput: "0 9" },
+    ],
+  },
+  // ========== ICPC/ACM 竞赛真题 ==========
+  // ICPC 1: 数字三角形变式
+  {
+    id: 350,
+    title: "ICPC 区域赛 - 数字金字塔",
+    titleEn: "Digital Pyramid",
+    difficulty: "intermediate",
+    description: "给定一个数字金字塔，从顶部出发，每次只能移动到下一行相邻的位置，求到底部的最大路径和。",
+    inputFormat: "第一行n，接下来n行每行i个整数。",
+    outputFormat: "输出最大路径和。",
+    sampleInput: "5\n7\n3 8\n8 1 0\n2 7 4 4\n4 5 2 6 5",
+    sampleOutput: "30",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<vector<int>> dp(n, vector<int>(n));
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j <= i; j++) {
+            cin >> dp[i][j];
+        }
+    }
+    
+    for (int i = n - 2; i >= 0; i--) {
+        for (int j = 0; j <= i; j++) {
+            dp[i][j] += max(dp[i+1][j], dp[i+1][j+1]);
+        }
+    }
+    
+    cout << dp[0][0] << endl;
+    return 0;
+}`,
+    category: "动态规划",
+    tags: ["动态规划"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "5\n7\n3 8\n8 1 0\n2 7 4 4\n4 5 2 6 5", expectedOutput: "30" },
+    ],
+  },
+  // ICPC 2: 背包问题
+  {
+    id: 351,
+    title: "ICPC 区域赛 - 0-1背包问题",
+    titleEn: "0-1 Knapsack",
+    difficulty: "intermediate",
+    description: "给定n个物品，每个物品有重量w和价值v，在不超过容量C的情况下，求最大价值。",
+    inputFormat: "第一行n和C，接下来n行每行w和v。",
+    outputFormat: "输出最大价值。",
+    sampleInput: "4 8\n2 3\n3 4\n4 5\n5 6",
+    sampleOutput: "10",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n, C;
+    cin >> n >> C;
+    vector<int> w(n), v(n);
+    for (int i = 0; i < n; i++) cin >> w[i] >> v[i];
+    
+    vector<int> dp(C + 1, 0);
+    for (int i = 0; i < n; i++) {
+        for (int j = C; j >= w[i]; j--) {
+            dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+        }
+    }
+    
+    cout << dp[C] << endl;
+    return 0;
+}`,
+    category: "动态规划",
+    tags: ["背包问题"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "4 8\n2 3\n3 4\n4 5\n5 6", expectedOutput: "10" },
+    ],
+  },
+  // ICPC 3: 最长公共子序列
+  {
+    id: 352,
+    title: "ICPC 区域赛 - 最长公共子序列",
+    titleEn: "Longest Common Subsequence",
+    difficulty: "intermediate",
+    description: "给定两个字符串，求它们的最长公共子序列长度。",
+    inputFormat: "输入两行字符串。",
+    outputFormat: "输出最长公共子序列长度。",
+    sampleInput: "abcde\nabce",
+    sampleOutput: "4",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+    string s1, s2;
+    cin >> s1 >> s2;
+    int n = s1.length(), m = s2.length();
+    
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s1[i-1] == s2[j-1]) {
+                dp[i][j] = dp[i-1][j-1] + 1;
+            } else {
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            }
+        }
+    }
+    
+    cout << dp[n][m] << endl;
+    return 0;
+}`,
+    category: "动态规划",
+    tags: ["LCS"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "abcde\nabce", expectedOutput: "4" },
+    ],
+  },
+  // ICPC 4: 最短路径
+  {
+    id: 353,
+    title: "ICPC 区域赛 - 单源最短路径",
+    titleEn: "Shortest Path",
+    difficulty: "intermediate",
+    description: "给定一个带权有向图，求从源点到所有其他点的最短路径。",
+    inputFormat: "第一行n,m,s表示顶点数、边数、源点。接下来m行每行u,v,w表示一条边。",
+    outputFormat: "输出源点到各点的最短距离。",
+    sampleInput: "5 7 1\n1 2 10\n1 3 3\n2 3 1\n2 4 2\n3 2 4\n3 4 8\n4 5 5",
+    sampleOutput: "0 4 3 6 11",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <queue>
+#include <limits>
+using namespace std;
+
+int main() {
+    int n, m, s;
+    cin >> n >> m >> s;
+    vector<vector<pair<int,int>>> adj(n + 1);
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+    }
+    
+    vector<long long> dist(n + 1, LLONG_MAX);
+    dist[s] = 0;
+    priority_queue<pair<long long,int>, vector<pair<long long,int>>, greater<pair<long long,int>>> pq;
+    pq.push({0, s});
+    
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+        if (d > dist[u]) continue;
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    
+    for (int i = 1; i <= n; i++) {
+        if (i > 1) cout << " ";
+        cout << (dist[i] == LLONG_MAX ? -1 : dist[i]);
+    }
+    cout << endl;
+    return 0;
+}`,
+    category: "图论",
+    tags: ["Dijkstra"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "5 7 1\n1 2 10\n1 3 3\n2 3 1\n2 4 2\n3 2 4\n3 4 8\n4 5 5", expectedOutput: "0 4 3 6 11" },
+    ],
+  },
+  // ICPC 5: 拓扑排序
+  {
+    id: 354,
+    title: "ICPC 区域赛 - 课程表",
+    titleEn: "Course Schedule",
+    difficulty: "intermediate",
+    description: "有n门课程，编号0到n-1。有些课程有先修课程。判断是否可能完成所有课程。",
+    inputFormat: "第一行n和m，接下来m行每行prerequisite[0]和prerequisite[1]。",
+    outputFormat: "输出是否可以完成（true/false）。",
+    sampleInput: "2 1\n1 0",
+    sampleOutput: "true",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> adj(n);
+    vector<int> indegree(n, 0);
+    
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> v >> u;
+        adj[u].push_back(v);
+        indegree[v]++;
+    }
+    
+    queue<int> q;
+    for (int i = 0; i < n; i++) {
+        if (indegree[i] == 0) q.push(i);
+    }
+    
+    int count = 0;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        count++;
+        for (int v : adj[u]) {
+            indegree[v]--;
+            if (indegree[v] == 0) q.push(v);
+        }
+    }
+    
+    cout << (count == n ? "true" : "false") << endl;
+    return 0;
+}`,
+    category: "图论",
+    tags: ["拓扑排序"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "2 1\n1 0", expectedOutput: "true" },
+    ],
+  },
+  // ICPC 6: 并查集
+  {
+    id: 355,
+    title: "ICPC 区域赛 - 朋友圈",
+    titleEn: "Friend Circles",
+    difficulty: "intermediate",
+    description: "有n个学生，如果两个学生认识，他们就在同一个朋友圈里。求朋友圈的数量。",
+    inputFormat: "第一行n，接下来n行每行n个0/1表示认识关系。",
+    outputFormat: "输出朋友圈数量。",
+    sampleInput: "4\n1 1 0 0\n1 1 1 0\n0 1 1 0\n0 0 0 1",
+    sampleOutput: "2",
+    defaultCode: `#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<int> parent;
+
+int find(int x) {
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
+}
+
+void unite(int a, int b) {
+    a = find(a);
+    b = find(b);
+    if (a != b) parent[a] = b;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    parent.resize(n);
+    for (int i = 0; i < n; i++) parent[i] = i;
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            int x;
+            cin >> x;
+            if (x == 1) unite(i, j);
+        }
+    }
+    
+    int groups = 0;
+    for (int i = 0; i < n; i++) {
+        if (parent[i] == i) groups++;
+    }
+    
+    cout << groups << endl;
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["并查集"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "4\n1 1 0 0\n1 1 1 0\n0 1 1 0\n0 0 0 1", expectedOutput: "2" },
+    ],
+  },
+  // ICPC 7: 快速幂
+  {
+    id: 356,
+    title: "ICPC 区域赛 - 快速幂运算",
+    titleEn: "Fast Power",
+    difficulty: "intermediate",
+    description: "计算 a^n mod m，其中 n 可能很大。",
+    inputFormat: "输入 a, n, m。",
+    outputFormat: "输出 a^n mod m。",
+    sampleInput: "2 10 1000",
+    sampleOutput: "24",
+    defaultCode: `#include <iostream>
+using namespace std;
+
+long long fastPower(long long a, long long n, long long m) {
+    long long result = 1;
+    while (n > 0) {
+        if (n % 2 == 1) {
+            result = (result * a) % m;
+        }
+        a = (a * a) % m;
+        n /= 2;
+    }
+    return result;
+}
+
+int main() {
+    long long a, n, m;
+    cin >> a >> n >> m;
+    cout << fastPower(a, n, m) << endl;
+    return 0;
+}`,
+    category: "数论",
+    tags: ["快速幂"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "2 10 1000", expectedOutput: "24" },
+    ],
+  },
+  // ICPC 8: 区间DP
+  {
+    id: 357,
+    title: "ICPC 区域赛 - 合并石子",
+    titleEn: "Stone Merging",
+    difficulty: "advanced",
+    description: "将n堆石子合并成一堆，每次只能合并相邻的两堆，求最小代价。",
+    inputFormat: "第一行n，第二行n个整数表示每堆石子数量。",
+    outputFormat: "输出最小合并代价。",
+    sampleInput: "4\n4 5 9 4",
+    sampleOutput: "44",
+    defaultCode: `#include <iostream>
+#include <vector>
+#include <limits>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) cin >> a[i];
+    
+    vector<int> sum(n + 1, 0);
+    for (int i = 0; i < n; i++) sum[i + 1] = sum[i] + a[i];
+    
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+    for (int len = 2; len <= n; len++) {
+        for (int i = 0; i + len <= n; i++) {
+            int j = i + len - 1;
+            dp[i][j] = INT_MAX;
+            for (int k = i; k < j; k++) {
+                dp[i][j] = min(dp[i][j], dp[i][k] + dp[k + 1][j] + sum[j + 1] - sum[i]);
+            }
+        }
+    }
+    
+    cout << dp[0][n - 1] << endl;
+    return 0;
+}`,
+    category: "动态规划",
+    tags: ["区间DP"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "4\n4 5 9 4", expectedOutput: "44" },
+    ],
+  },
+  // ICPC 9: Trie树
+  {
+    id: 358,
+    title: "ICPC 区域赛 - 前缀树",
+    titleEn: "Implement Trie",
+    difficulty: "intermediate",
+    description: "实现一个前缀树，支持插入和查找操作。",
+    inputFormat: "输入操作序列：1 word 表示插入，2 word 表示查找。",
+    outputFormat: "对于查找操作，输出是否找到。",
+    sampleInput: "5\n1 hello\n1 helloworld\n2 hello\n2 hell\n2 hellowor",
+    sampleOutput: "true\nfalse\nfalse",
+    defaultCode: `#include <iostream>
+#include <string>
+#include <unordered_set>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    unordered_set<string> trie;
+    
+    for (int i = 0; i < n; i++) {
+        int op;
+        string word;
+        cin >> op >> word;
+        if (op == 1) {
+            trie.insert(word);
+        } else {
+            cout << (trie.count(word) ? "true" : "false") << endl;
+        }
+    }
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["Trie树"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "5\n1 hello\n1 helloworld\n2 hello\n2 hell\n2 hellowor", expectedOutput: "true\nfalse\nfalse" },
+    ],
+  },
+  // ICPC 10: 线段树
+  {
+    id: 359,
+    title: "ICPC 区域赛 - 区间求和",
+    titleEn: "Range Sum Query",
+    difficulty: "advanced",
+    description: "给定数组，支持单点更新和区间求和查询。",
+    inputFormat: "第一行n和q，第二行n个整数，接下来q行每行op,l,r。",
+    outputFormat: "对于查询操作输出结果。",
+    sampleInput: "5 3\n1 2 3 4 5\n2 1 3\n1 2 10\n2 1 3",
+    sampleOutput: "6\n15",
+    defaultCode: `#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n, q;
+    cin >> n >> q;
+    vector<int> a(n + 1);
+    for (int i = 1; i <= n; i++) cin >> a[i];
+    
+    vector<int> bit(n + 1, 0);
+    for (int i = 1; i <= n; i++) {
+        for (int j = i; j <= n; j += j & -j) {
+            bit[j] += a[i];
+        }
+    }
+    
+    auto query = [&](int idx) {
+        int sum = 0;
+        for (int i = idx; i > 0; i -= i & -i) {
+            sum += bit[i];
+        }
+        return sum;
+    };
+    
+    for (int i = 0; i < q; i++) {
+        int op, l, r;
+        cin >> op >> l >> r;
+        if (op == 1) {
+            int delta = r - a[l];
+            a[l] = r;
+            for (int j = l; j <= n; j += j & -j) {
+                bit[j] += delta;
+            }
+        } else {
+            cout << query(r) - query(l - 1) << endl;
+        }
+    }
+    return 0;
+}`,
+    category: "数据结构",
+    tags: ["线段树", "树状数组"],
+    source: "ICPC",
+    timeLimit: 1000,
+    memoryLimit: 128,
+    testCases: [
+      { id: 1, input: "5 3\n1 2 3 4 5\n2 1 3\n1 2 10\n2 1 3", expectedOutput: "6\n15" },
     ],
   },
 ];
