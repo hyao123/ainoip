@@ -39,7 +39,7 @@ const DEFAULT_INITIAL_ARRAY = [64, 34, 25, 12, 22, 11, 90, 45, 33, 88];
 interface AlgorithmVisualizationProps {
   title: string;
   description: string;
-  algorithm: 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs' | 'selection' | 'insertion' | 'heap' | 'dp-lis' | 'dp-knapsack' | 'dp-climb';
+  algorithm: 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs' | 'selection' | 'insertion' | 'heap' | 'dp-lis' | 'dp-knapsack' | 'dp-climb' | 'dp-dijkstra';
   initialArray?: number[];
 }
 
@@ -866,13 +866,89 @@ function* climbStairsSteps(n: number): Generator<AlgorithmStep> {
   };
 }
 
+// 最短路径（Dijkstra）步骤生成器
+function* dijkstraSteps(nodes: number, edges: [number, number, number][]): Generator<AlgorithmStep> {
+  const INF = Number.MAX_SAFE_INTEGER;
+  const dist: number[] = Array(nodes).fill(INF);
+  const visited: boolean[] = Array(nodes).fill(false);
+  const prev: (number | null)[] = Array(nodes).fill(null);
+  const visitedNodes: number[] = [];
+  
+  // 构建邻接表
+  const adj: [number, number][][] = Array.from({ length: nodes }, () => []);
+  for (const [u, v, w] of edges) {
+    adj[u].push([v, w]);
+    adj[v].push([u, w]);
+  }
+  
+  const array = Array.from({ length: nodes }, (_, i) => i);
+  
+  yield {
+    array: [...array],
+    description: `Dijkstra最短路径，共 ${nodes} 个节点`,
+    codeHighlight: 1,
+  };
+  
+  dist[0] = 0; // 从节点0开始
+  
+  for (let i = 0; i < nodes; i++) {
+    // 找到未访问的最小距离节点
+    let u = -1;
+    let minDist = INF;
+    for (let j = 0; j < nodes; j++) {
+      if (!visited[j] && dist[j] < minDist) {
+        minDist = dist[j];
+        u = j;
+      }
+    }
+    
+    if (u === -1) break;
+    visited[u] = true;
+    visitedNodes.push(u);
+    
+    yield {
+      array: [...array],
+      highlight: [u],
+      sorted: [...visitedNodes],
+      description: `选择节点 ${u}，距离 = ${dist[u] === INF ? '∞' : dist[u]}`,
+      codeHighlight: 5,
+    };
+    
+    // 更新邻居距离
+    for (const [v, w] of adj[u]) {
+      if (!visited[v] && dist[u] + w < dist[v]) {
+        dist[v] = dist[u] + w;
+        prev[v] = u;
+        yield {
+          array: [...array],
+          comparing: [u, v],
+          highlight: [v],
+          sorted: [...visitedNodes],
+          description: `更新 dist[${v}] = ${dist[v]}，前驱 = ${u}`,
+          codeHighlight: 8,
+        };
+      }
+    }
+  }
+  
+  yield {
+    array: [...array],
+    sorted: visitedNodes,
+    description: `最短路径完成：从0到各点的距离 = [${dist.map(d => d === INF ? '∞' : d).join(', ')}]`,
+    codeHighlight: 12,
+  };
+}
+
 // 获取算法步骤
 function getAlgorithmSteps(algorithm: string, array: number[]): AlgorithmStep[] {
   const steps: AlgorithmStep[] = [];
   let generator: Generator<AlgorithmStep>;
   
-  // 定义图的边（用于DFS和BFS）
-  const edges: [number, number][] = [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]];
+  // 定义图的边（用于DFS、BFS和Dijkstra）
+  const graphEdges: [number, number][] = [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]];
+  const weightedEdges: [number, number, number][] = [
+    [0, 1, 4], [0, 2, 2], [1, 2, 1], [1, 3, 5], [2, 3, 8], [1, 4, 6], [2, 4, 3], [3, 4, 2]
+  ];
   const nodes = 7;
   
   switch (algorithm) {
@@ -898,10 +974,10 @@ function getAlgorithmSteps(algorithm: string, array: number[]): AlgorithmStep[] 
       generator = heapSortSteps(array);
       break;
     case 'dfs':
-      generator = dfsSteps(nodes, edges);
+      generator = dfsSteps(nodes, graphEdges);
       break;
     case 'bfs':
-      generator = bfsSteps(nodes, edges);
+      generator = bfsSteps(nodes, graphEdges);
       break;
     case 'dp-lis':
       generator = lisSteps(array);
@@ -914,6 +990,9 @@ function getAlgorithmSteps(algorithm: string, array: number[]): AlgorithmStep[] 
       break;
     case 'dp-climb':
       generator = climbStairsSteps(10);
+      break;
+    case 'dp-dijkstra':
+      generator = dijkstraSteps(nodes, weightedEdges);
       break;
     default:
       generator = bubbleSortSteps(array);
@@ -1111,6 +1190,28 @@ void heapSort(int arr[], int n) {
     
     return dp[n];
 }`,
+    'dp-dijkstra': `void dijkstra(int src) {
+    vector<int> dist(n, INF);
+    vector<bool> visited(n, false);
+    dist[src] = 0;
+    
+    for (int i = 0; i < n; i++) {
+        // 选择未访问的最小距离节点
+        int u = -1;
+        for (int j = 0; j < n; j++) {
+            if (!visited[j] && (u == -1 || dist[j] < dist[u]))
+                u = j;
+        }
+        visited[u] = true;
+        
+        // 更新邻居距离
+        for (auto [v, w] : adj[u]) {
+            if (!visited[v] && dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+            }
+        }
+    }
+}`,
   };
   
   return codes[algorithm] || codes.bubble;
@@ -1292,32 +1393,81 @@ export function AlgorithmVisualization({
                 const isPivot = currentData.pivot === index;
                 const isHighlight = currentData.highlight?.includes(index);
                 
+                // 根据状态计算颜色和效果
+                let bgColor = '#64748b';
+                let glowIntensity = 0;
+                let scale = 1;
+                let borderGlow = '';
+                
+                if (isSwapping) {
+                  bgColor = '#ef4444';
+                  glowIntensity = 20;
+                  scale = 1.08;
+                  borderGlow = 'shadow-[0_0_20px_rgba(239,68,68,0.6)]';
+                } else if (isComparing) {
+                  bgColor = '#f59e0b';
+                  glowIntensity = 15;
+                  scale = 1.05;
+                  borderGlow = 'shadow-[0_0_15px_rgba(245,158,11,0.5)]';
+                } else if (isPivot) {
+                  bgColor = '#8b5cf6';
+                  glowIntensity = 15;
+                  borderGlow = 'shadow-[0_0_15px_rgba(139,92,246,0.5)]';
+                } else if (isSorted) {
+                  bgColor = '#22c55e';
+                  glowIntensity = 10;
+                  borderGlow = 'shadow-[0_0_10px_rgba(34,197,94,0.4)]';
+                } else if (isHighlight) {
+                  bgColor = '#3b82f6';
+                  glowIntensity = 12;
+                  borderGlow = 'shadow-[0_0_12px_rgba(59,130,246,0.5)]';
+                }
+                
                 return (
                   <motion.div
                     key={`${index}-${value}`}
                     initial={false}
+                    layout
                     animate={{
                       height: `${(value / maxValue) * 100}%`,
-                      backgroundColor: isSwapping 
-                        ? '#ef4444' 
-                        : isComparing 
-                          ? '#f59e0b' 
-                          : isPivot 
-                            ? '#8b5cf6'
-                            : isSorted 
-                              ? '#22c55e' 
-                              : isHighlight 
-                                ? '#3b82f6'
-                                : '#64748b',
-                      scale: isComparing || isSwapping ? 1.05 : 1,
+                      scale,
+                      boxShadow: glowIntensity > 0 ? `0 0 ${glowIntensity}px ${bgColor}` : 'none',
                     }}
-                    transition={{ duration: 0.3 }}
-                    className="w-8 rounded-t-md flex flex-col items-center justify-end relative"
+                    transition={{ 
+                      duration: 0.3, 
+                      type: 'spring',
+                      stiffness: 300,
+                      damping: 20
+                    }}
+                    className={`
+                      w-8 rounded-t-md flex flex-col items-center justify-end relative
+                      transition-all duration-300 ${borderGlow}
+                    `}
+                    style={{ backgroundColor: bgColor }}
                   >
-                    <span className="absolute -top-6 text-xs font-medium text-foreground">
-                      {value}
+                    <AnimatePresence>
+                      {(isComparing || isSwapping) && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          className="absolute -top-8 bg-background/90 text-foreground text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap"
+                        >
+                          {value}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <span className="absolute -top-6 text-xs font-bold text-foreground drop-shadow-sm">
+                      <motion.span
+                        key={value}
+                        initial={{ scale: 1.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {value}
+                      </motion.span>
                     </span>
-                    <span className="text-xs text-white/80 mb-1">
+                    <span className="text-xs text-white/90 font-medium mb-1">
                       {index}
                     </span>
                   </motion.div>

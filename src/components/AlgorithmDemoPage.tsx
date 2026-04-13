@@ -202,6 +202,18 @@ const algorithms: Algorithm[] = [
     difficulty: 'medium',
     features: ['优先队列', '堆排序', 'TopK问题'],
   },
+  {
+    id: 'dp-dijkstra',
+    name: 'Dijkstra最短路径',
+    nameEn: "Dijkstra's Algorithm",
+    category: 'graph',
+    description: '贪心算法求单源最短路径，每次选择未访问的最小距离节点。',
+    timeComplexity: 'O((V+E) log V)',
+    spaceComplexity: 'O(V)',
+    stable: true,
+    difficulty: 'hard',
+    features: ['贪心算法', '最短路径', '加权图'],
+  },
 ];
 
 const categoryConfig = {
@@ -357,7 +369,7 @@ export function AlgorithmDemoPage() {
                 key={selectedAlgorithm}
                 title={currentAlgorithm.name}
                 description={currentAlgorithm.description}
-                algorithm={selectedAlgorithm as 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs' | 'selection' | 'insertion' | 'heap' | 'dp-lis' | 'dp-knapsack' | 'dp-climb'}
+                algorithm={selectedAlgorithm as 'bubble' | 'quick' | 'merge' | 'binary' | 'dfs' | 'bfs' | 'selection' | 'insertion' | 'heap' | 'dp-lis' | 'dp-knapsack' | 'dp-climb' | 'dp-dijkstra'}
               />
             </CardContent>
           </Card>

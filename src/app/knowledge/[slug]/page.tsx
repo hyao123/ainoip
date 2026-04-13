@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -80,6 +80,14 @@ function getRelatedPoints(point: KnowledgePoint): KnowledgePoint[] {
 }
 
 export default function KnowledgeDetailPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <KnowledgeDetailContent />
+    </Suspense>
+  );
+}
+
+function KnowledgeDetailContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -459,6 +459,14 @@ const categoryColors: Record<string, string> = {
 };
 
 export default function FoundationQuizPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <FoundationQuizContent />
+    </Suspense>
+  );
+}
+
+function FoundationQuizContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get('from');
